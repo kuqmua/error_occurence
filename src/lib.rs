@@ -1,14 +1,14 @@
-// #![deny(
-//     clippy::indexing_slicing,
-//     clippy::integer_arithmetic,
-//     clippy::unwrap_used,
-//     clippy::float_arithmetic
-// )]
-// #![allow(clippy::too_many_arguments)]
+#![deny(
+    clippy::indexing_slicing,
+    clippy::integer_arithmetic,
+    clippy::unwrap_used,
+    clippy::float_arithmetic
+)]
+#![allow(clippy::too_many_arguments)]
 
-// use proc_macro_helpers::global_variables::hardcode::ERROR_ENUM_NAME;
-// use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
-// use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
+use proc_macro_helpers::global_variables::hardcode::ERROR_ENUM_NAME;
+use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
+use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
 
 #[proc_macro_derive(ImplErrorOccurenceFromTufaCommon)]
 pub fn derive_impl_error_occurence_tufa_common(
@@ -28,63 +28,197 @@ fn generate(
     input: proc_macro::TokenStream,
     path: proc_macro_helpers::path::Path,
 ) -> proc_macro::TokenStream {
-    // let ast: syn::DeriveInput =
-    //     syn::parse(input).expect("ImplErrorOccurence syn::parse(input) failed");
-    // let fields = match ast.data {
-    //     syn::Data::Struct(struct_item) => struct_item.fields,
-    //     _ => panic!("ImplErrorOccurence only works on structs"),
-    // };
-    // let ident = &ast.ident;
-    // let fields_named = match fields {
-    //     syn::Fields::Named(fields_named) => fields_named,
-    //     _ => panic!("ImplErrorOccurence only works with named fields"),
-    // };
-    // match fields_named.named.len() {
-    //     2 => (),
-    //     _ => {
-    //         panic!("ImplErrorOccurence fields_named.len() != 2")
-    //     }
-    // }
-    // let source_type_ident = match &fields_named.named[0].ty {
-    //     syn::Type::Path(type_path) => type_path,
-    //     _ => panic!("ImplErrorOccurence only works on structs fields with  syn::Type::Path type"),
-    // };
-    // let first_source_type_ident = source_type_ident.path.segments[0].ident.clone();
-    // let first_source_type_ident_as_string = format!("{}", first_source_type_ident);
-    // let source_place_type_source_token_stream =
-    //     format!("{path}::config_mods::source_place_type::SourcePlaceType::Source")
-    //         .parse::<proc_macro2::TokenStream>()
-    //         .expect("path parse failed");
-    // let source_place_type_github_token_stream =
-    //     format!("{path}::config_mods::source_place_type::SourcePlaceType::Github")
-    //         .parse::<proc_macro2::TokenStream>()
-    //         .expect("path parse failed");
-    // let source_place_type_none_token_stream =
-    //     format!("{path}::config_mods::source_place_type::SourcePlaceType::None")
-    //         .parse::<proc_macro2::TokenStream>()
-    //         .expect("path parse failed");
-    // let with_tracing_token_stream = format!("{path}::traits::with_tracing::WithTracing")
-    //     .parse::<proc_macro2::TokenStream>()
-    //     .expect("path parse failed");
-    // let where_was_token_stream = format!("{path}::common::where_was::WhereWas")
-    //     .parse::<proc_macro2::TokenStream>()
-    //     .expect("path parse failed");
-    // let source_place_type_token_stream =
-    //     format!("{path}::config_mods::source_place_type::SourcePlaceType")
-    //         .parse::<proc_macro2::TokenStream>()
-    //         .expect("path parse failed");
-    // let tracing_token_stream = format!("{path}::config_mods::log_type::LogType::Tracing")
-    //     .parse::<proc_macro2::TokenStream>()
-    //     .expect("path parse failed");
-    // let stack_token_stream = format!("{path}::config_mods::log_type::LogType::Stack")
-    //     .parse::<proc_macro2::TokenStream>()
-    //     .expect("path parse failed");
-    // let none_token_stream = format!("{path}::config_mods::log_type::LogType::None")
-    //     .parse::<proc_macro2::TokenStream>()
-    //     .expect("path parse failed");
-    // let error_color_token_stream = format!("{path}::traits::get_color::ErrorColorBold")
-    //     .parse::<proc_macro2::TokenStream>()
-    //     .expect("path parse failed");
+    let ast: syn::DeriveInput =
+        syn::parse(input).expect("ImplErrorOccurence syn::parse(input) failed");
+    let ident = &ast.ident;
+    // let fields =
+    match ast.data {
+        syn::Data::Struct(struct_item) => {
+            let fields = struct_item.fields;
+
+            let fields_named = match fields {
+                syn::Fields::Named(fields_named) => fields_named,
+                _ => panic!("ImplErrorOccurence only works with named fields"),
+            };
+            match fields_named.named.len() {
+                2 => (),
+                _ => {
+                    panic!("ImplErrorOccurence fields_named.len() != 2")
+                }
+            }
+            let source_type_ident = match &fields_named.named[0].ty {
+                syn::Type::Path(type_path) => type_path,
+                _ => panic!(
+                    "ImplErrorOccurence only works on structs fields with  syn::Type::Path type"
+                ),
+            };
+            let first_source_type_ident = source_type_ident.path.segments[0].ident.clone();
+            // let first_source_type_ident_as_string = format!("{first_source_type_ident}");
+            // let source_place_type_source_token_stream =
+            //     format!("{path}::config_mods::source_place_type::SourcePlaceType::Source")
+            //         .parse::<proc_macro2::TokenStream>()
+            //         .expect("path parse failed");
+            // let source_place_type_github_token_stream =
+            //     format!("{path}::config_mods::source_place_type::SourcePlaceType::Github")
+            //         .parse::<proc_macro2::TokenStream>()
+            //         .expect("path parse failed");
+            // let source_place_type_none_token_stream =
+            //     format!("{path}::config_mods::source_place_type::SourcePlaceType::None")
+            //         .parse::<proc_macro2::TokenStream>()
+            //         .expect("path parse failed");
+            // let with_tracing_token_stream = format!("{path}::traits::with_tracing::WithTracing")
+            //     .parse::<proc_macro2::TokenStream>()
+            //     .expect("path parse failed");
+            // let where_was_token_stream = format!("{path}::common::where_was::WhereWas")
+            //     .parse::<proc_macro2::TokenStream>()
+            //     .expect("path parse failed");
+            // let source_place_type_token_stream =
+            //     format!("{path}::config_mods::source_place_type::SourcePlaceType")
+            //         .parse::<proc_macro2::TokenStream>()
+            //         .expect("path parse failed");
+            // let tracing_token_stream = format!("{path}::config_mods::log_type::LogType::Tracing")
+            //     .parse::<proc_macro2::TokenStream>()
+            //     .expect("path parse failed");
+            // let stack_token_stream = format!("{path}::config_mods::log_type::LogType::Stack")
+            //     .parse::<proc_macro2::TokenStream>()
+            //     .expect("path parse failed");
+            // let none_token_stream = format!("{path}::config_mods::log_type::LogType::None")
+            //     .parse::<proc_macro2::TokenStream>()
+            //     .expect("path parse failed");
+            // let error_color_token_stream = format!("{path}::traits::get_color::ErrorColorBold")
+            //     .parse::<proc_macro2::TokenStream>()
+            //     .expect("path parse failed");
+            quote::quote! {}.into()
+        }
+        syn::Data::Enum(data_enum) => {
+            let use_to_string_without_config_token_stream = format!("use {path}::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;")
+                .parse::<proc_macro2::TokenStream>()
+                .expect("path parse failed");
+            let variants = data_enum.variants.iter().map(|variant| {
+                let variant_ident = &variant.ident;
+                match &variant.fields {
+                    syn::Fields::Named(fields_named) => {
+                        let g = fields_named.named.iter().map(|field| {
+                            let first_field_ident =
+                                field.ident.clone().expect("enum field ident is None");
+                            let type_handle = &field.ty;
+                            quote::quote! {
+                            // #[derive(Debug, thiserror::Error, serde::Serialize)]
+                            // pub enum EightOriginError<'a> {
+                            //     Something {
+                            //         error: String,
+                            //         code_occurence: crate::common::code_occurence::CodeOccurence<'a>,
+                            //     },
+                            // }
+
+                                impl<'a> std::fmt::Display for #ident<'a> {
+                                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                                        #use_to_string_without_config_token_stream
+                                        write!(f, "{}", self.to_string_without_config())
+                                    }
+                                }
+
+                            // impl<'a, ConfigGeneric>
+                            //     crate::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
+                            //         'a,
+                            //         ConfigGeneric,
+                            //     > for EightOriginError<'a>
+                            // where
+                            //     ConfigGeneric: crate::traits::fields::GetSourcePlaceType
+                            //         + crate::traits::fields::GetTimezone
+                            //         + crate::traits::get_server_address::GetServerAddress,
+                            // {
+                            //     fn source_to_string_with_config(&self, _config: &ConfigGeneric) -> String {
+                            //         use crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                            //         self.source_to_string_without_config()
+                            //     }
+                            // }
+
+                            // impl<'a>
+                            //     crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
+                            //         'a,
+                            //     > for EightOriginError<'a>
+                            // {
+                            //     fn source_to_string_without_config(&self) -> String {
+                            //         match self {
+                            //             EightOriginError::Something {
+                            //                 error,
+                            //                 code_occurence: _code_occurence,
+                            //             } => format!("{}", error),
+                            //         }
+                            //     }
+                            // }
+
+                            // impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
+                            //     for EightOriginError<'a>
+                            // {
+                            //     fn get_code_occurence(&self) -> &crate::common::code_occurence::CodeOccurence<'a> {
+                            //         match self {
+                            //             EightOriginError::Something {
+                            //                 error: _error,
+                            //                 code_occurence,
+                            //             } => code_occurence,
+                            //         }
+                            //     }
+                            // }
+
+                            // #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
+                            // pub enum EightOriginErrorWithDeserialize<'a> {
+                            //     Something {
+                            //         error: String,
+                            //         #[serde(borrow)]
+                            //         code_occurence: crate::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                            //     },
+                            // }
+
+                            // impl<'a> std::fmt::Display for EightOriginErrorWithDeserialize<'a> {
+                            //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                            //         use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                            //         write!(f, "{}", self.to_string_without_config_with_deserialize())
+                            //     }
+                            // }
+
+                            // impl<'a>
+                            //     crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
+                            //         'a,
+                            //     > for EightOriginErrorWithDeserialize<'a>
+                            // {
+                            //     fn source_to_string_without_config(&self) -> String {
+                            //         match self {
+                            //             EightOriginErrorWithDeserialize::Something {
+                            //                 error,
+                            //                 code_occurence: _code_occurence,
+                            //             } => format!("{}", error),
+                            //         }
+                            //     }
+                            // }
+
+                            // impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
+                            //     for EightOriginErrorWithDeserialize<'a>
+                            // {
+                            //     fn get_code_occurence_with_deserialize(
+                            //         &self,
+                            //     ) -> &crate::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
+                            //         match self {
+                            //             EightOriginErrorWithDeserialize::Something {
+                            //                 error: _error,
+                            //                 code_occurence,
+                            //             } => code_occurence,
+                            //         }
+                            //     }
+                            // }
+                            }
+                        });
+                    }
+                    _ => panic!("ImplErrorOccurence only works with named fields"),
+                }
+            });
+            println!("{:#?}", data_enum);
+            quote::quote! {}.into()
+        }
+        _ => panic!("ImplErrorOccurence only works on structs and enums!"),
+    }
+
     // let error_and_where_was_init = if first_source_type_ident_as_string == *"Vec" {
     //     let ident_as_string = match source_type_ident.path.segments[0].arguments.clone() {
     //         syn::PathArguments::None => {
@@ -601,19 +735,8 @@ fn generate(
     //         }
     //     }
     // };
-    let gen = quote::quote! {
-        // use ansi_term::Colour::RGB;
-        // impl #with_tracing_token_stream<#source_type_ident> for #ident {
-        //     fn with_tracing(
-        //         source: #source_type_ident,
-        //         where_was: #where_was_token_stream,
-        //         source_place_type: &#source_place_type_token_stream,
-        //     ) -> Self {
-        //         use #error_color_token_stream;
-        //         #error_and_where_was_init
-        //         Self { source, where_was }
-        //     }
-        // }
-    };
-    gen.into()
 }
+
+//
+
+//
