@@ -31,6 +31,9 @@ fn generate(
     let ast: syn::DeriveInput =
         syn::parse(input).expect("ImplErrorOccurence syn::parse(input) failed");
     let ident = &ast.ident;
+    let ident_with_deserialize_token_stream = format!("{ident}WithDeserialize")
+        .parse::<proc_macro2::TokenStream>()
+        .expect("path parse failed");
     // let fields =
     match ast.data {
         syn::Data::Struct(struct_item) => {
@@ -94,6 +97,12 @@ fn generate(
             let use_to_string_without_config_token_stream = format!("use {path}::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;")
                 .parse::<proc_macro2::TokenStream>()
                 .expect("path parse failed");
+            let source_to_string_with_config_token_stream = format!("{path}::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig")
+                .parse::<proc_macro2::TokenStream>()
+                .expect("path parse failed");
+            let path_token_stream = format!("{path}")
+                .parse::<proc_macro2::TokenStream>()
+                .expect("path parse failed");
             let variants = data_enum.variants.iter().map(|variant| {
                 let variant_ident = &variant.ident;
                 match &variant.fields {
@@ -103,110 +112,7 @@ fn generate(
                                 field.ident.clone().expect("enum field ident is None");
                             let type_handle = &field.ty;
                             quote::quote! {
-                            // #[derive(Debug, thiserror::Error, serde::Serialize)]
-                            // pub enum EightOriginError<'a> {
-                            //     Something {
-                            //         error: String,
-                            //         code_occurence: crate::common::code_occurence::CodeOccurence<'a>,
-                            //     },
-                            // }
 
-                                impl<'a> std::fmt::Display for #ident<'a> {
-                                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                                        #use_to_string_without_config_token_stream
-                                        write!(f, "{}", self.to_string_without_config())
-                                    }
-                                }
-
-                            // impl<'a, ConfigGeneric>
-                            //     crate::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
-                            //         'a,
-                            //         ConfigGeneric,
-                            //     > for EightOriginError<'a>
-                            // where
-                            //     ConfigGeneric: crate::traits::fields::GetSourcePlaceType
-                            //         + crate::traits::fields::GetTimezone
-                            //         + crate::traits::get_server_address::GetServerAddress,
-                            // {
-                            //     fn source_to_string_with_config(&self, _config: &ConfigGeneric) -> String {
-                            //         use crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
-                            //         self.source_to_string_without_config()
-                            //     }
-                            // }
-
-                            // impl<'a>
-                            //     crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
-                            //         'a,
-                            //     > for EightOriginError<'a>
-                            // {
-                            //     fn source_to_string_without_config(&self) -> String {
-                            //         match self {
-                            //             EightOriginError::Something {
-                            //                 error,
-                            //                 code_occurence: _code_occurence,
-                            //             } => format!("{}", error),
-                            //         }
-                            //     }
-                            // }
-
-                            // impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
-                            //     for EightOriginError<'a>
-                            // {
-                            //     fn get_code_occurence(&self) -> &crate::common::code_occurence::CodeOccurence<'a> {
-                            //         match self {
-                            //             EightOriginError::Something {
-                            //                 error: _error,
-                            //                 code_occurence,
-                            //             } => code_occurence,
-                            //         }
-                            //     }
-                            // }
-
-                            // #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
-                            // pub enum EightOriginErrorWithDeserialize<'a> {
-                            //     Something {
-                            //         error: String,
-                            //         #[serde(borrow)]
-                            //         code_occurence: crate::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
-                            //     },
-                            // }
-
-                            // impl<'a> std::fmt::Display for EightOriginErrorWithDeserialize<'a> {
-                            //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                            //         use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
-                            //         write!(f, "{}", self.to_string_without_config_with_deserialize())
-                            //     }
-                            // }
-
-                            // impl<'a>
-                            //     crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
-                            //         'a,
-                            //     > for EightOriginErrorWithDeserialize<'a>
-                            // {
-                            //     fn source_to_string_without_config(&self) -> String {
-                            //         match self {
-                            //             EightOriginErrorWithDeserialize::Something {
-                            //                 error,
-                            //                 code_occurence: _code_occurence,
-                            //             } => format!("{}", error),
-                            //         }
-                            //     }
-                            // }
-
-                            // impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
-                            //     for EightOriginErrorWithDeserialize<'a>
-                            // {
-                            //     fn get_code_occurence_with_deserialize(
-                            //         &self,
-                            //     ) -> &crate::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
-                            //         match self {
-                            //             EightOriginErrorWithDeserialize::Something {
-                            //                 error: _error,
-                            //                 code_occurence,
-                            //             } => code_occurence,
-                            //         }
-                            //     }
-                            // }
                             }
                         });
                     }
@@ -214,7 +120,113 @@ fn generate(
                 }
             });
             println!("{:#?}", data_enum);
-            quote::quote! {}.into()
+            quote::quote! {
+                // #[derive(Debug, thiserror::Error, serde::Serialize)]
+                // pub enum EightOriginError<'a> {
+                //     Something {
+                //         error: String,
+                //         code_occurence: crate::common::code_occurence::CodeOccurence<'a>,
+                //     },
+                // }
+                impl<'a> std::fmt::Display for #ident<'a> {
+                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                        write!(f, "{}", self.to_string_without_config())
+                    }
+                }
+                impl<'a, ConfigGeneric>
+                    #path_token_stream::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
+                        'a,
+                        ConfigGeneric,
+                    > for #ident<'a>
+                    where ConfigGeneric: #path_token_stream::traits::fields::GetSourcePlaceType
+                        + #path_token_stream::traits::fields::GetTimezone
+                        + #path_token_stream::traits::get_server_address::GetServerAddress,
+                {
+                    fn source_to_string_with_config(&self, _config: &ConfigGeneric) -> String {
+                        use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                        self.source_to_string_without_config()
+                    }
+                }
+
+                //
+                // impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
+                //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                //         use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                //         write!(f, "{}", self.to_string_without_config_with_deserialize())
+                //     }
+                //  }
+                //
+
+
+
+
+
+                impl<'a>
+                    #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
+                        'a,
+                    > for #ident<'a>
+                {
+                    fn source_to_string_without_config(&self) -> String {
+                        match self {
+                            #ident::Something {
+                                error,
+                                code_occurence: _code_occurence,
+                            } => format!("{}", error),
+                        }
+                    }
+                }
+
+                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
+                    for #ident<'a>
+                {
+                    fn get_code_occurence(&self) -> &#path_token_stream::common::code_occurence::CodeOccurence<'a> {
+                        match self {
+                            #ident::Something {
+                                error: _error,
+                                code_occurence,
+                            } => code_occurence,
+                        }
+                    }
+                }
+
+                #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
+                pub enum #ident_with_deserialize_token_stream<'a> {
+                    Something {
+                        error: String,
+                        #[serde(borrow)]
+                        code_occurence: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                    },
+                }
+                
+                impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
+                {
+                    fn source_to_string_without_config(&self) -> String {
+                        match self {
+                            #ident_with_deserialize_token_stream::Something {
+                                error,
+                                code_occurence: _code_occurence,
+                            } => format!("{}", error),
+                        }
+                    }
+                }
+
+                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
+                    for #ident_with_deserialize_token_stream<'a>
+                {
+                    fn get_code_occurence_with_deserialize(
+                        &self,
+                    ) -> &#path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
+                        match self {
+                            #ident_with_deserialize_token_stream::Something {
+                                error: _error,
+                                code_occurence,
+                            } => code_occurence,
+                        }
+                    }
+                }
+            }
+            .into()
         }
         _ => panic!("ImplErrorOccurence only works on structs and enums!"),
     }
