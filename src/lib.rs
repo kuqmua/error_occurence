@@ -6,6 +6,8 @@
 )]
 #![allow(clippy::too_many_arguments)]
 
+use std::f32::consts::E;
+
 use proc_macro_helpers::global_variables::hardcode::ERROR_ENUM_NAME;
 use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
 use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
@@ -27,10 +29,24 @@ pub fn derive_impl_error_occurence_from_crate(
 enum ErrorFieldName {
     Error,
     InnerError,
-    InnerErrors
+    InnerErrors,
 }
 
-enum SuportedEnumVariants {
+impl From<proc_macro2::Ident> for ErrorFieldName {
+    fn from(item: proc_macro2::Ident) -> Self {
+        if item == *"error" {
+            ErrorFieldName::Error
+        } else if item == *"inner_error" {
+            ErrorFieldName::InnerError
+        } else if item == *"inner_errors" {
+            ErrorFieldName::InnerErrors
+        } else {
+            panic!("ImplErrorOccurence only works with enums where variants named first field name == error | inner_error | inner_errors");
+        }
+    }
+}
+
+enum SuportedEnumVariant {
     Named,
     Unnamed,
 }
@@ -46,8 +62,8 @@ fn generate(
         .parse::<proc_macro2::TokenStream>()
         .expect("path parse failed");
     let path_token_stream = format!("{path}")
-                .parse::<proc_macro2::TokenStream>()
-                .expect("path parse failed");
+        .parse::<proc_macro2::TokenStream>()
+        .expect("path parse failed");
     // let fields =
     match ast.data {
         syn::Data::Struct(struct_item) => {
@@ -108,167 +124,207 @@ fn generate(
             quote::quote! {}.into()
         }
         syn::Data::Enum(data_enum) => {
-            {
-                let mut all_equal: Option<SuportedEnumVariants> = None;
-                for variant in &data_enum.variants {
-                    match variant.fields {
-                        syn::Fields::Named(_) => {
-                            match &all_equal {
-                                Some(supported_variant) => {
-                                    match supported_variant {
-                                        SuportedEnumVariants::Named => (),
-                                        SuportedEnumVariants::Unnamed => panic!("ImplErrorOccurence only works with enums where all variants are named or all variants are unnamed"),
-                                    }
-                                },
-                                None => {
-                                    all_equal = Some(SuportedEnumVariants::Named);
-                                },
-                            }
-                        },
-                        syn::Fields::Unnamed(_) => {
-                            match &all_equal {
-                                Some(supported_variant) => {
-                                    match supported_variant {
-                                        SuportedEnumVariants::Named => panic!("ImplErrorOccurence only works with enums where all variants are named or all variants are unnamed"),
-                                        SuportedEnumVariants::Unnamed => (),
-                                    }
-                                },
-                                None => {
-                                    all_equal = Some(SuportedEnumVariants::Unnamed);
-                                },
-                            }
-                        },
-                        syn::Fields::Unit => panic!("ImplErrorOccurence only works with named fields"),
-                    }
-                }
-            }
-            let variants = data_enum.variants.iter().map(|variant| {
-                let variant_ident = &variant.ident;
-                //todo add check on all variants are named or all variants are unnamed
+            println!("{:#?}", data_enum);
+            let mut all_equal: Option<SuportedEnumVariant> = None;
+            for variant in &data_enum.variants {
                 match &variant.fields {
                     syn::Fields::Named(fields_named) => {
-                        let named = &fields_named.named;
-                        match named.len() == 2 {
-                            true => {
-                                let g = named.iter().map(|field| {
-                                    let first_field_ident =
-                                    field.ident.clone().expect("enum field ident is None");
-                                    let type_handle = &field.ty;
-                                    quote::quote! {
-
-                                    }
-                                });
+                        match &all_equal {
+                            Some(supported_variant) => {
+                                match supported_variant {
+                                    SuportedEnumVariant::Named => (),
+                                    SuportedEnumVariant::Unnamed => panic!("ImplErrorOccurence only works with enums where all variants are named or all variants are unnamed"),
+                                }
                             },
-                            false => panic!("ImplErrorOccurence only works on named fields with length of 2"),
+                            None => {
+                                all_equal = Some(SuportedEnumVariant::Named);
+                            },
                         }
                     },
-                    syn::Fields::Unnamed(fields_unnamed) => todo!(),
-                    _ => panic!("ImplErrorOccurence only works with named fields"),
-                }
-            });
-            println!("{:#?}", data_enum);
-            //error, inner_errors, inner_error
-            quote::quote! {
-                // #[derive(Debug, thiserror::Error, serde::Serialize)]
-                // pub enum EightOriginError<'a> {
-                //     Something {
-                //         error: String,
-                //         code_occurence: crate::common::code_occurence::CodeOccurence<'a>,
-                //     },
-                // }
-                impl<'a> std::fmt::Display for #ident<'a> {
-                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                        write!(f, "{}", self.to_string_without_config())
-                    }
-                }
-                impl<'a, ConfigGeneric>
-                    #path_token_stream::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
-                        'a,
-                        ConfigGeneric,
-                    > for #ident<'a>
-                    where ConfigGeneric: #path_token_stream::traits::fields::GetSourcePlaceType
-                        + #path_token_stream::traits::fields::GetTimezone
-                        + #path_token_stream::traits::get_server_address::GetServerAddress,
-                {
-                    fn source_to_string_with_config(&self, _config: &ConfigGeneric) -> String {
-                        use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
-                        self.source_to_string_without_config()
-                    }
-                }
-                
-                impl<'a>
-                    #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
-                        'a,
-                    > for #ident<'a>
-                {
-                    fn source_to_string_without_config(&self) -> String {
-                        match self {
-                            #ident::Something {
-                                error,
-                                code_occurence: _code_occurence,
-                            } => format!("{}", error),
+                    syn::Fields::Unnamed(_) => {
+                        match &all_equal {
+                            Some(supported_variant) => {
+                                match supported_variant {
+                                    SuportedEnumVariant::Named => panic!("ImplErrorOccurence only works with enums where all variants are named or all variants are unnamed"),
+                                    SuportedEnumVariant::Unnamed => (),
+                                }
+                            },
+                            None => {
+                                all_equal = Some(SuportedEnumVariant::Unnamed);
+                            },
                         }
-                    }
-                }
-
-                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
-                    for #ident<'a>
-                {
-                    fn get_code_occurence(&self) -> &#path_token_stream::common::code_occurence::CodeOccurence<'a> {
-                        match self {
-                            #ident::Something {
-                                error: _error,
-                                code_occurence,
-                            } => code_occurence,
-                        }
-                    }
-                }
-
-                #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
-                pub enum #ident_with_deserialize_token_stream<'a> {
-                    Something {
-                        error: String,
-                        #[serde(borrow)]
-                        code_occurence: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                     },
-                }
-
-                impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
-                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
-                        write!(f, "{}", self.to_string_without_config_with_deserialize())
-                    }
-                 }
-                
-                impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
-                {
-                    fn source_to_string_without_config(&self) -> String {
-                        match self {
-                            #ident_with_deserialize_token_stream::Something {
-                                error,
-                                code_occurence: _code_occurence,
-                            } => format!("{}", error),
-                        }
-                    }
-                }
-
-                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
-                    for #ident_with_deserialize_token_stream<'a>
-                {
-                    fn get_code_occurence_with_deserialize(
-                        &self,
-                    ) -> &#path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
-                        match self {
-                            #ident_with_deserialize_token_stream::Something {
-                                error: _error,
-                                code_occurence,
-                            } => code_occurence,
-                        }
-                    }
+                    syn::Fields::Unit => panic!("ImplErrorOccurence only works with named fields"),
                 }
             }
-            .into()
+            match all_equal {
+                Some(supported_enum_variant) => {
+                    match supported_enum_variant {
+                        SuportedEnumVariant::Named => {
+                            let mut vec_needed_info: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, &syn::Type)> = Vec::new();
+                            data_enum.variants.iter().for_each(|variant| {
+                                let variant_ident = &variant.ident;
+                                let needed_info = match &variant.fields {
+                                    syn::Fields::Named(fields_named) => {
+                                        let named = &fields_named.named;
+                                        match named.len() == 2 {
+                                            true => {
+                                                let first_field = &named[0];
+                                                let first_field_ident =
+                                                    first_field.ident.clone().expect("ImplErrorOccurence enum variant first field ident is None");
+                                                let error_field_name = ErrorFieldName::from(first_field_ident);
+                                                let second_field = &named[1];
+                                                let second_field_ident =
+                                                    second_field.ident.clone().expect("enum variant second field ident is None");
+                                                if second_field_ident != *"code_occurence" {
+                                                    panic!("ImplErrorOccurence only works with enums where variants named first field name == error | inner_error | inner_errors");
+                                                }
+                                                (error_field_name, &first_field.ty, &second_field.ty)
+                                            },
+                                            false => panic!("ImplErrorOccurence only works on named fields with length of 2"),
+                                        }
+                                    },
+                                    syn::Fields::Unnamed(_) => panic!("ImplErrorOccurence unexpected named unnamed logic"),
+                                    _ => panic!("ImplErrorOccurence only works with named fields"),
+                                };
+                                vec_needed_info.push((variant_ident, needed_info.0, needed_info.1, needed_info.2));
+                            });
+                            quote::quote! {
+                                // #[derive(Debug, thiserror::Error, serde::Serialize)]
+                                // pub enum EightOriginError<'a> {
+                                //     Something {
+                                //         error: String,
+                                //         code_occurence: crate::common::code_occurence::CodeOccurence<'a>,
+                                //     },
+                                // }
+                                //difference
+                                impl<'a, ConfigGeneric>
+                                    #path_token_stream::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
+                                        'a,
+                                        ConfigGeneric,
+                                    > for #ident<'a>
+                                    where ConfigGeneric: #path_token_stream::traits::fields::GetSourcePlaceType
+                                        + #path_token_stream::traits::fields::GetTimezone
+                                        + #path_token_stream::traits::get_server_address::GetServerAddress,
+                                {
+                                    fn source_to_string_with_config(
+                                        &self,
+                                        //error 
+                                        _config: &ConfigGeneric
+                                        //inner_error
+                                        config: &ConfigGeneric
+                                        //inner_errors
+                                        config: &ConfigGeneric
+                                    ) -> String {
+                                        //error
+                                        use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                                        self.source_to_string_without_config()
+                                        //inner_error
+                                        use crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
+                                        match self {
+                                            ThreeWrapperError::Something {
+                                                inner_error,
+                                                code_occurence: _code_occurence,
+                                            } => inner_error.to_string_with_config_for_source_to_string_with_config(config),
+                                        }
+                                        //inner_errors
+                                        use crate::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig;
+                                        match self {
+                                            SixWrapperError::Something {
+                                                inner_errors,
+                                                code_occurence: _code_occurence,
+                                            } => inner_errors.few_to_string_with_config(config),
+                                        }
+                                    }
+                                }
+                                /////////////////////////////////
+
+                                /////////////////////////////////
+                                //difference
+                                impl<'a>
+                                    #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
+                                        'a,
+                                    > for #ident<'a>
+                                {
+                                    fn source_to_string_without_config(&self) -> String {
+                                        match self {
+                                            #ident::Something {
+                                                error,
+                                                code_occurence: _code_occurence,
+                                            } => format!("{}", error),
+                                        }
+                                    }
+                                }
+                                //difference(only in error naming)
+                                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
+                                    for #ident<'a>
+                                {
+                                    fn get_code_occurence(&self) -> &#path_token_stream::common::code_occurence::CodeOccurence<'a> {
+                                        match self {
+                                            #ident::Something {
+                                                error: _error,
+                                                code_occurence,
+                                            } => code_occurence,
+                                        }
+                                    }
+                                }
+                                //difference
+                                #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
+                                pub enum #ident_with_deserialize_token_stream<'a> {
+                                    Something {
+                                        error: String,
+                                        #[serde(borrow)]
+                                        code_occurence: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                    },
+                                }
+                                //difference
+                                impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
+                                {
+                                    fn source_to_string_without_config(&self) -> String {
+                                        match self {
+                                            #ident_with_deserialize_token_stream::Something {
+                                                error,
+                                                code_occurence: _code_occurence,
+                                            } => format!("{}", error),
+                                        }
+                                    }
+                                }
+                                //difference(only in error naming)
+                                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
+                                    for #ident_with_deserialize_token_stream<'a>
+                                {
+                                    fn get_code_occurence_with_deserialize(
+                                        &self,
+                                    ) -> &#path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
+                                        match self {
+                                            #ident_with_deserialize_token_stream::Something {
+                                                error: _error,
+                                                code_occurence,
+                                            } => code_occurence,
+                                        }
+                                    }
+                                }
+                            };
+                        },
+                        SuportedEnumVariant::Unnamed => todo!(),
+                    }
+                    quote::quote! {
+                        impl<'a> std::fmt::Display for #ident<'a> {
+                            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                                use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                                write!(f, "{}", self.to_string_without_config())
+                            }
+                        }
+                        impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
+                            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                                use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                                write!(f, "{}", self.to_string_without_config_with_deserialize())
+                            }
+                        }
+                    }.into()
+                },
+                None => panic!("ImplErrorOccurence enums where variants named first field name == error | inner_error | inner_errors not found"),
+            }
         }
         _ => panic!("ImplErrorOccurence only works on structs and enums!"),
     }
