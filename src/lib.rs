@@ -1,12 +1,10 @@
-#![deny(
-    clippy::indexing_slicing,
-    clippy::integer_arithmetic,
-    clippy::unwrap_used,
-    clippy::float_arithmetic
-)]
-#![allow(clippy::too_many_arguments)]
-
-use std::f32::consts::E;
+// #![deny(
+//     clippy::indexing_slicing,
+//     clippy::integer_arithmetic,
+//     clippy::unwrap_used,
+//     clippy::float_arithmetic
+// )]
+// #![allow(clippy::too_many_arguments)]
 
 use proc_macro_helpers::global_variables::hardcode::ERROR_ENUM_NAME;
 use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
@@ -24,6 +22,11 @@ pub fn derive_impl_error_occurence_from_crate(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     generate(input, proc_macro_helpers::path::Path::Crate)
+}
+
+enum OriginOrWrapper {
+    Origin,
+    Wrapper,
 }
 
 enum ErrorFieldName {
@@ -46,6 +49,16 @@ impl From<proc_macro2::Ident> for ErrorFieldName {
     }
 }
 
+impl std::fmt::Display for ErrorFieldName {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            ErrorFieldName::Error => write!(f, "error"),
+            ErrorFieldName::InnerError => write!(f, "inner_error"),
+            ErrorFieldName::InnerErrors => write!(f, "inner_errors"),
+        }
+    }
+}
+
 enum SuportedEnumVariant {
     Named,
     Unnamed,
@@ -58,77 +71,39 @@ fn generate(
     let ast: syn::DeriveInput =
         syn::parse(input).expect("ImplErrorOccurence syn::parse(input) failed");
     let ident = &ast.ident;
+    let ident_as_string = ident.to_string();
     let ident_with_deserialize_token_stream = format!("{ident}WithDeserialize")
         .parse::<proc_macro2::TokenStream>()
-        .expect("path parse failed");
+        .expect("identWithDeserialize parse failed");
     let path_token_stream = format!("{path}")
         .parse::<proc_macro2::TokenStream>()
         .expect("path parse failed");
+    let origin_or_wrapper = if ident_as_string.contains(WRAPPER_NAME)
+        && ident_as_string.contains(ORIGIN_NAME)
+    {
+        panic!(
+            "ImplErrorOccurence - ident name {ident_as_string} contains {WRAPPER_NAME} and {ORIGIN_NAME}",
+        );
+    } else if ident_as_string.contains(WRAPPER_NAME) {
+        OriginOrWrapper::Wrapper
+    } else if ident_as_string.contains(ORIGIN_NAME) {
+        OriginOrWrapper::Origin
+    } else {
+        panic!(
+            "ImplErrorOccurence - ident name {ident_as_string} does not contain {WRAPPER_NAME} or {ORIGIN_NAME}",
+        );
+    };
     // let fields =
     match ast.data {
-        syn::Data::Struct(struct_item) => {
-            let fields = struct_item.fields;
-
-            let fields_named = match fields {
-                syn::Fields::Named(fields_named) => fields_named,
-                _ => panic!("ImplErrorOccurence only works with named fields"),
-            };
-            match fields_named.named.len() {
-                2 => (),
-                _ => {
-                    panic!("ImplErrorOccurence fields_named.len() != 2")
-                }
-            }
-            let source_type_ident = match &fields_named.named[0].ty {
-                syn::Type::Path(type_path) => type_path,
-                _ => panic!(
-                    "ImplErrorOccurence only works on structs fields with  syn::Type::Path type"
-                ),
-            };
-            let first_source_type_ident = source_type_ident.path.segments[0].ident.clone();
-            // let first_source_type_ident_as_string = format!("{first_source_type_ident}");
-            // let source_place_type_source_token_stream =
-            //     format!("{path}::config_mods::source_place_type::SourcePlaceType::Source")
-            //         .parse::<proc_macro2::TokenStream>()
-            //         .expect("path parse failed");
-            // let source_place_type_github_token_stream =
-            //     format!("{path}::config_mods::source_place_type::SourcePlaceType::Github")
-            //         .parse::<proc_macro2::TokenStream>()
-            //         .expect("path parse failed");
-            // let source_place_type_none_token_stream =
-            //     format!("{path}::config_mods::source_place_type::SourcePlaceType::None")
-            //         .parse::<proc_macro2::TokenStream>()
-            //         .expect("path parse failed");
-            // let with_tracing_token_stream = format!("{path}::traits::with_tracing::WithTracing")
-            //     .parse::<proc_macro2::TokenStream>()
-            //     .expect("path parse failed");
-            // let where_was_token_stream = format!("{path}::common::where_was::WhereWas")
-            //     .parse::<proc_macro2::TokenStream>()
-            //     .expect("path parse failed");
-            // let source_place_type_token_stream =
-            //     format!("{path}::config_mods::source_place_type::SourcePlaceType")
-            //         .parse::<proc_macro2::TokenStream>()
-            //         .expect("path parse failed");
-            // let tracing_token_stream = format!("{path}::config_mods::log_type::LogType::Tracing")
-            //     .parse::<proc_macro2::TokenStream>()
-            //     .expect("path parse failed");
-            // let stack_token_stream = format!("{path}::config_mods::log_type::LogType::Stack")
-            //     .parse::<proc_macro2::TokenStream>()
-            //     .expect("path parse failed");
-            // let none_token_stream = format!("{path}::config_mods::log_type::LogType::None")
-            //     .parse::<proc_macro2::TokenStream>()
-            //     .expect("path parse failed");
-            // let error_color_token_stream = format!("{path}::traits::get_color::ErrorColorBold")
-            //     .parse::<proc_macro2::TokenStream>()
-            //     .expect("path parse failed");
+        syn::Data::Struct(_struct_item) => {
             quote::quote! {}.into()
         }
         syn::Data::Enum(data_enum) => {
-            println!("{:#?}", data_enum);
+            println!("{data_enum:#?}");
             let mut all_equal: Option<SuportedEnumVariant> = None;
             for variant in &data_enum.variants {
                 match &variant.fields {
-                    syn::Fields::Named(fields_named) => {
+                    syn::Fields::Named(_) => {
                         match &all_equal {
                             Some(supported_variant) => {
                                 match supported_variant {
@@ -157,46 +132,103 @@ fn generate(
                     syn::Fields::Unit => panic!("ImplErrorOccurence only works with named fields"),
                 }
             }
+            let config_name_for_source_to_string_with_config = match origin_or_wrapper {
+                OriginOrWrapper::Origin => String::from("_config")
+                    .parse::<proc_macro2::TokenStream>()
+                    .expect("path parse failed"),
+                OriginOrWrapper::Wrapper => String::from("config")
+                    .parse::<proc_macro2::TokenStream>()
+                    .expect("path parse failed"),
+            };
             match all_equal {
                 Some(supported_enum_variant) => {
                     match supported_enum_variant {
                         SuportedEnumVariant::Named => {
-                            let mut vec_needed_info: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, &syn::Type)> = Vec::new();
-                            data_enum.variants.iter().for_each(|variant| {
-                                let variant_ident = &variant.ident;
-                                let needed_info = match &variant.fields {
-                                    syn::Fields::Named(fields_named) => {
-                                        let named = &fields_named.named;
-                                        match named.len() == 2 {
-                                            true => {
-                                                let first_field = &named[0];
-                                                let first_field_ident =
-                                                    first_field.ident.clone().expect("ImplErrorOccurence enum variant first field ident is None");
-                                                let error_field_name = ErrorFieldName::from(first_field_ident);
-                                                let second_field = &named[1];
-                                                let second_field_ident =
-                                                    second_field.ident.clone().expect("enum variant second field ident is None");
-                                                if second_field_ident != *"code_occurence" {
-                                                    panic!("ImplErrorOccurence only works with enums where variants named first field name == error | inner_error | inner_errors");
+                            let vec_needed_info = {
+                                let mut vec_needed_info: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type)> = Vec::new();
+                                data_enum.variants.iter().for_each(|variant| {
+                                    let variant_ident = &variant.ident;
+                                    let needed_info = match &variant.fields {
+                                        syn::Fields::Named(fields_named) => {
+                                            let named = &fields_named.named;
+                                            match named.len() == 2 {
+                                                true => {
+                                                    let first_field = &named[0];
+                                                    let first_field_ident =
+                                                        first_field.ident.clone().expect("ImplErrorOccurence enum variant first field ident is None");
+                                                    let error_field_name = ErrorFieldName::from(first_field_ident);
+                                                    let second_field = &named[1];
+                                                    let second_field_ident =
+                                                        second_field.ident.clone().expect("enum variant second field ident is None");
+                                                    if second_field_ident != *"code_occurence" {
+                                                        panic!("ImplErrorOccurence only works with enums where variants named first field name == error | inner_error | inner_errors");
+                                                    }
+                                                    (error_field_name, &first_field.ty, second_field_ident, &second_field.ty)
+                                                },
+                                                false => panic!("ImplErrorOccurence only works on named fields with length of 2"),
+                                            }
+                                        },
+                                        syn::Fields::Unnamed(_) => panic!("ImplErrorOccurence unexpected named unnamed logic"),
+                                        _ => panic!("ImplErrorOccurence only works with named fields"),
+                                    };
+                                    vec_needed_info.push((variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3));
+                                });
+                                vec_needed_info
+                            };
+                            let logic_for_source_to_string_with_config = match origin_or_wrapper {
+                                OriginOrWrapper::Origin => quote::quote! {
+                                    use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                                    self.source_to_string_without_config()
+                                },
+                                OriginOrWrapper::Wrapper => {
+                                    match vec_needed_info.is_empty() {
+                                        true => panic!("ImplErrorOccurence enum variants are empty"),
+                                        false => (),
+                                    }
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("error_field_name_token_steam parse failed");
+                                        match error_field_name {
+                                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                                            ErrorFieldName::InnerError => {
+                                                quote::quote! {
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam,
+                                                        #second_field_ident: _code_occurence,
+                                                    } => {
+                                                        use #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
+                                                        #error_field_name_token_steam.to_string_with_config_for_source_to_string_with_config(config)
+                                                    },
                                                 }
-                                                (error_field_name, &first_field.ty, &second_field.ty)
                                             },
-                                            false => panic!("ImplErrorOccurence only works on named fields with length of 2"),
+                                            ErrorFieldName::InnerErrors => {
+                                                quote::quote! {
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam,
+                                                        #second_field_ident: _code_occurence,
+                                                    } => {
+                                                        use #path_token_stream::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig;
+                                                        #error_field_name_token_steam.few_to_string_with_config(config)
+                                                    },
+                                                }
+                                            },
                                         }
-                                    },
-                                    syn::Fields::Unnamed(_) => panic!("ImplErrorOccurence unexpected named unnamed logic"),
-                                    _ => panic!("ImplErrorOccurence only works with named fields"),
-                                };
-                                vec_needed_info.push((variant_ident, needed_info.0, needed_info.1, needed_info.2));
-                            });
+                                    });
+                                    quote::quote! {
+                                        match self {
+                                            #(#generated_variants_logic),*
+                                        }
+                                    }
+                                },
+                            };
                             quote::quote! {
-                                // #[derive(Debug, thiserror::Error, serde::Serialize)]
-                                // pub enum EightOriginError<'a> {
-                                //     Something {
-                                //         error: String,
-                                //         code_occurence: crate::common::code_occurence::CodeOccurence<'a>,
-                                //     },
-                                // }
                                 //difference
                                 impl<'a, ConfigGeneric>
                                     #path_token_stream::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
@@ -209,37 +241,11 @@ fn generate(
                                 {
                                     fn source_to_string_with_config(
                                         &self,
-                                        //error 
-                                        _config: &ConfigGeneric
-                                        //inner_error
-                                        config: &ConfigGeneric
-                                        //inner_errors
-                                        config: &ConfigGeneric
+                                        #config_name_for_source_to_string_with_config: &ConfigGeneric
                                     ) -> String {
-                                        //error
-                                        use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
-                                        self.source_to_string_without_config()
-                                        //inner_error
-                                        use crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
-                                        match self {
-                                            ThreeWrapperError::Something {
-                                                inner_error,
-                                                code_occurence: _code_occurence,
-                                            } => inner_error.to_string_with_config_for_source_to_string_with_config(config),
-                                        }
-                                        //inner_errors
-                                        use crate::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig;
-                                        match self {
-                                            SixWrapperError::Something {
-                                                inner_errors,
-                                                code_occurence: _code_occurence,
-                                            } => inner_errors.few_to_string_with_config(config),
-                                        }
+                                        #logic_for_source_to_string_with_config
                                     }
                                 }
-                                /////////////////////////////////
-
-                                /////////////////////////////////
                                 //difference
                                 impl<'a>
                                     #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
