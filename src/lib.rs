@@ -24,6 +24,17 @@ pub fn derive_impl_error_occurence_from_crate(
     generate(input, proc_macro_helpers::path::Path::Crate)
 }
 
+enum ErrorFieldName {
+    Error,
+    InnerError,
+    InnerErrors
+}
+
+enum SuportedEnumVariants {
+    Named,
+    Unnamed,
+}
+
 fn generate(
     input: proc_macro::TokenStream,
     path: proc_macro_helpers::path::Path,
@@ -34,6 +45,9 @@ fn generate(
     let ident_with_deserialize_token_stream = format!("{ident}WithDeserialize")
         .parse::<proc_macro2::TokenStream>()
         .expect("path parse failed");
+    let path_token_stream = format!("{path}")
+                .parse::<proc_macro2::TokenStream>()
+                .expect("path parse failed");
     // let fields =
     match ast.data {
         syn::Data::Struct(struct_item) => {
@@ -94,32 +108,66 @@ fn generate(
             quote::quote! {}.into()
         }
         syn::Data::Enum(data_enum) => {
-            let use_to_string_without_config_token_stream = format!("use {path}::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;")
-                .parse::<proc_macro2::TokenStream>()
-                .expect("path parse failed");
-            let source_to_string_with_config_token_stream = format!("{path}::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig")
-                .parse::<proc_macro2::TokenStream>()
-                .expect("path parse failed");
-            let path_token_stream = format!("{path}")
-                .parse::<proc_macro2::TokenStream>()
-                .expect("path parse failed");
+            {
+                let mut all_equal: Option<SuportedEnumVariants> = None;
+                for variant in &data_enum.variants {
+                    match variant.fields {
+                        syn::Fields::Named(_) => {
+                            match &all_equal {
+                                Some(supported_variant) => {
+                                    match supported_variant {
+                                        SuportedEnumVariants::Named => (),
+                                        SuportedEnumVariants::Unnamed => panic!("ImplErrorOccurence only works with enums where all variants are named or all variants are unnamed"),
+                                    }
+                                },
+                                None => {
+                                    all_equal = Some(SuportedEnumVariants::Named);
+                                },
+                            }
+                        },
+                        syn::Fields::Unnamed(_) => {
+                            match &all_equal {
+                                Some(supported_variant) => {
+                                    match supported_variant {
+                                        SuportedEnumVariants::Named => panic!("ImplErrorOccurence only works with enums where all variants are named or all variants are unnamed"),
+                                        SuportedEnumVariants::Unnamed => (),
+                                    }
+                                },
+                                None => {
+                                    all_equal = Some(SuportedEnumVariants::Unnamed);
+                                },
+                            }
+                        },
+                        syn::Fields::Unit => panic!("ImplErrorOccurence only works with named fields"),
+                    }
+                }
+            }
             let variants = data_enum.variants.iter().map(|variant| {
                 let variant_ident = &variant.ident;
+                //todo add check on all variants are named or all variants are unnamed
                 match &variant.fields {
                     syn::Fields::Named(fields_named) => {
-                        let g = fields_named.named.iter().map(|field| {
-                            let first_field_ident =
-                                field.ident.clone().expect("enum field ident is None");
-                            let type_handle = &field.ty;
-                            quote::quote! {
+                        let named = &fields_named.named;
+                        match named.len() == 2 {
+                            true => {
+                                let g = named.iter().map(|field| {
+                                    let first_field_ident =
+                                    field.ident.clone().expect("enum field ident is None");
+                                    let type_handle = &field.ty;
+                                    quote::quote! {
 
-                            }
-                        });
-                    }
+                                    }
+                                });
+                            },
+                            false => panic!("ImplErrorOccurence only works on named fields with length of 2"),
+                        }
+                    },
+                    syn::Fields::Unnamed(fields_unnamed) => todo!(),
                     _ => panic!("ImplErrorOccurence only works with named fields"),
                 }
             });
             println!("{:#?}", data_enum);
+            //error, inner_errors, inner_error
             quote::quote! {
                 // #[derive(Debug, thiserror::Error, serde::Serialize)]
                 // pub enum EightOriginError<'a> {
@@ -148,20 +196,7 @@ fn generate(
                         self.source_to_string_without_config()
                     }
                 }
-
-                //
-                // impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
-                //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                //         use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
-                //         write!(f, "{}", self.to_string_without_config_with_deserialize())
-                //     }
-                //  }
-                //
-
-
-
-
-
+                
                 impl<'a>
                     #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
                         'a,
@@ -198,6 +233,13 @@ fn generate(
                         code_occurence: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                     },
                 }
+
+                impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
+                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                        write!(f, "{}", self.to_string_without_config_with_deserialize())
+                    }
+                 }
                 
                 impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
                 {
