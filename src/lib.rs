@@ -175,16 +175,16 @@ fn generate(
                                 });
                                 vec_needed_info
                             };
-                            let logic_for_source_to_string_with_config = match origin_or_wrapper {
+                            match vec_needed_info.is_empty() {
+                                true => panic!("ImplErrorOccurence enum variants are empty"),
+                                false => (),
+                            }
+                            let logic_for_source_to_string_with_config = match &origin_or_wrapper {
                                 OriginOrWrapper::Origin => quote::quote! {
                                     use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
                                     self.source_to_string_without_config()
                                 },
                                 OriginOrWrapper::Wrapper => {
-                                    match vec_needed_info.is_empty() {
-                                        true => panic!("ImplErrorOccurence enum variants are empty"),
-                                        false => (),
-                                    }
                                     let generated_variants_logic = vec_needed_info.iter().map(|(
                                         variant_ident, 
                                         error_field_name, 
@@ -194,7 +194,7 @@ fn generate(
                                     )|{
                                         let error_field_name_token_steam = error_field_name.to_string()
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("error_field_name_token_steam parse failed");
+                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => {
@@ -228,8 +228,79 @@ fn generate(
                                     }
                                 },
                             };
+                            let logic_for_source_to_string_without_config = match &origin_or_wrapper {
+                                OriginOrWrapper::Origin => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        match error_field_name {
+                                            ErrorFieldName::Error => {
+                                                quote::quote! {
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam,
+                                                        #second_field_ident: _code_occurence,
+                                                    } => format!("{}", error),
+                                                }
+                                            },
+                                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
+                                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                                OriginOrWrapper::Wrapper => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        match error_field_name {
+                                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                                            ErrorFieldName::InnerError => {
+                                                quote::quote! {
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam,
+                                                        #second_field_ident: _code_occurence,
+                                                    } => {
+                                                        use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                                                        #error_field_name_token_steam.to_string_without_config()
+                                                    },
+                                                }
+                                            },
+                                            ErrorFieldName::InnerErrors => {
+                                                quote::quote! {
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam,
+                                                        #second_field_ident: _code_occurence,
+                                                    } => {
+                                                        use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
+                                                        #error_field_name_token_steam.few_to_string_without_config()
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                            };
                             quote::quote! {
-                                //difference
+                                //difference done?
                                 impl<'a, ConfigGeneric>
                                     #path_token_stream::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
                                         'a,
@@ -246,7 +317,7 @@ fn generate(
                                         #logic_for_source_to_string_with_config
                                     }
                                 }
-                                //difference
+                                //difference done?
                                 impl<'a>
                                     #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
                                         'a,
@@ -254,10 +325,7 @@ fn generate(
                                 {
                                     fn source_to_string_without_config(&self) -> String {
                                         match self {
-                                            #ident::Something {
-                                                error,
-                                                code_occurence: _code_occurence,
-                                            } => format!("{}", error),
+                                            #logic_for_source_to_string_without_config
                                         }
                                     }
                                 }
