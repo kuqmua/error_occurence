@@ -93,11 +93,7 @@ fn generate(
             "ImplErrorOccurence - ident name {ident_as_string} does not contain {WRAPPER_NAME} or {ORIGIN_NAME}",
         );
     };
-    // let fields =
     match ast.data {
-        syn::Data::Struct(_struct_item) => {
-            quote::quote! {}.into()
-        }
         syn::Data::Enum(data_enum) => {
             println!("{data_enum:#?}");
             let mut all_equal: Option<SuportedEnumVariant> = None;
@@ -192,30 +188,30 @@ fn generate(
                                         second_field_ident, 
                                         _second_field_type
                                     )|{
-                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        let error_field_name_token_stream = error_field_name.to_string()
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => {
                                                 quote::quote! {
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam,
+                                                        #error_field_name_token_stream,
                                                         #second_field_ident: _code_occurence,
                                                     } => {
                                                         use #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
-                                                        #error_field_name_token_steam.to_string_with_config_for_source_to_string_with_config(config)
+                                                        #error_field_name_token_stream.to_string_with_config_for_source_to_string_with_config(config)
                                                     },
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => {
                                                 quote::quote! {
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam,
+                                                        #error_field_name_token_stream,
                                                         #second_field_ident: _code_occurence,
                                                     } => {
                                                         use #path_token_stream::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig;
-                                                        #error_field_name_token_steam.few_to_string_with_config(config)
+                                                        #error_field_name_token_stream.few_to_string_with_config(config)
                                                     },
                                                 }
                                             },
@@ -237,14 +233,14 @@ fn generate(
                                         second_field_ident, 
                                         _second_field_type
                                     )|{
-                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        let error_field_name_token_stream = error_field_name.to_string()
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
                                         match error_field_name {
                                             ErrorFieldName::Error => {
                                                 quote::quote! {
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam,
+                                                        #error_field_name_token_stream,
                                                         #second_field_ident: _code_occurence,
                                                     } => format!("{}", error),
                                                 }
@@ -265,30 +261,30 @@ fn generate(
                                         second_field_ident, 
                                         _second_field_type
                                     )|{
-                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        let error_field_name_token_stream = error_field_name.to_string()
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => {
                                                 quote::quote! {
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam,
+                                                        #error_field_name_token_stream,
                                                         #second_field_ident: _code_occurence,
                                                     } => {
                                                         use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                        #error_field_name_token_steam.to_string_without_config()
+                                                        #error_field_name_token_stream.to_string_without_config()
                                                     },
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => {
                                                 quote::quote! {
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam,
+                                                        #error_field_name_token_stream,
                                                         #second_field_ident: _code_occurence,
                                                     } => {
                                                         use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
-                                                        #error_field_name_token_steam.few_to_string_without_config()
+                                                        #error_field_name_token_stream.few_to_string_without_config()
                                                     },
                                                 }
                                             },
@@ -310,15 +306,15 @@ fn generate(
                                     )|{
                                         match error_field_name {
                                             ErrorFieldName::Error => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                                let error_field_name_underscore_token_stream = format!("_{error_field_name}")
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
                                                         #second_field_ident,
                                                     } => #second_field_ident,
                                                 }
@@ -342,29 +338,29 @@ fn generate(
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                                let error_field_name_underscore_token_stream = format!("_{error_field_name}")
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
                                                         #second_field_ident,
                                                     } => #second_field_ident,
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                                let error_field_name_underscore_token_stream = format!("_{error_field_name}")
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #ident::#variant_ident {
-                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
                                                         #second_field_ident,
                                                     } => #second_field_ident,
                                                 }
@@ -387,16 +383,16 @@ fn generate(
                                     )|{
                                         match error_field_name {
                                             ErrorFieldName::Error => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
                                                 // todo - maybe later add
-                                                // let second_field_type_with_deserialize_token_steam = format!("{second_field_type}WithDeserialize")
+                                                // let second_field_type_with_deserialize_token_stream = format!("{second_field_type}WithDeserialize")
                                                 // .parse::<proc_macro2::TokenStream>()
-                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
-                                                        #error_field_name_token_steam: #first_field_type,
+                                                        #error_field_name_token_stream: #first_field_type,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                                                     },
@@ -421,32 +417,32 @@ fn generate(
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
                                                 // todo - maybe later add
-                                                // let second_field_type_with_deserialize_token_steam = format!("{second_field_type}WithDeserialize")
+                                                // let second_field_type_with_deserialize_token_stream = format!("{second_field_type}WithDeserialize")
                                                 // .parse::<proc_macro2::TokenStream>()
-                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
-                                                        #error_field_name_token_steam: #first_field_type,
+                                                        #error_field_name_token_stream: #first_field_type,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                                                     },
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
                                                 // todo - maybe later add
-                                                // let second_field_type_with_deserialize_token_steam = format!("{second_field_type}WithDeserialize")
+                                                // let second_field_type_with_deserialize_token_stream = format!("{second_field_type}WithDeserialize")
                                                 // .parse::<proc_macro2::TokenStream>()
-                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
-                                                        #error_field_name_token_steam: #first_field_type,
+                                                        #error_field_name_token_stream: #first_field_type,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                                                     },
@@ -468,19 +464,19 @@ fn generate(
                                         second_field_ident, 
                                         _second_field_type
                                     )|{
-                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        let error_field_name_token_stream = error_field_name.to_string()
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                        let second_field_ident_underscore_token_steam = format!("_{second_field_ident}")
+                                        .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                        let second_field_ident_underscore_token_stream = format!("_{second_field_ident}")
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                        .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                         match error_field_name {
                                             ErrorFieldName::Error => {
                                                 quote::quote! {
                                                     #ident_with_deserialize_token_stream::#variant_ident {
-                                                        #error_field_name_token_steam,
-                                                        #second_field_ident: #second_field_ident_underscore_token_steam,
-                                                    } => format!("{}", #error_field_name_token_steam),
+                                                        #error_field_name_token_stream,
+                                                        #second_field_ident: #second_field_ident_underscore_token_stream,
+                                                    } => format!("{}", #error_field_name_token_stream),
                                                 }
                                             },
                                             ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
@@ -499,30 +495,30 @@ fn generate(
                                         second_field_ident, 
                                         _second_field_type
                                     )|{
-                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        let error_field_name_token_stream = error_field_name.to_string()
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                        let second_field_ident_underscore_token_steam = format!("_{second_field_ident}")
+                                        .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                        let second_field_ident_underscore_token_stream = format!("_{second_field_ident}")
                                         .parse::<proc_macro2::TokenStream>()
-                                        .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                        .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => quote::quote! {
                                                 #ident_with_deserialize_token_stream::#variant_ident {
-                                                    #error_field_name_token_steam,
-                                                    #second_field_ident: #second_field_ident_underscore_token_steam,
+                                                    #error_field_name_token_stream,
+                                                    #second_field_ident: #second_field_ident_underscore_token_stream,
                                                 } => {
                                                     use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                    #error_field_name_token_steam.to_string_without_config()
+                                                    #error_field_name_token_stream.to_string_without_config()
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => quote::quote! {
                                                 #ident_with_deserialize_token_stream::#variant_ident {
-                                                    #error_field_name_token_steam,
-                                                    #second_field_ident: #second_field_ident_underscore_token_steam,
+                                                    #error_field_name_token_stream,
+                                                    #second_field_ident: #second_field_ident_underscore_token_stream,
                                                 } => {
                                                     use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
-                                                    #error_field_name_token_steam.few_to_string_without_config()
+                                                    #error_field_name_token_stream.few_to_string_without_config()
                                                 }
                                             },
                                         }
@@ -543,15 +539,15 @@ fn generate(
                                     )|{
                                         match error_field_name {
                                             ErrorFieldName::Error => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                                let error_field_name_underscore_token_stream = format!("_{error_field_name}")
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                      #ident_with_deserialize_token_stream::#variant_ident {
-                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
                                                         #second_field_ident,
                                                     } => #second_field_ident,
                                                 }
@@ -575,29 +571,29 @@ fn generate(
                                         match error_field_name {
                                             ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
                                             ErrorFieldName::InnerError => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                                let error_field_name_underscore_token_stream = format!("_{error_field_name}")
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #ident_with_deserialize_token_stream::#variant_ident {
-                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
                                                         #second_field_ident,
                                                     } => #second_field_ident,
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => {
-                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                let error_field_name_token_stream = error_field_name.to_string()
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
-                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .expect("ImplErrorOccurence error_field_name_token_stream parse failed");
+                                                let error_field_name_underscore_token_stream = format!("_{error_field_name}")
                                                 .parse::<proc_macro2::TokenStream>()
-                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #ident_with_deserialize_token_stream::#variant_ident {
-                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
                                                         #second_field_ident,
                                                     } => #second_field_ident,
                                                 }
@@ -677,7 +673,109 @@ fn generate(
                                 }
                             }
                         },
-                        SuportedEnumVariant::Unnamed => todo!(),
+                        SuportedEnumVariant::Unnamed => {
+                            let vec_needed_info = {
+                                let mut vec_needed_info: Vec<(&proc_macro2::Ident, &syn::Type)> = Vec::new();
+                                data_enum.variants.iter().for_each(|variant| {
+                                    let needed_info = match &variant.fields {
+                                        syn::Fields::Named(_) => panic!("ImplErrorOccurence unexpected named unnamed logic"),
+                                        syn::Fields::Unnamed(fields_unnamed) => {
+                                            let unnamed = &fields_unnamed.unnamed;
+                                            let first_field = &unnamed[0];//todo - how to handle error in this case?
+                                            &first_field.ty
+                                        },
+                                        _ => panic!("ImplErrorOccurence only works with named fields"),
+                                    };
+                                    vec_needed_info.push((&variant.ident, needed_info));
+                                });
+                                vec_needed_info
+                            };
+                            match vec_needed_info.is_empty() {
+                                true => panic!("ImplErrorOccurence enum variants are empty"),
+                                false => (),
+                            }
+                            let logic_for_to_string_with_config_for_source_to_string_with_config = {
+                                let generated_variants_logic = vec_needed_info.iter().map(|(
+                                    variant_ident, 
+                                    first_field_type, 
+                                )|{
+                                    let gen = match first_field_type {
+                                        syn::Type::Path(type_path) => {
+                                            let last_segment_ident = type_path.path.segments.last().expect("ImplErrorOccurence no last segment in type_path.path.segments").ident.to_string();
+                                            let origin_or_wrapper = match (last_segment_ident.contains(WRAPPER_NAME), last_segment_ident.contains(ORIGIN_NAME)) {
+                                                (true, true) => panic!("ImplErrorOccurence last_segment_ident contains Wrapper and Origin"),
+                                                (true, false) => OriginOrWrapper::Wrapper,
+                                                (false, true) => OriginOrWrapper::Origin,
+                                                (false, false) => panic!("ImplErrorOccurence last_segment_ident do not contain Wrapper or Origin"),
+                                            };
+                                            match origin_or_wrapper {
+                                                OriginOrWrapper::Origin => quote::quote! {
+                                                    use #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithoutConfig;
+                                                    i.to_string_with_config_for_source_to_string_without_config(config)
+                                                },
+                                                OriginOrWrapper::Wrapper => quote::quote! {
+                                                    i.to_string_with_config_for_source_to_string_with_config(config)
+                                                },
+                                            }
+                                        },
+                                        _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
+                                    };
+                                    quote::quote!{
+                                        #ident::#variant_ident(i) => {
+                                            #gen
+                                        }
+                                    }
+                                });
+                                quote::quote! {
+                                    #(#generated_variants_logic),*
+                                }
+                            };
+                            println!("_____________");
+                            println!("{}", logic_for_to_string_with_config_for_source_to_string_with_config);
+                            let logic_for_to_string_without_config = {
+                                let gen = vec_needed_info.iter().map(|(
+                                    variant_ident, 
+                                    _first_field_type, 
+                                )|
+                                    quote::quote!{
+                                        #ident::#variant_ident(i) => i.to_string_without_config()
+                                    }
+                                );
+                                quote::quote! {
+                                    #(#gen),*
+                                }
+                            };
+                            // println!("_____________+++");
+                            // println!("{}", logic_for_to_string_without_config);
+                            //todo - deserialize logic
+                            quote::quote! {
+                                impl<'a, ConfigGeneric>
+                                    #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig<
+                                    'a,
+                                    ConfigGeneric,
+                                    > for #ident<'a>
+                                where
+                                    ConfigGeneric: #path_token_stream::traits::fields::GetSourcePlaceType
+                                    + #path_token_stream::traits::fields::GetTimezone
+                                    + #path_token_stream::traits::get_server_address::GetServerAddress,
+                                {
+                                    fn to_string_with_config_for_source_to_string_with_config(&self, config: &ConfigGeneric) -> String {
+                                        match self {
+                                            #logic_for_to_string_with_config_for_source_to_string_with_config
+                                        }
+                                    }
+                                }
+                                impl<'a> #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig<'a>
+                                    for #ident<'a>
+                                {
+                                    fn to_string_without_config(&self) -> String {
+                                        match self {
+                                            #logic_for_to_string_without_config
+                                        }
+                                    }
+                                }
+                            }
+                        },
                     };
                     quote::quote! {
                         impl<'a> std::fmt::Display for #ident<'a> {
@@ -687,538 +785,17 @@ fn generate(
                             }
                         }
                         #generated
-                        impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
-                            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                                use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
-                                write!(f, "{}", self.to_string_without_config_with_deserialize())
-                            }
-                        }
+                        // impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
+                        //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        //         use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                        //         write!(f, "{}", self.to_string_without_config_with_deserialize())
+                        //     }
+                        // }
                     }.into()
                 },
                 None => panic!("ImplErrorOccurence enums where variants named first field name == error | inner_error | inner_errors not found"),
             }
         }
-        _ => panic!("ImplErrorOccurence only works on structs and enums!"),
+        _ => panic!("ImplErrorOccurence only works on enums!"),
     }
-
-    // let error_and_where_was_init = if first_source_type_ident_as_string == *"Vec" {
-    //     let ident_as_string = match source_type_ident.path.segments[0].arguments.clone() {
-    //         syn::PathArguments::None => {
-    //             panic!("ImplErrorOccurence does not work with syn::PathArguments::None")
-    //         }
-    //         syn::PathArguments::AngleBracketed(angle_bracketed) => {
-    //             match angle_bracketed.args.len() {
-    //                 1 => match angle_bracketed.args[0].clone() {
-    //                     syn::GenericArgument::Type(type_handle) => match type_handle {
-    //                         syn::Type::Path(type_path) => match type_path.path.segments.len() {
-    //                             1 => type_path.path.segments[0].ident.to_string(),
-    //                             _ => {
-    //                                 panic!("ImplErrorOccurence type_path.path.segments.len() != 1")
-    //                             }
-    //                         },
-    //                         _ => panic!("ImplErrorOccurence works only with syn::Type::Path"),
-    //                     },
-    //                     _ => {
-    //                         panic!("ImplErrorOccurence works only with syn::GenericArgument::Type")
-    //                     }
-    //                 },
-    //                 _ => panic!("ImplErrorOccurence 1 angle_bracketed.args.len() != 1"),
-    //             }
-    //         }
-    //         syn::PathArguments::Parenthesized(_) => {
-    //             panic!("ImplErrorOccurence does not work with syn::PathArguments::Parenthesized")
-    //         }
-    //     };
-    //     if ident_as_string.contains(WRAPPER_NAME) && ident_as_string.contains(ORIGIN_NAME) {
-    //         panic!(
-    //             "ImplErrorOccurence - ident name {} contains {} and {}",
-    //             ident_as_string, WRAPPER_NAME, ORIGIN_NAME
-    //         );
-    //     } else if ident_as_string.contains(WRAPPER_NAME) {
-    //         quote::quote! {
-
-    //             match source_place_type {
-    //                 #source_place_type_source_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|e| e.get_log_where_was(source_place_type, CONFIG.log_type, e.get_source()))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_github_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|e| e.get_log_where_was(source_place_type, CONFIG.log_type, e.get_source()))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_none_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|e| format!("{}, ", e.get_source()))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //             };
-    //         }
-    //     } else if ident_as_string.contains(ORIGIN_NAME) {
-    //         quote::quote! {
-
-    //           match source_place_type {
-    //               #source_place_type_source_token_stream => {
-    //                   let mut error_handle = source
-    //                   .iter()
-    //                   .map(|e| format!("{}, ", e))
-    //                   .fold(String::from(""), |mut acc, elem| {
-    //                       acc.push_str(&elem);
-    //                       acc
-    //                   });
-    //                   if !error_handle.is_empty() {
-    //                       error_handle.pop();
-    //                       error_handle.pop();
-    //                   }
-    //                   let where_was_handle = where_was.file_line_column();
-    //                   match CONFIG.log_type {
-    //                       #tracing_token_stream => {
-    //                           tracing::error!(error = error_handle);
-    //                       }
-    //                       #stack_token_stream => {
-    //                           println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                       }
-    //                       #none_token_stream => (),
-    //                   }
-    //               }
-    //               #source_place_type_github_token_stream => {
-    //                   let mut error_handle = source
-    //                   .iter()
-    //                   .map(|e| format!("{}, ", e))
-    //                   .fold(String::from(""), |mut acc, elem| {
-    //                       acc.push_str(&elem);
-    //                       acc
-    //                   });
-    //                   if !error_handle.is_empty() {
-    //                       error_handle.pop();
-    //                       error_handle.pop();
-    //                   }
-    //                   let where_was_handle = where_was.github_file_line_column(&where_was.git_info);
-    //                   match CONFIG.log_type {
-    //                       #tracing_token_stream => {
-    //                           tracing::error!(error = error_handle);
-    //                       }
-    //                       #stack_token_stream => {
-    //                           println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                       }
-    //                       #none_token_stream => (),
-    //                   }
-    //               }
-    //               #source_place_type_none_token_stream => {
-    //                   let mut error_handle = source
-    //                   .iter()
-    //                   .map(|e| format!("{}, ", e))
-    //                   .fold(String::from(""), |mut acc, elem| {
-    //                       acc.push_str(&elem);
-    //                       acc
-    //                   });
-    //                   if !error_handle.is_empty() {
-    //                       error_handle.pop();
-    //                       error_handle.pop();
-    //                   }
-    //                   match CONFIG.log_type {
-    //                       #tracing_token_stream => {
-    //                           tracing::error!(error = error_handle);
-    //                       }
-    //                       #stack_token_stream => {
-    //                           println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                       }
-    //                       #none_token_stream => (),
-    //                   }
-    //               }
-    //           };
-    //         }
-    //     } else {
-    //         panic!(
-    //             "ImplErrorOccurence - ident name {} does not contain {} or {}",
-    //             ident_as_string, WRAPPER_NAME, ORIGIN_NAME
-    //         );
-    //     }
-    // } else if first_source_type_ident_as_string == *"HashMap" {
-    //     let ident_as_string = match source_type_ident.path.segments[0].arguments.clone() {
-    //         syn::PathArguments::None => {
-    //             panic!("ImplErrorOccurence does not work with syn::PathArguments::None")
-    //         }
-    //         syn::PathArguments::AngleBracketed(angle_bracketed) => {
-    //             match angle_bracketed.args.len() {
-    //                 2 => match angle_bracketed.args[1].clone() {
-    //                     syn::GenericArgument::Type(type_handle) => match type_handle {
-    //                         syn::Type::Path(type_path) => match type_path.path.segments.len() {
-    //                             1 => type_path.path.segments[0].ident.to_string(),
-    //                             _ => {
-    //                                 panic!("ImplErrorOccurence type_path.path.segments.len() != 1")
-    //                             }
-    //                         },
-    //                         _ => panic!("ImplErrorOccurence works only with syn::Type::Path"),
-    //                     },
-    //                     _ => {
-    //                         panic!("ImplErrorOccurence works only with syn::GenericArgument::Type")
-    //                     }
-    //                 },
-    //                 _ => panic!("ImplErrorOccurence 2 angle_bracketed.args.len() != 1"),
-    //             }
-    //         }
-    //         syn::PathArguments::Parenthesized(_) => {
-    //             panic!("ImplErrorOccurence does not work with syn::PathArguments::Parenthesized")
-    //         }
-    //     };
-    //     if ident_as_string.contains(WRAPPER_NAME) && ident_as_string.contains(ORIGIN_NAME) {
-    //         panic!(
-    //             "ImplErrorOccurence - ident name {} contains {} and {}",
-    //             ident_as_string, WRAPPER_NAME, ORIGIN_NAME
-    //         );
-    //     } else if ident_as_string.contains(WRAPPER_NAME) || ident_as_string.contains(ORIGIN_NAME) {
-    //         quote::quote! {
-
-    //             match source_place_type {
-    //                 #source_place_type_source_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|(key, e)| e.get_log_where_was(source_place_type, CONFIG.log_type, format!("{} {}", key, e.get_source())))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_github_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|(key, e)| e.get_log_where_was(source_place_type, CONFIG.log_type, format!("{} {}", key, e.get_source())))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_none_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|(key, e)| format!("{} {}, ", key, e.get_source()))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //             };
-    //         }
-    //     } else {
-    //         quote::quote! {
-
-    //             match source_place_type {
-    //                 #source_place_type_source_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|(key, e)| format!("{} {}, ", key, e))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     let where_was_handle = where_was.file_line_column();
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_github_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|(key, e)| format!("{} {}, ", key, e))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     let where_was_handle = where_was.github_file_line_column(&where_was.git_info);
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_none_token_stream => {
-    //                     let mut error_handle = source
-    //                     .iter()
-    //                     .map(|(key, e)| format!("{} {}, ", key, e))
-    //                     .fold(String::from(""), |mut acc, elem| {
-    //                         acc.push_str(&elem);
-    //                         acc
-    //                     });
-    //                     if !error_handle.is_empty() {
-    //                         error_handle.pop();
-    //                         error_handle.pop();
-    //                     }
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //             };
-    //         }
-    //     }
-    // } else if first_source_type_ident_as_string.contains(ERROR_ENUM_NAME) {
-    //     if first_source_type_ident_as_string.contains(WRAPPER_NAME)
-    //         && first_source_type_ident_as_string.contains(ORIGIN_NAME)
-    //     {
-    //         panic!(
-    //             "ImplErrorOccurence - ident name {} contains {} and {}",
-    //             first_source_type_ident_as_string, WRAPPER_NAME, ORIGIN_NAME
-    //         );
-    //     } else if first_source_type_ident_as_string.contains(WRAPPER_NAME) {
-    //         quote::quote! {
-
-    //             match source_place_type {
-    //                 #source_place_type_source_token_stream => {
-    //                     let error_handle = source.get_log_with_additional_where_was(
-    //                         &where_was,
-    //                         source_place_type,
-    //                         source.get_source(),
-    //                         CONFIG.log_type
-    //                     );
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_github_token_stream => {
-    //                     let error_handle = source.get_log_with_additional_where_was(
-    //                         &where_was,
-    //                         source_place_type,
-    //                         source.get_source(),
-    //                         CONFIG.log_type
-    //                     );
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_none_token_stream => {
-    //                     let error_handle = source.get_source();
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //             };
-    //         }
-    //     } else if first_source_type_ident_as_string.contains(ORIGIN_NAME) {
-    //         quote::quote! {
-    //             match source_place_type {
-    //                 #source_place_type_source_token_stream => {
-    //                     let error_handle = source.get_source();
-    //                     let where_was_handle = where_was.file_line_column();
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_github_token_stream => {
-    //                     let error_handle = source.get_source();
-    //                     let where_was_handle = where_was.github_file_line_column(&where_was.git_info);
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //                 #source_place_type_none_token_stream => {
-    //                     let error_handle = source.get_source();
-    //                     match CONFIG.log_type {
-    //                         #tracing_token_stream => {
-    //                             tracing::error!(error = error_handle);
-    //                         }
-    //                         #stack_token_stream => {
-    //                             println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                         }
-    //                         #none_token_stream => (),
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     } else {
-    //         panic!(
-    //             "ImplErrorOccurence - ident name {} does not contain {} or {}",
-    //             first_source_type_ident_as_string, WRAPPER_NAME, ORIGIN_NAME
-    //         );
-    //     }
-    // } else {
-    //     quote::quote! {
-    //         match source_place_type {
-    //             #source_place_type_source_token_stream => {
-    //                 let error_handle = format!("{} {}", where_was.file_line_column(), source);
-    //                 match CONFIG.log_type {
-    //                     #tracing_token_stream => {
-    //                         tracing::error!(error = error_handle);
-    //                     }
-    //                     #stack_token_stream => {
-    //                         println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                     }
-    //                     #none_token_stream => (),
-    //                 }
-    //             }
-    //             #source_place_type_github_token_stream => {
-    //                 let error_handle = format!("{} {}", where_was.github_file_line_column(&where_was.git_info), source);
-    //                 match CONFIG.log_type {
-    //                     #tracing_token_stream => {
-    //                         tracing::error!(error = error_handle);
-    //                     }
-    //                     #stack_token_stream => {
-    //                         println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                     }
-    //                     #none_token_stream => (),
-    //                 }
-    //             }
-    //             #source_place_type_none_token_stream => {
-    //                 let error_handle = format!("{}", source);
-    //                 match CONFIG.log_type {
-    //                     #tracing_token_stream => {
-    //                         tracing::error!(error = error_handle);
-    //                     }
-    //                     #stack_token_stream => {
-    //                         println!("{}", CONFIG.get_error_color_bold().paint(error_handle));
-    //                     }
-    //                     #none_token_stream => (),
-    //                 }
-    //             }
-    //         }
-    //     }
-    // };
 }
-
-//
-
-//
