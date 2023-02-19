@@ -299,6 +299,318 @@ fn generate(
                                     }
                                 },
                             };
+                            let logic_for_get_code_occurence = match &origin_or_wrapper {
+                                OriginOrWrapper::Origin => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        match error_field_name {
+                                            ErrorFieldName::Error => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #second_field_ident,
+                                                    } => #second_field_ident,
+                                                }
+                                            },
+                                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
+                                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                                OriginOrWrapper::Wrapper => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        match error_field_name {
+                                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                                            ErrorFieldName::InnerError => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #second_field_ident,
+                                                    } => #second_field_ident,
+                                                }
+                                            },
+                                            ErrorFieldName::InnerErrors => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #ident::#variant_ident {
+                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #second_field_ident,
+                                                    } => #second_field_ident,
+                                                }
+                                            },
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                            };
+                            let logic_for_struct_or_enum_with_deserialize = match &origin_or_wrapper {
+                                OriginOrWrapper::Origin => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        match error_field_name {
+                                            ErrorFieldName::Error => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                // todo - maybe later add
+                                                // let second_field_type_with_deserialize_token_steam = format!("{second_field_type}WithDeserialize")
+                                                // .parse::<proc_macro2::TokenStream>()
+                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #variant_ident {
+                                                        #error_field_name_token_steam: #first_field_type,
+                                                        #[serde(borrow)]
+                                                        #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                                    },
+                                                }
+                                            },
+                                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
+                                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                                OriginOrWrapper::Wrapper => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        match error_field_name {
+                                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                                            ErrorFieldName::InnerError => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                // todo - maybe later add
+                                                // let second_field_type_with_deserialize_token_steam = format!("{second_field_type}WithDeserialize")
+                                                // .parse::<proc_macro2::TokenStream>()
+                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #variant_ident {
+                                                        #error_field_name_token_steam: #first_field_type,
+                                                        #[serde(borrow)]
+                                                        #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                                    },
+                                                }
+                                            },
+                                            ErrorFieldName::InnerErrors => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                // todo - maybe later add
+                                                // let second_field_type_with_deserialize_token_steam = format!("{second_field_type}WithDeserialize")
+                                                // .parse::<proc_macro2::TokenStream>()
+                                                // .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #variant_ident {
+                                                        #error_field_name_token_steam: #first_field_type,
+                                                        #[serde(borrow)]
+                                                        #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                            };
+                            let logic_for_source_to_string_without_config_with_deserialize = match &origin_or_wrapper {
+                                OriginOrWrapper::Origin => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        let second_field_ident_underscore_token_steam = format!("_{second_field_ident}")
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                        match error_field_name {
+                                            ErrorFieldName::Error => {
+                                                quote::quote! {
+                                                    #ident_with_deserialize_token_stream::#variant_ident {
+                                                        #error_field_name_token_steam,
+                                                        #second_field_ident: #second_field_ident_underscore_token_steam,
+                                                    } => format!("{}", #error_field_name_token_steam),
+                                                }
+                                            },
+                                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
+                                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                                OriginOrWrapper::Wrapper => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        let error_field_name_token_steam = error_field_name.to_string()
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                        let second_field_ident_underscore_token_steam = format!("_{second_field_ident}")
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                        match error_field_name {
+                                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                                            ErrorFieldName::InnerError => quote::quote! {
+                                                #ident_with_deserialize_token_stream::#variant_ident {
+                                                    #error_field_name_token_steam,
+                                                    #second_field_ident: #second_field_ident_underscore_token_steam,
+                                                } => {
+                                                    use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                                                    #error_field_name_token_steam.to_string_without_config()
+                                                }
+                                            },
+                                            ErrorFieldName::InnerErrors => quote::quote! {
+                                                #ident_with_deserialize_token_stream::#variant_ident {
+                                                    #error_field_name_token_steam,
+                                                    #second_field_ident: #second_field_ident_underscore_token_steam,
+                                                } => {
+                                                    use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
+                                                    #error_field_name_token_steam.few_to_string_without_config()
+                                                }
+                                            },
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                            };
+                            //
+                            let logic_for_get_code_occurence_with_deserialize = match &origin_or_wrapper {
+                                OriginOrWrapper::Origin => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        match error_field_name {
+                                            ErrorFieldName::Error => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                     #ident_with_deserialize_token_stream::#variant_ident {
+                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #second_field_ident,
+                                                    } => #second_field_ident,
+                                                }
+                                            },
+                                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
+                                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                                OriginOrWrapper::Wrapper => {
+                                    let generated_variants_logic = vec_needed_info.iter().map(|(
+                                        variant_ident, 
+                                        error_field_name, 
+                                        _first_field_type,
+                                        second_field_ident, 
+                                        _second_field_type
+                                    )|{
+                                        match error_field_name {
+                                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                                            ErrorFieldName::InnerError => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #ident_with_deserialize_token_stream::#variant_ident {
+                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #second_field_ident,
+                                                    } => #second_field_ident,
+                                                }
+                                            },
+                                            ErrorFieldName::InnerErrors => {
+                                                let error_field_name_token_steam = error_field_name.to_string()
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_token_steam parse failed");
+                                                let error_field_name_underscore_token_steam = format!("_{error_field_name}")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_steam parse failed");
+                                                quote::quote!{
+                                                    #ident_with_deserialize_token_stream::#variant_ident {
+                                                        #error_field_name_token_steam: #error_field_name_underscore_token_steam,
+                                                        #second_field_ident,
+                                                    } => #second_field_ident,
+                                                }
+                                            },
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                                },
+                            };
+                            //
                             quote::quote! {
                                 //difference done?
                                 impl<'a, ConfigGeneric>
@@ -335,31 +647,21 @@ fn generate(
                                 {
                                     fn get_code_occurence(&self) -> &#path_token_stream::common::code_occurence::CodeOccurence<'a> {
                                         match self {
-                                            #ident::Something {
-                                                error: _error,
-                                                code_occurence,
-                                            } => code_occurence,
+                                            #logic_for_get_code_occurence
                                         }
                                     }
                                 }
                                 //difference
                                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
                                 pub enum #ident_with_deserialize_token_stream<'a> {
-                                    Something {
-                                        error: String,
-                                        #[serde(borrow)]
-                                        code_occurence: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
-                                    },
+                                    #logic_for_struct_or_enum_with_deserialize
                                 }
                                 //difference
                                 impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
                                 {
                                     fn source_to_string_without_config(&self) -> String {
                                         match self {
-                                            #ident_with_deserialize_token_stream::Something {
-                                                error,
-                                                code_occurence: _code_occurence,
-                                            } => format!("{}", error),
+                                            #logic_for_source_to_string_without_config_with_deserialize
                                         }
                                     }
                                 }
@@ -371,10 +673,7 @@ fn generate(
                                         &self,
                                     ) -> &#path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
                                         match self {
-                                            #ident_with_deserialize_token_stream::Something {
-                                                error: _error,
-                                                code_occurence,
-                                            } => code_occurence,
+                                            #logic_for_get_code_occurence_with_deserialize
                                         }
                                     }
                                 }
