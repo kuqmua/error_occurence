@@ -142,7 +142,7 @@ fn generate(
             };
             match all_equal {
                 Some(supported_enum_variant) => {
-                    match supported_enum_variant {
+                    let generated = match supported_enum_variant {
                         SuportedEnumVariant::Named => {
                             let vec_needed_info = {
                                 let mut vec_needed_info: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type)> = Vec::new();
@@ -532,7 +532,6 @@ fn generate(
                                     }
                                 },
                             };
-                            //
                             let logic_for_get_code_occurence_with_deserialize = match &origin_or_wrapper {
                                 OriginOrWrapper::Origin => {
                                     let generated_variants_logic = vec_needed_info.iter().map(|(
@@ -610,7 +609,6 @@ fn generate(
                                     }
                                 },
                             };
-                            //
                             quote::quote! {
                                 //difference done?
                                 impl<'a, ConfigGeneric>
@@ -677,10 +675,10 @@ fn generate(
                                         }
                                     }
                                 }
-                            };
+                            }
                         },
                         SuportedEnumVariant::Unnamed => todo!(),
-                    }
+                    };
                     quote::quote! {
                         impl<'a> std::fmt::Display for #ident<'a> {
                             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -688,6 +686,7 @@ fn generate(
                                 write!(f, "{}", self.to_string_without_config())
                             }
                         }
+                        #generated
                         impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
                             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                                 use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
