@@ -63,7 +63,7 @@ enum SuportedEnumVariant {
     Named,
     Unnamed,
 }
-
+//todo check on full path generation to enums
 fn generate(
     input: proc_macro::TokenStream,
     path: proc_macro_helpers::path::Path,
@@ -372,7 +372,7 @@ fn generate(
                                     }
                                 },
                             };
-                            let logic_for_struct_or_enum_with_deserialize = match &origin_or_wrapper {
+                            let logic_for_enum_with_deserialize = match &origin_or_wrapper {
                                 OriginOrWrapper::Origin => {
                                     let generated_variants_logic = vec_needed_info.iter().map(|(
                                         variant_ident, 
@@ -648,7 +648,7 @@ fn generate(
                                 //difference
                                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
                                 pub enum #ident_with_deserialize_token_stream<'a> {
-                                    #logic_for_struct_or_enum_with_deserialize
+                                    #logic_for_enum_with_deserialize
                                 }
                                 //difference
                                 impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
@@ -745,9 +745,54 @@ fn generate(
                                     #(#gen),*
                                 }
                             };
-                            // println!("_____________+++");
-                            // println!("{}", logic_for_to_string_without_config);
-                            //todo - deserialize logic
+                            let logic_for_enum_with_deserialize = {
+                                let generated_variants_logic = vec_needed_info.iter().map(|(
+                                    variant_ident, 
+                                    first_field_type
+                                    )|{
+                                        let variant_type_with_deserialize_token_stream = match first_field_type {
+                                            syn::Type::Path(type_path) => {
+                                                let variant_type = {
+                                                    let mut segments_stringified = type_path.path.segments.iter()
+                                                    .fold(String::from(""), |mut acc, elem| {
+                                                        acc.push_str(&format!("{}::", elem.ident));
+                                                        acc
+                                                    });
+                                                    segments_stringified.pop();
+                                                    segments_stringified.pop();
+                                                    segments_stringified
+                                                };
+                                                format!("{variant_type}WithDeserialize")
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence variant_type_with_deserialize_token_stream parse failed")                                                
+                                            },
+                                            _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
+                                        };
+                                        
+                                        quote::quote!{
+                                            #[serde(borrow)]
+                                            #variant_ident(#variant_type_with_deserialize_token_stream<'a>)
+                                        }
+                                    });
+                                    quote::quote! {
+                                        #(#generated_variants_logic),*
+                                    }
+                            };
+                            println!("_________________)))))))");
+                            println!("{}", logic_for_enum_with_deserialize);
+                            let logic_for_to_string_without_config_with_deserialize = {
+                                let gen = vec_needed_info.iter().map(|(
+                                    variant_ident, 
+                                    _first_field_type, 
+                                )|
+                                    quote::quote!{
+                                        #ident_with_deserialize_token_stream::#variant_ident(i) => i.to_string_without_config_with_deserialize()
+                                    }
+                                );
+                                quote::quote! {
+                                    #(#gen),*
+                                }
+                            };
                             quote::quote! {
                                 impl<'a, ConfigGeneric>
                                     #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig<
@@ -774,6 +819,25 @@ fn generate(
                                         }
                                     }
                                 }
+                                #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
+                                pub enum #ident_with_deserialize_token_stream<'a> {
+                                    #logic_for_enum_with_deserialize
+                                }
+                                
+                                impl<'a>
+                                    crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<
+                                        'a,
+                                    > for #ident_with_deserialize_token_stream<'a>
+                                {
+                                    fn to_string_without_config_with_deserialize(&self) -> String {
+                                        match self {
+                                            #logic_for_to_string_without_config_with_deserialize
+                                            // #ident_with_deserialize_token_stream::SevenWrapper(i) => {
+                                            //     i.to_string_without_config_with_deserialize()
+                                            // }
+                                        }
+                                    }
+                                }
                             }
                         },
                     };
@@ -785,12 +849,12 @@ fn generate(
                             }
                         }
                         #generated
-                        // impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
-                        //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        //         use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
-                        //         write!(f, "{}", self.to_string_without_config_with_deserialize())
-                        //     }
-                        // }
+                        impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
+                            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                                use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                                write!(f, "{}", self.to_string_without_config_with_deserialize())
+                            }
+                        }
                     }.into()
                 },
                 None => panic!("ImplErrorOccurence enums where variants named first field name == error | inner_error | inner_errors not found"),
