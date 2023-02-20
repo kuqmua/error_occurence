@@ -426,6 +426,7 @@ fn generate(
                                                 // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
+                                                        #[serde(borrow)]
                                                         #error_field_name_token_stream: #first_field_type,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
@@ -442,6 +443,7 @@ fn generate(
                                                 // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
+                                                        #[serde(borrow)]
                                                         #error_field_name_token_stream: #first_field_type,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
