@@ -95,7 +95,7 @@ fn generate(
     };
     match ast.data {
         syn::Data::Enum(data_enum) => {
-            println!("{data_enum:#?}");
+            // println!("{data_enum:#?}");
             let mut all_equal: Option<SuportedEnumVariant> = None;
             for variant in &data_enum.variants {
                 match &variant.fields {
@@ -441,10 +441,78 @@ fn generate(
                                                 // let second_field_type_with_deserialize_token_stream = format!("{second_field_type}WithDeserialize")
                                                 // .parse::<proc_macro2::TokenStream>()
                                                 // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
+                                                let first_field_type_prep = match first_field_type {
+                                                    syn::Type::Path(type_path) => {
+                                                        println!("####\n{:#?}\n####", type_path);
+                                                        let variant_type = {
+                                                            match type_path.path.segments.len() == 1 {
+                                                                true => {
+                                                                    let first_segment = &type_path.path.segments[0];
+                                                                    let ident = &first_segment.ident;
+                                                                    let v = if *ident == "Vec" {
+                                                                        match &first_segment.arguments {
+                                                                            syn::PathArguments::None => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::None for Vec"),
+                                                                            syn::PathArguments::AngleBracketed(angle_bracketed) => {
+                                                                                match angle_bracketed.args.len() == 1 {
+                                                                                    true => {
+                                                                                        match &angle_bracketed.args[0] {
+                                                                                            syn::GenericArgument::Type(gt) => {
+                                                                                                match gt {
+                                                                                                    syn::Type::Path(type_path_handle) => {
+                                                                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
+                                                                                                        .fold(String::from(""), |mut acc, elem| {
+                                                                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                                                                            acc
+                                                                                                        });
+                                                                                                        segments_stringified.pop();
+                                                                                                        segments_stringified.pop();
+                                                                                                        format!("Vec<{segments_stringified}WithDeserialize<'a>>")
+                                                                                                    },
+                                                                                                    _ => panic!("ImplErrorOccurence works only with syn::Type::Path for Vec"),
+                                                                                                }
+                                                                                            },
+                                                                                            _ => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for Vec"),
+                                                                                        }
+                                                                                    },
+                                                                                    false => panic!("ImplErrorOccurence works only with angle_bracketed.args.len() == 1 for Vec"),
+                                                                                }
+                                                                            },
+                                                                            syn::PathArguments::Parenthesized(_) => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
+                                                                        }
+                                                                    }
+                                                                    else if *ident == "HashMap" {
+                                                                        todo!()
+                                                                    }
+                                                                    else {
+                                                                        //todo -maybe incorrect
+                                                                        let mut segments_stringified = type_path.path.segments.iter()
+                                                                        .fold(String::from(""), |mut acc, elem| {
+                                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                                            acc
+                                                                        });
+                                                                        segments_stringified.pop();
+                                                                        segments_stringified.pop();
+                                                                        segments_stringified
+                                                                    };
+                                                                    v
+                                                                },
+                                                                false => panic!("ImplErrorOccurence supports only type_path.path.segments.len() == 1"),
+                                                            }
+                                                            // let variant_type_ident = type_path.path.segments
+
+                                                        };
+                                                        println!("\n@@@{}\n@@@", variant_type);
+                                                        variant_type
+                                                    },
+                                                    _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
+                                                };
+                                                let first_field_type_with_deserialize_token_stream = first_field_type_prep
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
                                                         #[serde(borrow)]
-                                                        #error_field_name_token_stream: #first_field_type,
+                                                        #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                                                     },
@@ -519,8 +587,8 @@ fn generate(
                                                     #error_field_name_token_stream,
                                                     #second_field_ident: #second_field_ident_underscore_token_stream,
                                                 } => {
-                                                    use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
-                                                    #error_field_name_token_stream.few_to_string_without_config()
+                                                    use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfigWithDeserialize;
+                                                    #error_field_name_token_stream.few_to_string_without_config_with_deserialize()
                                                 }
                                             },
                                         }
@@ -732,8 +800,8 @@ fn generate(
                                     #(#generated_variants_logic),*
                                 }
                             };
-                            println!("_____________");
-                            println!("{}", logic_for_to_string_with_config_for_source_to_string_with_config);
+                            // println!("_____________");
+                            // println!("{}", logic_for_to_string_with_config_for_source_to_string_with_config);
                             let logic_for_to_string_without_config = {
                                 let gen = vec_needed_info.iter().map(|(
                                     variant_ident, 
@@ -780,8 +848,9 @@ fn generate(
                                         #(#generated_variants_logic),*
                                     }
                             };
-                            println!("_________________)))))))");
-                            println!("{}", logic_for_enum_with_deserialize);
+                            // println!("_________________)))))))");
+                            // println!("{}", logic_for_enum_with_deserialize);
+                            // println!("_________________)))))))");
                             let logic_for_to_string_without_config_with_deserialize = {
                                 let gen = vec_needed_info.iter().map(|(
                                     variant_ident, 
@@ -843,7 +912,7 @@ fn generate(
                             }
                         },
                     };
-                    quote::quote! {
+                    let uuu = quote::quote! {
                         impl<'a> std::fmt::Display for #ident<'a> {
                             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                                 use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
@@ -857,7 +926,9 @@ fn generate(
                                 write!(f, "{}", self.to_string_without_config_with_deserialize())
                             }
                         }
-                    }.into()
+                    };
+                    println!("{}", uuu);
+                    uuu.into()
                 },
                 None => panic!("ImplErrorOccurence enums where variants named first field name == error | inner_error | inner_errors not found"),
             }
