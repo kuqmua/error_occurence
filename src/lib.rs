@@ -424,10 +424,27 @@ fn generate(
                                                 // let second_field_type_with_deserialize_token_stream = format!("{second_field_type}WithDeserialize")
                                                 // .parse::<proc_macro2::TokenStream>()
                                                 // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
+                                                //
+                                                let first_field_type_stringified = match first_field_type {
+                                                    syn::Type::Path(type_path_handle) => {
+                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
+                                                        .fold(String::from(""), |mut acc, elem| {
+                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                            acc
+                                                        });
+                                                        segments_stringified.pop();
+                                                        segments_stringified.pop();
+                                                        format!("{segments_stringified}WithDeserialize<'a>")
+                                                    },
+                                                    _ => panic!("ImplErrorOccurence works only with syn::Type::Path"),
+                                                };
+                                                let first_field_type_token_stream = first_field_type_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 quote::quote!{
                                                     #variant_ident {
                                                         #[serde(borrow)]
-                                                        #error_field_name_token_stream: #first_field_type,
+                                                        #error_field_name_token_stream: #first_field_type_token_stream,
                                                         #[serde(borrow)]
                                                         #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
                                                     },
@@ -443,65 +460,116 @@ fn generate(
                                                 // .expect("ImplErrorOccurence error_field_name_underscore_token_stream parse failed");
                                                 let first_field_type_prep = match first_field_type {
                                                     syn::Type::Path(type_path) => {
-                                                        println!("####\n{:#?}\n####", type_path);
+                                                        // println!("####\n{:#?}\n####", type_path);
                                                         let variant_type = {
-                                                            match type_path.path.segments.len() == 1 {
-                                                                true => {
-                                                                    let first_segment = &type_path.path.segments[0];
-                                                                    let ident = &first_segment.ident;
-                                                                    let v = if *ident == "Vec" {
-                                                                        match &first_segment.arguments {
-                                                                            syn::PathArguments::None => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::None for Vec"),
-                                                                            syn::PathArguments::AngleBracketed(angle_bracketed) => {
-                                                                                match angle_bracketed.args.len() == 1 {
-                                                                                    true => {
-                                                                                        match &angle_bracketed.args[0] {
-                                                                                            syn::GenericArgument::Type(gt) => {
-                                                                                                match gt {
-                                                                                                    syn::Type::Path(type_path_handle) => {
-                                                                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
-                                                                                                        .fold(String::from(""), |mut acc, elem| {
-                                                                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                                                                            acc
-                                                                                                        });
-                                                                                                        segments_stringified.pop();
-                                                                                                        segments_stringified.pop();
-                                                                                                        format!("Vec<{segments_stringified}WithDeserialize<'a>>")
-                                                                                                    },
-                                                                                                    _ => panic!("ImplErrorOccurence works only with syn::Type::Path for Vec"),
-                                                                                                }
-                                                                                            },
-                                                                                            _ => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for Vec"),
-                                                                                        }
-                                                                                    },
-                                                                                    false => panic!("ImplErrorOccurence works only with angle_bracketed.args.len() == 1 for Vec"),
-                                                                                }
-                                                                            },
-                                                                            syn::PathArguments::Parenthesized(_) => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
-                                                                        }
+                                                            // let first_segment = &type_path.path.segments[0];
+                                                            // let ident = &first_segment.ident;
+                                                            let mut v = type_path.path.segments.iter()
+                                                            .fold(String::from(""), |mut acc, elem| {
+                                                                let elem_ident = &elem.ident;
+                                                                //todo: check of HashMap true only once
+                                                                //todo check on Vec true only once
+                                                                //todo check on HashMap or Vec are last element
+                                                                if *elem_ident == "Vec" {
+                                                                    match &elem.arguments {
+                                                                        syn::PathArguments::None => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::None for Vec"),
+                                                                        syn::PathArguments::AngleBracketed(angle_bracketed) => {
+                                                                            match angle_bracketed.args.len() == 1 {
+                                                                                true => {
+                                                                                    match &angle_bracketed.args[0] {
+                                                                                        syn::GenericArgument::Type(gt) => {
+                                                                                            match gt {
+                                                                                                syn::Type::Path(type_path_handle) => {
+                                                                                                    let mut segments_stringified = type_path_handle.path.segments.iter()
+                                                                                                    .fold(String::from(""), |mut acc, elem| {
+                                                                                                        acc.push_str(&format!("{}::", elem.ident));
+                                                                                                        acc
+                                                                                                    });
+                                                                                                    segments_stringified.pop();
+                                                                                                    segments_stringified.pop();
+                                                                                                    acc.push_str(&format!("Vec<{segments_stringified}WithDeserialize<'a>>::"))//todo remove ::
+                                                                                                },
+                                                                                                _ => panic!("ImplErrorOccurence works only with syn::Type::Path for Vec"),
+                                                                                            }
+                                                                                        },
+                                                                                        _ => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for Vec"),
+                                                                                    }
+                                                                                },
+                                                                                false => panic!("ImplErrorOccurence works only with angle_bracketed.args.len() == 1 for Vec"),
+                                                                            }
+                                                                        },
+                                                                        syn::PathArguments::Parenthesized(_) => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
                                                                     }
-                                                                    else if *ident == "HashMap" {
-                                                                        todo!()
+                                                                }
+                                                                else if *elem_ident == "HashMap" {
+                                                                    match &elem.arguments {
+                                                                        syn::PathArguments::None => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::None for HashMap"),
+                                                                        syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
+                                                                            match angle_bracketed_generic_arguments.args.len() == 2 {
+                                                                                true => {
+                                                                                    let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
+                                                                                        syn::GenericArgument::Lifetime(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                        syn::GenericArgument::Type(type_handle) => {
+                                                                                            match type_handle {
+                                                                                                syn::Type::Path(type_path_handle_two) => {
+                                                                                                    let mut segments_stringified = type_path_handle_two.path.segments.iter()
+                                                                                                    .fold(String::from(""), |mut acc, elem| {
+                                                                                                        acc.push_str(&format!("{}::", elem.ident));
+                                                                                                        acc
+                                                                                                    });
+                                                                                                    segments_stringified.pop();
+                                                                                                    segments_stringified.pop();
+                                                                                                    segments_stringified
+                                                                                                },
+                                                                                                _ => panic!("ImplErrorOccurence works only with syn::Type::Path for HashMap"),
+                                                                                            }
+                                                                                        },
+                                                                                        syn::GenericArgument::Const(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                        syn::GenericArgument::Binding(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                        syn::GenericArgument::Constraint(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                    };
+                                                                                    let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
+                                                                                        syn::GenericArgument::Lifetime(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                        syn::GenericArgument::Type(type_handle) => {
+                                                                                            match type_handle {
+                                                                                                syn::Type::Path(type_path_handle_three) => {
+                                                                                                    let mut segments_stringified = type_path_handle_three.path.segments.iter()
+                                                                                                    .fold(String::from(""), |mut acc, elem| {
+                                                                                                        acc.push_str(&format!("{}::", elem.ident));
+                                                                                                        acc
+                                                                                                    });
+                                                                                                    segments_stringified.pop();
+                                                                                                    segments_stringified.pop();
+                                                                                                    format!("{segments_stringified}WithDeserialize<'a>")
+                                                                                                },
+                                                                                                _ => panic!("ImplErrorOccurence works only with syn::Type::Path for HashMap"),
+                                                                                            }
+                                                                                        },
+                                                                                        syn::GenericArgument::Const(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                        syn::GenericArgument::Binding(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                        syn::GenericArgument::Constraint(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                    };
+                                                                                    acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>::"));//todo - maybe incorrect to add :: in the end
+                                                                                },
+                                                                                false => panic!("ImplErrorOccurence works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
+                                                                            }
+                                                                        },
+                                                                        syn::PathArguments::Parenthesized(_) => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
                                                                     }
-                                                                    else {
-                                                                        //todo -maybe incorrect
-                                                                        let mut segments_stringified = type_path.path.segments.iter()
-                                                                        .fold(String::from(""), |mut acc, elem| {
-                                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                                            acc
-                                                                        });
-                                                                        segments_stringified.pop();
-                                                                        segments_stringified.pop();
-                                                                        segments_stringified
-                                                                    };
-                                                                    v
-                                                                },
-                                                                false => panic!("ImplErrorOccurence supports only type_path.path.segments.len() == 1"),
-                                                            }
+                                                                }
+                                                                else {
+                                                                    //todo - its maybe uncorrect
+                                                                    acc.push_str(&format!("{elem_ident}::"));
+                                                                }
+                                                                acc
+                                                            });
+                                                            v.pop();
+                                                            v.pop();
+                                                            // println!("@##@@\n{}@##@\n", v);
+                                                            v
                                                             // let variant_type_ident = type_path.path.segments
-
                                                         };
-                                                        println!("\n@@@{}\n@@@", variant_type);
+                                                        // println!("\n@@@{}\n@@@", variant_type);
                                                         variant_type
                                                     },
                                                     _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
@@ -578,8 +646,8 @@ fn generate(
                                                     #error_field_name_token_stream,
                                                     #second_field_ident: #second_field_ident_underscore_token_stream,
                                                 } => {
-                                                    use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                    #error_field_name_token_stream.to_string_without_config()
+                                                    use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                                                    #error_field_name_token_stream.to_string_without_config_with_deserialize()
                                                 }
                                             },
                                             ErrorFieldName::InnerErrors => quote::quote! {
@@ -927,7 +995,7 @@ fn generate(
                             }
                         }
                     };
-                    println!("{}", uuu);
+                    // println!("{}", uuu);
                     uuu.into()
                 },
                 None => panic!("ImplErrorOccurence enums where variants named first field name == error | inner_error | inner_errors not found"),
