@@ -964,7 +964,7 @@ fn generate(
                                 }
                                 
                                 impl<'a>
-                                    crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<
+                                    #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<
                                         'a,
                                     > for #ident_with_deserialize_token_stream<'a>
                                 {
