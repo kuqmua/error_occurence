@@ -51,6 +51,13 @@ enum SuportedEnumVariant {
     Named,
     Unnamed,
 }
+
+enum SupportedInnerErrorsContainers {
+    Vec,
+    HashMap,
+    Other
+}
+
 //todo check on full path generation to enums
 fn generate(
     input: proc_macro::TokenStream,
@@ -468,122 +475,161 @@ fn generate(
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-                                let first_field_type_prep = match first_field_type {
+                                let first_field_type_stringified = match first_field_type {
                                     syn::Type::Path(type_path) => {
-                                        // println!("####\n{:#?}\n####", type_path);
-                                        let variant_type = {
-                                            let mut v = type_path.path.segments.iter()
-                                            .fold(String::from(""), |mut acc, elem| {
-                                                let elem_ident = &elem.ident;
-                                                //todo: check of HashMap true only once
-                                                //todo check on Vec true only once
-                                                //todo check on HashMap or Vec are last element
-                                                if *elem_ident == "Vec" {
-                                                    match &elem.arguments {
-                                                        syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
-                                                        syn::PathArguments::AngleBracketed(angle_bracketed) => {
-                                                            match angle_bracketed.args.len() == 1 {
-                                                                true => {
-                                                                    match &angle_bracketed.args[0] {
-                                                                        syn::GenericArgument::Type(gt) => {
-                                                                            match gt {
-                                                                                syn::Type::Path(type_path_handle) => {
-                                                                                    let mut segments_stringified = type_path_handle.path.segments.iter()
-                                                                                    .fold(String::from(""), |mut acc, elem| {
-                                                                                        acc.push_str(&format!("{}::", elem.ident));
-                                                                                        acc
-                                                                                    });
-                                                                                    segments_stringified.pop();
-                                                                                    segments_stringified.pop();
-                                                                                    acc.push_str(&format!("Vec<{segments_stringified}WithDeserialize<'a>>::"))//todo remove ::
-                                                                                },
-                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
-                                                                            }
-                                                                        },
-                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for Vec"),
-                                                                    }
-                                                                },
-                                                                false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for Vec"),
-                                                            }
-                                                        },
-                                                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
-                                                    }
+                                        let supported_inner_errors_container =  match type_path.path.segments.last() {
+                                            Some(path_segment) => {
+                                                if path_segment.ident == "Vec" {
+                                                    SupportedInnerErrorsContainers::Vec
                                                 }
-                                                else if *elem_ident == "HashMap" {
-                                                    match &elem.arguments {
-                                                        syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
-                                                        syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
-                                                            match angle_bracketed_generic_arguments.args.len() == 2 {
-                                                                true => {
-                                                                    let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
-                                                                        syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Type(type_handle) => {
-                                                                            match type_handle {
-                                                                                syn::Type::Path(type_path_handle_two) => {
-                                                                                    let mut segments_stringified = type_path_handle_two.path.segments.iter()
-                                                                                    .fold(String::from(""), |mut acc, elem| {
-                                                                                        acc.push_str(&format!("{}::", elem.ident));
-                                                                                        acc
-                                                                                    });
-                                                                                    segments_stringified.pop();
-                                                                                    segments_stringified.pop();
-                                                                                    segments_stringified
-                                                                                },
-                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
-                                                                            }
-                                                                        },
-                                                                        syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                    };
-                                                                    let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
-                                                                        syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Type(type_handle) => {
-                                                                            match type_handle {
-                                                                                syn::Type::Path(type_path_handle_three) => {
-                                                                                    let mut segments_stringified = type_path_handle_three.path.segments.iter()
-                                                                                    .fold(String::from(""), |mut acc, elem| {
-                                                                                        acc.push_str(&format!("{}::", elem.ident));
-                                                                                        acc
-                                                                                    });
-                                                                                    segments_stringified.pop();
-                                                                                    segments_stringified.pop();
-                                                                                    format!("{segments_stringified}WithDeserialize<'a>")
-                                                                                },
-                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
-                                                                            }
-                                                                        },
-                                                                        syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                    };
-                                                                    acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>::"));//todo - maybe incorrect to add :: in the end
-                                                                },
-                                                                false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
-                                                            }
-                                                        },
-                                                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
-                                                    }
+                                                else if path_segment.ident == "HashMap" {
+                                                    SupportedInnerErrorsContainers::HashMap
                                                 }
                                                 else {
-                                                    //todo - its maybe uncorrect
-                                                    acc.push_str(&format!("{elem_ident}::"));
+                                                    SupportedInnerErrorsContainers::Other
                                                 }
-                                                acc
-                                            });
-                                            v.pop();
-                                            v.pop();
-                                            // println!("@##@@\n{}@##@\n", v);
-                                            v
+                                            },
+                                            None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
                                         };
-                                        // println!("\n@@@{}\n@@@", variant_type);
-                                        variant_type
+                                        let first_field_type_prep = match supported_inner_errors_container {
+                                            SupportedInnerErrorsContainers::Vec => {
+                                                let mut vec_checker: Option<()> = None;
+                                                let type_path_path_segments_stringified = type_path.path.segments.iter()
+                                                .fold(String::from(""), |mut acc, elem| {
+                                                    let elem_ident = &elem.ident;
+                                                    if *elem_ident == "Vec" {
+                                                        if vec_checker.is_some() {
+                                                            panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one Vec inside type path");
+                                                        }
+                                                        match &elem.arguments {
+                                                            syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
+                                                            syn::PathArguments::AngleBracketed(angle_bracketed) => {
+                                                                match angle_bracketed.args.len() == 1 {
+                                                                    true => {
+                                                                        match &angle_bracketed.args[0] {
+                                                                            syn::GenericArgument::Type(gt) => {
+                                                                                match gt {
+                                                                                    syn::Type::Path(type_path_handle) => {
+                                                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
+                                                                                        .fold(String::from(""), |mut acc, elem| {
+                                                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                                                            acc
+                                                                                        });
+                                                                                        segments_stringified.pop();
+                                                                                        segments_stringified.pop();
+                                                                                        acc.push_str(&format!("Vec<{segments_stringified}WithDeserialize<'a>>"))
+                                                                                    },
+                                                                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
+                                                                                }
+                                                                            },
+                                                                            _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for Vec"),
+                                                                        }
+                                                                    },
+                                                                    false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for Vec"),
+                                                                }
+                                                            },
+                                                            syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
+                                                        }
+                                                        vec_checker = Some(());
+                                                    }
+                                                    else {
+                                                        acc.push_str(&format!("{elem_ident}::"));
+                                                    }
+                                                    acc
+                                                });
+                                                type_path_path_segments_stringified
+                                            },
+                                            SupportedInnerErrorsContainers::HashMap => {
+                                                let mut hashmap_checker: Option<()> = None;
+                                                let type_path_path_segments_stringified = type_path.path.segments.iter()
+                                                .fold(String::from(""), |mut acc, elem| {
+                                                    let elem_ident = &elem.ident;
+                                                    if *elem_ident == "HashMap" {
+                                                        if hashmap_checker.is_some() {
+                                                            panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one HashMap inside type path");
+                                                        }
+                                                        match &elem.arguments {
+                                                            syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
+                                                            syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
+                                                                match angle_bracketed_generic_arguments.args.len() == 2 {
+                                                                    true => {
+                                                                        let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
+                                                                            syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                            syn::GenericArgument::Type(type_handle) => {
+                                                                                match type_handle {
+                                                                                    syn::Type::Path(type_path_handle_two) => {
+                                                                                        let mut segments_stringified = type_path_handle_two.path.segments.iter()
+                                                                                        .fold(String::from(""), |mut acc, elem| {
+                                                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                                                            acc
+                                                                                        });
+                                                                                        segments_stringified.pop();
+                                                                                        segments_stringified.pop();
+                                                                                        segments_stringified
+                                                                                    },
+                                                                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+                                                                                }
+                                                                            },
+                                                                            syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                            syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                            syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        };
+                                                                        let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
+                                                                            syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                            syn::GenericArgument::Type(type_handle) => {
+                                                                                match type_handle {
+                                                                                    syn::Type::Path(type_path_handle_three) => {
+                                                                                        let mut segments_stringified = type_path_handle_three.path.segments.iter()
+                                                                                        .fold(String::from(""), |mut acc, elem| {
+                                                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                                                            acc
+                                                                                        });
+                                                                                        segments_stringified.pop();
+                                                                                        segments_stringified.pop();
+                                                                                        format!("{segments_stringified}WithDeserialize<'a>")
+                                                                                    },
+                                                                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+                                                                                }
+                                                                            },
+                                                                            syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                            syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                            syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        };
+                                                                        acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
+                                                                    },
+                                                                    false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
+                                                                }
+                                                            },
+                                                            syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
+                                                        }
+                                                        hashmap_checker = Some(());
+                                                    }
+                                                    else {
+                                                        acc.push_str(&format!("{elem_ident}::"));
+                                                    }
+                                                    acc
+                                                });
+                                                type_path_path_segments_stringified
+                                            },
+                                            SupportedInnerErrorsContainers::Other => {
+                                                let mut type_path_path_segments_stringified = type_path.path.segments.iter()
+                                                .fold(String::from(""), |mut acc, elem| {
+                                                    let elem_ident = &elem.ident;
+                                                    acc.push_str(&format!("{elem_ident}::"));
+                                                    acc
+                                                });
+                                                type_path_path_segments_stringified.pop();
+                                                type_path_path_segments_stringified.pop();
+                                                type_path_path_segments_stringified
+                                            },
+                                        };
+                                        first_field_type_prep
                                     },
                                     _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
                                 };
-                                let first_field_type_with_deserialize_token_stream = first_field_type_prep
+                                let first_field_type_with_deserialize_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_prep} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified);
                                 quote::quote!{
                                     #variant_ident {
