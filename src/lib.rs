@@ -10,6 +10,8 @@
 use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
 use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
 
+const PROC_MACRO_NAME: &str = "ImplErrorOccurence";
+
 #[proc_macro_derive(ImplErrorOccurenceFromTufaCommon)]
 pub fn derive_impl_error_occurence_tufa_common(
     input: proc_macro::TokenStream,
@@ -44,7 +46,7 @@ impl From<proc_macro2::Ident> for ErrorFieldName {
         } else if item == *"inner_errors" {
             ErrorFieldName::InnerErrors
         } else {
-            panic!("ImplErrorOccurence only works with enums where variants named first field name == error | inner_error | inner_errors");
+            panic!("{PROC_MACRO_NAME} only works with enums where variants named first field name == error | inner_error | inner_errors");
         }
     }
 }
@@ -68,24 +70,23 @@ fn generate(
     input: proc_macro::TokenStream,
     path: proc_macro_helpers::path::Path,
 ) -> proc_macro::TokenStream {
-    let proc_macro_name = "ImplErrorOccurence";
     let ast: syn::DeriveInput =
-        syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
+        syn::parse(input).unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} syn::parse(input) failed"));
     let ident = &ast.ident;
     let ident_with_deserialize_stringified = format!("{ident}WithDeserialize");
     let ident_with_deserialize_token_stream = ident_with_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
     let path_stringified = format!("{path}");
     let path_token_stream = path_stringified
         .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {path_stringified} .parse::<proc_macro2::TokenStream>() failed")); 
-    let ident_as_string = ident.to_string();
+        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {path_stringified} .parse::<proc_macro2::TokenStream>() failed")); 
+    let ident_as_string = ident.to_string();//todo - add this to panic info
     let origin_or_wrapper = if ident_as_string.contains(WRAPPER_NAME)
         && ident_as_string.contains(ORIGIN_NAME)
     {
         panic!(
-            "{proc_macro_name} {ident_as_string} contains {WRAPPER_NAME} and {ORIGIN_NAME}",
+            "{PROC_MACRO_NAME} {ident_as_string} contains {WRAPPER_NAME} and {ORIGIN_NAME}",
         );
     } else if ident_as_string.contains(WRAPPER_NAME) {
         OriginOrWrapper::Wrapper
@@ -93,12 +94,12 @@ fn generate(
         OriginOrWrapper::Origin
     } else {
         panic!(
-            "{proc_macro_name} {ident_as_string} does not contain {WRAPPER_NAME} or {ORIGIN_NAME}",
+            "{PROC_MACRO_NAME} {ident_as_string} does not contain {WRAPPER_NAME} or {ORIGIN_NAME}",
         );
     };
     let data_enum = match ast.data {
         syn::Data::Enum(data_enum) => data_enum,
-        _ => panic!("ImplErrorOccurence only works on enums!"),
+        _ => panic!("{PROC_MACRO_NAME} only works with syn::Data::Enum"),
     };
     // println!("{data_enum:#?}");
     let mut all_equal: Option<SuportedEnumVariant> = None;
@@ -109,7 +110,7 @@ fn generate(
                     Some(supported_variant) => {
                         match supported_variant {
                             SuportedEnumVariant::Named => (),
-                            SuportedEnumVariant::Unnamed => panic!("{proc_macro_name} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
+                            SuportedEnumVariant::Unnamed => panic!("{PROC_MACRO_NAME} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
                         }
                     },
                     None => {
@@ -121,7 +122,7 @@ fn generate(
                 match &all_equal {
                     Some(supported_variant) => {
                         match supported_variant {
-                            SuportedEnumVariant::Named => panic!("{proc_macro_name} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
+                            SuportedEnumVariant::Named => panic!("{PROC_MACRO_NAME} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
                             SuportedEnumVariant::Unnamed => (),
                         }
                     },
@@ -130,24 +131,24 @@ fn generate(
                     },
                 }
             },
-            syn::Fields::Unit => panic!("{proc_macro_name} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
+            syn::Fields::Unit => panic!("{PROC_MACRO_NAME} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
         }
     }
     let config_name_for_source_to_string_with_config = match origin_or_wrapper {
         OriginOrWrapper::Origin => {
             let underscore_config_stringified = String::from("_config");
             underscore_config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_config_stringified} .parse::<proc_macro2::TokenStream>() failed"))
+            .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_config_stringified} .parse::<proc_macro2::TokenStream>() failed"))
         },
         OriginOrWrapper::Wrapper => {
             let config_stringified = String::from("config");
             config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {config_stringified} .parse::<proc_macro2::TokenStream>() failed"))
+            .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {config_stringified} .parse::<proc_macro2::TokenStream>() failed"))
         },
     };
     let supported_enum_variant = match all_equal {
         Some(supported_enum_variant) => supported_enum_variant,
-        None => panic!("ImplErrorOccurence enums where variants named first field name == error | inner_error | inner_errors not found"),
+        None => panic!("{PROC_MACRO_NAME} only works on enums where variants named first field name == error | inner_error | inner_errors"),
     };
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
@@ -163,29 +164,29 @@ fn generate(
                                     let first_field = &named[0];
                                     let first_field_ident =
                                         first_field.ident.clone()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name} SuportedEnumVariant::Named syn::Fields::Named first_field_ident is None"));
+                                        .unwrap_or_else(|| panic!("{PROC_MACRO_NAME} SuportedEnumVariant::Named syn::Fields::Named first_field_ident is None"));
                                     let error_field_name = ErrorFieldName::from(first_field_ident);
                                     let second_field = &named[1];
                                     let second_field_ident =
                                         second_field.ident.clone()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name} SuportedEnumVariant::Named syn::Fields::Named second_field_ident is None"));
+                                        .unwrap_or_else(|| panic!("{PROC_MACRO_NAME} SuportedEnumVariant::Named syn::Fields::Named second_field_ident is None"));
                                     if second_field_ident != *"code_occurence" {
-                                        panic!("ImplErrorOccurence only works with enums where variants named first field name == error | inner_error | inner_errors");
+                                        panic!("{PROC_MACRO_NAME} only works on enums where variants named second field name == error | inner_error | inner_errors");
                                     }
                                     (error_field_name, &first_field.ty, second_field_ident, &second_field.ty)
                                 },
-                                false => panic!("ImplErrorOccurence only works on named fields with length of 2"),
+                                false => panic!("{PROC_MACRO_NAME} only works on named fields with length of 2"),
                             }
                         },
-                        syn::Fields::Unnamed(_) => panic!("ImplErrorOccurence unexpected named unnamed logic"),
-                        _ => panic!("ImplErrorOccurence only works with named fields"),
+                        syn::Fields::Unnamed(_) => panic!("{PROC_MACRO_NAME} expected field to be named"),
+                        _ => panic!("{PROC_MACRO_NAME} expected fields would be named"),
                     };
                     vec_needed_info.push((variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3));
                 });
                 vec_needed_info
             };
             match vec_needed_info.is_empty() {
-                true => panic!("ImplErrorOccurence enum variants are empty"),
+                true => panic!("{PROC_MACRO_NAME} vec_needed_info is empty"),
                 false => (),
             }
             let logic_for_source_to_string_with_config = match &origin_or_wrapper {
@@ -204,9 +205,9 @@ fn generate(
                         let error_field_name_stringified = error_field_name.to_string();
                         let error_field_name_token_stream = error_field_name_stringified
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                         match error_field_name {
-                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                            ErrorFieldName::Error => panic!("{PROC_MACRO_NAME} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
                                 quote::quote! {
                                     #ident::#variant_ident {
@@ -250,7 +251,7 @@ fn generate(
                         let error_field_name_stringified = error_field_name.to_string();
                         let error_field_name_token_stream = error_field_name_stringified
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                         match error_field_name {
                             ErrorFieldName::Error => {
                                 quote::quote! {
@@ -260,8 +261,8 @@ fn generate(
                                     } => format!("{}", error),
                                 }
                             },
-                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerError => panic!("{PROC_MACRO_NAME} error field name is inner_error, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerErrors => panic!("{PROC_MACRO_NAME} error field name is inner_errors, but struct/enum field is Origin"),
                         }
                     });
                     quote::quote! {
@@ -279,9 +280,9 @@ fn generate(
                         let error_field_name_stringified = error_field_name.to_string();
                         let error_field_name_token_stream = error_field_name_stringified
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                         match error_field_name {
-                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                            ErrorFieldName::Error => panic!("{PROC_MACRO_NAME} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
                                 quote::quote! {
                                     #ident::#variant_ident {
@@ -325,11 +326,11 @@ fn generate(
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -337,8 +338,8 @@ fn generate(
                                     } => #second_field_ident,
                                 }
                             },
-                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerError => panic!("{PROC_MACRO_NAME} error field name is inner_error, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerErrors => panic!("{PROC_MACRO_NAME} error field name is inner_errors, but struct/enum field is Origin"),
                         }
                     });
                     quote::quote! {
@@ -354,16 +355,16 @@ fn generate(
                         _second_field_type
                     )|{
                         match error_field_name {
-                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                            ErrorFieldName::Error => panic!("{PROC_MACRO_NAME} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -375,11 +376,11 @@ fn generate(
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -408,7 +409,7 @@ fn generate(
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 // todo - maybe later add second_field_type_with_deserialize_token_stream
                                 quote::quote!{
                                     #variant_ident {
@@ -418,8 +419,8 @@ fn generate(
                                     },
                                 }
                             },
-                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerError => panic!("{PROC_MACRO_NAME} error field name is inner_error, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerErrors => panic!("{PROC_MACRO_NAME} error field name is inner_errors, but struct/enum field is Origin"),
                         }
                     });
                     quote::quote! {
@@ -435,12 +436,12 @@ fn generate(
                         _second_field_type
                     )|{
                         match error_field_name {
-                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                            ErrorFieldName::Error => panic!("{PROC_MACRO_NAME} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 // todo - maybe later add second_field_type_with_deserialize_token_stream
                                 let first_field_type_stringified = match first_field_type {
                                     syn::Type::Path(type_path_handle) => {
@@ -453,11 +454,11 @@ fn generate(
                                         segments_stringified.pop();
                                         format!("{segments_stringified}WithDeserialize<'a>")
                                     },
-                                    _ => panic!("ImplErrorOccurence works only with syn::Type::Path"),
+                                    _ => panic!("{PROC_MACRO_NAME} works only with syn::Type::Path"),
                                 };
                                 let first_field_type_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {first_field_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {first_field_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
@@ -471,7 +472,7 @@ fn generate(
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 // todo - maybe later add second_field_type_with_deserialize_token_stream
                                 let first_field_type_prep = match first_field_type {
                                     syn::Type::Path(type_path) => {
@@ -485,7 +486,7 @@ fn generate(
                                                 //todo check on HashMap or Vec are last element
                                                 if *elem_ident == "Vec" {
                                                     match &elem.arguments {
-                                                        syn::PathArguments::None => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::None for Vec"),
+                                                        syn::PathArguments::None => panic!("{PROC_MACRO_NAME} first_segment.arguments syn::PathArguments::None for Vec"),
                                                         syn::PathArguments::AngleBracketed(angle_bracketed) => {
                                                             match angle_bracketed.args.len() == 1 {
                                                                 true => {
@@ -502,26 +503,26 @@ fn generate(
                                                                                     segments_stringified.pop();
                                                                                     acc.push_str(&format!("Vec<{segments_stringified}WithDeserialize<'a>>::"))//todo remove ::
                                                                                 },
-                                                                                _ => panic!("ImplErrorOccurence works only with syn::Type::Path for Vec"),
+                                                                                _ => panic!("{PROC_MACRO_NAME} works only with syn::Type::Path for Vec"),
                                                                             }
                                                                         },
-                                                                        _ => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for Vec"),
+                                                                        _ => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for Vec"),
                                                                     }
                                                                 },
-                                                                false => panic!("ImplErrorOccurence works only with angle_bracketed.args.len() == 1 for Vec"),
+                                                                false => panic!("{PROC_MACRO_NAME} works only with angle_bracketed.args.len() == 1 for Vec"),
                                                             }
                                                         },
-                                                        syn::PathArguments::Parenthesized(_) => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
+                                                        syn::PathArguments::Parenthesized(_) => panic!("{PROC_MACRO_NAME} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
                                                     }
                                                 }
                                                 else if *elem_ident == "HashMap" {
                                                     match &elem.arguments {
-                                                        syn::PathArguments::None => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::None for HashMap"),
+                                                        syn::PathArguments::None => panic!("{PROC_MACRO_NAME} first_segment.arguments syn::PathArguments::None for HashMap"),
                                                         syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
                                                             match angle_bracketed_generic_arguments.args.len() == 2 {
                                                                 true => {
                                                                     let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
-                                                                        syn::GenericArgument::Lifetime(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        syn::GenericArgument::Lifetime(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap key"),
                                                                         syn::GenericArgument::Type(type_handle) => {
                                                                             match type_handle {
                                                                                 syn::Type::Path(type_path_handle_two) => {
@@ -534,15 +535,15 @@ fn generate(
                                                                                     segments_stringified.pop();
                                                                                     segments_stringified
                                                                                 },
-                                                                                _ => panic!("ImplErrorOccurence works only with syn::Type::Path for HashMap"),
+                                                                                _ => panic!("{PROC_MACRO_NAME} works only with syn::Type::Path for HashMap"),
                                                                             }
                                                                         },
-                                                                        syn::GenericArgument::Const(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Binding(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Constraint(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        syn::GenericArgument::Const(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        syn::GenericArgument::Binding(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        syn::GenericArgument::Constraint(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap key"),
                                                                     };
                                                                     let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
-                                                                        syn::GenericArgument::Lifetime(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        syn::GenericArgument::Lifetime(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap value"),
                                                                         syn::GenericArgument::Type(type_handle) => {
                                                                             match type_handle {
                                                                                 syn::Type::Path(type_path_handle_three) => {
@@ -555,19 +556,19 @@ fn generate(
                                                                                     segments_stringified.pop();
                                                                                     format!("{segments_stringified}WithDeserialize<'a>")
                                                                                 },
-                                                                                _ => panic!("ImplErrorOccurence works only with syn::Type::Path for HashMap"),
+                                                                                _ => panic!("{PROC_MACRO_NAME} works only with syn::Type::Path for HashMap"),
                                                                             }
                                                                         },
-                                                                        syn::GenericArgument::Const(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Binding(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Constraint(_) => panic!("ImplErrorOccurence works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        syn::GenericArgument::Const(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        syn::GenericArgument::Binding(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        syn::GenericArgument::Constraint(_) => panic!("{PROC_MACRO_NAME} works only with syn::GenericArgument::Type for HashMap value"),
                                                                     };
                                                                     acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>::"));//todo - maybe incorrect to add :: in the end
                                                                 },
-                                                                false => panic!("ImplErrorOccurence works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
+                                                                false => panic!("{PROC_MACRO_NAME} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
                                                             }
                                                         },
-                                                        syn::PathArguments::Parenthesized(_) => panic!("ImplErrorOccurence first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
+                                                        syn::PathArguments::Parenthesized(_) => panic!("{PROC_MACRO_NAME} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
                                                     }
                                                 }
                                                 else {
@@ -584,11 +585,11 @@ fn generate(
                                         // println!("\n@@@{}\n@@@", variant_type);
                                         variant_type
                                     },
-                                    _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
+                                    _ => panic!("{PROC_MACRO_NAME} first_field_type supports only syn::Type::Path"),
                                 };
                                 let first_field_type_with_deserialize_token_stream = first_field_type_prep
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {first_field_type_prep} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {first_field_type_prep} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
@@ -617,11 +618,11 @@ fn generate(
                         let error_field_name_stringified = error_field_name.to_string();
                         let error_field_name_token_stream = error_field_name_stringified
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                         let underscore_second_field_ident = format!("_{second_field_ident}");
                         let second_field_ident_underscore_token_stream = underscore_second_field_ident
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_second_field_ident} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_second_field_ident} .parse::<proc_macro2::TokenStream>() failed"));
                         match error_field_name {
                             ErrorFieldName::Error => {
                                 quote::quote! {
@@ -631,8 +632,8 @@ fn generate(
                                     } => format!("{}", #error_field_name_token_stream),
                                 }
                             },
-                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerError => panic!("{PROC_MACRO_NAME} error field name is inner_error, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerErrors => panic!("{PROC_MACRO_NAME} error field name is inner_errors, but struct/enum field is Origin"),
                         }
                     });
                     quote::quote! {
@@ -650,13 +651,13 @@ fn generate(
                         let error_field_name_stringified = error_field_name.to_string();
                         let error_field_name_token_stream = error_field_name_stringified
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                         let underscore_second_field_ident_stringified = format!("_{second_field_ident}");
                         let second_field_ident_underscore_token_stream = underscore_second_field_ident_stringified
                         .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_second_field_ident_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_second_field_ident_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                         match error_field_name {
-                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                            ErrorFieldName::Error => panic!("{PROC_MACRO_NAME} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => quote::quote! {
                                 #ident_with_deserialize_token_stream::#variant_ident {
                                     #error_field_name_token_stream,
@@ -696,11 +697,11 @@ fn generate(
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                      #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -708,8 +709,8 @@ fn generate(
                                     } => #second_field_ident,
                                 }
                             },
-                            ErrorFieldName::InnerError => panic!("ImplErrorOccurence error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("ImplErrorOccurence error field name is inner_errors, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerError => panic!("{PROC_MACRO_NAME} error field name is inner_error, but struct/enum field is Origin"),
+                            ErrorFieldName::InnerErrors => panic!("{PROC_MACRO_NAME} error field name is inner_errors, but struct/enum field is Origin"),
                         }
                     });
                     quote::quote! {
@@ -725,16 +726,16 @@ fn generate(
                         _second_field_type
                     )|{
                         match error_field_name {
-                            ErrorFieldName::Error => panic!("ImplErrorOccurence error field name is error, but struct/enum field is Wrapper"),
+                            ErrorFieldName::Error => panic!("{PROC_MACRO_NAME} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -746,11 +747,11 @@ fn generate(
                                 let error_field_name_stringified = error_field_name.to_string();
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -832,20 +833,20 @@ fn generate(
                 let mut vec_needed_info: Vec<(&proc_macro2::Ident, &syn::Type)> = Vec::new();
                 data_enum.variants.iter().for_each(|variant| {
                     let needed_info = match &variant.fields {
-                        syn::Fields::Named(_) => panic!("ImplErrorOccurence unexpected named unnamed logic"),
+                        syn::Fields::Named(_) => panic!("{PROC_MACRO_NAME} unexpected named unnamed logic"),
                         syn::Fields::Unnamed(fields_unnamed) => {
                             let unnamed = &fields_unnamed.unnamed;
                             let first_field = &unnamed[0];//todo - how to handle error in this case?
                             &first_field.ty
                         },
-                        _ => panic!("ImplErrorOccurence only works with named fields"),
+                        _ => panic!("{PROC_MACRO_NAME} only works with named fields"),
                     };
                     vec_needed_info.push((&variant.ident, needed_info));
                 });
                 vec_needed_info
             };
             match vec_needed_info.is_empty() {
-                true => panic!("ImplErrorOccurence enum variants are empty"),
+                true => panic!("{PROC_MACRO_NAME} enum variants are empty"),
                 false => (),
             }
             let logic_for_to_string_with_config_for_source_to_string_with_config = {
@@ -856,13 +857,13 @@ fn generate(
                     let gen = match first_field_type {
                         syn::Type::Path(type_path) => {
                             let last_segment_ident = type_path.path.segments.last()
-                            .unwrap_or_else(|| panic!("{proc_macro_name} no last segment in type_path.path.segments"))
+                            .unwrap_or_else(|| panic!("{PROC_MACRO_NAME} no last segment in type_path.path.segments"))
                             .ident.to_string();
                             let origin_or_wrapper = match (last_segment_ident.contains(WRAPPER_NAME), last_segment_ident.contains(ORIGIN_NAME)) {
-                                (true, true) => panic!("ImplErrorOccurence last_segment_ident contains Wrapper and Origin"),
+                                (true, true) => panic!("{PROC_MACRO_NAME} last_segment_ident contains Wrapper and Origin"),
                                 (true, false) => OriginOrWrapper::Wrapper,
                                 (false, true) => OriginOrWrapper::Origin,
-                                (false, false) => panic!("ImplErrorOccurence last_segment_ident do not contain Wrapper or Origin"),
+                                (false, false) => panic!("{PROC_MACRO_NAME} last_segment_ident do not contain Wrapper or Origin"),
                             };
                             match origin_or_wrapper {
                                 OriginOrWrapper::Origin => quote::quote! {
@@ -874,7 +875,7 @@ fn generate(
                                 },
                             }
                         },
-                        _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
+                        _ => panic!("{PROC_MACRO_NAME} first_field_type supports only syn::Type::Path"),
                     };
                     quote::quote!{
                         #ident::#variant_ident(i) => {
@@ -919,9 +920,9 @@ fn generate(
                                 let variant_type_with_deserialize_stringified = format!("{variant_type}WithDeserialize");
                                 variant_type_with_deserialize_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {variant_type_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"))                                             
+                                .unwrap_or_else(|_| panic!("{PROC_MACRO_NAME} {variant_type_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"))                                             
                             },
-                            _ => panic!("ImplErrorOccurence first_field_type supports only syn::Type::Path"),
+                            _ => panic!("{PROC_MACRO_NAME} first_field_type supports only syn::Type::Path"),
                         };
                         quote::quote!{
                             #[serde(borrow)]
