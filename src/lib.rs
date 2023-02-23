@@ -5,24 +5,8 @@
 //     clippy::float_arithmetic
 // )]
 // #![allow(clippy::too_many_arguments)]
-
-// use proc_macro_helpers::global_variables::hardcode::ERROR_ENUM_NAME;
 use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
 use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
-
-#[proc_macro_derive(ImplErrorOccurenceFromTufaCommon)]
-pub fn derive_impl_error_occurence_tufa_common(
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
-    generate(input, proc_macro_helpers::path::Path::TufaCommon)
-}
-
-#[proc_macro_derive(ImplErrorOccurenceFromCrate)]
-pub fn derive_impl_error_occurence_from_crate(
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
-    generate(input, proc_macro_helpers::path::Path::Crate)
-}
 
 enum OriginOrWrapper {
     Origin,
@@ -59,9 +43,9 @@ enum SupportedInnerErrorsContainers {
 }
 
 //todo check on full path generation to enums
-fn generate(
+#[proc_macro_derive(ImplErrorOccurence)]
+pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
-    path: proc_macro_helpers::path::Path,
 ) -> proc_macro::TokenStream {
     let proc_macro_name = "ImplErrorOccurence";
     let ast: syn::DeriveInput =
@@ -72,10 +56,6 @@ fn generate(
     let ident_with_deserialize_token_stream = ident_with_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let path_stringified = format!("{path}");
-    let path_token_stream = path_stringified
-        .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} .parse::<proc_macro2::TokenStream>() failed")); 
     let origin_or_wrapper = if ident_stringified.contains(WRAPPER_NAME)
         && ident_stringified.contains(ORIGIN_NAME)
     {
@@ -95,7 +75,6 @@ fn generate(
         syn::Data::Enum(data_enum) => data_enum,
         _ => panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum"),
     };
-    // println!("{data_enum:#?}");
     let mut all_equal: Option<SuportedEnumVariant> = None;
     for variant in &data_enum.variants {
         match &variant.fields {
@@ -193,7 +172,7 @@ fn generate(
             }
             let logic_for_source_to_string_with_config = match &origin_or_wrapper {
                 OriginOrWrapper::Origin => quote::quote! {
-                    use #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                    use crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
                     self.source_to_string_without_config()
                 },
                 OriginOrWrapper::Wrapper => {
@@ -216,7 +195,7 @@ fn generate(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        use #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
+                                        use crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
                                         #error_field_name_token_stream.to_string_with_config_for_source_to_string_with_config(config)
                                     },
                                 }
@@ -227,7 +206,7 @@ fn generate(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        use #path_token_stream::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig;
+                                        use crate::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig;
                                         #error_field_name_token_stream.few_to_string_with_config(config)
                                     },
                                 }
@@ -291,7 +270,7 @@ fn generate(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                                        use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
                                         #error_field_name_token_stream.to_string_without_config()
                                     },
                                 }
@@ -302,7 +281,7 @@ fn generate(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
+                                        use crate::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
                                         #error_field_name_token_stream.few_to_string_without_config()
                                     },
                                 }
@@ -704,7 +683,7 @@ fn generate(
                                     #error_field_name_token_stream,
                                     #second_field_ident: #second_field_ident_underscore_token_stream,
                                 } => {
-                                    use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                                    use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
                                     #error_field_name_token_stream.to_string_without_config_with_deserialize()
                                 }
                             },
@@ -713,7 +692,7 @@ fn generate(
                                     #error_field_name_token_stream,
                                     #second_field_ident: #second_field_ident_underscore_token_stream,
                                 } => {
-                                    use #path_token_stream::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfigWithDeserialize;
+                                    use crate::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfigWithDeserialize;
                                     #error_field_name_token_stream.few_to_string_without_config_with_deserialize()
                                 }
                             },
@@ -809,13 +788,13 @@ fn generate(
             };
             quote::quote! {
                 impl<'a, ConfigGeneric>
-                    #path_token_stream::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
+                    crate::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig<
                         'a,
                         ConfigGeneric,
                     > for #ident<'a>
-                    where ConfigGeneric: #path_token_stream::traits::fields::GetSourcePlaceType
-                        + #path_token_stream::traits::fields::GetTimezone
-                        + #path_token_stream::traits::get_server_address::GetServerAddress,
+                    where ConfigGeneric: crate::traits::fields::GetSourcePlaceType
+                        + crate::traits::fields::GetTimezone
+                        + crate::traits::get_server_address::GetServerAddress,
                 {
                     fn source_to_string_with_config(
                         &self,
@@ -825,7 +804,7 @@ fn generate(
                     }
                 }
                 impl<'a>
-                    #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
+                    crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
                         'a,
                     > for #ident<'a>
                 {
@@ -835,10 +814,10 @@ fn generate(
                         }
                     }
                 }
-                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
+                impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
                     for #ident<'a>
                 {
-                    fn get_code_occurence(&self) -> &#path_token_stream::common::code_occurence::CodeOccurence<'a> {
+                    fn get_code_occurence(&self) -> &crate::common::code_occurence::CodeOccurence<'a> {
                         match self {
                             #logic_for_get_code_occurence
                         }
@@ -848,7 +827,7 @@ fn generate(
                 pub enum #ident_with_deserialize_token_stream<'a> {
                     #logic_for_enum_with_deserialize
                 }
-                impl<'a> #path_token_stream::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
+                impl<'a> crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
                 {
                     fn source_to_string_without_config(&self) -> String {
                         match self {
@@ -856,12 +835,12 @@ fn generate(
                         }
                     }
                 }
-                impl<'a> #path_token_stream::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
+                impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
                     for #ident_with_deserialize_token_stream<'a>
                 {
                     fn get_code_occurence_with_deserialize(
                         &self,
-                    ) -> &#path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
+                    ) -> &crate::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
                         match self {
                             #logic_for_get_code_occurence_with_deserialize
                         }
@@ -909,7 +888,7 @@ fn generate(
                             };
                             match origin_or_wrapper {
                                 OriginOrWrapper::Origin => quote::quote! {
-                                    use #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithoutConfig;
+                                    use crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithoutConfig;
                                     i.to_string_with_config_for_source_to_string_without_config(config)
                                 },
                                 OriginOrWrapper::Wrapper => quote::quote! {
@@ -975,9 +954,6 @@ fn generate(
                         #(#generated_variants_logic),*
                     }
             };
-            // println!("_________________)))))))");
-            // println!("{}", logic_for_enum_with_deserialize);
-            // println!("_________________)))))))");
             let logic_for_to_string_without_config_with_deserialize = {
                 let gen = vec_needed_info.iter().map(|(
                     variant_ident, 
@@ -993,14 +969,14 @@ fn generate(
             };
             quote::quote! {
                 impl<'a, ConfigGeneric>
-                    #path_token_stream::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig<
+                    crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig<
                     'a,
                     ConfigGeneric,
                     > for #ident<'a>
                 where
-                    ConfigGeneric: #path_token_stream::traits::fields::GetSourcePlaceType
-                    + #path_token_stream::traits::fields::GetTimezone
-                    + #path_token_stream::traits::get_server_address::GetServerAddress,
+                    ConfigGeneric: crate::traits::fields::GetSourcePlaceType
+                    + crate::traits::fields::GetTimezone
+                    + crate::traits::get_server_address::GetServerAddress,
                 {
                     fn to_string_with_config_for_source_to_string_with_config(&self, config: &ConfigGeneric) -> String {
                         match self {
@@ -1008,7 +984,7 @@ fn generate(
                         }
                     }
                 }
-                impl<'a> #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig<'a>
+                impl<'a> crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig<'a>
                     for #ident<'a>
                 {
                     fn to_string_without_config(&self) -> String {
@@ -1022,7 +998,7 @@ fn generate(
                     #logic_for_enum_with_deserialize
                 }
                 impl<'a>
-                    #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<
+                    crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<
                         'a,
                     > for #ident_with_deserialize_token_stream<'a>
                 {
@@ -1036,23 +1012,21 @@ fn generate(
         },
     };
     //todo - maybe add flag to implement display or not
-    let uuu = quote::quote! {
+    quote::quote! {
         impl<'a> std::fmt::Display for #ident<'a> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
                 write!(f, "{}", self.to_string_without_config())
             }
         }
         #generated_impl_with_deserialize_alternatives
         impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                use #path_token_stream::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
+                use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;
                 write!(f, "{}", self.to_string_without_config_with_deserialize())
             }
         }
-    };
-    // println!("{}", uuu);
-    uuu.into()
+    }.into()
 }
 
 fn form_code_occurence_deserialize(second_field_type: &syn::Type, proc_macro_name: &str, ident_stringified: &String) -> proc_macro2::TokenStream {
