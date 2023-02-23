@@ -877,8 +877,10 @@ fn generate(
                         syn::Fields::Named(_) => panic!("{proc_macro_name} {ident_stringified} unexpected named unnamed logic"),
                         syn::Fields::Unnamed(fields_unnamed) => {
                             let unnamed = &fields_unnamed.unnamed;
-                            let first_field = &unnamed[0];//todo - how to handle error in this case?
-                            &first_field.ty
+                            if let false = unnamed.len() == 1 {
+                                panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Unnamed variant fields unnamed len != 1");
+                            }
+                            &unnamed[0].ty
                         },
                         _ => panic!("{proc_macro_name} {ident_stringified} only works with named fields"),
                     };
@@ -886,9 +888,8 @@ fn generate(
                 });
                 vec_needed_info
             };
-            match vec_needed_info.is_empty() {
-                true => panic!("{proc_macro_name} {ident_stringified} enum variants are empty"),
-                false => (),
+            if let true = vec_needed_info.is_empty() {
+                panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
             }
             let logic_for_to_string_with_config_for_source_to_string_with_config = {
                 let generated_variants_logic = vec_needed_info.iter().map(|(
