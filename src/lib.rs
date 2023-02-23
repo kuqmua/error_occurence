@@ -10,8 +10,6 @@
 use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
 use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
 
-
-
 #[proc_macro_derive(ImplErrorOccurenceFromTufaCommon)]
 pub fn derive_impl_error_occurence_tufa_common(
     input: proc_macro::TokenStream,
@@ -399,7 +397,7 @@ fn generate(
                         error_field_name, 
                         first_field_type,
                         second_field_ident, 
-                        _second_field_type
+                        second_field_type
                     )|{
                         match error_field_name {
                             ErrorFieldName::Error => {
@@ -407,12 +405,39 @@ fn generate(
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-                                // todo - maybe later add second_field_type_with_deserialize_token_stream
+                                let second_field_ident_prep = match second_field_type {
+                                    syn::Type::Path(type_path) => {
+                                        let second_field_ident_prep = {
+                                            let mut v = type_path.path.segments.iter()
+                                            .fold(String::from(""), |mut acc, elem| {
+                                                let elem_ident = &elem.ident;
+                                                //todo: check of CodeOccurence true only once
+                                                //todo check of CodeOccurence exists
+                                                if *elem_ident == "CodeOccurence" {
+                                                    acc.push_str(&format!("{elem_ident}WithDeserialize<'a>::"));//todo remove ::
+                                                }
+                                                else {
+                                                    //todo - its maybe uncorrect
+                                                    acc.push_str(&format!("{elem_ident}::"));
+                                                }
+                                                acc
+                                            });
+                                            v.pop();
+                                            v.pop();
+                                            v
+                                        };
+                                        second_field_ident_prep
+                                    },
+                                    _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
+                                };
+                                let second_field_ident_token_stream = second_field_ident_prep
+                                .parse::<proc_macro2::TokenStream>()
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #variant_ident {
                                         #error_field_name_token_stream: #first_field_type,
                                         #[serde(borrow)]
-                                        #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                        #second_field_ident: #second_field_ident_token_stream
                                     },
                                 }
                             },
@@ -430,7 +455,7 @@ fn generate(
                         error_field_name, 
                         first_field_type,
                         second_field_ident, 
-                        _second_field_type
+                        second_field_type
                     )|{
                         match error_field_name {
                             ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
@@ -439,7 +464,6 @@ fn generate(
                                 let error_field_name_token_stream = error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-                                // todo - maybe later add second_field_type_with_deserialize_token_stream
                                 let first_field_type_stringified = match first_field_type {
                                     syn::Type::Path(type_path_handle) => {
                                         let mut segments_stringified = type_path_handle.path.segments.iter()
@@ -456,12 +480,40 @@ fn generate(
                                 let first_field_type_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                let second_field_ident_prep = match second_field_type {
+                                    syn::Type::Path(type_path) => {
+                                        let second_field_ident_prep = {
+                                            let mut v = type_path.path.segments.iter()
+                                            .fold(String::from(""), |mut acc, elem| {
+                                                let elem_ident = &elem.ident;
+                                                //todo: check of CodeOccurence true only once
+                                                //todo check of CodeOccurence exists
+                                                if *elem_ident == "CodeOccurence" {
+                                                    acc.push_str(&format!("{elem_ident}WithDeserialize<'a>::"));//todo remove ::
+                                                }
+                                                else {
+                                                    //todo - its maybe uncorrect
+                                                    acc.push_str(&format!("{elem_ident}::"));
+                                                }
+                                                acc
+                                            });
+                                            v.pop();
+                                            v.pop();
+                                            v
+                                        };
+                                        second_field_ident_prep
+                                    },
+                                    _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
+                                };
+                                let second_field_ident_token_stream = second_field_ident_prep
+                                .parse::<proc_macro2::TokenStream>()
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
                                         #error_field_name_token_stream: #first_field_type_token_stream,
                                         #[serde(borrow)]
-                                        #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                        #second_field_ident: #second_field_ident_token_stream
                                     },
                                 }
                             },
@@ -587,12 +639,40 @@ fn generate(
                                 let first_field_type_with_deserialize_token_stream = first_field_type_prep
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_prep} .parse::<proc_macro2::TokenStream>() failed"));
+                                let second_field_ident_prep = match second_field_type {
+                                    syn::Type::Path(type_path) => {
+                                        let second_field_ident_prep = {
+                                            let mut v = type_path.path.segments.iter()
+                                            .fold(String::from(""), |mut acc, elem| {
+                                                let elem_ident = &elem.ident;
+                                                //todo: check of CodeOccurence true only once
+                                                //todo check of CodeOccurence exists
+                                                if *elem_ident == "CodeOccurence" {
+                                                    acc.push_str(&format!("{elem_ident}WithDeserialize<'a>::"));//todo remove ::
+                                                }
+                                                else {
+                                                    //todo - its maybe uncorrect
+                                                    acc.push_str(&format!("{elem_ident}::"));
+                                                }
+                                                acc
+                                            });
+                                            v.pop();
+                                            v.pop();
+                                            v
+                                        };
+                                        second_field_ident_prep
+                                    },
+                                    _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
+                                };
+                                let second_field_ident_token_stream = second_field_ident_prep
+                                .parse::<proc_macro2::TokenStream>()
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} .parse::<proc_macro2::TokenStream>() failed"));
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
                                         #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
                                         #[serde(borrow)]
-                                        #second_field_ident: #path_token_stream::common::code_occurence::CodeOccurenceWithDeserialize<'a>,
+                                        #second_field_ident: #second_field_ident_token_stream
                                     },
                                 }
                             },
@@ -990,6 +1070,7 @@ fn generate(
             }
         },
     };
+    //todo - maybe add flag to implement display or not
     let uuu = quote::quote! {
         impl<'a> std::fmt::Display for #ident<'a> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
