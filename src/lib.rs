@@ -56,6 +56,15 @@ pub fn derive_impl_error_occurence(
     let ident_with_deserialize_token_stream = ident_with_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = "crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig";
+    let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
+    .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified}WithDeserialize");
+    let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified
+    .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    //
     let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = "use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;";
     let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -64,6 +73,7 @@ pub fn derive_impl_error_occurence(
     let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream = 
     use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    //
     let crate_traits_fields_get_source_place_type_stringified = "crate::traits::fields::GetSourcePlaceType";
     let crate_traits_fields_get_source_place_type_token_stream = 
     crate_traits_fields_get_source_place_type_stringified.parse::<proc_macro2::TokenStream>()
@@ -124,6 +134,22 @@ pub fn derive_impl_error_occurence(
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream = 
     crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_common_code_occurence_code_occurence_stringified = "crate::common::code_occurence::CodeOccurence";
+    let crate_common_code_occurence_code_occurence_token_stream = 
+    crate_common_code_occurence_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_common_code_occurence_code_occurence_with_deserialize_stringified = format!("{crate_common_code_occurence_code_occurence_stringified}WithDeserialize");
+    let crate_common_code_occurence_code_occurence_with_deserialize_token_stream = 
+    crate_common_code_occurence_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let get_code_occurence_stringified = "get_code_occurence";
+    let get_code_occurence_token_stream = 
+    get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let get_code_occurence_with_deserialize_stringified = format!("{get_code_occurence_stringified}_with_deserialize");
+    let get_code_occurence_with_deserialize_token_stream = 
+    get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
     let origin_or_wrapper = if ident_stringified.contains(WRAPPER_NAME)
         && ident_stringified.contains(ORIGIN_NAME)
     {
@@ -885,7 +911,7 @@ pub fn derive_impl_error_occurence(
                 impl<'a> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<'a>
                     for #ident<'a>
                 {
-                    fn get_code_occurence(&self) -> &crate::common::code_occurence::CodeOccurence<'a> {
+                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream<'a> {
                         match self {
                             #logic_for_get_code_occurence
                         }
@@ -906,9 +932,9 @@ pub fn derive_impl_error_occurence(
                 impl<'a> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream<'a>
                     for #ident_with_deserialize_token_stream<'a>
                 {
-                    fn get_code_occurence_with_deserialize(
+                    fn #get_code_occurence_with_deserialize_token_stream(
                         &self,
-                    ) -> &crate::common::code_occurence::CodeOccurenceWithDeserialize<'a> {
+                    ) -> &#crate_common_code_occurence_code_occurence_with_deserialize_token_stream<'a> {
                         match self {
                             #logic_for_get_code_occurence_with_deserialize
                         }
@@ -1052,7 +1078,7 @@ pub fn derive_impl_error_occurence(
                         }
                     }
                 }
-                impl<'a> crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig<'a>
+                impl<'a> #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<'a>
                     for #ident<'a>
                 {
                     fn #to_string_without_config_token_stream(&self) -> String {
@@ -1066,7 +1092,7 @@ pub fn derive_impl_error_occurence(
                     #logic_for_enum_with_deserialize
                 }
                 impl<'a>
-                    crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<
+                    #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
                         'a,
                     > for #ident_with_deserialize_token_stream<'a>
                 {
