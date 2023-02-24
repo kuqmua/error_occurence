@@ -65,14 +65,14 @@ pub fn derive_impl_error_occurence(
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
     //
-    let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = "use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;";
-    let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
-    .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified = "use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;";
-    let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream = 
-    use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    // let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = "use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;";
+    // let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
+    // .parse::<proc_macro2::TokenStream>()
+    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    // let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified = "use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize;";
+    // let use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream = 
+    // use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
     //
     let crate_traits_fields_get_source_place_type_stringified = "crate::traits::fields::GetSourcePlaceType";
     let crate_traits_fields_get_source_place_type_token_stream = 
@@ -364,7 +364,8 @@ pub fn derive_impl_error_occurence(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        #use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream
+                                        // #use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream
+                                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
                                         #error_field_name_token_stream.#to_string_without_config_token_stream()
                                     },
                                 }
@@ -777,7 +778,7 @@ pub fn derive_impl_error_occurence(
                                     #error_field_name_token_stream,
                                     #second_field_ident: #second_field_ident_underscore_token_stream,
                                 } => {
-                                    #use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream
+                                    use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
                                     #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
                                 }
                             },
@@ -1109,14 +1110,14 @@ pub fn derive_impl_error_occurence(
     quote::quote! {
         impl<'a> std::fmt::Display for #ident<'a> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                #use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream
+                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
                 write!(f, "{}", self.#to_string_without_config_token_stream())
             }
         }
         #generated_impl_with_deserialize_alternatives
         impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                #use_crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream
+                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
                 write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
             }
         }
