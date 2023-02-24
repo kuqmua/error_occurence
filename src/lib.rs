@@ -76,6 +76,22 @@ pub fn derive_impl_error_occurence(
     let crate_traits_get_server_address_get_server_address_token_stream = 
     crate_traits_get_server_address_get_server_address_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_get_server_address_get_server_address_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified = "crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig";
+    let crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream = 
+    crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified = "crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig";
+    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream = 
+    crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified = "crate::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig";
+    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream = 
+    crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified}WithDeserialize");
+    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream = 
+    crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
     let origin_or_wrapper = if ident_stringified.contains(WRAPPER_NAME)
         && ident_stringified.contains(ORIGIN_NAME)
     {
@@ -192,7 +208,7 @@ pub fn derive_impl_error_occurence(
             }
             let logic_for_source_to_string_with_config = match &origin_or_wrapper {
                 OriginOrWrapper::Origin => quote::quote! {
-                    use crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                    use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
                     self.source_to_string_without_config()
                 },
                 OriginOrWrapper::Wrapper => {
@@ -215,7 +231,7 @@ pub fn derive_impl_error_occurence(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        use crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
+                                        use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
                                         #error_field_name_token_stream.to_string_with_config_for_source_to_string_with_config(config)
                                     },
                                 }
@@ -259,7 +275,7 @@ pub fn derive_impl_error_occurence(
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
-                                    } => format!("{}", error),
+                                    } => #error_field_name_token_stream.to_string(),
                                 }
                             },
                             ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
@@ -301,7 +317,7 @@ pub fn derive_impl_error_occurence(
                                         #error_field_name_token_stream,
                                         #second_field_ident: _code_occurence,
                                     } => {
-                                        use crate::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfig;
+                                        use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
                                         #error_field_name_token_stream.few_to_string_without_config()
                                     },
                                 }
@@ -712,7 +728,7 @@ pub fn derive_impl_error_occurence(
                                     #error_field_name_token_stream,
                                     #second_field_ident: #second_field_ident_underscore_token_stream,
                                 } => {
-                                    use crate::traits::error_logs_logic::few_to_string_without_config::FewToStringWithoutConfigWithDeserialize;
+                                    use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
                                     #error_field_name_token_stream.few_to_string_without_config_with_deserialize()
                                 }
                             },
@@ -824,7 +840,7 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 impl<'a>
-                    crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<
+                    #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
                         'a,
                     > for #ident<'a>
                 {
@@ -847,7 +863,7 @@ pub fn derive_impl_error_occurence(
                 pub enum #ident_with_deserialize_token_stream<'a> {
                     #logic_for_enum_with_deserialize
                 }
-                impl<'a> crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig<'a,> for #ident_with_deserialize_token_stream<'a>
+                impl<'a> #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<'a,> for #ident_with_deserialize_token_stream<'a>
                 {
                     fn source_to_string_without_config(&self) -> String {
                         match self {
@@ -989,7 +1005,7 @@ pub fn derive_impl_error_occurence(
             };
             quote::quote! {
                 impl<'a, ConfigGeneric>
-                    crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig<
+                    #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream<
                     'a,
                     ConfigGeneric,
                     > for #ident<'a>
