@@ -116,6 +116,14 @@ pub fn derive_impl_error_occurence(
     let to_string_without_config_with_deserialize_token_stream = 
     to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified = "crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence";
+    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
+    crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified}WithDeserialize");
+    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream = 
+    crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
     let origin_or_wrapper = if ident_stringified.contains(WRAPPER_NAME)
         && ident_stringified.contains(ORIGIN_NAME)
     {
@@ -874,7 +882,7 @@ pub fn derive_impl_error_occurence(
                         }
                     }
                 }
-                impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence<'a>
+                impl<'a> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<'a>
                     for #ident<'a>
                 {
                     fn get_code_occurence(&self) -> &crate::common::code_occurence::CodeOccurence<'a> {
@@ -895,7 +903,7 @@ pub fn derive_impl_error_occurence(
                         }
                     }
                 }
-                impl<'a> crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurenceWithDeserialize<'a>
+                impl<'a> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream<'a>
                     for #ident_with_deserialize_token_stream<'a>
                 {
                     fn get_code_occurence_with_deserialize(
