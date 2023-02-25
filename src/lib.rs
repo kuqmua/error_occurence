@@ -54,7 +54,7 @@ pub fn derive_impl_error_occurence(
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
     let with_deserialize_camel_case = "WithDeserialize";
-    let underscore_with_deserialize_lower_case = format!("_{}", with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase());
+    let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
     let ident_with_deserialize_token_stream = ident_with_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
@@ -109,7 +109,7 @@ pub fn derive_impl_error_occurence(
     let few_to_string_without_config_token_stream = 
     few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let few_to_string_without_config_with_deserialize_stringified = format!("{few_to_string_without_config_stringified}{underscore_with_deserialize_lower_case}");
+    let few_to_string_without_config_with_deserialize_stringified = format!("{few_to_string_without_config_stringified}_{with_deserialize_lower_case}");
     let few_to_string_without_config_with_deserialize_token_stream = 
     few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
@@ -120,7 +120,7 @@ pub fn derive_impl_error_occurence(
     let to_string_without_config_token_stream = 
     to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_lower_case} .parse::<proc_macro2::TokenStream>() failed"));
-    let to_string_without_config_with_deserialize_stringified = format!("{to_string_without_config_lower_case}{underscore_with_deserialize_lower_case}");
+    let to_string_without_config_with_deserialize_stringified = format!("{to_string_without_config_lower_case}_{with_deserialize_lower_case}");
     let to_string_without_config_with_deserialize_token_stream = 
     to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
@@ -148,7 +148,7 @@ pub fn derive_impl_error_occurence(
     let get_code_occurence_token_stream = 
     get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let get_code_occurence_with_deserialize_stringified = format!("{get_code_occurence_stringified}{underscore_with_deserialize_lower_case}");
+    let get_code_occurence_with_deserialize_stringified = format!("{get_code_occurence_stringified}_{with_deserialize_lower_case}");
     let get_code_occurence_with_deserialize_token_stream = 
     get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
