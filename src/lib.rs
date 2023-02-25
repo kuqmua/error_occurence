@@ -513,7 +513,6 @@ pub fn derive_impl_error_occurence(
             if let true = vec_needed_info.is_empty() {
                 panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
             }
-            //
             let (
                 config_name_for_source_to_string_with_config,
                 logic_for_source_to_string_with_config,
@@ -533,8 +532,12 @@ pub fn derive_impl_error_occurence(
                         use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
                         self.#source_to_string_without_config_token_stream()
                     };
-                    //
-                    let logic_around_fields = vec_needed_info.iter().map(|(
+                    let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+                    let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+                    let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+                    let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+                    let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+                    vec_needed_info.iter().for_each(|(
                         variant_ident, 
                         error_field_name, 
                         first_field_type,
@@ -547,19 +550,19 @@ pub fn derive_impl_error_occurence(
                             ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
                             ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
                         }
-                        let logic_for_source_to_string_without_config_handle = quote::quote! {
+                        logic_for_source_to_string_without_config.push(quote::quote! {
                             #ident::#variant_ident {
                                 #error_field_name_token_stream,
                                 #second_field_ident: _unused_second_argument,
                             } => #error_field_name_token_stream.to_string(),
-                        };
-                        let logic_for_get_code_occurence_handle = quote::quote!{
+                        });
+                        logic_for_get_code_occurence.push(quote::quote!{
                             #ident::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
                             } => #second_field_ident,
-                        };
-                        let logic_for_enum_with_deserialize_handle = {
+                        });
+                        logic_for_enum_with_deserialize.push({
                             let second_field_ident_token_stream = form_code_occurence_deserialize(
                                 second_field_type, 
                                 proc_macro_name, 
@@ -576,167 +579,39 @@ pub fn derive_impl_error_occurence(
                                     #second_field_ident: #second_field_ident_token_stream
                                 },
                             }
-                        };
-                        let logic_for_source_to_string_without_config_with_deserialize_handle = quote::quote! {
+                        });
+                        logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
                             #ident_with_deserialize_token_stream::#variant_ident {
                                 #error_field_name_token_stream,
                                 #second_field_ident: _unused_second_argument,
                             } => #error_field_name_token_stream.to_string(),
-                        };
-                        let logic_for_get_code_occurence_with_deserialize_handle = quote::quote!{
+                        });
+                        logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
                             #ident_with_deserialize_token_stream::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
                             } => #second_field_ident,
-                        };
-                        (
-                            logic_for_source_to_string_without_config_handle,
-                            logic_for_get_code_occurence_handle,
-                            logic_for_enum_with_deserialize_handle,
-                            logic_for_source_to_string_without_config_with_deserialize_handle,
-                            logic_for_get_code_occurence_with_deserialize_handle
-                        )
+                        });
                     });
-                    //
-                    let logic_for_source_to_string_without_config = {
-                        let generated_variants_logic = vec_needed_info.iter().map(|(
-                            variant_ident, 
-                            error_field_name, 
-                            _first_field_type,
-                            second_field_ident, 
-                            _second_field_type,
-                            error_field_name_token_stream
-                        )|{
-                            match error_field_name {
-                                ErrorFieldName::Error => {
-                                quote::quote! {
-                                    #ident::#variant_ident {
-                                        #error_field_name_token_stream,
-                                        #second_field_ident: _unused_second_argument,
-                                    } => #error_field_name_token_stream.to_string(),
-                                }
-                                },
-                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                            }
-                        });
-                        quote::quote! {
-                            #(#generated_variants_logic),*
-                        }
+                    let logic_for_source_to_string_without_config_generated = logic_for_source_to_string_without_config.iter();
+                    let logic_for_get_code_occurence_generated = logic_for_get_code_occurence.iter();
+                    let logic_for_enum_with_deserialize_generated = logic_for_enum_with_deserialize.iter();
+                    let logic_for_source_to_string_without_config_with_deserialize_generated = logic_for_source_to_string_without_config_with_deserialize.iter();
+                    let logic_for_get_code_occurence_with_deserialize_generated = logic_for_get_code_occurence_with_deserialize.iter();
+                    let logic_for_source_to_string_without_config = quote::quote! {
+                        #(#logic_for_source_to_string_without_config_generated),*
                     };
-                    let logic_for_get_code_occurence = {
-                        let generated_variants_logic = vec_needed_info.iter().map(|(
-                            variant_ident, 
-                            error_field_name, 
-                            _first_field_type,
-                            second_field_ident, 
-                            _second_field_type,
-                            error_field_name_token_stream
-                        )|{
-                            match error_field_name {
-                                ErrorFieldName::Error => {
-                                    quote::quote!{
-                                        #ident::#variant_ident {
-                                            #error_field_name_token_stream: _unused_first_argument,
-                                            #second_field_ident,
-                                        } => #second_field_ident,
-                                    }
-                                },
-                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                            }
-                        });
-                        quote::quote! {
-                            #(#generated_variants_logic),*
-                        }
+                    let logic_for_get_code_occurence = quote::quote! {
+                        #(#logic_for_get_code_occurence_generated),*
                     };
-                    let logic_for_enum_with_deserialize = {
-                        let generated_variants_logic = vec_needed_info.iter().map(|(
-                            variant_ident, 
-                            error_field_name, 
-                            first_field_type,
-                            second_field_ident, 
-                            second_field_type,
-                            error_field_name_token_stream
-                        )|{
-                            match error_field_name {
-                                ErrorFieldName::Error => {
-                                    let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                        second_field_type, 
-                                        proc_macro_name, 
-                                        &ident_stringified, 
-                                        with_deserialize_camel_case, 
-                                        parse_proc_macro2_token_stream_failed_message,
-                                        code_occurence_camel_case,
-                                        lifetime_stringified
-                                    );
-                                    quote::quote!{
-                                        #variant_ident {
-                                            #error_field_name_token_stream: #first_field_type,
-                                            #[serde(borrow)]
-                                            #second_field_ident: #second_field_ident_token_stream
-                                        },
-                                    }
-                                },
-                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                            }
-                        });
-                        quote::quote! {
-                            #(#generated_variants_logic),*
-                        }
+                    let logic_for_enum_with_deserialize = quote::quote! {
+                        #(#logic_for_enum_with_deserialize_generated),*
                     };
-                    let logic_for_source_to_string_without_config_with_deserialize = {
-                        let generated_variants_logic = vec_needed_info.iter().map(|(
-                            variant_ident, 
-                            error_field_name, 
-                            _first_field_type,
-                            second_field_ident, 
-                            _second_field_type,
-                            error_field_name_token_stream
-                        )|{
-                            match error_field_name {
-                                ErrorFieldName::Error => {
-                                    quote::quote! {
-                                        #ident_with_deserialize_token_stream::#variant_ident {
-                                                #error_field_name_token_stream,
-                                                #second_field_ident: _unused_second_argument,
-                                        } => #error_field_name_token_stream.to_string(),
-                                    }
-                                },
-                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                            }
-                        });
-                        quote::quote! {
-                            #(#generated_variants_logic),*
-                        }
+                    let logic_for_source_to_string_without_config_with_deserialize = quote::quote! {
+                        #(#logic_for_source_to_string_without_config_with_deserialize_generated),*
                     };
-                    let logic_for_get_code_occurence_with_deserialize = {
-                        let generated_variants_logic = vec_needed_info.iter().map(|(
-                            variant_ident, 
-                            error_field_name, 
-                            _first_field_type,
-                            second_field_ident, 
-                            _second_field_type,
-                            error_field_name_token_stream
-                        )|{
-                            match error_field_name {
-                                ErrorFieldName::Error => {
-                                    quote::quote!{
-                                         #ident_with_deserialize_token_stream::#variant_ident {
-                                            #error_field_name_token_stream: _unused_first_argument,
-                                            #second_field_ident,
-                                        } => #second_field_ident,
-                                    }
-                                },
-                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                            }
-                        });
-                        quote::quote! {
-                            #(#generated_variants_logic),*
-                        }
+                    let logic_for_get_code_occurence_with_deserialize = quote::quote! {
+                        #(#logic_for_get_code_occurence_with_deserialize_generated),*
                     };
                     (
                         config_name_for_source_to_string_with_config,
