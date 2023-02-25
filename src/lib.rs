@@ -231,24 +231,24 @@ pub fn derive_impl_error_occurence(
             syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
         }
     }
-    let config_name_for_source_to_string_with_config = match origin_or_wrapper {
-        OriginOrWrapper::Origin => {
-            let underscore_config_stringified = String::from("_config");
-            underscore_config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-        },
-        OriginOrWrapper::Wrapper => {
-            let config_stringified = String::from("config");
-            config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-        },
-    };
     let supported_enum_variant = match all_equal {
         Some(supported_enum_variant) => supported_enum_variant,
         None => panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec()),
     };
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
+            let config_name_for_source_to_string_with_config = match origin_or_wrapper {
+                OriginOrWrapper::Origin => {
+                    let underscore_config_stringified = "_config";
+                    underscore_config_stringified.parse::<proc_macro2::TokenStream>()
+                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                },
+                OriginOrWrapper::Wrapper => {
+                    let config_stringified = "config";
+                    config_stringified.parse::<proc_macro2::TokenStream>()
+                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                },
+            };
             let vec_needed_info = {
                 let mut vec_needed_info_prep: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type, proc_macro2::TokenStream)> = Vec::with_capacity(data_enum.variants.len());
                 data_enum.variants.iter().for_each(|variant| {
@@ -945,32 +945,28 @@ pub fn derive_impl_error_occurence(
                     variant_ident, 
                     first_field_type, 
                 )|{
-                    let gen = match first_field_type {
+                    let variant_generated_logic = match first_field_type {
                         syn::Type::Path(type_path) => {
                             let last_segment_ident = type_path.path.segments.last()
                             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} no last segment in type_path.path.segments"))
                             .ident.to_string();
-                            let origin_or_wrapper = match (last_segment_ident.contains(WRAPPER_NAME), last_segment_ident.contains(ORIGIN_NAME)) {
+                            match (last_segment_ident.contains(WRAPPER_NAME), last_segment_ident.contains(ORIGIN_NAME)) {
                                 (true, true) => panic!("{proc_macro_name} {ident_stringified} last_segment_ident contains Wrapper and Origin"),
-                                (true, false) => OriginOrWrapper::Wrapper,
-                                (false, true) => OriginOrWrapper::Origin,
-                                (false, false) => panic!("{proc_macro_name} {ident_stringified} last_segment_ident do not contain Wrapper or Origin"),
-                            };
-                            match origin_or_wrapper {
-                                OriginOrWrapper::Origin => quote::quote! {
+                                (true, false) => quote::quote! {
+                                    i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                                },
+                                (false, true) => quote::quote! {
                                     use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream;
                                     i.#to_string_with_config_for_source_to_string_without_config_token_stream(config)
                                 },
-                                OriginOrWrapper::Wrapper => quote::quote! {
-                                    i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                                },
+                                (false, false) => panic!("{proc_macro_name} {ident_stringified} last_segment_ident do not contain Wrapper or Origin"),
                             }
                         },
                         _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
                     };
                     quote::quote!{
                         #ident::#variant_ident(i) => {
-                            #gen
+                            #variant_generated_logic
                         }
                     }
                 });
