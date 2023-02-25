@@ -184,6 +184,7 @@ pub fn derive_impl_error_occurence(
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    //todo use macro #[origin] #[wrapper]
     let origin_or_wrapper = if ident_stringified.contains(WRAPPER_NAME)
         && ident_stringified.contains(ORIGIN_NAME)
     {
@@ -239,20 +240,229 @@ pub fn derive_impl_error_occurence(
         Some(supported_enum_variant) => supported_enum_variant,
         None => panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec()),
     };
+    // let generated_impl_with_deserialize_alternatives_handle = match (supported_enum_variant, origin_or_wrapper) {
+    //     (SuportedEnumVariant::Named, OriginOrWrapper::Origin) => {
+    //         //duplicate
+    //         let config_name_for_source_to_string_with_config = {
+    //             let underscore_config_stringified = "_config";
+    //             underscore_config_stringified.parse::<proc_macro2::TokenStream>()
+    //             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+    //         };
+    //         //duplicate
+    //         let vec_needed_info = {
+    //             let mut vec_needed_info_prep: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type, proc_macro2::TokenStream)> = Vec::with_capacity(data_enum.variants.len());
+    //             data_enum.variants.iter().for_each(|variant| {
+    //                 let variant_ident = &variant.ident;
+    //                 let needed_info = match &variant.fields {
+    //                     syn::Fields::Named(fields_named) => {
+    //                         let named = &fields_named.named;
+    //                         if let false = named.len() == 2 {
+    //                             panic!("{proc_macro_name} {ident_stringified} only works on named fields with length of 2");
+    //                         }
+    //                         let first_field = &named[0];
+    //                         let first_field_ident =
+    //                             first_field.ident.clone()
+    //                             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Named syn::Fields::Named first_field_ident is None"));
+    //                         let error_field_name = if first_field_ident == *"error" {
+    //                             ErrorFieldName::Error
+    //                         } else if first_field_ident == *"inner_error" {
+    //                             ErrorFieldName::InnerError
+    //                         } else if first_field_ident == *"inner_errors" {
+    //                             ErrorFieldName::InnerErrors
+    //                         } else {
+    //                             panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
+    //                         };
+    //                         let second_field = &named[1];
+    //                         let second_field_ident =
+    //                             second_field.ident.clone()
+    //                             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Named syn::Fields::Named second_field_ident is None"));
+    //                         if second_field_ident != *code_occurence_lower_case {
+    //                             panic!("{proc_macro_name} {ident_stringified} only works on enums where variants named second field name == {code_occurence_lower_case}");
+    //                         }
+    //                         let error_field_name_stringified = error_field_name.to_lower_snake_case();
+    //                         let error_field_name_token_stream = error_field_name_stringified
+    //                         .parse::<proc_macro2::TokenStream>()
+    //                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    //                         (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream)
+    //                     },
+    //                     syn::Fields::Unnamed(_) => panic!("{proc_macro_name} {ident_stringified} expected field to be named"),
+    //                     _ => panic!("{proc_macro_name} {ident_stringified} expected fields would be named"),
+    //                 };
+    //                 vec_needed_info_prep.push((variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3, needed_info.4));
+    //             });
+    //             match vec_needed_info_prep.is_empty() {
+    //                 true => panic!("{proc_macro_name} {ident_stringified} vec_needed_info is empty"),
+    //                 false => (),
+    //             }
+    //             vec_needed_info_prep
+    //         };
+    //         let logic_for_source_to_string_with_config = quote::quote! {
+    //             use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+    //             self.#source_to_string_without_config_token_stream()
+    //         };
+    //         let logic_for_source_to_string_without_config = {
+    //             let generated_variants_logic = vec_needed_info.iter().map(|(
+    //                 variant_ident, 
+    //                 error_field_name, 
+    //                 _first_field_type,
+    //                 second_field_ident, 
+    //                 _second_field_type,
+    //                 error_field_name_token_stream
+    //             )|{
+    //                 match error_field_name {
+    //                     ErrorFieldName::Error => {
+    //                         quote::quote! {
+    //                             #ident::#variant_ident {
+    //                                 #error_field_name_token_stream,
+    //                             #second_field_ident: _unused_second_argument,
+    //                             } => #error_field_name_token_stream.to_string(),
+    //                         }
+    //                     },
+    //                     ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+    //                     ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+    //                 }
+    //             });
+    //             quote::quote! {
+    //                 #(#generated_variants_logic),*
+    //             }
+    //         };
+    //         let logic_for_get_code_occurence = {
+    //             let generated_variants_logic = vec_needed_info.iter().map(|(
+    //                 variant_ident, 
+    //                 error_field_name, 
+    //                 _first_field_type,
+    //                 second_field_ident, 
+    //                 _second_field_type,
+    //                 error_field_name_token_stream
+    //             )|{
+    //                 match error_field_name {
+    //                     ErrorFieldName::Error => {
+    //                         quote::quote!{
+    //                             #ident::#variant_ident {
+    //                                 #error_field_name_token_stream: _unused_first_argument,
+    //                                 #second_field_ident,
+    //                             } => #second_field_ident,
+    //                         }
+    //                     },
+    //                     ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+    //                     ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+    //                 }
+    //             });
+    //             quote::quote! {
+    //                 #(#generated_variants_logic),*
+    //             }
+    //         };
+    //         let logic_for_enum_with_deserialize = {
+    //             let generated_variants_logic = vec_needed_info.iter().map(|(
+    //                 variant_ident, 
+    //                 error_field_name, 
+    //                 first_field_type,
+    //                 second_field_ident, 
+    //                 second_field_type,
+    //                 error_field_name_token_stream
+    //             )|{
+    //                 match error_field_name {
+    //                     ErrorFieldName::Error => {
+    //                         let second_field_ident_token_stream = form_code_occurence_deserialize(
+    //                             second_field_type, 
+    //                             proc_macro_name, 
+    //                             &ident_stringified, 
+    //                             with_deserialize_camel_case, 
+    //                             parse_proc_macro2_token_stream_failed_message,
+    //                             code_occurence_camel_case,
+    //                             lifetime_stringified
+    //                         );
+    //                         quote::quote!{
+    //                             #variant_ident {
+    //                                 #error_field_name_token_stream: #first_field_type,
+    //                                 #[serde(borrow)]
+    //                                 #second_field_ident: #second_field_ident_token_stream
+    //                             },
+    //                         }
+    //                     },
+    //                     ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+    //                     ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+    //                 }
+    //             });
+    //             quote::quote! {
+    //                 #(#generated_variants_logic),*
+    //             }
+    //         };
+    //         let logic_for_source_to_string_without_config_with_deserialize = {
+    //             let generated_variants_logic = vec_needed_info.iter().map(|(
+    //                 variant_ident, 
+    //                 error_field_name, 
+    //                 first_field_type,
+    //                 second_field_ident, 
+    //                 second_field_type,
+    //                 error_field_name_token_stream
+    //             )|{
+    //                 match error_field_name {
+    //                     ErrorFieldName::Error => {
+    //                         let second_field_ident_token_stream = form_code_occurence_deserialize(
+    //                             second_field_type, 
+    //                             proc_macro_name, 
+    //                             &ident_stringified, 
+    //                             with_deserialize_camel_case, 
+    //                             parse_proc_macro2_token_stream_failed_message,
+    //                             code_occurence_camel_case,
+    //                             lifetime_stringified
+    //                         );
+    //                         quote::quote!{
+    //                             #variant_ident {
+    //                                 #error_field_name_token_stream: #first_field_type,
+    //                                 #[serde(borrow)]
+    //                                 #second_field_ident: #second_field_ident_token_stream
+    //                             },
+    //                         }
+    //                     },
+    //                     ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+    //                     ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+    //                 }
+    //             });
+    //             quote::quote! {
+    //                 #(#generated_variants_logic),*
+    //             }
+    //         };
+    //         let logic_for_get_code_occurence_with_deserialize = {
+    //             let generated_variants_logic = vec_needed_info.iter().map(|(
+    //                 variant_ident, 
+    //                 error_field_name, 
+    //                 _first_field_type,
+    //                 second_field_ident, 
+    //                 _second_field_type,
+    //                 error_field_name_token_stream
+    //             )|{
+    //                 match error_field_name {
+    //                     ErrorFieldName::Error => {
+    //                         quote::quote!{
+    //                              #ident_with_deserialize_token_stream::#variant_ident {
+    //                                 #error_field_name_token_stream: _unused_first_argument,
+    //                                 #second_field_ident,
+    //                             } => #second_field_ident,
+    //                         }
+    //                     },
+    //                     ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+    //                     ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+    //                 }
+    //             });
+    //             quote::quote! {
+    //                 #(#generated_variants_logic),*
+    //             }
+    //         };
+    //     },
+    //     (SuportedEnumVariant::Named, OriginOrWrapper::Wrapper) => {
+
+    //     },
+    //     (SuportedEnumVariant::Unnamed, OriginOrWrapper::Origin) => {
+
+    //     },
+    //     (SuportedEnumVariant::Unnamed, OriginOrWrapper::Wrapper) => {
+
+    //     },
+    // };
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
-            let config_name_for_source_to_string_with_config = match origin_or_wrapper {
-                OriginOrWrapper::Origin => {
-                    let underscore_config_stringified = "_config";
-                    underscore_config_stringified.parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                },
-                OriginOrWrapper::Wrapper => {
-                    let config_stringified = "config";
-                    config_stringified.parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                },
-            };
             let vec_needed_info = {
                 let mut vec_needed_info_prep: Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type, proc_macro2::TokenStream)> = Vec::with_capacity(data_enum.variants.len());
                 data_enum.variants.iter().for_each(|variant| {
@@ -300,581 +510,1238 @@ pub fn derive_impl_error_occurence(
                 }
                 vec_needed_info_prep
             };
-            let logic_for_source_to_string_with_config = match &origin_or_wrapper {
-                OriginOrWrapper::Origin => quote::quote! {
-                    use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
-                    self.#source_to_string_without_config_token_stream()
-                },
-                OriginOrWrapper::Wrapper => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
-                            ErrorFieldName::InnerError => {
+            if let true = vec_needed_info.is_empty() {
+                panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
+            }
+            //
+            let (
+                config_name_for_source_to_string_with_config,
+                logic_for_source_to_string_with_config,
+                logic_for_source_to_string_without_config,
+                logic_for_get_code_occurence,
+                logic_for_enum_with_deserialize,
+                logic_for_source_to_string_without_config_with_deserialize,
+                logic_for_get_code_occurence_with_deserialize
+            ) =  match origin_or_wrapper {
+                OriginOrWrapper::Origin => {
+                    let config_name_for_source_to_string_with_config = {
+                        let underscore_config_stringified = "_config";
+                        underscore_config_stringified.parse::<proc_macro2::TokenStream>()
+                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                    };
+                    let logic_for_source_to_string_with_config = quote::quote! {
+                        use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+                        self.#source_to_string_without_config_token_stream()
+                    };
+                    let logic_for_source_to_string_without_config = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => {
                                 quote::quote! {
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
                                         #second_field_ident: _unused_second_argument,
-                                    } => {
-                                        use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
-                                        #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                                    },
+                                    } => #error_field_name_token_stream.to_string(),
                                 }
-                            },
-                            ErrorFieldName::InnerErrors => {
-                                quote::quote! {
-                                    #ident::#variant_ident {
-                                        #error_field_name_token_stream,
-                                        #second_field_ident: _unused_second_argument,
-                                    } => {
-                                        use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
-                                        #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
-                                    },
-                                }
-                            },
-                        }
-                    });
-                    quote::quote! {
-                        match self {
+                                },
+                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+                            }
+                        });
+                        quote::quote! {
                             #(#generated_variants_logic),*
                         }
-                    }
-                },
-            };
-            let logic_for_source_to_string_without_config = match &origin_or_wrapper {
-                OriginOrWrapper::Origin => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => {
-                                quote::quote! {
-                                    #ident::#variant_ident {
-                                        #error_field_name_token_stream,
-                                        #second_field_ident: _unused_second_argument,
-                                    } => #error_field_name_token_stream.to_string(),
+                    };
+                    let logic_for_get_code_occurence = match &origin_or_wrapper {
+                        OriginOrWrapper::Origin => {
+                            let generated_variants_logic = vec_needed_info.iter().map(|(
+                                variant_ident, 
+                                error_field_name, 
+                                _first_field_type,
+                                second_field_ident, 
+                                _second_field_type,
+                                error_field_name_token_stream
+                            )|{
+                                match error_field_name {
+                                    ErrorFieldName::Error => {
+                                        quote::quote!{
+                                            #ident::#variant_ident {
+                                                #error_field_name_token_stream: _unused_first_argument,
+                                                #second_field_ident,
+                                            } => #second_field_ident,
+                                        }
+                                    },
+                                    ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+                                    ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
                                 }
-                            },
-                            ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+                            });
+                            quote::quote! {
+                                #(#generated_variants_logic),*
+                            }
+                        },
+                        OriginOrWrapper::Wrapper => {
+                            let generated_variants_logic = vec_needed_info.iter().map(|(
+                                variant_ident, 
+                                error_field_name, 
+                                _first_field_type,
+                                second_field_ident, 
+                                _second_field_type,
+                                error_field_name_token_stream
+                            )|{
+                                match error_field_name {
+                                    ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                    ErrorFieldName::InnerError => {
+                                        quote::quote!{
+                                            #ident::#variant_ident {
+                                                #error_field_name_token_stream: _unused_first_argument,
+                                                #second_field_ident,
+                                            } => #second_field_ident,
+                                        }
+                                    },
+                                    ErrorFieldName::InnerErrors => {
+                                        quote::quote!{
+                                            #ident::#variant_ident {
+                                                #error_field_name_token_stream: _unused_first_argument,
+                                                #second_field_ident,
+                                            } => #second_field_ident,
+                                        }
+                                    },
+                                }
+                            });
+                            quote::quote! {
+                                #(#generated_variants_logic),*
+                            }
+                        },
+                    };
+                    let logic_for_enum_with_deserialize = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            first_field_type,
+                            second_field_ident, 
+                            second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => {
+                                    let second_field_ident_token_stream = form_code_occurence_deserialize(
+                                        second_field_type, 
+                                        proc_macro_name, 
+                                        &ident_stringified, 
+                                        with_deserialize_camel_case, 
+                                        parse_proc_macro2_token_stream_failed_message,
+                                        code_occurence_camel_case,
+                                        lifetime_stringified
+                                    );
+                                    quote::quote!{
+                                        #variant_ident {
+                                            #error_field_name_token_stream: #first_field_type,
+                                            #[serde(borrow)]
+                                            #second_field_ident: #second_field_ident_token_stream
+                                        },
+                                    }
+                                },
+                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
                         }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
+                    };
+                    let logic_for_source_to_string_without_config_with_deserialize = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => {
+                                    quote::quote! {
+                                        #ident_with_deserialize_token_stream::#variant_ident {
+                                                #error_field_name_token_stream,
+                                                #second_field_ident: _unused_second_argument,
+                                        } => #error_field_name_token_stream.to_string(),
+                                    }
+                                },
+                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
+                        }
+                    };
+                    let logic_for_get_code_occurence_with_deserialize = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => {
+                                    quote::quote!{
+                                         #ident_with_deserialize_token_stream::#variant_ident {
+                                            #error_field_name_token_stream: _unused_first_argument,
+                                            #second_field_ident,
+                                        } => #second_field_ident,
+                                    }
+                                },
+                                ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+                                ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
+                        }
+                    };
+                    (
+                        config_name_for_source_to_string_with_config,
+                        logic_for_source_to_string_with_config,
+                        logic_for_source_to_string_without_config,
+                        logic_for_get_code_occurence,
+                        logic_for_enum_with_deserialize,
+                        logic_for_source_to_string_without_config_with_deserialize,
+                        logic_for_get_code_occurence_with_deserialize
+                    )
                 },
                 OriginOrWrapper::Wrapper => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
-                            ErrorFieldName::InnerError => {
-                                quote::quote! {
-                                    #ident::#variant_ident {
+                    let config_name_for_source_to_string_with_config = {
+                        let config_stringified = "config";
+                        config_stringified.parse::<proc_macro2::TokenStream>()
+                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                    };
+                    let logic_for_source_to_string_with_config = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                ErrorFieldName::InnerError => {
+                                    quote::quote! {
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream,
+                                            #second_field_ident: _unused_second_argument,
+                                        } => {
+                                            use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
+                                            #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                                        },
+                                    }
+                                },
+                                ErrorFieldName::InnerErrors => {
+                                    quote::quote! {
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream,
+                                            #second_field_ident: _unused_second_argument,
+                                        } => {
+                                            use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
+                                            #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
+                                        },
+                                    }
+                                },
+                            }
+                        });
+                        quote::quote! {
+                            match self {
+                                #(#generated_variants_logic),*
+                            }
+                        }
+                    };
+                    let logic_for_source_to_string_without_config = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                ErrorFieldName::InnerError => {
+                                    quote::quote! {
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream,
+                                            #second_field_ident: _unused_second_argument,
+                                        } => {
+                                            use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+                                            #error_field_name_token_stream.#to_string_without_config_token_stream()
+                                        },
+                                    }
+                                },
+                                ErrorFieldName::InnerErrors => {
+                                    quote::quote! {
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream,
+                                            #second_field_ident: _unused_second_argument,
+                                        } => {
+                                            use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
+                                            #error_field_name_token_stream.#few_to_string_without_config_token_stream()
+                                        },
+                                    }
+                                },
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
+                        }
+                    };
+                    let logic_for_get_code_occurence = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                ErrorFieldName::InnerError => {
+                                    quote::quote!{
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream: _unused_first_argument,
+                                            #second_field_ident,
+                                        } => #second_field_ident,
+                                    }
+                                },
+                                ErrorFieldName::InnerErrors => {
+                                    quote::quote!{
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream: _unused_first_argument,
+                                            #second_field_ident,
+                                        } => #second_field_ident,
+                                    }
+                                },
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
+                        }
+                    };
+                    let logic_for_enum_with_deserialize = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            first_field_type,
+                            second_field_ident, 
+                            second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                ErrorFieldName::InnerError => {
+                                    let first_field_type_stringified = match first_field_type {
+                                        syn::Type::Path(type_path_handle) => {
+                                            let last_arg_option_lifetime = form_last_arg_lifetime(
+                                                type_path_handle, 
+                                                proc_macro_name, 
+                                                &ident_stringified,
+                                                lifetime_stringified,
+                                            );
+                                            let mut segments_stringified = type_path_handle.path.segments.iter()
+                                            .fold(String::from(""), |mut acc, elem| {
+                                                acc.push_str(&format!("{}::", elem.ident));
+                                                acc
+                                            });
+                                            segments_stringified.pop();
+                                            segments_stringified.pop();
+                                            format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
+                                        },
+                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path"),
+                                    };
+                                    let first_field_type_token_stream = first_field_type_stringified
+                                    .parse::<proc_macro2::TokenStream>()
+                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                    let second_field_ident_token_stream = form_code_occurence_deserialize(
+                                        second_field_type, 
+                                        proc_macro_name, 
+                                        &ident_stringified, 
+                                        with_deserialize_camel_case, 
+                                        parse_proc_macro2_token_stream_failed_message,
+                                        code_occurence_camel_case,
+                                        lifetime_stringified
+                                    );
+                                    quote::quote!{
+                                        #variant_ident {
+                                            #[serde(borrow)]
+                                            #error_field_name_token_stream: #first_field_type_token_stream,
+                                            #[serde(borrow)]
+                                            #second_field_ident: #second_field_ident_token_stream
+                                        },
+                                    }
+                                },
+                                ErrorFieldName::InnerErrors => {
+                                    let first_field_type_stringified = match first_field_type {
+                                        syn::Type::Path(type_path) => {
+                                            let supported_inner_errors_container =  match type_path.path.segments.last() {
+                                                Some(path_segment) => {
+                                                    if path_segment.ident == "Vec" {
+                                                        SupportedInnerErrorsContainers::Vec
+                                                    }
+                                                    else if path_segment.ident == "HashMap" {
+                                                        SupportedInnerErrorsContainers::HashMap
+                                                    }
+                                                    else {
+                                                        SupportedInnerErrorsContainers::Other
+                                                    }
+                                                },
+                                                None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
+                                            };
+                                            let first_field_type_prep = match supported_inner_errors_container {
+                                                SupportedInnerErrorsContainers::Vec => {
+                                                    let mut vec_checker: Option<()> = None;
+                                                    let type_path_path_segments_stringified = type_path.path.segments.iter()
+                                                    .fold(String::from(""), |mut acc, elem| {
+                                                        let elem_ident = &elem.ident;
+                                                        if *elem_ident == "Vec" {
+                                                            if vec_checker.is_some() {
+                                                                panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one Vec inside type path");
+                                                            }
+                                                            match &elem.arguments {
+                                                                syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
+                                                                syn::PathArguments::AngleBracketed(angle_bracketed) => {
+                                                                    match angle_bracketed.args.len() == 1 {
+                                                                        true => {
+                                                                            match &angle_bracketed.args[0] {
+                                                                                syn::GenericArgument::Type(type_handle) => {
+                                                                                    match type_handle {
+                                                                                        syn::Type::Path(type_path_handle) => {
+                                                                                            let mut segments_stringified = type_path_handle.path.segments.iter()
+                                                                                            .fold(String::from(""), |mut acc, elem| {
+                                                                                                acc.push_str(&format!("{}::", elem.ident));
+                                                                                                acc
+                                                                                            });
+                                                                                            segments_stringified.pop();
+                                                                                            segments_stringified.pop();
+                                                                                            acc.push_str(&format!("Vec<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
+                                                                                        },
+                                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
+                                                                                    }
+                                                                                },
+                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for Vec"),
+                                                                            }
+                                                                        },
+                                                                        false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for Vec"),
+                                                                    }
+                                                                },
+                                                                syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
+                                                            }
+                                                            vec_checker = Some(());
+                                                        }
+                                                        else {
+                                                            acc.push_str(&format!("{elem_ident}::"));
+                                                        }
+                                                        acc
+                                                    });
+                                                    type_path_path_segments_stringified
+                                                },
+                                                SupportedInnerErrorsContainers::HashMap => {
+                                                    let mut hashmap_checker: Option<()> = None;
+                                                    let type_path_path_segments_stringified = type_path.path.segments.iter()
+                                                    .fold(String::from(""), |mut acc, elem| {
+                                                        let elem_ident = &elem.ident;
+                                                        if *elem_ident == "HashMap" {
+                                                            if hashmap_checker.is_some() {
+                                                                panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one HashMap inside type path");
+                                                            }
+                                                            match &elem.arguments {
+                                                                syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
+                                                                syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
+                                                                    match angle_bracketed_generic_arguments.args.len() == 2 {
+                                                                        true => {
+                                                                            let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
+                                                                                syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                syn::GenericArgument::Type(type_handle) => {
+                                                                                    match type_handle {
+                                                                                        syn::Type::Path(type_path_handle_two) => {
+                                                                                            let mut segments_stringified = type_path_handle_two.path.segments.iter()
+                                                                                            .fold(String::from(""), |mut acc, elem| {
+                                                                                                acc.push_str(&format!("{}::", elem.ident));
+                                                                                                acc
+                                                                                            });
+                                                                                            segments_stringified.pop();
+                                                                                            segments_stringified.pop();
+                                                                                            segments_stringified
+                                                                                        },
+                                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+                                                                                    }
+                                                                                },
+                                                                                syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                                syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                            };
+                                                                            let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
+                                                                                syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                syn::GenericArgument::Type(type_handle) => {
+                                                                                    match type_handle {
+                                                                                        syn::Type::Path(type_path_handle) => {
+                                                                                            let last_arg_option_lifetime = form_last_arg_lifetime(
+                                                                                                type_path_handle, 
+                                                                                                proc_macro_name, 
+                                                                                                &ident_stringified,
+                                                                                                lifetime_stringified,
+                                                                                            );
+                                                                                            let mut segments_stringified = type_path_handle.path.segments.iter()
+                                                                                            .fold(String::from(""), |mut acc, elem| {
+                                                                                                acc.push_str(&format!("{}::", elem.ident));
+                                                                                                acc
+                                                                                            });
+                                                                                            segments_stringified.pop();
+                                                                                            segments_stringified.pop();
+                                                                                            format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
+                                                                                        },
+                                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+                                                                                    }
+                                                                                },
+                                                                                syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                                syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                            };
+                                                                            acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
+                                                                        },
+                                                                        false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
+                                                                    }
+                                                                },
+                                                                syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
+                                                            }
+                                                            hashmap_checker = Some(());
+                                                        }
+                                                        else {
+                                                            acc.push_str(&format!("{elem_ident}::"));
+                                                        }
+                                                        acc
+                                                    });
+                                                    type_path_path_segments_stringified
+                                                },
+                                                SupportedInnerErrorsContainers::Other => {
+                                                    let mut type_path_path_segments_stringified = type_path.path.segments.iter()
+                                                    .fold(String::from(""), |mut acc, elem| {
+                                                        let elem_ident = &elem.ident;
+                                                        acc.push_str(&format!("{elem_ident}::"));
+                                                        acc
+                                                    });
+                                                    type_path_path_segments_stringified.pop();
+                                                    type_path_path_segments_stringified.pop();
+                                                    type_path_path_segments_stringified
+                                                },
+                                            };
+                                            first_field_type_prep
+                                        },
+                                        _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
+                                    };
+                                    let first_field_type_with_deserialize_token_stream = first_field_type_stringified
+                                    .parse::<proc_macro2::TokenStream>()
+                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                    let second_field_ident_token_stream = form_code_occurence_deserialize(
+                                        second_field_type, 
+                                        proc_macro_name, 
+                                        &ident_stringified, 
+                                        with_deserialize_camel_case, 
+                                        parse_proc_macro2_token_stream_failed_message,
+                                        code_occurence_camel_case,
+                                        lifetime_stringified
+                                    );
+                                    quote::quote!{
+                                        #variant_ident {
+                                            #[serde(borrow)]
+                                            #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
+                                            #[serde(borrow)]
+                                            #second_field_ident: #second_field_ident_token_stream
+                                        },
+                                    }
+                                },
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
+                        }
+                    };
+                    let logic_for_source_to_string_without_config_with_deserialize = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                ErrorFieldName::InnerError => quote::quote! {
+                                    #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream,
                                         #second_field_ident: _unused_second_argument,
                                     } => {
-                                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                                        #error_field_name_token_stream.#to_string_without_config_token_stream()
-                                    },
-                                }
-                            },
-                            ErrorFieldName::InnerErrors => {
-                                quote::quote! {
-                                    #ident::#variant_ident {
+                                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
+                                        #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
+                                    }
+                                },
+                                ErrorFieldName::InnerErrors => quote::quote! {
+                                    #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream,
                                         #second_field_ident: _unused_second_argument,
                                     } => {
-                                        use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
-                                        #error_field_name_token_stream.#few_to_string_without_config_token_stream()
-                                    },
-                                }
-                            },
+                                        use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
+                                        #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
+                                    }
+                                },
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
                         }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
+                    };
+                    let logic_for_get_code_occurence_with_deserialize = {
+                        let generated_variants_logic = vec_needed_info.iter().map(|(
+                            variant_ident, 
+                            error_field_name, 
+                            _first_field_type,
+                            second_field_ident, 
+                            _second_field_type,
+                            error_field_name_token_stream
+                        )|{
+                            match error_field_name {
+                                ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+                                ErrorFieldName::InnerError => {
+                                    quote::quote!{
+                                        #ident_with_deserialize_token_stream::#variant_ident {
+                                            #error_field_name_token_stream: _unused_first_argument,
+                                            #second_field_ident,
+                                        } => #second_field_ident,
+                                    }
+                                },
+                                ErrorFieldName::InnerErrors => {
+                                    quote::quote!{
+                                        #ident_with_deserialize_token_stream::#variant_ident {
+                                            #error_field_name_token_stream: _unused_first_argument,
+                                            #second_field_ident,
+                                        } => #second_field_ident,
+                                    }
+                                },
+                            }
+                        });
+                        quote::quote! {
+                            #(#generated_variants_logic),*
+                        }
+                    };
+                    (
+                        config_name_for_source_to_string_with_config,
+                        logic_for_source_to_string_with_config,
+                        logic_for_source_to_string_without_config,
+                        logic_for_get_code_occurence,
+                        logic_for_enum_with_deserialize,
+                        logic_for_source_to_string_without_config_with_deserialize,
+                        logic_for_get_code_occurence_with_deserialize
+                    )
                 },
             };
-            let logic_for_get_code_occurence = match &origin_or_wrapper {
-                OriginOrWrapper::Origin => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => {
-                                quote::quote!{
-                                    #ident::#variant_ident {
-                                        #error_field_name_token_stream: _unused_first_argument,
-                                        #second_field_ident,
-                                    } => #second_field_ident,
-                                }
-                            },
-                            ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-                OriginOrWrapper::Wrapper => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
-                            ErrorFieldName::InnerError => {
-                                quote::quote!{
-                                    #ident::#variant_ident {
-                                        #error_field_name_token_stream: _unused_first_argument,
-                                        #second_field_ident,
-                                    } => #second_field_ident,
-                                }
-                            },
-                            ErrorFieldName::InnerErrors => {
-                                quote::quote!{
-                                    #ident::#variant_ident {
-                                        #error_field_name_token_stream: _unused_first_argument,
-                                        #second_field_ident,
-                                    } => #second_field_ident,
-                                }
-                            },
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-            };
-            let logic_for_enum_with_deserialize = match &origin_or_wrapper {
-                OriginOrWrapper::Origin => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        first_field_type,
-                        second_field_ident, 
-                        second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => {
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                    second_field_type, 
-                                    proc_macro_name, 
-                                    &ident_stringified, 
-                                    with_deserialize_camel_case, 
-                                    parse_proc_macro2_token_stream_failed_message,
-                                    code_occurence_camel_case,
-                                    lifetime_stringified
-                                );
-                                quote::quote!{
-                                    #variant_ident {
-                                        #error_field_name_token_stream: #first_field_type,
-                                        #[serde(borrow)]
-                                        #second_field_ident: #second_field_ident_token_stream
-                                    },
-                                }
-                            },
-                            ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-                OriginOrWrapper::Wrapper => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        first_field_type,
-                        second_field_ident, 
-                        second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
-                            ErrorFieldName::InnerError => {
-                                let first_field_type_stringified = match first_field_type {
-                                    syn::Type::Path(type_path_handle) => {
-                                        let last_arg_option_lifetime = form_last_arg_lifetime(
-                                            type_path_handle, 
-                                            proc_macro_name, 
-                                            &ident_stringified,
-                                            lifetime_stringified,
-                                        );
-                                        let mut segments_stringified = type_path_handle.path.segments.iter()
-                                        .fold(String::from(""), |mut acc, elem| {
-                                            acc.push_str(&format!("{}::", elem.ident));
-                                            acc
-                                        });
-                                        segments_stringified.pop();
-                                        segments_stringified.pop();
-                                        format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
-                                    },
-                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path"),
-                                };
-                                let first_field_type_token_stream = first_field_type_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                    second_field_type, 
-                                    proc_macro_name, 
-                                    &ident_stringified, 
-                                    with_deserialize_camel_case, 
-                                    parse_proc_macro2_token_stream_failed_message,
-                                    code_occurence_camel_case,
-                                    lifetime_stringified
-                                );
-                                quote::quote!{
-                                    #variant_ident {
-                                        #[serde(borrow)]
-                                        #error_field_name_token_stream: #first_field_type_token_stream,
-                                        #[serde(borrow)]
-                                        #second_field_ident: #second_field_ident_token_stream
-                                    },
-                                }
-                            },
-                            ErrorFieldName::InnerErrors => {
-                                let first_field_type_stringified = match first_field_type {
-                                    syn::Type::Path(type_path) => {
-                                        let supported_inner_errors_container =  match type_path.path.segments.last() {
-                                            Some(path_segment) => {
-                                                if path_segment.ident == "Vec" {
-                                                    SupportedInnerErrorsContainers::Vec
-                                                }
-                                                else if path_segment.ident == "HashMap" {
-                                                    SupportedInnerErrorsContainers::HashMap
-                                                }
-                                                else {
-                                                    SupportedInnerErrorsContainers::Other
-                                                }
-                                            },
-                                            None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
-                                        };
-                                        let first_field_type_prep = match supported_inner_errors_container {
-                                            SupportedInnerErrorsContainers::Vec => {
-                                                let mut vec_checker: Option<()> = None;
-                                                let type_path_path_segments_stringified = type_path.path.segments.iter()
-                                                .fold(String::from(""), |mut acc, elem| {
-                                                    let elem_ident = &elem.ident;
-                                                    if *elem_ident == "Vec" {
-                                                        if vec_checker.is_some() {
-                                                            panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one Vec inside type path");
-                                                        }
-                                                        match &elem.arguments {
-                                                            syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
-                                                            syn::PathArguments::AngleBracketed(angle_bracketed) => {
-                                                                match angle_bracketed.args.len() == 1 {
-                                                                    true => {
-                                                                        match &angle_bracketed.args[0] {
-                                                                            syn::GenericArgument::Type(type_handle) => {
-                                                                                match type_handle {
-                                                                                    syn::Type::Path(type_path_handle) => {
-                                                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
-                                                                                        .fold(String::from(""), |mut acc, elem| {
-                                                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                                                            acc
-                                                                                        });
-                                                                                        segments_stringified.pop();
-                                                                                        segments_stringified.pop();
-                                                                                        acc.push_str(&format!("Vec<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
-                                                                                    },
-                                                                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
-                                                                                }
-                                                                            },
-                                                                            _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for Vec"),
-                                                                        }
-                                                                    },
-                                                                    false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for Vec"),
-                                                                }
-                                                            },
-                                                            syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
-                                                        }
-                                                        vec_checker = Some(());
-                                                    }
-                                                    else {
-                                                        acc.push_str(&format!("{elem_ident}::"));
-                                                    }
-                                                    acc
-                                                });
-                                                type_path_path_segments_stringified
-                                            },
-                                            SupportedInnerErrorsContainers::HashMap => {
-                                                let mut hashmap_checker: Option<()> = None;
-                                                let type_path_path_segments_stringified = type_path.path.segments.iter()
-                                                .fold(String::from(""), |mut acc, elem| {
-                                                    let elem_ident = &elem.ident;
-                                                    if *elem_ident == "HashMap" {
-                                                        if hashmap_checker.is_some() {
-                                                            panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one HashMap inside type path");
-                                                        }
-                                                        match &elem.arguments {
-                                                            syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
-                                                            syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
-                                                                match angle_bracketed_generic_arguments.args.len() == 2 {
-                                                                    true => {
-                                                                        let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
-                                                                            syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                            syn::GenericArgument::Type(type_handle) => {
-                                                                                match type_handle {
-                                                                                    syn::Type::Path(type_path_handle_two) => {
-                                                                                        let mut segments_stringified = type_path_handle_two.path.segments.iter()
-                                                                                        .fold(String::from(""), |mut acc, elem| {
-                                                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                                                            acc
-                                                                                        });
-                                                                                        segments_stringified.pop();
-                                                                                        segments_stringified.pop();
-                                                                                        segments_stringified
-                                                                                    },
-                                                                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
-                                                                                }
-                                                                            },
-                                                                            syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                            syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                            syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        };
-                                                                        let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
-                                                                            syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                            syn::GenericArgument::Type(type_handle) => {
-                                                                                match type_handle {
-                                                                                    syn::Type::Path(type_path_handle) => {
-                                                                                        let last_arg_option_lifetime = form_last_arg_lifetime(
-                                                                                            type_path_handle, 
-                                                                                            proc_macro_name, 
-                                                                                            &ident_stringified,
-                                                                                            lifetime_stringified,
-                                                                                        );
-                                                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
-                                                                                        .fold(String::from(""), |mut acc, elem| {
-                                                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                                                            acc
-                                                                                        });
-                                                                                        segments_stringified.pop();
-                                                                                        segments_stringified.pop();
-                                                                                        format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
-                                                                                    },
-                                                                                    _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
-                                                                                }
-                                                                            },
-                                                                            syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                            syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                            syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        };
-                                                                        acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
-                                                                    },
-                                                                    false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
-                                                                }
-                                                            },
-                                                            syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
-                                                        }
-                                                        hashmap_checker = Some(());
-                                                    }
-                                                    else {
-                                                        acc.push_str(&format!("{elem_ident}::"));
-                                                    }
-                                                    acc
-                                                });
-                                                type_path_path_segments_stringified
-                                            },
-                                            SupportedInnerErrorsContainers::Other => {
-                                                let mut type_path_path_segments_stringified = type_path.path.segments.iter()
-                                                .fold(String::from(""), |mut acc, elem| {
-                                                    let elem_ident = &elem.ident;
-                                                    acc.push_str(&format!("{elem_ident}::"));
-                                                    acc
-                                                });
-                                                type_path_path_segments_stringified.pop();
-                                                type_path_path_segments_stringified.pop();
-                                                type_path_path_segments_stringified
-                                            },
-                                        };
-                                        first_field_type_prep
-                                    },
-                                    _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
-                                };
-                                let first_field_type_with_deserialize_token_stream = first_field_type_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                    second_field_type, 
-                                    proc_macro_name, 
-                                    &ident_stringified, 
-                                    with_deserialize_camel_case, 
-                                    parse_proc_macro2_token_stream_failed_message,
-                                    code_occurence_camel_case,
-                                    lifetime_stringified
-                                );
-                                quote::quote!{
-                                    #variant_ident {
-                                        #[serde(borrow)]
-                                        #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
-                                        #[serde(borrow)]
-                                        #second_field_ident: #second_field_ident_token_stream
-                                    },
-                                }
-                            },
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-            };
-            let logic_for_source_to_string_without_config_with_deserialize = match &origin_or_wrapper {
-                OriginOrWrapper::Origin => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => {
-                                quote::quote! {
-                                    #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream,
-                                        #second_field_ident: _unused_second_argument,
-                                    } => #error_field_name_token_stream.to_string(),
-                                }
-                            },
-                            ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-                OriginOrWrapper::Wrapper => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
-                            ErrorFieldName::InnerError => quote::quote! {
-                                #ident_with_deserialize_token_stream::#variant_ident {
-                                    #error_field_name_token_stream,
-                                    #second_field_ident: _unused_second_argument,
-                                } => {
-                                    use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
-                                    #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
-                                }
-                            },
-                            ErrorFieldName::InnerErrors => quote::quote! {
-                                #ident_with_deserialize_token_stream::#variant_ident {
-                                    #error_field_name_token_stream,
-                                    #second_field_ident: _unused_second_argument,
-                                } => {
-                                    use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
-                                    #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
-                                }
-                            },
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-            };
-            let logic_for_get_code_occurence_with_deserialize = match &origin_or_wrapper {
-                OriginOrWrapper::Origin => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => {
-                                quote::quote!{
-                                     #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream: _unused_first_argument,
-                                        #second_field_ident,
-                                    } => #second_field_ident,
-                                }
-                            },
-                            ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
-                            ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-                OriginOrWrapper::Wrapper => {
-                    let generated_variants_logic = vec_needed_info.iter().map(|(
-                        variant_ident, 
-                        error_field_name, 
-                        _first_field_type,
-                        second_field_ident, 
-                        _second_field_type,
-                        error_field_name_token_stream
-                    )|{
-                        match error_field_name {
-                            ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
-                            ErrorFieldName::InnerError => {
-                                quote::quote!{
-                                    #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream: _unused_first_argument,
-                                        #second_field_ident,
-                                    } => #second_field_ident,
-                                }
-                            },
-                            ErrorFieldName::InnerErrors => {
-                                quote::quote!{
-                                    #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream: _unused_first_argument,
-                                        #second_field_ident,
-                                    } => #second_field_ident,
-                                }
-                            },
-                        }
-                    });
-                    quote::quote! {
-                        #(#generated_variants_logic),*
-                    }
-                },
-            };
+            //
+            // let config_name_for_source_to_string_with_config = match origin_or_wrapper {
+            //     OriginOrWrapper::Origin => {
+            //         let underscore_config_stringified = "_config";
+            //         underscore_config_stringified.parse::<proc_macro2::TokenStream>()
+            //         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let config_stringified = "config";
+            //         config_stringified.parse::<proc_macro2::TokenStream>()
+            //         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            //     },
+            // };
+            // let logic_for_source_to_string_with_config = match &origin_or_wrapper {
+            //     OriginOrWrapper::Origin => quote::quote! {
+            //         use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+            //         self.#source_to_string_without_config_token_stream()
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+            //                 ErrorFieldName::InnerError => {
+            //                     quote::quote! {
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream,
+            //                             #second_field_ident: _unused_second_argument,
+            //                         } => {
+            //                             use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
+            //                             #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+            //                         },
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerErrors => {
+            //                     quote::quote! {
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream,
+            //                             #second_field_ident: _unused_second_argument,
+            //                         } => {
+            //                             use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
+            //                             #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
+            //                         },
+            //                     }
+            //                 },
+            //             }
+            //         });
+            //         quote::quote! {
+            //             match self {
+            //                 #(#generated_variants_logic),*
+            //             }
+            //         }
+            //     },
+            // };
+            // let logic_for_source_to_string_without_config = match &origin_or_wrapper {
+            //     OriginOrWrapper::Origin => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => {
+            //                     quote::quote! {
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream,
+            //                             #second_field_ident: _unused_second_argument,
+            //                         } => #error_field_name_token_stream.to_string(),
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+            //                 ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+            //                 ErrorFieldName::InnerError => {
+            //                     quote::quote! {
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream,
+            //                             #second_field_ident: _unused_second_argument,
+            //                         } => {
+            //                             use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+            //                             #error_field_name_token_stream.#to_string_without_config_token_stream()
+            //                         },
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerErrors => {
+            //                     quote::quote! {
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream,
+            //                             #second_field_ident: _unused_second_argument,
+            //                         } => {
+            //                             use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
+            //                             #error_field_name_token_stream.#few_to_string_without_config_token_stream()
+            //                         },
+            //                     }
+            //                 },
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            // };
+            // let logic_for_get_code_occurence = match &origin_or_wrapper {
+            //     OriginOrWrapper::Origin => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => {
+            //                     quote::quote!{
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream: _unused_first_argument,
+            //                             #second_field_ident,
+            //                         } => #second_field_ident,
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+            //                 ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+            //                 ErrorFieldName::InnerError => {
+            //                     quote::quote!{
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream: _unused_first_argument,
+            //                             #second_field_ident,
+            //                         } => #second_field_ident,
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerErrors => {
+            //                     quote::quote!{
+            //                         #ident::#variant_ident {
+            //                             #error_field_name_token_stream: _unused_first_argument,
+            //                             #second_field_ident,
+            //                         } => #second_field_ident,
+            //                     }
+            //                 },
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            // };
+            // let logic_for_enum_with_deserialize = match &origin_or_wrapper {
+            //     OriginOrWrapper::Origin => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             first_field_type,
+            //             second_field_ident, 
+            //             second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => {
+            //                     let second_field_ident_token_stream = form_code_occurence_deserialize(
+            //                         second_field_type, 
+            //                         proc_macro_name, 
+            //                         &ident_stringified, 
+            //                         with_deserialize_camel_case, 
+            //                         parse_proc_macro2_token_stream_failed_message,
+            //                         code_occurence_camel_case,
+            //                         lifetime_stringified
+            //                     );
+            //                     quote::quote!{
+            //                         #variant_ident {
+            //                             #error_field_name_token_stream: #first_field_type,
+            //                             #[serde(borrow)]
+            //                             #second_field_ident: #second_field_ident_token_stream
+            //                         },
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+            //                 ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             first_field_type,
+            //             second_field_ident, 
+            //             second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+            //                 ErrorFieldName::InnerError => {
+            //                     let first_field_type_stringified = match first_field_type {
+            //                         syn::Type::Path(type_path_handle) => {
+            //                             let last_arg_option_lifetime = form_last_arg_lifetime(
+            //                                 type_path_handle, 
+            //                                 proc_macro_name, 
+            //                                 &ident_stringified,
+            //                                 lifetime_stringified,
+            //                             );
+            //                             let mut segments_stringified = type_path_handle.path.segments.iter()
+            //                             .fold(String::from(""), |mut acc, elem| {
+            //                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                 acc
+            //                             });
+            //                             segments_stringified.pop();
+            //                             segments_stringified.pop();
+            //                             format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
+            //                         },
+            //                         _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path"),
+            //                     };
+            //                     let first_field_type_token_stream = first_field_type_stringified
+            //                     .parse::<proc_macro2::TokenStream>()
+            //                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+            //                     let second_field_ident_token_stream = form_code_occurence_deserialize(
+            //                         second_field_type, 
+            //                         proc_macro_name, 
+            //                         &ident_stringified, 
+            //                         with_deserialize_camel_case, 
+            //                         parse_proc_macro2_token_stream_failed_message,
+            //                         code_occurence_camel_case,
+            //                         lifetime_stringified
+            //                     );
+            //                     quote::quote!{
+            //                         #variant_ident {
+            //                             #[serde(borrow)]
+            //                             #error_field_name_token_stream: #first_field_type_token_stream,
+            //                             #[serde(borrow)]
+            //                             #second_field_ident: #second_field_ident_token_stream
+            //                         },
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerErrors => {
+            //                     let first_field_type_stringified = match first_field_type {
+            //                         syn::Type::Path(type_path) => {
+            //                             let supported_inner_errors_container =  match type_path.path.segments.last() {
+            //                                 Some(path_segment) => {
+            //                                     if path_segment.ident == "Vec" {
+            //                                         SupportedInnerErrorsContainers::Vec
+            //                                     }
+            //                                     else if path_segment.ident == "HashMap" {
+            //                                         SupportedInnerErrorsContainers::HashMap
+            //                                     }
+            //                                     else {
+            //                                         SupportedInnerErrorsContainers::Other
+            //                                     }
+            //                                 },
+            //                                 None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
+            //                             };
+            //                             let first_field_type_prep = match supported_inner_errors_container {
+            //                                 SupportedInnerErrorsContainers::Vec => {
+            //                                     let mut vec_checker: Option<()> = None;
+            //                                     let type_path_path_segments_stringified = type_path.path.segments.iter()
+            //                                     .fold(String::from(""), |mut acc, elem| {
+            //                                         let elem_ident = &elem.ident;
+            //                                         if *elem_ident == "Vec" {
+            //                                             if vec_checker.is_some() {
+            //                                                 panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one Vec inside type path");
+            //                                             }
+            //                                             match &elem.arguments {
+            //                                                 syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
+            //                                                 syn::PathArguments::AngleBracketed(angle_bracketed) => {
+            //                                                     match angle_bracketed.args.len() == 1 {
+            //                                                         true => {
+            //                                                             match &angle_bracketed.args[0] {
+            //                                                                 syn::GenericArgument::Type(type_handle) => {
+            //                                                                     match type_handle {
+            //                                                                         syn::Type::Path(type_path_handle) => {
+            //                                                                             let mut segments_stringified = type_path_handle.path.segments.iter()
+            //                                                                             .fold(String::from(""), |mut acc, elem| {
+            //                                                                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                                                                 acc
+            //                                                                             });
+            //                                                                             segments_stringified.pop();
+            //                                                                             segments_stringified.pop();
+            //                                                                             acc.push_str(&format!("Vec<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
+            //                                                                         },
+            //                                                                         _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
+            //                                                                     }
+            //                                                                 },
+            //                                                                 _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for Vec"),
+            //                                                             }
+            //                                                         },
+            //                                                         false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for Vec"),
+            //                                                     }
+            //                                                 },
+            //                                                 syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
+            //                                             }
+            //                                             vec_checker = Some(());
+            //                                         }
+            //                                         else {
+            //                                             acc.push_str(&format!("{elem_ident}::"));
+            //                                         }
+            //                                         acc
+            //                                     });
+            //                                     type_path_path_segments_stringified
+            //                                 },
+            //                                 SupportedInnerErrorsContainers::HashMap => {
+            //                                     let mut hashmap_checker: Option<()> = None;
+            //                                     let type_path_path_segments_stringified = type_path.path.segments.iter()
+            //                                     .fold(String::from(""), |mut acc, elem| {
+            //                                         let elem_ident = &elem.ident;
+            //                                         if *elem_ident == "HashMap" {
+            //                                             if hashmap_checker.is_some() {
+            //                                                 panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one HashMap inside type path");
+            //                                             }
+            //                                             match &elem.arguments {
+            //                                                 syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
+            //                                                 syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
+            //                                                     match angle_bracketed_generic_arguments.args.len() == 2 {
+            //                                                         true => {
+            //                                                             let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
+            //                                                                 syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+            //                                                                 syn::GenericArgument::Type(type_handle) => {
+            //                                                                     match type_handle {
+            //                                                                         syn::Type::Path(type_path_handle_two) => {
+            //                                                                             let mut segments_stringified = type_path_handle_two.path.segments.iter()
+            //                                                                             .fold(String::from(""), |mut acc, elem| {
+            //                                                                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                                                                 acc
+            //                                                                             });
+            //                                                                             segments_stringified.pop();
+            //                                                                             segments_stringified.pop();
+            //                                                                             segments_stringified
+            //                                                                         },
+            //                                                                         _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+            //                                                                     }
+            //                                                                 },
+            //                                                                 syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+            //                                                                 syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+            //                                                                 syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+            //                                                             };
+            //                                                             let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
+            //                                                                 syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+            //                                                                 syn::GenericArgument::Type(type_handle) => {
+            //                                                                     match type_handle {
+            //                                                                         syn::Type::Path(type_path_handle) => {
+            //                                                                             let last_arg_option_lifetime = form_last_arg_lifetime(
+            //                                                                                 type_path_handle, 
+            //                                                                                 proc_macro_name, 
+            //                                                                                 &ident_stringified,
+            //                                                                                 lifetime_stringified,
+            //                                                                             );
+            //                                                                             let mut segments_stringified = type_path_handle.path.segments.iter()
+            //                                                                             .fold(String::from(""), |mut acc, elem| {
+            //                                                                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                                                                 acc
+            //                                                                             });
+            //                                                                             segments_stringified.pop();
+            //                                                                             segments_stringified.pop();
+            //                                                                             format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
+            //                                                                         },
+            //                                                                         _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+            //                                                                     }
+            //                                                                 },
+            //                                                                 syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+            //                                                                 syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+            //                                                                 syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+            //                                                             };
+            //                                                             acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
+            //                                                         },
+            //                                                         false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
+            //                                                     }
+            //                                                 },
+            //                                                 syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
+            //                                             }
+            //                                             hashmap_checker = Some(());
+            //                                         }
+            //                                         else {
+            //                                             acc.push_str(&format!("{elem_ident}::"));
+            //                                         }
+            //                                         acc
+            //                                     });
+            //                                     type_path_path_segments_stringified
+            //                                 },
+            //                                 SupportedInnerErrorsContainers::Other => {
+            //                                     let mut type_path_path_segments_stringified = type_path.path.segments.iter()
+            //                                     .fold(String::from(""), |mut acc, elem| {
+            //                                         let elem_ident = &elem.ident;
+            //                                         acc.push_str(&format!("{elem_ident}::"));
+            //                                         acc
+            //                                     });
+            //                                     type_path_path_segments_stringified.pop();
+            //                                     type_path_path_segments_stringified.pop();
+            //                                     type_path_path_segments_stringified
+            //                                 },
+            //                             };
+            //                             first_field_type_prep
+            //                         },
+            //                         _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
+            //                     };
+            //                     let first_field_type_with_deserialize_token_stream = first_field_type_stringified
+            //                     .parse::<proc_macro2::TokenStream>()
+            //                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+            //                     let second_field_ident_token_stream = form_code_occurence_deserialize(
+            //                         second_field_type, 
+            //                         proc_macro_name, 
+            //                         &ident_stringified, 
+            //                         with_deserialize_camel_case, 
+            //                         parse_proc_macro2_token_stream_failed_message,
+            //                         code_occurence_camel_case,
+            //                         lifetime_stringified
+            //                     );
+            //                     quote::quote!{
+            //                         #variant_ident {
+            //                             #[serde(borrow)]
+            //                             #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
+            //                             #[serde(borrow)]
+            //                             #second_field_ident: #second_field_ident_token_stream
+            //                         },
+            //                     }
+            //                 },
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            // };
+            // let logic_for_source_to_string_without_config_with_deserialize = match &origin_or_wrapper {
+            //     OriginOrWrapper::Origin => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => {
+            //                     quote::quote! {
+            //                         #ident_with_deserialize_token_stream::#variant_ident {
+            //                             #error_field_name_token_stream,
+            //                             #second_field_ident: _unused_second_argument,
+            //                         } => #error_field_name_token_stream.to_string(),
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+            //                 ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+            //                 ErrorFieldName::InnerError => quote::quote! {
+            //                     #ident_with_deserialize_token_stream::#variant_ident {
+            //                         #error_field_name_token_stream,
+            //                         #second_field_ident: _unused_second_argument,
+            //                     } => {
+            //                         use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
+            //                         #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerErrors => quote::quote! {
+            //                     #ident_with_deserialize_token_stream::#variant_ident {
+            //                         #error_field_name_token_stream,
+            //                         #second_field_ident: _unused_second_argument,
+            //                     } => {
+            //                         use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
+            //                         #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
+            //                     }
+            //                 },
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            // };
+            // let logic_for_get_code_occurence_with_deserialize = match &origin_or_wrapper {
+            //     OriginOrWrapper::Origin => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => {
+            //                     quote::quote!{
+            //                          #ident_with_deserialize_token_stream::#variant_ident {
+            //                             #error_field_name_token_stream: _unused_first_argument,
+            //                             #second_field_ident,
+            //                         } => #second_field_ident,
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
+            //                 ErrorFieldName::InnerErrors => panic!("{proc_macro_name} {ident_stringified} error field name is inner_errors, but struct/enum field is Origin"),
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            //     OriginOrWrapper::Wrapper => {
+            //         let generated_variants_logic = vec_needed_info.iter().map(|(
+            //             variant_ident, 
+            //             error_field_name, 
+            //             _first_field_type,
+            //             second_field_ident, 
+            //             _second_field_type,
+            //             error_field_name_token_stream
+            //         )|{
+            //             match error_field_name {
+            //                 ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
+            //                 ErrorFieldName::InnerError => {
+            //                     quote::quote!{
+            //                         #ident_with_deserialize_token_stream::#variant_ident {
+            //                             #error_field_name_token_stream: _unused_first_argument,
+            //                             #second_field_ident,
+            //                         } => #second_field_ident,
+            //                     }
+            //                 },
+            //                 ErrorFieldName::InnerErrors => {
+            //                     quote::quote!{
+            //                         #ident_with_deserialize_token_stream::#variant_ident {
+            //                             #error_field_name_token_stream: _unused_first_argument,
+            //                             #second_field_ident,
+            //                         } => #second_field_ident,
+            //                     }
+            //                 },
+            //             }
+            //         });
+            //         quote::quote! {
+            //             #(#generated_variants_logic),*
+            //         }
+            //     },
+            // };
             quote::quote! {
                 impl<#lifetime_token_stream, #config_generic_token_stream>
                     #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
@@ -1167,19 +2034,17 @@ fn form_code_occurence_deserialize(
             .fold(String::from(""), |mut acc, path_segment| {
                 let path_segment_ident = &path_segment.ident;
                 if *path_segment_ident == code_occurence_camel_case {
-                    match code_occurence_checker {
-                        Some(_) => panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path"),
-                        None => {
-                            let last_arg_option_lifetime = form_last_arg_lifetime(
-                                type_path, 
-                                proc_macro_name, 
-                                ident_stringified,
-                                lifetime_stringified,
-                            );
-                            acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-                            code_occurence_checker = Some(());
-                        },
+                    if code_occurence_checker.is_some() {
+                        panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
                     }
+                    let last_arg_option_lifetime = form_last_arg_lifetime(
+                        type_path, 
+                        proc_macro_name, 
+                        ident_stringified,
+                        lifetime_stringified,
+                    );
+                    acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                    code_occurence_checker = Some(());
                 }
                 else {
                     acc.push_str(&format!("{path_segment_ident}::"));
