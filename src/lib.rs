@@ -62,6 +62,9 @@ pub fn derive_impl_error_occurence(
     let config_generic_token_stream = "ConfigGeneric"
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+    let to_string_with_config_camel_case = "ToStringWithConfig";
+    let to_string_with_config_lower_case = to_string_with_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let source_to_string_with_config_camel_case = format!("Source{to_string_with_config_camel_case}");
     let to_string_without_config_camel_case = "ToStringWithoutConfig";
     let to_string_without_config_lower_case = to_string_without_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let source_to_string_without_config_camel_case = format!("Source{to_string_without_config_camel_case}");
@@ -90,7 +93,7 @@ pub fn derive_impl_error_occurence(
     let crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified = "crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig";
+    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified = format!("crate::traits::error_logs_logic::{to_string_with_config_lower_case}::{to_string_with_config_camel_case}For{source_to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
@@ -110,7 +113,7 @@ pub fn derive_impl_error_occurence(
     let few_to_string_without_config_with_deserialize_token_stream = 
     few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let to_string_with_config_for_source_to_string_with_config_stringified = "to_string_with_config_for_source_to_string_with_config";
+    let to_string_with_config_for_source_to_string_with_config_stringified = format!("{to_string_with_config_lower_case}_for_source_{to_string_with_config_lower_case}");
     let to_string_with_config_for_source_to_string_with_config_token_stream = 
     to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
@@ -149,27 +152,27 @@ pub fn derive_impl_error_occurence(
     let get_code_occurence_with_deserialize_token_stream = 
     get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigFor{source_to_string_without_config_camel_case}");
+    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::{to_string_with_config_lower_case}::{to_string_with_config_camel_case}For{source_to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream = 
     crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let to_string_with_config_for_source_to_string_without_config_stringified = format!("to_string_with_config_for_source_{to_string_without_config_lower_case}");
+    let to_string_with_config_for_source_to_string_without_config_stringified = format!("{to_string_with_config_lower_case}_for_source_{to_string_without_config_lower_case}");
     let to_string_with_config_for_source_to_string_without_config_token_stream = 
     to_string_with_config_for_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified = "crate::traits::error_logs_logic::few_to_string_with_config::FewToStringWithConfig";
+    let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified = format!("crate::traits::error_logs_logic::few_{to_string_with_config_lower_case}::Few{to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let few_to_string_with_config_stringified = "few_to_string_with_config";
+    let few_to_string_with_config_stringified = format!("few_{to_string_with_config_lower_case}");
     let few_to_string_with_config_token_stream = 
     few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = "crate::traits::error_logs_logic::source_to_string_with_config::SourceToStringWithConfig";
+    let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = format!("crate::traits::error_logs_logic::source_{to_string_with_config_lower_case}::{source_to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-    let source_to_string_with_config_stringified = "source_to_string_with_config";
+    let source_to_string_with_config_stringified = format!("source_{to_string_with_config_lower_case}");
     let source_to_string_with_config_token_stream = 
     source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
