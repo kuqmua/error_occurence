@@ -53,15 +53,16 @@ pub fn derive_impl_error_occurence(
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
+    let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
     let with_deserialize_camel_case = "WithDeserialize";
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
     let ident_with_deserialize_token_stream = ident_with_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let config_generic_token_stream = "ConfigGeneric"
         .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {ident_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let to_string_with_config_camel_case = "ToStringWithConfig";
     let to_string_with_config_lower_case = to_string_with_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let source_to_string_with_config_camel_case = format!("Source{to_string_with_config_camel_case}");
@@ -71,111 +72,111 @@ pub fn derive_impl_error_occurence(
     let source_to_string_without_config_lower_case = source_to_string_without_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let source_to_string_without_config_token_stream = 
     source_to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {source_to_string_without_config_lower_case} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {source_to_string_without_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
     .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified}{with_deserialize_camel_case}");
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified
     .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_fields_stringified = "crate::traits::fields::";
     let crate_traits_fields_get_source_place_type_stringified = format!("{crate_traits_fields_stringified}GetSourcePlaceType");
     let crate_traits_fields_get_source_place_type_token_stream = 
     crate_traits_fields_get_source_place_type_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_fields_get_source_place_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_fields_get_source_place_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_fields_get_timezone_stringified = format!("{crate_traits_fields_stringified}GetTimezone");
     let crate_traits_fields_get_timezone_token_stream = 
     crate_traits_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_fields_get_timezone_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_fields_get_timezone_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_get_server_address_get_server_address_stringified = "crate::traits::get_server_address::GetServerAddress";
     let crate_traits_get_server_address_get_server_address_token_stream = 
     crate_traits_get_server_address_get_server_address_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_get_server_address_get_server_address_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_get_server_address_get_server_address_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::{source_to_string_without_config_lower_case}::{source_to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified = format!("crate::traits::error_logs_logic::{to_string_with_config_lower_case}::{to_string_with_config_camel_case}For{source_to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::few_{to_string_without_config_lower_case}::Few{to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream = 
     crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified}{with_deserialize_camel_case}");
     let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream = 
     crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let few_to_string_without_config_stringified = format!("few_{to_string_without_config_lower_case}");
     let few_to_string_without_config_token_stream = 
     few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let few_to_string_without_config_with_deserialize_stringified = format!("{few_to_string_without_config_stringified}_{with_deserialize_lower_case}");
     let few_to_string_without_config_with_deserialize_token_stream = 
     few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let to_string_with_config_for_source_to_string_with_config_stringified = format!("{to_string_with_config_lower_case}_for_source_{to_string_with_config_lower_case}");
     let to_string_with_config_for_source_to_string_with_config_token_stream = 
     to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let to_string_without_config_token_stream = 
     to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_lower_case} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
     let to_string_without_config_with_deserialize_stringified = format!("{to_string_without_config_lower_case}_{with_deserialize_lower_case}");
     let to_string_without_config_with_deserialize_token_stream = 
     to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified = "crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence";
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
     crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified}{with_deserialize_camel_case}");
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream = 
     crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_common_code_occurence_code_occurence_stringified = "crate::common::code_occurence::CodeOccurence";
     let crate_common_code_occurence_code_occurence_token_stream = 
     crate_common_code_occurence_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_common_code_occurence_code_occurence_with_deserialize_stringified = format!("{crate_common_code_occurence_code_occurence_stringified}{with_deserialize_camel_case}");
     let crate_common_code_occurence_code_occurence_with_deserialize_token_stream = 
     crate_common_code_occurence_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let get_code_occurence_stringified = "get_code_occurence";
     let get_code_occurence_token_stream = 
     get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let get_code_occurence_with_deserialize_stringified = format!("{get_code_occurence_stringified}_{with_deserialize_lower_case}");
     let get_code_occurence_with_deserialize_token_stream = 
     get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::{to_string_with_config_lower_case}::{to_string_with_config_camel_case}For{source_to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream = 
     crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let to_string_with_config_for_source_to_string_without_config_stringified = format!("{to_string_with_config_lower_case}_for_{source_to_string_without_config_lower_case}");
     let to_string_with_config_for_source_to_string_without_config_token_stream = 
     to_string_with_config_for_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_without_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified = format!("crate::traits::error_logs_logic::few_{to_string_with_config_lower_case}::Few{to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let few_to_string_with_config_stringified = format!("few_{to_string_with_config_lower_case}");
     let few_to_string_with_config_token_stream = 
     few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = format!("crate::traits::error_logs_logic::source_{to_string_with_config_lower_case}::{source_to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let source_to_string_with_config_stringified = format!("source_{to_string_with_config_lower_case}");
     let source_to_string_with_config_token_stream = 
     source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {source_to_string_with_config_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let origin_or_wrapper = if ident_stringified.contains(WRAPPER_NAME)
         && ident_stringified.contains(ORIGIN_NAME)
     {
@@ -231,12 +232,12 @@ pub fn derive_impl_error_occurence(
         OriginOrWrapper::Origin => {
             let underscore_config_stringified = String::from("_config");
             underscore_config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} .parse::<proc_macro2::TokenStream>() failed"))
+            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
         },
         OriginOrWrapper::Wrapper => {
             let config_stringified = String::from("config");
             config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} .parse::<proc_macro2::TokenStream>() failed"))
+            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
         },
     };
     let supported_enum_variant = match all_equal {
@@ -278,7 +279,7 @@ pub fn derive_impl_error_occurence(
                             let error_field_name_stringified = error_field_name.to_lower_snake_case();
                             let error_field_name_token_stream = error_field_name_stringified
                             .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream)
                         },
                         syn::Fields::Unnamed(_) => panic!("{proc_macro_name} {ident_stringified} expected field to be named"),
@@ -421,7 +422,7 @@ pub fn derive_impl_error_occurence(
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -452,7 +453,7 @@ pub fn derive_impl_error_occurence(
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -464,7 +465,7 @@ pub fn derive_impl_error_occurence(
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -491,7 +492,7 @@ pub fn derive_impl_error_occurence(
                     )|{
                         match error_field_name {
                             ErrorFieldName::Error => {
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case);
+                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case, parse_proc_macro2_token_stream_failed_message);
                                 quote::quote!{
                                     #variant_ident {
                                         #error_field_name_token_stream: #first_field_type,
@@ -535,8 +536,8 @@ pub fn derive_impl_error_occurence(
                                 };
                                 let first_field_type_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case);
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case, parse_proc_macro2_token_stream_failed_message);
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
@@ -701,8 +702,8 @@ pub fn derive_impl_error_occurence(
                                 };
                                 let first_field_type_with_deserialize_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} .parse::<proc_macro2::TokenStream>() failed"));
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case);
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case, parse_proc_macro2_token_stream_failed_message);
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
@@ -730,7 +731,7 @@ pub fn derive_impl_error_occurence(
                         error_field_name_token_stream
                     )|{
                         let second_field_ident_underscore_token_stream = 
-                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified);
+                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified, parse_proc_macro2_token_stream_failed_message);
                         match error_field_name {
                             ErrorFieldName::Error => {
                                 quote::quote! {
@@ -758,7 +759,7 @@ pub fn derive_impl_error_occurence(
                         error_field_name_token_stream
                     )|{
                         let second_field_ident_underscore_token_stream = 
-                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified);
+                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified, parse_proc_macro2_token_stream_failed_message);
                         match error_field_name {
                             ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => quote::quote! {
@@ -801,7 +802,7 @@ pub fn derive_impl_error_occurence(
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                      #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -832,7 +833,7 @@ pub fn derive_impl_error_occurence(
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -844,7 +845,7 @@ pub fn derive_impl_error_occurence(
                                 let underscore_error_field_name_stringified = format!("_{error_field_name}");
                                 let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream: #error_field_name_underscore_token_stream,
@@ -1014,7 +1015,7 @@ pub fn derive_impl_error_occurence(
                                 let variant_type_with_deserialize_stringified = format!("{variant_type}{with_deserialize_camel_case}");
                                 variant_type_with_deserialize_stringified
                                 .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {variant_type_with_deserialize_stringified} .parse::<proc_macro2::TokenStream>() failed"))                                             
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {variant_type_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))                                             
                             },
                             _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
                         };
@@ -1102,14 +1103,25 @@ pub fn derive_impl_error_occurence(
     }.into()
 }
 
-fn form_second_field_ident_token_stream(second_field_ident: &proc_macro2::Ident, proc_macro_name: &str, ident_stringified: &String) -> proc_macro2::TokenStream {
+fn form_second_field_ident_token_stream(
+    second_field_ident: &proc_macro2::Ident, 
+    proc_macro_name: &str, 
+    ident_stringified: &String, 
+    parse_proc_macro2_token_stream_failed_message: &str
+) -> proc_macro2::TokenStream {
     let underscore_second_field_ident = format!("_{second_field_ident}");
     underscore_second_field_ident
     .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_second_field_ident} .parse::<proc_macro2::TokenStream>() failed"))
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_second_field_ident} {parse_proc_macro2_token_stream_failed_message}"))
 }
 
-fn form_code_occurence_deserialize(second_field_type: &syn::Type, proc_macro_name: &str, ident_stringified: &String, with_deserialize_camel_case: &str) -> proc_macro2::TokenStream {
+fn form_code_occurence_deserialize(
+    second_field_type: &syn::Type, 
+    proc_macro_name: &str, 
+    ident_stringified: &String, 
+    with_deserialize_camel_case: &str,
+    parse_proc_macro2_token_stream_failed_message: &str
+) -> proc_macro2::TokenStream {
     let second_field_ident_prep = match second_field_type {
         syn::Type::Path(type_path) => {
             match type_path.path.segments.last() {
@@ -1147,5 +1159,5 @@ fn form_code_occurence_deserialize(second_field_type: &syn::Type, proc_macro_nam
     };
     second_field_ident_prep
     .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} .parse::<proc_macro2::TokenStream>() failed"))
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} {parse_proc_macro2_token_stream_failed_message}"))
 }
