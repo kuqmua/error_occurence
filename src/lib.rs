@@ -694,10 +694,8 @@ pub fn derive_impl_error_occurence(
                         _second_field_type,
                         error_field_name_token_stream
                     )|{
-                        let underscore_second_field_ident = format!("_{second_field_ident}");
-                        let second_field_ident_underscore_token_stream = underscore_second_field_ident
-                        .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_second_field_ident} .parse::<proc_macro2::TokenStream>() failed"));
+                        let second_field_ident_underscore_token_stream = 
+                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified);
                         match error_field_name {
                             ErrorFieldName::Error => {
                                 quote::quote! {
@@ -724,10 +722,8 @@ pub fn derive_impl_error_occurence(
                         _second_field_type,
                         error_field_name_token_stream
                     )|{
-                        let underscore_second_field_ident_stringified = format!("_{second_field_ident}");
-                        let second_field_ident_underscore_token_stream = underscore_second_field_ident_stringified
-                        .parse::<proc_macro2::TokenStream>()
-                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_second_field_ident_stringified} .parse::<proc_macro2::TokenStream>() failed"));
+                        let second_field_ident_underscore_token_stream = 
+                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified);
                         match error_field_name {
                             ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => quote::quote! {
@@ -1069,6 +1065,13 @@ pub fn derive_impl_error_occurence(
             }
         }
     }.into()
+}
+
+fn form_second_field_ident_token_stream(second_field_ident: &proc_macro2::Ident, proc_macro_name: &str, ident_stringified: &String) -> proc_macro2::TokenStream {
+    let underscore_second_field_ident = format!("_{second_field_ident}");
+    underscore_second_field_ident
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_second_field_ident} .parse::<proc_macro2::TokenStream>() failed"))
 }
 
 fn form_code_occurence_deserialize(second_field_type: &syn::Type, proc_macro_name: &str, ident_stringified: &String) -> proc_macro2::TokenStream {
