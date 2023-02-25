@@ -73,6 +73,10 @@ pub fn derive_impl_error_occurence(
     let source_to_string_without_config_token_stream = 
     source_to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {source_to_string_without_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    //
+    let code_occurence_camel_case = "CodeOccurence";
+    let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    //
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("crate::traits::error_logs_logic::{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -133,7 +137,7 @@ pub fn derive_impl_error_occurence(
     let to_string_without_config_with_deserialize_token_stream = 
     to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified = "crate::traits::error_logs_logic::get_code_occurence::GetCodeOccurence";
+    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified = format!("crate::traits::error_logs_logic::get_{code_occurence_lower_case}::Get{code_occurence_camel_case}");
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
     crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -141,7 +145,7 @@ pub fn derive_impl_error_occurence(
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream = 
     crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_common_code_occurence_code_occurence_stringified = "crate::common::code_occurence::CodeOccurence";
+    let crate_common_code_occurence_code_occurence_stringified = format!("crate::common::{code_occurence_lower_case}::{code_occurence_camel_case}");
     let crate_common_code_occurence_code_occurence_token_stream = 
     crate_common_code_occurence_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -149,7 +153,7 @@ pub fn derive_impl_error_occurence(
     let crate_common_code_occurence_code_occurence_with_deserialize_token_stream = 
     crate_common_code_occurence_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_common_code_occurence_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let get_code_occurence_stringified = "get_code_occurence";
+    let get_code_occurence_stringified = format!("get_{code_occurence_lower_case}");
     let get_code_occurence_token_stream = 
     get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -273,8 +277,8 @@ pub fn derive_impl_error_occurence(
                             let second_field_ident =
                                 second_field.ident.clone()
                                 .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Named syn::Fields::Named second_field_ident is None"));
-                            if second_field_ident != *"code_occurence" {
-                                panic!("{proc_macro_name} {ident_stringified} only works on enums where variants named second field name == code_occurence");
+                            if second_field_ident != *code_occurence_lower_case {
+                                panic!("{proc_macro_name} {ident_stringified} only works on enums where variants named second field name == {code_occurence_lower_case}");
                             }
                             let error_field_name_stringified = error_field_name.to_lower_snake_case();
                             let error_field_name_token_stream = error_field_name_stringified
@@ -313,7 +317,7 @@ pub fn derive_impl_error_occurence(
                                 quote::quote! {
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
-                                        #second_field_ident: _code_occurence,
+                                        #second_field_ident: _unused_second_argument,
                                     } => {
                                         use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
                                         #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
@@ -324,7 +328,7 @@ pub fn derive_impl_error_occurence(
                                 quote::quote! {
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
-                                        #second_field_ident: _code_occurence,
+                                        #second_field_ident: _unused_second_argument,
                                     } => {
                                         use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
                                         #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
@@ -355,7 +359,7 @@ pub fn derive_impl_error_occurence(
                                 quote::quote! {
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
-                                        #second_field_ident: _code_occurence,
+                                        #second_field_ident: _unused_second_argument,
                                     } => #error_field_name_token_stream.to_string(),
                                 }
                             },
@@ -382,7 +386,7 @@ pub fn derive_impl_error_occurence(
                                 quote::quote! {
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
-                                        #second_field_ident: _code_occurence,
+                                        #second_field_ident: _unused_second_argument,
                                     } => {
                                         use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
                                         #error_field_name_token_stream.#to_string_without_config_token_stream()
@@ -393,7 +397,7 @@ pub fn derive_impl_error_occurence(
                                 quote::quote! {
                                     #ident::#variant_ident {
                                         #error_field_name_token_stream,
-                                        #second_field_ident: _code_occurence,
+                                        #second_field_ident: _unused_second_argument,
                                     } => {
                                         use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
                                         #error_field_name_token_stream.#few_to_string_without_config_token_stream()
@@ -419,13 +423,9 @@ pub fn derive_impl_error_occurence(
                     )|{
                         match error_field_name {
                             ErrorFieldName::Error => {
-                                let underscore_error_field_name_stringified = format!("_{error_field_name}");
-                                let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident::#variant_ident {
-                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
+                                        #error_field_name_token_stream: _unused_first_argument,
                                         #second_field_ident,
                                     } => #second_field_ident,
                                 }
@@ -450,25 +450,17 @@ pub fn derive_impl_error_occurence(
                         match error_field_name {
                             ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
-                                let underscore_error_field_name_stringified = format!("_{error_field_name}");
-                                let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident::#variant_ident {
-                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
+                                        #error_field_name_token_stream: _unused_first_argument,
                                         #second_field_ident,
                                     } => #second_field_ident,
                                 }
                             },
                             ErrorFieldName::InnerErrors => {
-                                let underscore_error_field_name_stringified = format!("_{error_field_name}");
-                                let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident::#variant_ident {
-                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
+                                        #error_field_name_token_stream: _unused_first_argument,
                                         #second_field_ident,
                                     } => #second_field_ident,
                                 }
@@ -492,7 +484,14 @@ pub fn derive_impl_error_occurence(
                     )|{
                         match error_field_name {
                             ErrorFieldName::Error => {
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case, parse_proc_macro2_token_stream_failed_message);
+                                let second_field_ident_token_stream = form_code_occurence_deserialize(
+                                    second_field_type, 
+                                    proc_macro_name, 
+                                    &ident_stringified, 
+                                    with_deserialize_camel_case, 
+                                    parse_proc_macro2_token_stream_failed_message,
+                                    code_occurence_camel_case
+                                );
                                 quote::quote!{
                                     #variant_ident {
                                         #error_field_name_token_stream: #first_field_type,
@@ -537,7 +536,14 @@ pub fn derive_impl_error_occurence(
                                 let first_field_type_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case, parse_proc_macro2_token_stream_failed_message);
+                                let second_field_ident_token_stream = form_code_occurence_deserialize(
+                                    second_field_type, 
+                                    proc_macro_name, 
+                                    &ident_stringified, 
+                                    with_deserialize_camel_case, 
+                                    parse_proc_macro2_token_stream_failed_message,
+                                    code_occurence_camel_case
+                                );
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
@@ -703,7 +709,14 @@ pub fn derive_impl_error_occurence(
                                 let first_field_type_with_deserialize_token_stream = first_field_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                let second_field_ident_token_stream = form_code_occurence_deserialize(second_field_type, proc_macro_name, &ident_stringified, with_deserialize_camel_case, parse_proc_macro2_token_stream_failed_message);
+                                let second_field_ident_token_stream = form_code_occurence_deserialize(
+                                    second_field_type, 
+                                    proc_macro_name, 
+                                    &ident_stringified, 
+                                    with_deserialize_camel_case, 
+                                    parse_proc_macro2_token_stream_failed_message,
+                                    code_occurence_camel_case
+                                );
                                 quote::quote!{
                                     #variant_ident {
                                         #[serde(borrow)]
@@ -730,15 +743,13 @@ pub fn derive_impl_error_occurence(
                         _second_field_type,
                         error_field_name_token_stream
                     )|{
-                        let second_field_ident_underscore_token_stream = 
-                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified, parse_proc_macro2_token_stream_failed_message);
                         match error_field_name {
                             ErrorFieldName::Error => {
                                 quote::quote! {
                                     #ident_with_deserialize_token_stream::#variant_ident {
                                         #error_field_name_token_stream,
-                                        #second_field_ident: #second_field_ident_underscore_token_stream,
-                                    } => format!("{}", #error_field_name_token_stream),
+                                        #second_field_ident: _unused_second_argument,
+                                    } => #error_field_name_token_stream.to_string(),
                                 }
                             },
                             ErrorFieldName::InnerError => panic!("{proc_macro_name} {ident_stringified} error field name is inner_error, but struct/enum field is Origin"),
@@ -758,14 +769,12 @@ pub fn derive_impl_error_occurence(
                         _second_field_type,
                         error_field_name_token_stream
                     )|{
-                        let second_field_ident_underscore_token_stream = 
-                        form_second_field_ident_token_stream(second_field_ident, proc_macro_name, &ident_stringified, parse_proc_macro2_token_stream_failed_message);
                         match error_field_name {
                             ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => quote::quote! {
                                 #ident_with_deserialize_token_stream::#variant_ident {
                                     #error_field_name_token_stream,
-                                    #second_field_ident: #second_field_ident_underscore_token_stream,
+                                    #second_field_ident: _unused_second_argument,
                                 } => {
                                     use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
                                     #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
@@ -774,7 +783,7 @@ pub fn derive_impl_error_occurence(
                             ErrorFieldName::InnerErrors => quote::quote! {
                                 #ident_with_deserialize_token_stream::#variant_ident {
                                     #error_field_name_token_stream,
-                                    #second_field_ident: #second_field_ident_underscore_token_stream,
+                                    #second_field_ident: _unused_second_argument,
                                 } => {
                                     use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
                                     #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
@@ -799,13 +808,9 @@ pub fn derive_impl_error_occurence(
                     )|{
                         match error_field_name {
                             ErrorFieldName::Error => {
-                                let underscore_error_field_name_stringified = format!("_{error_field_name}");
-                                let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                      #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
+                                        #error_field_name_token_stream: _unused_first_argument,
                                         #second_field_ident,
                                     } => #second_field_ident,
                                 }
@@ -830,25 +835,17 @@ pub fn derive_impl_error_occurence(
                         match error_field_name {
                             ErrorFieldName::Error => panic!("{proc_macro_name} {ident_stringified} error field name is error, but struct/enum field is Wrapper"),
                             ErrorFieldName::InnerError => {
-                                let underscore_error_field_name_stringified = format!("_{error_field_name}");
-                                let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
+                                        #error_field_name_token_stream: _unused_first_argument,
                                         #second_field_ident,
                                     } => #second_field_ident,
                                 }
                             },
                             ErrorFieldName::InnerErrors => {
-                                let underscore_error_field_name_stringified = format!("_{error_field_name}");
-                                let error_field_name_underscore_token_stream = underscore_error_field_name_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                 quote::quote!{
                                     #ident_with_deserialize_token_stream::#variant_ident {
-                                        #error_field_name_token_stream: #error_field_name_underscore_token_stream,
+                                        #error_field_name_token_stream: _unused_first_argument,
                                         #second_field_ident,
                                     } => #second_field_ident,
                                 }
@@ -1103,31 +1100,20 @@ pub fn derive_impl_error_occurence(
     }.into()
 }
 
-fn form_second_field_ident_token_stream(
-    second_field_ident: &proc_macro2::Ident, 
-    proc_macro_name: &str, 
-    ident_stringified: &String, 
-    parse_proc_macro2_token_stream_failed_message: &str
-) -> proc_macro2::TokenStream {
-    let underscore_second_field_ident = format!("_{second_field_ident}");
-    underscore_second_field_ident
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_second_field_ident} {parse_proc_macro2_token_stream_failed_message}"))
-}
-
 fn form_code_occurence_deserialize(
     second_field_type: &syn::Type, 
     proc_macro_name: &str, 
     ident_stringified: &String, 
     with_deserialize_camel_case: &str,
-    parse_proc_macro2_token_stream_failed_message: &str
+    parse_proc_macro2_token_stream_failed_message: &str,
+    code_occurence_camel_case: &str
 ) -> proc_macro2::TokenStream {
     let second_field_ident_prep = match second_field_type {
         syn::Type::Path(type_path) => {
             match type_path.path.segments.last() {
                 Some(path_segment) => {
-                    if let false = path_segment.ident == "CodeOccurence" {
-                        panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != CodeOccurence");
+                    if let false = path_segment.ident == code_occurence_camel_case {
+                        panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != {code_occurence_camel_case}");
                     }
                 },
                 None => panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() is None"),
@@ -1136,9 +1122,9 @@ fn form_code_occurence_deserialize(
             let second_field_ident_segments_stringified = type_path.path.segments.iter()
             .fold(String::from(""), |mut acc, path_segment| {
                 let path_segment_ident = &path_segment.ident;
-                if *path_segment_ident == "CodeOccurence" {
+                if *path_segment_ident == code_occurence_camel_case {
                     match code_occurence_checker {
-                        Some(_) => panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one CodeOccurence inside type path"),
+                        Some(_) => panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path"),
                         None => {
                             acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}<'a>"));
                             code_occurence_checker = Some(());
@@ -1151,7 +1137,7 @@ fn form_code_occurence_deserialize(
                 acc
             });
             if code_occurence_checker.is_none() {
-                panic!("{proc_macro_name} {ident_stringified} no CodeOccurence detected inside second_field_ident type path");
+                panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
             }
             second_field_ident_segments_stringified
         },
