@@ -54,6 +54,10 @@ pub fn derive_impl_error_occurence(
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
     let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
+    let lifetime_stringified = "'a";
+    let lifetime_token_stream = lifetime_stringified
+        .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let with_deserialize_camel_case = "WithDeserialize";
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
@@ -489,7 +493,8 @@ pub fn derive_impl_error_occurence(
                                     &ident_stringified, 
                                     with_deserialize_camel_case, 
                                     parse_proc_macro2_token_stream_failed_message,
-                                    code_occurence_camel_case
+                                    code_occurence_camel_case,
+                                    lifetime_stringified
                                 );
                                 quote::quote!{
                                     #variant_ident {
@@ -521,6 +526,30 @@ pub fn derive_impl_error_occurence(
                             ErrorFieldName::InnerError => {
                                 let first_field_type_stringified = match first_field_type {
                                     syn::Type::Path(type_path_handle) => {
+                                        let last_arg_option_lifetime = match type_path_handle.path.segments.last() {
+                                            Some(path_segment) => {
+                                                match &path_segment.arguments {
+                                                    syn::PathArguments::None => None,
+                                                    syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
+                                                        if let false = angle_bracketed_generic_argument.args.len() == 1 {
+                                                            panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified angle_bracketed_generic_argument.args.len() != 1");
+                                                        }
+                                                        match &angle_bracketed_generic_argument.args[0] {
+                                                            syn::GenericArgument::Lifetime(_) => {
+                                                                Some(format!("<{lifetime_stringified}>"))
+                                                            },
+                                                            syn::GenericArgument::Type(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Type"),
+                                                            syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Const"),
+                                                            syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Binding"),
+                                                            syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Constraint"),
+                                                        }
+                                                        
+                                                    },
+                                                    syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
+                                                }
+                                            },
+                                            None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
+                                        };
                                         let mut segments_stringified = type_path_handle.path.segments.iter()
                                         .fold(String::from(""), |mut acc, elem| {
                                             acc.push_str(&format!("{}::", elem.ident));
@@ -528,7 +557,7 @@ pub fn derive_impl_error_occurence(
                                         });
                                         segments_stringified.pop();
                                         segments_stringified.pop();
-                                        format!("{segments_stringified}{with_deserialize_camel_case}<'a>")
+                                        format!("{segments_stringified}{with_deserialize_camel_case}{}", last_arg_option_lifetime.unwrap_or(String::from("")))
                                     },
                                     _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path"),
                                 };
@@ -541,7 +570,8 @@ pub fn derive_impl_error_occurence(
                                     &ident_stringified, 
                                     with_deserialize_camel_case, 
                                     parse_proc_macro2_token_stream_failed_message,
-                                    code_occurence_camel_case
+                                    code_occurence_camel_case,
+                                    lifetime_stringified
                                 );
                                 quote::quote!{
                                     #variant_ident {
@@ -595,7 +625,7 @@ pub fn derive_impl_error_occurence(
                                                                                         });
                                                                                         segments_stringified.pop();
                                                                                         segments_stringified.pop();
-                                                                                        acc.push_str(&format!("Vec<{segments_stringified}{with_deserialize_camel_case}<'a>>"))
+                                                                                        acc.push_str(&format!("Vec<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
                                                                                     },
                                                                                     _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
                                                                                 }
@@ -657,6 +687,30 @@ pub fn derive_impl_error_occurence(
                                                                             syn::GenericArgument::Type(type_handle) => {
                                                                                 match type_handle {
                                                                                     syn::Type::Path(type_path_handle_three) => {
+                                                                                        let last_arg_option_lifetime = match type_path_handle_three.path.segments.last() {
+                                                                                            Some(path_segment) => {
+                                                                                                match &path_segment.arguments {
+                                                                                                    syn::PathArguments::None => None,
+                                                                                                    syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
+                                                                                                        if let false = angle_bracketed_generic_argument.args.len() == 1 {
+                                                                                                            panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified angle_bracketed_generic_argument.args.len() != 1");
+                                                                                                        }
+                                                                                                        match &angle_bracketed_generic_argument.args[0] {
+                                                                                                            syn::GenericArgument::Lifetime(_) => {
+                                                                                                                Some(format!("<{lifetime_stringified}>"))
+                                                                                                            },
+                                                                                                            syn::GenericArgument::Type(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Type"),
+                                                                                                            syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Const"),
+                                                                                                            syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Binding"),
+                                                                                                            syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Constraint"),
+                                                                                                        }
+
+                                                                                                    },
+                                                                                                    syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
+                                                                                                }
+                                                                                            },
+                                                                                            None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
+                                                                                        };
                                                                                         let mut segments_stringified = type_path_handle_three.path.segments.iter()
                                                                                         .fold(String::from(""), |mut acc, elem| {
                                                                                             acc.push_str(&format!("{}::", elem.ident));
@@ -664,7 +718,7 @@ pub fn derive_impl_error_occurence(
                                                                                         });
                                                                                         segments_stringified.pop();
                                                                                         segments_stringified.pop();
-                                                                                        format!("{segments_stringified}{with_deserialize_camel_case}<'a>")
+                                                                                        format!("{segments_stringified}{with_deserialize_camel_case}{}", last_arg_option_lifetime.unwrap_or(String::from("")))
                                                                                     },
                                                                                     _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
                                                                                 }
@@ -714,7 +768,8 @@ pub fn derive_impl_error_occurence(
                                     &ident_stringified, 
                                     with_deserialize_camel_case, 
                                     parse_proc_macro2_token_stream_failed_message,
-                                    code_occurence_camel_case
+                                    code_occurence_camel_case,
+                                    lifetime_stringified
                                 );
                                 quote::quote!{
                                     #variant_ident {
@@ -857,11 +912,11 @@ pub fn derive_impl_error_occurence(
                 },
             };
             quote::quote! {
-                impl<'a, #config_generic_token_stream>
+                impl<#lifetime_token_stream, #config_generic_token_stream>
                     #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
-                        'a,
+                        #lifetime_token_stream,
                         #config_generic_token_stream,
-                    > for #ident<'a>
+                    > for #ident<#lifetime_token_stream>
                     where #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
                         + #crate_traits_fields_get_timezone_token_stream
                         + #crate_traits_get_server_address_get_server_address_token_stream,
@@ -873,10 +928,10 @@ pub fn derive_impl_error_occurence(
                         #logic_for_source_to_string_with_config
                     }
                 }
-                impl<'a>
+                impl<#lifetime_token_stream>
                     #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
-                        'a,
-                    > for #ident<'a>
+                        #lifetime_token_stream,
+                    > for #ident<#lifetime_token_stream>
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -884,20 +939,20 @@ pub fn derive_impl_error_occurence(
                         }
                     }
                 }
-                impl<'a> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<'a>
-                    for #ident<'a>
+                impl<#lifetime_token_stream> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<#lifetime_token_stream>
+                    for #ident<#lifetime_token_stream>
                 {
-                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream<'a> {
+                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream<#lifetime_token_stream> {
                         match self {
                             #logic_for_get_code_occurence
                         }
                     }
                 }
                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
-                pub enum #ident_with_deserialize_token_stream<'a> {
+                pub enum #ident_with_deserialize_token_stream<#lifetime_token_stream> {
                     #logic_for_enum_with_deserialize
                 }
-                impl<'a> #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<'a,> for #ident_with_deserialize_token_stream<'a>
+                impl<#lifetime_token_stream> #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<#lifetime_token_stream> for #ident_with_deserialize_token_stream<#lifetime_token_stream>
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -905,12 +960,12 @@ pub fn derive_impl_error_occurence(
                         }
                     }
                 }
-                impl<'a> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream<'a>
-                    for #ident_with_deserialize_token_stream<'a>
+                impl<#lifetime_token_stream> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_deserialize_token_stream<#lifetime_token_stream>
+                    for #ident_with_deserialize_token_stream<#lifetime_token_stream>
                 {
                     fn #get_code_occurence_with_deserialize_token_stream(
                         &self,
-                    ) -> &#crate_common_code_occurence_code_occurence_with_deserialize_token_stream<'a> {
+                    ) -> &#crate_common_code_occurence_code_occurence_with_deserialize_token_stream<#lifetime_token_stream> {
                         match self {
                             #logic_for_get_code_occurence_with_deserialize
                         }
@@ -1013,7 +1068,7 @@ pub fn derive_impl_error_occurence(
                         };
                         quote::quote!{
                             #[serde(borrow)]
-                            #variant_ident(#variant_type_with_deserialize_token_stream<'a>)
+                            #variant_ident(#variant_type_with_deserialize_token_stream<#lifetime_token_stream>)
                         }
                     });
                     quote::quote! {
@@ -1034,11 +1089,11 @@ pub fn derive_impl_error_occurence(
                 }
             };
             quote::quote! {
-                impl<'a, #config_generic_token_stream>
+                impl<#lifetime_token_stream, #config_generic_token_stream>
                     #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream<
-                    'a,
+                    #lifetime_token_stream,
                     #config_generic_token_stream,
-                    > for #ident<'a>
+                    > for #ident<#lifetime_token_stream>
                 where
                     #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
                     + #crate_traits_fields_get_timezone_token_stream
@@ -1050,8 +1105,8 @@ pub fn derive_impl_error_occurence(
                         }
                     }
                 }
-                impl<'a> #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<'a>
-                    for #ident<'a>
+                impl<#lifetime_token_stream> #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<#lifetime_token_stream>
+                    for #ident<#lifetime_token_stream>
                 {
                     fn #to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -1060,13 +1115,13 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
-                pub enum #ident_with_deserialize_token_stream<'a> {
+                pub enum #ident_with_deserialize_token_stream<#lifetime_token_stream> {
                     #logic_for_enum_with_deserialize
                 }
-                impl<'a>
+                impl<#lifetime_token_stream>
                     #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
-                        'a,
-                    > for #ident_with_deserialize_token_stream<'a>
+                        #lifetime_token_stream,
+                    > for #ident_with_deserialize_token_stream<#lifetime_token_stream>
                 {
                     fn #to_string_without_config_with_deserialize_token_stream(&self) -> String {
                         match self {
@@ -1079,14 +1134,14 @@ pub fn derive_impl_error_occurence(
     };
     //todo - maybe add flag to implement display or not
     quote::quote! {
-        impl<'a> std::fmt::Display for #ident<'a> {
+        impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
                 write!(f, "{}", self.#to_string_without_config_token_stream())
             }
         }
         #generated_impl_with_deserialize_alternatives
-        impl<'a> std::fmt::Display for #ident_with_deserialize_token_stream<'a> {
+        impl<#lifetime_token_stream> std::fmt::Display for #ident_with_deserialize_token_stream<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
                 write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
@@ -1101,7 +1156,8 @@ fn form_code_occurence_deserialize(
     ident_stringified: &String, 
     with_deserialize_camel_case: &str,
     parse_proc_macro2_token_stream_failed_message: &str,
-    code_occurence_camel_case: &str
+    code_occurence_camel_case: &str,
+    lifetime_stringified: &str
 ) -> proc_macro2::TokenStream {
     let second_field_ident_prep = match second_field_type {
         syn::Type::Path(type_path) => {
@@ -1118,10 +1174,29 @@ fn form_code_occurence_deserialize(
             .fold(String::from(""), |mut acc, path_segment| {
                 let path_segment_ident = &path_segment.ident;
                 if *path_segment_ident == code_occurence_camel_case {
+                    let last_arg_option_lifetime = match &path_segment.arguments {
+                        syn::PathArguments::None => None,
+                        syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
+                            if let false = angle_bracketed_generic_argument.args.len() == 1 {
+                                panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified angle_bracketed_generic_argument.args.len() != 1");
+                            }
+                            match &angle_bracketed_generic_argument.args[0] {
+                                syn::GenericArgument::Lifetime(_) => {
+                                    Some(format!("<{lifetime_stringified}>"))
+                                },
+                                syn::GenericArgument::Type(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Type"),
+                                syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Const"),
+                                syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Binding"),
+                                syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Constraint"),
+                            }
+
+                        },
+                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
+                    };
                     match code_occurence_checker {
                         Some(_) => panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path"),
                         None => {
-                            acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}<'a>"));
+                            acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{}", last_arg_option_lifetime.unwrap_or(String::from(""))));
                             code_occurence_checker = Some(());
                         },
                     }
