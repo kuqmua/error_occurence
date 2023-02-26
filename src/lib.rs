@@ -187,6 +187,7 @@ pub fn derive_impl_error_occurence(
         _ => panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum"),
     };
     let mut all_equal: Option<SuportedEnumVariant> = None;
+    let named_or_unnamed_error_name = "only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed";
     for variant in &data_enum.variants {
         match &variant.fields {
             syn::Fields::Named(_) => {
@@ -194,7 +195,7 @@ pub fn derive_impl_error_occurence(
                     Some(supported_variant) => {
                         match supported_variant {
                             SuportedEnumVariant::Named => (),
-                            SuportedEnumVariant::Unnamed => panic!("{proc_macro_name} {ident_stringified} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
+                            SuportedEnumVariant::Unnamed => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
                         }
                     },
                     None => {
@@ -206,7 +207,7 @@ pub fn derive_impl_error_occurence(
                 match &all_equal {
                     Some(supported_variant) => {
                         match supported_variant {
-                            SuportedEnumVariant::Named => panic!("{proc_macro_name} {ident_stringified} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
+                            SuportedEnumVariant::Named => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
                             SuportedEnumVariant::Unnamed => (),
                         }
                     },
@@ -215,7 +216,7 @@ pub fn derive_impl_error_occurence(
                     },
                 }
             },
-            syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed"),
+            syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
         }
     }
     let supported_enum_variant = match all_equal {
@@ -738,11 +739,12 @@ pub fn derive_impl_error_occurence(
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
                 let mut attribute_type_option: Option<ErrorOccurenceFromUnnamedEnumField> = None;
+                let helper_attributes_error_name = "only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper";
                 variant.attrs.iter().for_each(|attribute|{
                     attribute.path.segments.iter().for_each(|path_segment|{
                         if path_segment.ident == "error_occurence_from_origin" {
                             match attribute_type_option {
-                                Some(_) => panic!("{proc_macro_name} {ident_stringified} only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper"),
+                                Some(_) => panic!("{proc_macro_name} {ident_stringified} {helper_attributes_error_name}"),
                                 None => {
                                     attribute_type_option = Some(ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromOrigin);
                                 },
@@ -750,7 +752,7 @@ pub fn derive_impl_error_occurence(
                         }
                         else if path_segment.ident == "error_occurence_from_wrapper" {
                             match attribute_type_option {
-                                Some(_) => panic!("{proc_macro_name} {ident_stringified} only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper"),
+                                Some(_) => panic!("{proc_macro_name} {ident_stringified} {helper_attributes_error_name}"),
                                 None => {
                                     attribute_type_option = Some(ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromWrapper);
                                 },
@@ -760,7 +762,7 @@ pub fn derive_impl_error_occurence(
                 });
                 let attribute_type = match attribute_type_option {
                     Some(error_occurence_from_unnamed_enum_field) => error_occurence_from_unnamed_enum_field,
-                    None => panic!("{proc_macro_name} {ident_stringified} only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper"),
+                    None => panic!("{proc_macro_name} {ident_stringified} {helper_attributes_error_name}"),
                 };
                 let type_handle = match &variant.fields {
                     syn::Fields::Named(_) => panic!("{proc_macro_name} {ident_stringified} unexpected named unnamed logic"),
