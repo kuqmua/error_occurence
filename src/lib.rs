@@ -764,6 +764,7 @@ pub fn derive_impl_error_occurence(
                             let last_segment_ident = type_path.path.segments.last()
                             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} no last segment in type_path.path.segments"))
                             .ident.to_string();
+                            //todo - remove this usages of WRAPPER_NAME AND ORIGIN_NAME
                             match (last_segment_ident.contains(WRAPPER_NAME), last_segment_ident.contains(ORIGIN_NAME)) {
                                 (true, true) => panic!("{proc_macro_name} {ident_stringified} last_segment_ident contains Wrapper and Origin"),
                                 (true, false) => quote::quote! {
