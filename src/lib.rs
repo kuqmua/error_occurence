@@ -6,8 +6,6 @@
 // )]
 // #![allow(clippy::too_many_arguments)]
 use convert_case::Casing;
-use proc_macro_helpers::global_variables::hardcode::ORIGIN_NAME;
-use proc_macro_helpers::global_variables::hardcode::WRAPPER_NAME;
 
 #[derive(
     Debug,
@@ -38,8 +36,13 @@ enum SupportedInnerErrorsContainers {
     Other
 }
 
+enum ErrorOccurenceFromUnnamedEnumField {
+    ErrorOccurenceFromOrigin,
+    ErrorOccurenceFromWrapper
+}
+
 //todo check on full path generation to enums
-#[proc_macro_derive(ImplErrorOccurence)]
+#[proc_macro_derive(ImplErrorOccurence, attributes(error_occurence_from_origin, error_occurence_from_wrapper))]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -734,6 +737,31 @@ pub fn derive_impl_error_occurence(
         },
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
+                let mut attribute_type_option: Option<ErrorOccurenceFromUnnamedEnumField> = None;
+                variant.attrs.iter().for_each(|attribute|{
+                    attribute.path.segments.iter().for_each(|path_segment|{
+                        if path_segment.ident == "error_occurence_from_origin" {
+                            match attribute_type_option {
+                                Some(_) => panic!("{proc_macro_name} {ident_stringified} only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper"),
+                                None => {
+                                    attribute_type_option = Some(ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromOrigin);
+                                },
+                            }
+                        }
+                        else if path_segment.ident == "error_occurence_from_wrapper" {
+                            match attribute_type_option {
+                                Some(_) => panic!("{proc_macro_name} {ident_stringified} only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper"),
+                                None => {
+                                    attribute_type_option = Some(ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromWrapper);
+                                },
+                            }
+                        }
+                    });
+                });
+                let attribute_type = match attribute_type_option {
+                    Some(error_occurence_from_unnamed_enum_field) => error_occurence_from_unnamed_enum_field,
+                    None => panic!("{proc_macro_name} {ident_stringified} only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper"),
+                };
                 let type_handle = match &variant.fields {
                     syn::Fields::Named(_) => panic!("{proc_macro_name} {ident_stringified} unexpected named unnamed logic"),
                     syn::Fields::Unnamed(fields_unnamed) => {
@@ -745,8 +773,8 @@ pub fn derive_impl_error_occurence(
                     },
                     _ => panic!("{proc_macro_name} {ident_stringified} only works with named fields"),
                 };
-                (&variant.ident, type_handle)
-            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type)>>();
+                (&variant.ident, type_handle, attribute_type)
+            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, ErrorOccurenceFromUnnamedEnumField)>>();
             if let true = vec_variants_and_variants_types.is_empty() {
                 panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
             }
@@ -757,27 +785,17 @@ pub fn derive_impl_error_occurence(
             vec_variants_and_variants_types.iter().for_each(|(
                 variant_ident, 
                 first_field_type, 
+                attribute_type
             )|{
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
-                    let variant_generated_logic = match first_field_type {
-                        syn::Type::Path(type_path) => {
-                            let last_segment_ident = type_path.path.segments.last()
-                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} no last segment in type_path.path.segments"))
-                            .ident.to_string();
-                            //todo - remove this usages of WRAPPER_NAME AND ORIGIN_NAME and add annotations #[from_wrapper] #[from_origin]
-                            match (last_segment_ident.contains(WRAPPER_NAME), last_segment_ident.contains(ORIGIN_NAME)) {
-                                (true, true) => panic!("{proc_macro_name} {ident_stringified} last_segment_ident contains Wrapper and Origin"),
-                                (true, false) => quote::quote! {
-                                    i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                                },
-                                (false, true) => quote::quote! {
-                                    use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream;
-                                    i.#to_string_with_config_for_source_to_string_without_config_token_stream(config)
-                                },
-                                (false, false) => panic!("{proc_macro_name} {ident_stringified} last_segment_ident do not contain Wrapper or Origin"),
-                            }
+                    let variant_generated_logic = match attribute_type {
+                        ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromOrigin => quote::quote! {
+                            use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream;
+                            i.#to_string_with_config_for_source_to_string_without_config_token_stream(config)
                         },
-                        _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
+                        ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromWrapper => quote::quote! {
+                            i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                        },
                     };
                     quote::quote!{
                         #ident::#variant_ident(i) => {
@@ -878,7 +896,7 @@ pub fn derive_impl_error_occurence(
         },
     };
     //todo - maybe add flag to implement display or not
-    let uuu = quote::quote! {
+    quote::quote! {
         impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
@@ -892,9 +910,7 @@ pub fn derive_impl_error_occurence(
                 write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
             }
         }
-    };
-    println!("{}", uuu);
-    uuu.into()
+    }.into()
 }
 
 fn form_last_arg_lifetime(
