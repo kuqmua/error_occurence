@@ -38,7 +38,6 @@ enum SupportedInnerErrorsContainers {
     Other
 }
 
-//tood or maybe use just first field error, inner_error, inner_errors
 //todo check on full path generation to enums
 #[proc_macro_derive(ImplErrorOccurence)]
 pub fn derive_impl_error_occurence(
@@ -288,19 +287,6 @@ pub fn derive_impl_error_occurence(
             )|{
                 match error_field_name {
                     ErrorFieldName::Error => {
-                        // let config_name_for_source_to_string_with_config = {
-                        //     let underscore_config_stringified = "_config";
-                        //     underscore_config_stringified.parse::<proc_macro2::TokenStream>()
-                        //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {underscore_config_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                        // };
-                        /////////////////////////////
-
-                        //
-                        // let logic_for_source_to_string_with_config = quote::quote! {
-                        //     use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
-                        //     self.#source_to_string_without_config_token_stream()
-                        // };
-                        //todo - here must be match
                         logic_for_source_to_string_with_config.push(quote::quote! {
                             #ident::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
@@ -308,20 +294,19 @@ pub fn derive_impl_error_occurence(
                             } => {
                                 use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
                                 self.#source_to_string_without_config_token_stream()
-                            },
+                            }
                         });
-                        //
                         logic_for_source_to_string_without_config.push(quote::quote! {
                             #ident::#variant_ident {
                                 #error_field_name_token_stream,
                                 #second_field_ident: _unused_second_argument,
-                            } => #error_field_name_token_stream.to_string(),
+                            } => #error_field_name_token_stream.to_string()
                         });
                         logic_for_get_code_occurence.push(quote::quote!{
                             #ident::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
-                            } => #second_field_ident,
+                            } => #second_field_ident
                         });
                         logic_for_enum_with_deserialize.push({
                             let second_field_ident_token_stream = form_code_occurence_deserialize(
@@ -338,20 +323,20 @@ pub fn derive_impl_error_occurence(
                                     #error_field_name_token_stream: #first_field_type,
                                     #[serde(borrow)]
                                     #second_field_ident: #second_field_ident_token_stream
-                                },
+                                }
                             }
                         });
                         logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
                             #ident_with_deserialize_token_stream::#variant_ident {
                                 #error_field_name_token_stream,
                                 #second_field_ident: _unused_second_argument,
-                            } => #error_field_name_token_stream.to_string(),
+                            } => #error_field_name_token_stream.to_string()
                         });
                         logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
                             #ident_with_deserialize_token_stream::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
-                            } => #second_field_ident,
+                            } => #second_field_ident
                         });
                     },
                     ErrorFieldName::InnerError => {
@@ -362,7 +347,7 @@ pub fn derive_impl_error_occurence(
                             } => {
                                 use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
                                 #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                            },
+                            }
                         });
                         logic_for_source_to_string_without_config.push(quote::quote! {
                             #ident::#variant_ident {
@@ -371,13 +356,13 @@ pub fn derive_impl_error_occurence(
                             } => {
                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
                                 #error_field_name_token_stream.#to_string_without_config_token_stream()
-                            },
+                            }
                         });
                         logic_for_get_code_occurence.push(quote::quote!{
                             #ident::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
-                            } => #second_field_ident,
+                            } => #second_field_ident
                         });
                         logic_for_enum_with_deserialize.push({
                             let first_field_type_stringified = match first_field_type {
@@ -417,7 +402,7 @@ pub fn derive_impl_error_occurence(
                                     #error_field_name_token_stream: #first_field_type_token_stream,
                                     #[serde(borrow)]
                                     #second_field_ident: #second_field_ident_token_stream
-                                },
+                                }
                             }
                         });
                         logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
@@ -433,7 +418,7 @@ pub fn derive_impl_error_occurence(
                             #ident_with_deserialize_token_stream::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
-                            } => #second_field_ident,
+                            } => #second_field_ident
                         });
                     },
                     ErrorFieldName::InnerErrors => {
@@ -444,7 +429,7 @@ pub fn derive_impl_error_occurence(
                             } => {
                                 use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
                                 #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
-                            },
+                            }
                         });
                         logic_for_source_to_string_without_config.push(quote::quote! {
                             #ident::#variant_ident {
@@ -453,13 +438,13 @@ pub fn derive_impl_error_occurence(
                             } => {
                                 use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
                                 #error_field_name_token_stream.#few_to_string_without_config_token_stream()
-                            },
+                            }
                         });
                         logic_for_get_code_occurence.push(quote::quote!{
                             #ident::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
-                            } => #second_field_ident,
+                            } => #second_field_ident
                         });
                         logic_for_enum_with_deserialize.push({
                             let first_field_type_stringified = match first_field_type {
@@ -638,7 +623,7 @@ pub fn derive_impl_error_occurence(
                                     #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
                                     #[serde(borrow)]
                                     #second_field_ident: #second_field_ident_token_stream
-                                },
+                                }
                             }
                         });
                         logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
@@ -654,7 +639,7 @@ pub fn derive_impl_error_occurence(
                             #ident_with_deserialize_token_stream::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
                                 #second_field_ident,
-                            } => #second_field_ident,
+                            } => #second_field_ident
                         });
                     },
                 }
