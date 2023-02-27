@@ -36,7 +36,6 @@ enum SupportedInnerErrorsContainers {
     Other
 }
 
-//todo check on full path generation to enums
 #[proc_macro_derive(ImplErrorOccurence)]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
