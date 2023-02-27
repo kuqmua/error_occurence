@@ -35,20 +35,9 @@ enum SupportedInnerErrorsContainers {
     HashMap,
     Other
 }
-//todo - what to do if origin or wrapper changes inside inner enum? 
-// pub enum SixErrorEnum<'a> {
-//     #[error_occurence_from_origin]
-//     Seven(SevenError<'a>), - if it become inner_error \inner_errors or what logic must implement if its error + inner_error or error + inner_errors
-//     #[error_occurence_from_origin]
-//     Eight(EightError<'a>),
-// }
-enum ErrorOccurenceFromUnnamedEnumField {
-    ErrorOccurenceFromOrigin,
-    ErrorOccurenceFromWrapper
-}
 
 //todo check on full path generation to enums
-#[proc_macro_derive(ImplErrorOccurence, attributes(error_occurence_from_origin, error_occurence_from_wrapper))]
+#[proc_macro_derive(ImplErrorOccurence)]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -168,14 +157,6 @@ pub fn derive_impl_error_occurence(
     let get_code_occurence_with_deserialize_token_stream = 
     get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {get_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_with_config_lower_case}::{to_string_with_config_camel_case}For{source_to_string_without_config_camel_case}");
-    let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream = 
-    crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let to_string_with_config_for_source_to_string_without_config_stringified = format!("{to_string_with_config_lower_case}_for_{source_to_string_without_config_lower_case}");
-    let to_string_with_config_for_source_to_string_without_config_token_stream = 
-    to_string_with_config_for_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {to_string_with_config_for_source_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let few_to_string_with_config_stringified = format!("few_{to_string_with_config_lower_case}");
     let few_to_string_with_config_token_stream = 
     few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
@@ -744,32 +725,6 @@ pub fn derive_impl_error_occurence(
         },
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
-                let mut attribute_type_option: Option<ErrorOccurenceFromUnnamedEnumField> = None;
-                let helper_attributes_error_name = "only works with unnamed enums where only one derive macro helper attributes == error_occurence_from_origin or error_occurence_from_wrapper";
-                variant.attrs.iter().for_each(|attribute|{
-                    attribute.path.segments.iter().for_each(|path_segment|{
-                        if path_segment.ident == "error_occurence_from_origin" {
-                            match attribute_type_option {
-                                Some(_) => panic!("{proc_macro_name} {ident_stringified} {helper_attributes_error_name}"),
-                                None => {
-                                    attribute_type_option = Some(ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromOrigin);
-                                },
-                            }
-                        }
-                        else if path_segment.ident == "error_occurence_from_wrapper" {
-                            match attribute_type_option {
-                                Some(_) => panic!("{proc_macro_name} {ident_stringified} {helper_attributes_error_name}"),
-                                None => {
-                                    attribute_type_option = Some(ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromWrapper);
-                                },
-                            }
-                        }
-                    });
-                });
-                let attribute_type = match attribute_type_option {
-                    Some(error_occurence_from_unnamed_enum_field) => error_occurence_from_unnamed_enum_field,
-                    None => panic!("{proc_macro_name} {ident_stringified} {helper_attributes_error_name}"),
-                };
                 let type_handle = match &variant.fields {
                     syn::Fields::Named(_) => panic!("{proc_macro_name} {ident_stringified} unexpected named unnamed logic"),
                     syn::Fields::Unnamed(fields_unnamed) => {
@@ -781,8 +736,8 @@ pub fn derive_impl_error_occurence(
                     },
                     _ => panic!("{proc_macro_name} {ident_stringified} only works with named fields"),
                 };
-                (&variant.ident, type_handle, attribute_type)
-            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, ErrorOccurenceFromUnnamedEnumField)>>();
+                (&variant.ident, type_handle)
+            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type)>>();
             if let true = vec_variants_and_variants_types.is_empty() {
                 panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
             }
@@ -793,21 +748,11 @@ pub fn derive_impl_error_occurence(
             vec_variants_and_variants_types.iter().for_each(|(
                 variant_ident, 
                 first_field_type, 
-                attribute_type
             )|{
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
-                    let variant_generated_logic = match attribute_type {
-                        ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromOrigin => quote::quote! {
-                            use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_without_config_token_stream;
-                            i.#to_string_with_config_for_source_to_string_without_config_token_stream(config)
-                        },
-                        ErrorOccurenceFromUnnamedEnumField::ErrorOccurenceFromWrapper => quote::quote! {
-                            i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                        },
-                    };
                     quote::quote!{
                         #ident::#variant_ident(i) => {
-                            #variant_generated_logic
+                            i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
                         }
                     }
                 });
@@ -904,20 +849,24 @@ pub fn derive_impl_error_occurence(
         },
     };
     //todo - maybe add flag to implement display or not
-    quote::quote! {
+    //todo maybe add derive helper attribute for display in macro like in thiserror? (only for error and not for inner_error and inner_errors)
+    let display_generated = quote::quote! {
         impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
                 write!(f, "{}", self.#to_string_without_config_token_stream())
             }
         }
-        #generated_impl_with_deserialize_alternatives
         impl<#lifetime_token_stream> std::fmt::Display for #ident_with_deserialize_token_stream<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
                 write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
             }
         }
+    };
+    quote::quote! {
+        #display_generated
+        #generated_impl_with_deserialize_alternatives
     }.into()
 }
 
