@@ -35,7 +35,13 @@ enum SupportedInnerErrorsContainers {
     HashMap,
     Other
 }
-
+//todo - what to do if origin or wrapper changes inside inner enum? 
+// pub enum SixErrorEnum<'a> {
+//     #[error_occurence_from_origin]
+//     Seven(SevenError<'a>), - if it become inner_error \inner_errors or what logic must implement if its error + inner_error or error + inner_errors
+//     #[error_occurence_from_origin]
+//     Eight(EightError<'a>),
+// }
 enum ErrorOccurenceFromUnnamedEnumField {
     ErrorOccurenceFromOrigin,
     ErrorOccurenceFromWrapper
