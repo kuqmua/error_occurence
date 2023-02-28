@@ -217,6 +217,7 @@ pub fn derive_impl_error_occurence(
                 let variant_ident = &variant.ident;
                 let needed_info = match &variant.fields {
                     syn::Fields::Named(fields_named) => {
+                        let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
                         let named = &fields_named.named;
                         if let false = named.len() == 2 {
                             panic!("{proc_macro_name} {ident_stringified} only works on named fields with length of 2");
@@ -224,7 +225,7 @@ pub fn derive_impl_error_occurence(
                         let first_field = &named[0];
                         let first_field_ident =
                             first_field.ident.clone()
-                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Named syn::Fields::Named first_field_ident is None"));
+                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} first_field_ident is None"));
                         let error_field_name = if first_field_ident == *"error" {
                             ErrorFieldName::Error
                         } else if first_field_ident == *"inner_error" {
@@ -237,7 +238,7 @@ pub fn derive_impl_error_occurence(
                         let second_field = &named[1];
                         let second_field_ident =
                             second_field.ident.clone()
-                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Named syn::Fields::Named second_field_ident is None"));
+                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} second_field_ident is None"));
                         if second_field_ident != *code_occurence_lower_case {
                             panic!("{proc_macro_name} {ident_stringified} only works on enums where variants named second field name == {code_occurence_lower_case}");
                         }
@@ -269,6 +270,16 @@ pub fn derive_impl_error_occurence(
                 second_field_type,
                 error_field_name_token_stream
             )|{
+                let second_field_ident_token_stream = form_code_occurence_deserialize(
+                    second_field_type, 
+                    proc_macro_name, 
+                    &ident_stringified, 
+                    with_deserialize_camel_case, 
+                    parse_proc_macro2_token_stream_failed_message,
+                    code_occurence_camel_case,
+                    lifetime_stringified,
+                    first_field_type_stringified_name
+                );
                 match error_field_name {
                     ErrorFieldName::Error => {
                         logic_for_source_to_string_with_config.push(quote::quote! {
@@ -293,16 +304,6 @@ pub fn derive_impl_error_occurence(
                             } => #second_field_ident
                         });
                         logic_for_enum_with_deserialize.push({
-                            let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                second_field_type, 
-                                proc_macro_name, 
-                                &ident_stringified, 
-                                with_deserialize_camel_case, 
-                                parse_proc_macro2_token_stream_failed_message,
-                                code_occurence_camel_case,
-                                lifetime_stringified,
-                                first_field_type_stringified_name
-                            );
                             quote::quote!{
                                 #variant_ident {
                                     #error_field_name_token_stream: #first_field_type,
@@ -350,7 +351,7 @@ pub fn derive_impl_error_occurence(
                             } => #second_field_ident
                         });
                         logic_for_enum_with_deserialize.push({
-                            let first_field_type_stringified = match first_field_type {
+                            let first_field_type_token_stream = match first_field_type {
                                 syn::Type::Path(type_path_handle) => {
                                     let last_arg_option_lifetime = form_last_arg_lifetime(
                                         type_path_handle, 
@@ -366,23 +367,13 @@ pub fn derive_impl_error_occurence(
                                     });
                                     segments_stringified.pop();
                                     segments_stringified.pop();
-                                    format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
+                                    let first_field_type_stringified = format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}");
+                                    first_field_type_stringified
+                                    .parse::<proc_macro2::TokenStream>()
+                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                 },
                                 _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path"),
                             };
-                            let first_field_type_token_stream = first_field_type_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                            let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                second_field_type, 
-                                proc_macro_name, 
-                                &ident_stringified, 
-                                with_deserialize_camel_case, 
-                                parse_proc_macro2_token_stream_failed_message,
-                                code_occurence_camel_case,
-                                lifetime_stringified,
-                                first_field_type_stringified_name
-                            );
                             quote::quote!{
                                 #variant_ident {
                                     #[serde(borrow)]
@@ -590,16 +581,6 @@ pub fn derive_impl_error_occurence(
                             let first_field_type_with_deserialize_token_stream = first_field_type_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                            let second_field_ident_token_stream = form_code_occurence_deserialize(
-                                second_field_type, 
-                                proc_macro_name, 
-                                &ident_stringified, 
-                                with_deserialize_camel_case, 
-                                parse_proc_macro2_token_stream_failed_message,
-                                code_occurence_camel_case,
-                                lifetime_stringified,
-                                first_field_type_stringified_name
-                            );
                             quote::quote!{
                                 #variant_ident {
                                     #[serde(borrow)]
