@@ -284,22 +284,22 @@ pub fn derive_impl_error_occurence(
                         let second_field_ident_segments_stringified = type_path.path.segments.iter()
                         .fold(String::from(""), |mut acc, path_segment| {
                             let path_segment_ident = &path_segment.ident;
-                            if *path_segment_ident == code_occurence_camel_case {
-                                if code_occurence_checker.is_some() {
-                                    panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
-                                }
-                                let last_arg_option_lifetime = form_last_arg_lifetime(
-                                type_path, 
-                                    proc_macro_name, 
-                                    &ident_stringified,
-                                    lifetime_stringified,
-                                    first_field_type_stringified_name,
-                                );
-                                acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-                                code_occurence_checker = Some(());
-                            }
-                            else {
-                                acc.push_str(&format!("{path_segment_ident}::"));
+                            match *path_segment_ident == code_occurence_camel_case {
+                                true => {
+                                    if code_occurence_checker.is_some() {
+                                        panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
+                                    }
+                                    let last_arg_option_lifetime = form_last_arg_lifetime(
+                                    type_path, 
+                                        proc_macro_name, 
+                                        &ident_stringified,
+                                        lifetime_stringified,
+                                        first_field_type_stringified_name,
+                                    );
+                                    acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                                    code_occurence_checker = Some(());
+                                    },
+                                false => acc.push_str(&format!("{path_segment_ident}::")),
                             }
                             acc
                         });
@@ -459,12 +459,14 @@ pub fn derive_impl_error_occurence(
                         logic_for_enum_with_deserialize.push({
                             let first_field_type_stringified = match first_field_type {
                                 syn::Type::Path(type_path) => {
+                                    let vec_name = "Vec";
+                                    let hashmap_name = "HashMap";
                                     let supported_inner_errors_container =  match type_path.path.segments.last() {
                                         Some(path_segment) => {
-                                            if path_segment.ident == "Vec" {
+                                            if path_segment.ident == vec_name {
                                                 SupportedInnerErrorsContainers::Vec
                                             }
-                                            else if path_segment.ident == "HashMap" {
+                                            else if path_segment.ident == hashmap_name {
                                                 SupportedInnerErrorsContainers::HashMap
                                             }
                                             else {
@@ -479,12 +481,12 @@ pub fn derive_impl_error_occurence(
                                             let type_path_path_segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
                                                 let elem_ident = &elem.ident;
-                                                if *elem_ident == "Vec" {
+                                                if *elem_ident == vec_name {
                                                     if vec_checker.is_some() {
-                                                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one Vec inside type path");
+                                                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one {vec_name} inside type path");
                                                     }
                                                     match &elem.arguments {
-                                                        syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
+                                                        syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for {vec_name}"),
                                                         syn::PathArguments::AngleBracketed(angle_bracketed) => {
                                                             match angle_bracketed.args.len() == 1 {
                                                                 true => {
@@ -499,18 +501,18 @@ pub fn derive_impl_error_occurence(
                                                                                     });
                                                                                     segments_stringified.pop();
                                                                                     segments_stringified.pop();
-                                                                                    acc.push_str(&format!("Vec<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
+                                                                                    acc.push_str(&format!("{vec_name}<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
                                                                                 },
-                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for Vec"),
+                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {vec_name}"),
                                                                             }
                                                                         },
-                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for Vec"),
+                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {vec_name}"),
                                                                     }
                                                                 },
-                                                                false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for Vec"),
+                                                                false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for {vec_name}"),
                                                             }
                                                         },
-                                                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for Vec"),
+                                                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for {vec_name}"),
                                                     }
                                                     vec_checker = Some(());
                                                 }
@@ -526,12 +528,12 @@ pub fn derive_impl_error_occurence(
                                             let type_path_path_segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
                                                 let elem_ident = &elem.ident;
-                                                if *elem_ident == "HashMap" {
+                                                if *elem_ident == hashmap_name {
                                                     if hashmap_checker.is_some() {
-                                                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one HashMap inside type path");
+                                                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one {hashmap_name} inside type path");
                                                     }
                                                     match &elem.arguments {
-                                                        syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
+                                                        syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for {hashmap_name}"),
                                                         syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) => {
                                                             match angle_bracketed_generic_arguments.args.len() == 2 {
                                                                 true => {
@@ -548,10 +550,10 @@ pub fn derive_impl_error_occurence(
                                                                                     segments_stringified.pop();
                                                                                     segments_stringified
                                                                                 },
-                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {hashmap_name}"),
                                                                             }
                                                                         },
-                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {hashmap_name} key"),
                                                                     };
                                                                     let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
                                                                         syn::GenericArgument::Type(type_handle) => {
@@ -573,17 +575,17 @@ pub fn derive_impl_error_occurence(
                                                                                     segments_stringified.pop();
                                                                                     format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
                                                                                 },
-                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
+                                                                                _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {hashmap_name}"),
                                                                             }
                                                                         },
-                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {hashmap_name} value"),
                                                                     };
                                                                     acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
                                                                 },
-                                                                false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for HashMap"),
+                                                                false => panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for {hashmap_name}"),
                                                             }
                                                         },
-                                                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for HashMap"),
+                                                        syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::Parenthesized for {hashmap_name}"),
                                                     }
                                                     hashmap_checker = Some(());
                                                 }
@@ -899,59 +901,3 @@ fn form_last_arg_lifetime(
         None => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None"),
     }
 }
-
-// #[allow(clippy::too_many_arguments)]
-// fn form_code_occurence_deserialize(
-//     second_field_type: &syn::Type, 
-//     proc_macro_name: &str, 
-//     ident_stringified: &String, 
-//     with_deserialize_camel_case: &str,
-//     parse_proc_macro2_token_stream_failed_message: &str,
-//     code_occurence_camel_case: &str,
-//     lifetime_stringified: &str,
-//     first_field_type_stringified_name: &str,
-// ) -> proc_macro2::TokenStream {
-//     let second_field_ident_prep = match second_field_type {
-//         syn::Type::Path(type_path) => {
-//             match type_path.path.segments.last() {
-//                 Some(path_segment) => {
-//                     if let false = path_segment.ident == code_occurence_camel_case {
-//                         panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != {code_occurence_camel_case}");
-//                     }
-//                 },
-//                 None => panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() is None"),
-//             }
-//             let mut code_occurence_checker: Option<()> = None;
-//             let second_field_ident_segments_stringified = type_path.path.segments.iter()
-//             .fold(String::from(""), |mut acc, path_segment| {
-//                 let path_segment_ident = &path_segment.ident;
-//                 if *path_segment_ident == code_occurence_camel_case {
-//                     if code_occurence_checker.is_some() {
-//                         panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
-//                     }
-//                     let last_arg_option_lifetime = form_last_arg_lifetime(
-//                         type_path, 
-//                         proc_macro_name, 
-//                         ident_stringified,
-//                         lifetime_stringified,
-//                         first_field_type_stringified_name,
-//                     );
-//                     acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-//                     code_occurence_checker = Some(());
-//                 }
-//                 else {
-//                     acc.push_str(&format!("{path_segment_ident}::"));
-//                 }
-//                 acc
-//             });
-//             if code_occurence_checker.is_none() {
-//                 panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
-//             }
-//             second_field_ident_segments_stringified
-//         },
-//         _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
-//     };
-//     second_field_ident_prep
-//     .parse::<proc_macro2::TokenStream>()
-//     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} {parse_proc_macro2_token_stream_failed_message}"))
-// }
