@@ -74,6 +74,8 @@ pub fn derive_impl_error_occurence(
     let get_code_occurence_lower_case = format!("get_{code_occurence_lower_case}");
     let crate_traits_fields_stringified = "crate::traits::fields::";
     let crate_traits_error_logs_logic_stringified = "crate::traits::error_logs_logic::";
+    let first_field_type_name = "first_field_type";
+    let first_field_type_stringified_name = "first_field_type_stringified";
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -306,7 +308,8 @@ pub fn derive_impl_error_occurence(
                                 with_deserialize_camel_case, 
                                 parse_proc_macro2_token_stream_failed_message,
                                 code_occurence_camel_case,
-                                lifetime_stringified
+                                lifetime_stringified,
+                                first_field_type_stringified_name
                             );
                             quote::quote!{
                                 #variant_ident {
@@ -362,6 +365,7 @@ pub fn derive_impl_error_occurence(
                                         proc_macro_name, 
                                         &ident_stringified,
                                         lifetime_stringified,
+                                        first_field_type_stringified_name
                                     );
                                     let mut segments_stringified = type_path_handle.path.segments.iter()
                                     .fold(String::from(""), |mut acc, elem| {
@@ -384,7 +388,8 @@ pub fn derive_impl_error_occurence(
                                 with_deserialize_camel_case, 
                                 parse_proc_macro2_token_stream_failed_message,
                                 code_occurence_camel_case,
-                                lifetime_stringified
+                                lifetime_stringified,
+                                first_field_type_stringified_name
                             );
                             quote::quote!{
                                 #variant_ident {
@@ -451,7 +456,7 @@ pub fn derive_impl_error_occurence(
                                                 SupportedInnerErrorsContainers::Other
                                             }
                                         },
-                                        None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
+                                        None => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None"),
                                     };
                                     let first_field_type_prep = match supported_inner_errors_container {
                                         SupportedInnerErrorsContainers::Vec => {
@@ -461,7 +466,7 @@ pub fn derive_impl_error_occurence(
                                                 let elem_ident = &elem.ident;
                                                 if *elem_ident == "Vec" {
                                                     if vec_checker.is_some() {
-                                                        panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one Vec inside type path");
+                                                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one Vec inside type path");
                                                     }
                                                     match &elem.arguments {
                                                         syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for Vec"),
@@ -508,7 +513,7 @@ pub fn derive_impl_error_occurence(
                                                 let elem_ident = &elem.ident;
                                                 if *elem_ident == "HashMap" {
                                                     if hashmap_checker.is_some() {
-                                                        panic!("{proc_macro_name} {ident_stringified} first_field_type detected more than one HashMap inside type path");
+                                                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one HashMap inside type path");
                                                     }
                                                     match &elem.arguments {
                                                         syn::PathArguments::None => panic!("{proc_macro_name} {ident_stringified} first_segment.arguments syn::PathArguments::None for HashMap"),
@@ -516,7 +521,6 @@ pub fn derive_impl_error_occurence(
                                                             match angle_bracketed_generic_arguments.args.len() == 2 {
                                                                 true => {
                                                                     let hashmap_key = match &angle_bracketed_generic_arguments.args[0] {
-                                                                        syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
                                                                         syn::GenericArgument::Type(type_handle) => {
                                                                             match type_handle {
                                                                                 syn::Type::Path(type_path_handle_two) => {
@@ -532,12 +536,9 @@ pub fn derive_impl_error_occurence(
                                                                                 _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
                                                                             }
                                                                         },
-                                                                        syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
-                                                                        syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
+                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap key"),
                                                                     };
                                                                     let hashmap_value = match &angle_bracketed_generic_arguments.args[1] {
-                                                                        syn::GenericArgument::Lifetime(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
                                                                         syn::GenericArgument::Type(type_handle) => {
                                                                             match type_handle {
                                                                                 syn::Type::Path(type_path_handle) => {
@@ -546,6 +547,7 @@ pub fn derive_impl_error_occurence(
                                                                                         proc_macro_name, 
                                                                                         &ident_stringified,
                                                                                         lifetime_stringified,
+                                                                                        first_field_type_stringified_name
                                                                                     );
                                                                                     let mut segments_stringified = type_path_handle.path.segments.iter()
                                                                                     .fold(String::from(""), |mut acc, elem| {
@@ -559,9 +561,7 @@ pub fn derive_impl_error_occurence(
                                                                                 _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for HashMap"),
                                                                             }
                                                                         },
-                                                                        syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
-                                                                        syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
+                                                                        _ => panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for HashMap value"),
                                                                     };
                                                                     acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
                                                                 },
@@ -593,7 +593,7 @@ pub fn derive_impl_error_occurence(
                                     };
                                     first_field_type_prep
                                 },
-                                _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
+                                _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path"),
                             };
                             let first_field_type_with_deserialize_token_stream = first_field_type_stringified
                             .parse::<proc_macro2::TokenStream>()
@@ -605,7 +605,8 @@ pub fn derive_impl_error_occurence(
                                 with_deserialize_camel_case, 
                                 parse_proc_macro2_token_stream_failed_message,
                                 code_occurence_camel_case,
-                                lifetime_stringified
+                                lifetime_stringified,
+                                first_field_type_stringified_name
                             );
                             quote::quote!{
                                 #variant_ident {
@@ -776,7 +777,7 @@ pub fn derive_impl_error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {variant_type_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))                                         
                         },
-                        _ => panic!("{proc_macro_name} {ident_stringified} first_field_type supports only syn::Type::Path"),
+                        _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path"),
                     };
                     quote::quote!{
                         #[serde(borrow)]
@@ -847,8 +848,6 @@ pub fn derive_impl_error_occurence(
             }
         },
     };
-    //todo - maybe add flag to implement display or not
-    //todo maybe add derive helper attribute for display in macro like in thiserror? (only for error and not for inner_error and inner_errors)
     let display_generated = quote::quote! {
         impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -874,6 +873,7 @@ fn form_last_arg_lifetime(
     proc_macro_name: &str, 
     ident_stringified: &String,
     lifetime_stringified: &str,
+    first_field_type_stringified_name: &str,
 ) -> String {
     match type_path_handle.path.segments.last() {
         Some(path_segment) => {
@@ -881,23 +881,21 @@ fn form_last_arg_lifetime(
                 syn::PathArguments::None => String::from(""),
                 syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
                     if let false = angle_bracketed_generic_argument.args.len() == 1 {
-                        panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified angle_bracketed_generic_argument.args.len() != 1");
+                        panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} angle_bracketed_generic_argument.args.len() != 1");
                     }
                     match &angle_bracketed_generic_argument.args[0] {
                         syn::GenericArgument::Lifetime(_) => format!("<{lifetime_stringified}>"),
-                        syn::GenericArgument::Type(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Type"),
-                        syn::GenericArgument::Const(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Const"),
-                        syn::GenericArgument::Binding(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Binding"),
-                        syn::GenericArgument::Constraint(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() angle_bracketed_generic_argument.args[0] unexpected syn::GenericArgument::Constraint"),
+                        _  => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime"),
                     }
                 },
-                syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
+                syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
             }
         },
-        None => panic!("{proc_macro_name} {ident_stringified} first_field_type_stringified type_path.path.segments.last() is None"),
+        None => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None"),
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn form_code_occurence_deserialize(
     second_field_type: &syn::Type, 
     proc_macro_name: &str, 
@@ -905,7 +903,8 @@ fn form_code_occurence_deserialize(
     with_deserialize_camel_case: &str,
     parse_proc_macro2_token_stream_failed_message: &str,
     code_occurence_camel_case: &str,
-    lifetime_stringified: &str
+    lifetime_stringified: &str,
+    first_field_type_stringified_name: &str,
 ) -> proc_macro2::TokenStream {
     let second_field_ident_prep = match second_field_type {
         syn::Type::Path(type_path) => {
@@ -930,6 +929,7 @@ fn form_code_occurence_deserialize(
                         proc_macro_name, 
                         ident_stringified,
                         lifetime_stringified,
+                        first_field_type_stringified_name,
                     );
                     acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
                     code_occurence_checker = Some(());
