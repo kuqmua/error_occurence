@@ -213,6 +213,8 @@ pub fn derive_impl_error_occurence(
     };
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
+            let vec_name = "Vec";
+            let hashmap_name = "HashMap";
             let vec_needed_info = data_enum.variants.iter().map(|variant| {
                 let variant_ident = &variant.ident;
                 let needed_info = match &variant.fields {
@@ -457,10 +459,8 @@ pub fn derive_impl_error_occurence(
                             } => #second_field_ident
                         });
                         logic_for_enum_with_deserialize.push({
-                            let first_field_type_stringified = match first_field_type {
+                            let first_field_type_with_deserialize_token_stream = match first_field_type {
                                 syn::Type::Path(type_path) => {
-                                    let vec_name = "Vec";
-                                    let hashmap_name = "HashMap";
                                     let supported_inner_errors_container =  match type_path.path.segments.last() {
                                         Some(path_segment) => {
                                             if path_segment.ident == vec_name {
@@ -475,7 +475,7 @@ pub fn derive_impl_error_occurence(
                                         },
                                         None => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None"),
                                     };
-                                    let first_field_type_prep = match supported_inner_errors_container {
+                                    let first_field_type_stringified = match supported_inner_errors_container {
                                         SupportedInnerErrorsContainers::Vec => {
                                             let mut vec_checker: Option<()> = None;
                                             let type_path_path_segments_stringified = type_path.path.segments.iter()
@@ -608,13 +608,12 @@ pub fn derive_impl_error_occurence(
                                             type_path_path_segments_stringified
                                         },
                                     };
-                                    first_field_type_prep
+                                    first_field_type_stringified
+                                    .parse::<proc_macro2::TokenStream>()
+                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                 },
                                 _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path"),
                             };
-                            let first_field_type_with_deserialize_token_stream = first_field_type_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             quote::quote!{
                                 #variant_ident {
                                     #[serde(borrow)]
@@ -855,7 +854,7 @@ pub fn derive_impl_error_occurence(
             }
         },
     };
-    let display_generated = quote::quote! {
+    quote::quote! {
         impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
@@ -868,9 +867,6 @@ pub fn derive_impl_error_occurence(
                 write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
             }
         }
-    };
-    quote::quote! {
-        #display_generated
         #generated_impl_with_deserialize_alternatives
     }.into()
 }
