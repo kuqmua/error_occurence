@@ -270,16 +270,48 @@ pub fn derive_impl_error_occurence(
                 second_field_type,
                 error_field_name_token_stream
             )|{
-                let second_field_ident_token_stream = form_code_occurence_deserialize(
-                    second_field_type, 
-                    proc_macro_name, 
-                    &ident_stringified, 
-                    with_deserialize_camel_case, 
-                    parse_proc_macro2_token_stream_failed_message,
-                    code_occurence_camel_case,
-                    lifetime_stringified,
-                    first_field_type_stringified_name
-                );
+                let second_field_ident_token_stream = match second_field_type {
+                    syn::Type::Path(type_path) => {
+                        match type_path.path.segments.last() {
+                            Some(path_segment) => {
+                                if let false = path_segment.ident == code_occurence_camel_case {
+                                    panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != {code_occurence_camel_case}");
+                                }
+                            },
+                            None => panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() is None"),
+                        }
+                        let mut code_occurence_checker: Option<()> = None;
+                        let second_field_ident_segments_stringified = type_path.path.segments.iter()
+                        .fold(String::from(""), |mut acc, path_segment| {
+                            let path_segment_ident = &path_segment.ident;
+                            if *path_segment_ident == code_occurence_camel_case {
+                                if code_occurence_checker.is_some() {
+                                    panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
+                                }
+                                let last_arg_option_lifetime = form_last_arg_lifetime(
+                                type_path, 
+                                    proc_macro_name, 
+                                    &ident_stringified,
+                                    lifetime_stringified,
+                                    first_field_type_stringified_name,
+                                );
+                                acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                                code_occurence_checker = Some(());
+                            }
+                            else {
+                                acc.push_str(&format!("{path_segment_ident}::"));
+                            }
+                            acc
+                        });
+                        if code_occurence_checker.is_none() {
+                            panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
+                        }
+                        second_field_ident_segments_stringified
+                        .parse::<proc_macro2::TokenStream>()
+                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                    },
+                    _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
+                };
                 match error_field_name {
                     ErrorFieldName::Error => {
                         logic_for_source_to_string_with_config.push(quote::quote! {
@@ -868,58 +900,58 @@ fn form_last_arg_lifetime(
     }
 }
 
-#[allow(clippy::too_many_arguments)]
-fn form_code_occurence_deserialize(
-    second_field_type: &syn::Type, 
-    proc_macro_name: &str, 
-    ident_stringified: &String, 
-    with_deserialize_camel_case: &str,
-    parse_proc_macro2_token_stream_failed_message: &str,
-    code_occurence_camel_case: &str,
-    lifetime_stringified: &str,
-    first_field_type_stringified_name: &str,
-) -> proc_macro2::TokenStream {
-    let second_field_ident_prep = match second_field_type {
-        syn::Type::Path(type_path) => {
-            match type_path.path.segments.last() {
-                Some(path_segment) => {
-                    if let false = path_segment.ident == code_occurence_camel_case {
-                        panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != {code_occurence_camel_case}");
-                    }
-                },
-                None => panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() is None"),
-            }
-            let mut code_occurence_checker: Option<()> = None;
-            let second_field_ident_segments_stringified = type_path.path.segments.iter()
-            .fold(String::from(""), |mut acc, path_segment| {
-                let path_segment_ident = &path_segment.ident;
-                if *path_segment_ident == code_occurence_camel_case {
-                    if code_occurence_checker.is_some() {
-                        panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
-                    }
-                    let last_arg_option_lifetime = form_last_arg_lifetime(
-                        type_path, 
-                        proc_macro_name, 
-                        ident_stringified,
-                        lifetime_stringified,
-                        first_field_type_stringified_name,
-                    );
-                    acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-                    code_occurence_checker = Some(());
-                }
-                else {
-                    acc.push_str(&format!("{path_segment_ident}::"));
-                }
-                acc
-            });
-            if code_occurence_checker.is_none() {
-                panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
-            }
-            second_field_ident_segments_stringified
-        },
-        _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
-    };
-    second_field_ident_prep
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} {parse_proc_macro2_token_stream_failed_message}"))
-}
+// #[allow(clippy::too_many_arguments)]
+// fn form_code_occurence_deserialize(
+//     second_field_type: &syn::Type, 
+//     proc_macro_name: &str, 
+//     ident_stringified: &String, 
+//     with_deserialize_camel_case: &str,
+//     parse_proc_macro2_token_stream_failed_message: &str,
+//     code_occurence_camel_case: &str,
+//     lifetime_stringified: &str,
+//     first_field_type_stringified_name: &str,
+// ) -> proc_macro2::TokenStream {
+//     let second_field_ident_prep = match second_field_type {
+//         syn::Type::Path(type_path) => {
+//             match type_path.path.segments.last() {
+//                 Some(path_segment) => {
+//                     if let false = path_segment.ident == code_occurence_camel_case {
+//                         panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != {code_occurence_camel_case}");
+//                     }
+//                 },
+//                 None => panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() is None"),
+//             }
+//             let mut code_occurence_checker: Option<()> = None;
+//             let second_field_ident_segments_stringified = type_path.path.segments.iter()
+//             .fold(String::from(""), |mut acc, path_segment| {
+//                 let path_segment_ident = &path_segment.ident;
+//                 if *path_segment_ident == code_occurence_camel_case {
+//                     if code_occurence_checker.is_some() {
+//                         panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
+//                     }
+//                     let last_arg_option_lifetime = form_last_arg_lifetime(
+//                         type_path, 
+//                         proc_macro_name, 
+//                         ident_stringified,
+//                         lifetime_stringified,
+//                         first_field_type_stringified_name,
+//                     );
+//                     acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+//                     code_occurence_checker = Some(());
+//                 }
+//                 else {
+//                     acc.push_str(&format!("{path_segment_ident}::"));
+//                 }
+//                 acc
+//             });
+//             if code_occurence_checker.is_none() {
+//                 panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
+//             }
+//             second_field_ident_segments_stringified
+//         },
+//         _ => panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path"),
+//     };
+//     second_field_ident_prep
+//     .parse::<proc_macro2::TokenStream>()
+//     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_prep} {parse_proc_macro2_token_stream_failed_message}"))
+// }
