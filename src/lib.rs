@@ -36,7 +36,7 @@ enum SupportedInnerErrorsContainers {
     Other
 }
 
-#[proc_macro_derive(ImplErrorOccurence)]
+#[proc_macro_derive(ImplErrorOccurence, attributes(display_is_not_implemented))]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -72,8 +72,13 @@ pub fn derive_impl_error_occurence(
     let code_occurence_camel_case = "CodeOccurence";
     let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let get_code_occurence_lower_case = format!("get_{code_occurence_lower_case}");
-    let crate_traits_fields_stringified = "crate::traits::fields::";
-    let crate_traits_error_logs_logic_stringified = "crate::traits::error_logs_logic::";
+    let crate_traits_stringified = "crate::traits::";
+    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}display_foreign_type::DisplayForeignType");
+    let crate_traits_display_foreign_type_display_foreign_type_token_stream = crate_traits_display_foreign_type_display_foreign_type_stringified
+    .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_fields_stringified = format!("{crate_traits_stringified}fields::");
+    let crate_traits_error_logs_logic_stringified = format!("{crate_traits_stringified}error_logs_logic::");
     let first_field_type_name = "first_field_type";
     let first_field_type_stringified_name = "first_field_type_stringified";
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
@@ -92,7 +97,7 @@ pub fn derive_impl_error_occurence(
     let crate_traits_fields_get_timezone_token_stream = 
     crate_traits_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_fields_get_timezone_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_get_server_address_get_server_address_stringified = "crate::traits::get_server_address::GetServerAddress";
+    let crate_traits_get_server_address_get_server_address_stringified = format!("{crate_traits_stringified}get_server_address::GetServerAddress");
     let crate_traits_get_server_address_get_server_address_token_stream = 
     crate_traits_get_server_address_get_server_address_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_stringified} {crate_traits_get_server_address_get_server_address_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -228,12 +233,29 @@ pub fn derive_impl_error_occurence(
                         let first_field_ident =
                             first_field.ident.clone()
                             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} first_field_ident is None"));
-                        let error_field_name = if first_field_ident == *"error" {
-                            ErrorFieldName::Error
+                        let (error_field_name, is_display_not_implemented_option) = if first_field_ident == *"error" {
+                            let is_display_not_implemented_option = if first_field.attrs.is_empty() {
+                                Some(false)
+                            }
+                            else if first_field.attrs.len() == 1 {
+                                let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
+                                println!("{:#?}", attribute.path.segments);
+                                if let true = attribute.path.segments.len() != 1 {
+                                    panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
+                                }
+                                match attribute.path.segments[0].ident == "display_is_not_implemented" {
+                                    true => Some(true),
+                                    false => panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != display_is_not_implemented"),
+                                }
+                            }
+                            else {
+                                panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[display_implemented] or nothing")
+                            };
+                            (ErrorFieldName::Error, is_display_not_implemented_option)
                         } else if first_field_ident == *"inner_error" {
-                            ErrorFieldName::InnerError
+                            (ErrorFieldName::InnerError, None)
                         } else if first_field_ident == *"inner_errors" {
-                            ErrorFieldName::InnerErrors
+                            (ErrorFieldName::InnerErrors, None)
                         } else {
                             panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
                         };
@@ -248,13 +270,14 @@ pub fn derive_impl_error_occurence(
                         let error_field_name_token_stream = error_field_name_stringified
                         .parse::<proc_macro2::TokenStream>()
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                        (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream)
+                        (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream, is_display_not_implemented_option)
                     },
                     syn::Fields::Unnamed(_) => panic!("{proc_macro_name} {ident_stringified} expected field to be named"),
                     _ => panic!("{proc_macro_name} {ident_stringified} expected fields would be named"),
                 };
-                (variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3, needed_info.4)
-            }).collect::<Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type, proc_macro2::TokenStream)>>();
+
+                (variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3, needed_info.4, needed_info.5)
+            }).collect::<Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type, proc_macro2::TokenStream, Option<bool>)>>();
             if let true = vec_needed_info.is_empty() {
                 panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
             }
@@ -270,7 +293,8 @@ pub fn derive_impl_error_occurence(
                 first_field_type,
                 second_field_ident, 
                 second_field_type,
-                error_field_name_token_stream
+                error_field_name_token_stream,
+                is_display_not_implemented_option
             )|{
                 let second_field_ident_token_stream = match second_field_type {
                     syn::Type::Path(type_path) => {
@@ -325,12 +349,30 @@ pub fn derive_impl_error_occurence(
                                 self.#source_to_string_without_config_token_stream()
                             }
                         });
-                        logic_for_source_to_string_without_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #second_field_ident: _unused_second_argument,
-                            } => #error_field_name_token_stream.to_string()
-                        });
+                        match is_display_not_implemented_option {
+                            Some(is_display_not_implemented) => match is_display_not_implemented {
+                                true => {
+                                    logic_for_source_to_string_without_config.push(quote::quote! {
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream,
+                                            #second_field_ident: _unused_second_argument,
+                                        } => {
+                                            use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                            #error_field_name_token_stream.display_foreign_type()
+                                        }
+                                    });
+                                },
+                                false => {
+                                    logic_for_source_to_string_without_config.push(quote::quote! {
+                                        #ident::#variant_ident {
+                                            #error_field_name_token_stream,
+                                            #second_field_ident: _unused_second_argument,
+                                        } => #error_field_name_token_stream.to_string()
+                                    });
+                                },
+                            },
+                            None => panic!("{proc_macro_name} {ident_stringified} is_display_not_implemented_option unexpected logic"),
+                        };
                         logic_for_get_code_occurence.push(quote::quote!{
                             #ident::#variant_ident {
                                 #error_field_name_token_stream: _unused_first_argument,
@@ -340,7 +382,7 @@ pub fn derive_impl_error_occurence(
                         logic_for_enum_with_deserialize.push({
                             quote::quote!{
                                 #variant_ident {
-                                    #error_field_name_token_stream: #first_field_type,
+                                    #error_field_name_token_stream: String,//#first_field_type,
                                     #[serde(borrow)]
                                     #second_field_ident: #second_field_ident_token_stream
                                 }
@@ -854,7 +896,7 @@ pub fn derive_impl_error_occurence(
             }
         },
     };
-    quote::quote! {
+    let uuu = quote::quote! {
         impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
@@ -868,7 +910,9 @@ pub fn derive_impl_error_occurence(
             }
         }
         #generated_impl_with_deserialize_alternatives
-    }.into()
+    };
+    println!("{}", uuu);
+    uuu.into()
 }
 
 fn form_last_arg_lifetime(
