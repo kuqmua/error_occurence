@@ -239,13 +239,13 @@ pub fn derive_impl_error_occurence(
                             }
                             else if first_field.attrs.len() == 1 {
                                 let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
-                                println!("{:#?}", attribute.path.segments);
                                 if let true = attribute.path.segments.len() != 1 {
                                     panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
                                 }
-                                match attribute.path.segments[0].ident == "display_is_not_implemented" {
+                                let attribute_name = "display_is_not_implemented";
+                                match attribute.path.segments[0].ident == attribute_name {
                                     true => Some(true),
-                                    false => panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != display_is_not_implemented"),
+                                    false => panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {attribute_name}"),
                                 }
                             }
                             else {
