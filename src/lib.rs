@@ -373,15 +373,12 @@ pub fn derive_impl_error_occurence(
                         let is_display_foreign_type = is_display_foreign_type_option
                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_foreign_type_option unexpected logic"));
                         let to_string_or_display_foreign_type_method_token_stream = match is_display_foreign_type {
-                            true => {
-                                display_foreign_type_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                            true => quote::quote!{
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;//todo - maybe useless in case of to_string()
+                                #error_field_name_token_stream.#display_foreign_type_token_stream()
                             },
-                            false => {
-                                to_string_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                            false => quote::quote!{
+                                #error_field_name_token_stream.#to_string_token_stream()
                             },
                         };
                         logic_for_source_to_string_without_config.push(quote::quote! {
@@ -389,8 +386,7 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #second_field_ident: _unused_second_argument,
                             } => {
-                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;//todo - maybe useless in case of to_string()
-                                #error_field_name_token_stream.#to_string_or_display_foreign_type_method_token_stream()
+                                #to_string_or_display_foreign_type_method_token_stream
                             }
                         });
                         logic_for_get_code_occurence.push(quote::quote!{
@@ -425,9 +421,10 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #second_field_ident,
                             } => {
-                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;//todo - maybe useless in case of to_string()
                                 #ident_with_deserialize_token_stream::#variant_ident {
-                                    #error_field_name_token_stream: #error_field_name_token_stream.#to_string_or_display_foreign_type_method_token_stream(),
+                                    #error_field_name_token_stream: {
+                                        #to_string_or_display_foreign_type_method_token_stream
+                                    },
                                     #second_field_ident: #second_field_ident.#into_serialize_deserialize_version_token_stream(),
                                 }
                             }
