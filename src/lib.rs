@@ -35,7 +35,7 @@ enum SupportedInnerErrorsContainers {
     HashMap,
 }
 
-#[proc_macro_derive(ImplErrorOccurence, attributes(display_is_not_implemented))]
+#[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type))]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -249,7 +249,7 @@ pub fn derive_impl_error_occurence(
                             if let true = attribute.path.segments.len() != 1 {
                                 panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
                             }
-                            let attribute_name = "display_is_not_implemented";
+                            let attribute_name = "display_foreign_type";
                             if let true = attribute.path.segments[0].ident == attribute_name {
                                 Some(true)
                             }
@@ -959,7 +959,7 @@ pub fn derive_impl_error_occurence(
             }
         },
     };
-    quote::quote! {
+    let uuu = quote::quote! {
         impl<#lifetime_token_stream> std::fmt::Display for #ident<#lifetime_token_stream> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
@@ -973,7 +973,9 @@ pub fn derive_impl_error_occurence(
             }
         }
         #generated_impl_with_deserialize_alternatives
-    }.into()
+    };
+    // println!("{uuu}");
+    uuu.into()
 }
 
 fn form_last_arg_lifetime(
