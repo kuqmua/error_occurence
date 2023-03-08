@@ -35,7 +35,7 @@ enum SupportedInnerErrorsContainers {
     HashMap,
 }
 
-#[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type))]
+#[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type, origin))]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -44,6 +44,7 @@ pub fn derive_impl_error_occurence(
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
+    let display_foreign_type_stringified = "display_foreign_type";
     let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
     let lifetime_stringified = "'a";
     let lifetime_token_stream = lifetime_stringified
@@ -72,7 +73,7 @@ pub fn derive_impl_error_occurence(
     let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let get_code_occurence_lower_case = format!("get_{code_occurence_lower_case}");
     let crate_traits_stringified = "crate::traits::";
-    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}display_foreign_type::DisplayForeignType");
+    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}{display_foreign_type_stringified}::DisplayForeignType");
     let crate_traits_display_foreign_type_display_foreign_type_token_stream = crate_traits_display_foreign_type_display_foreign_type_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -249,7 +250,7 @@ pub fn derive_impl_error_occurence(
                             if let true = attribute.path.segments.len() != 1 {
                                 panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
                             }
-                            let attribute_name = "display_foreign_type";
+                            let attribute_name = display_foreign_type_stringified;
                             if let true = attribute.path.segments[0].ident == attribute_name {
                                 Some(true)
                             }
@@ -258,7 +259,7 @@ pub fn derive_impl_error_occurence(
                             }
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[display_implemented] or nothing")
+                            panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing")
                         };
                         (ErrorFieldName::Error, is_display_not_implemented_option)
                     } else if first_field_ident == *"inner_error" {
@@ -359,7 +360,7 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_not_implemented_option unexpected logic"));
                         let is_display_not_implemented_method_token_stream = match is_display_not_implemented {
                             true => {
-                                let display_foreign_type_stringified = "display_foreign_type";
+                                let display_foreign_type_stringified = display_foreign_type_stringified;
                                 display_foreign_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -825,6 +826,40 @@ pub fn derive_impl_error_occurence(
         },
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
+                println!("{:#?}", variant);
+                // //
+                // let mut is_origin_attribute_exists = false;
+                // let (is_origin_attribute_exists, is_display_foreign_type_attribute_exists) = match variant.attrs.len() {
+                //     0 => (false, false),
+                //     1 => {
+                //         let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
+                //     }
+                //     _ => {
+                //         panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing");
+                //     } 
+                // };
+                // //
+                // let is_display_not_implemented_option = if variant.attrs.is_empty() {
+                //     Some(false)
+                // }
+                // else if first_field.attrs.len() == 1 {
+                //     let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
+                //     if let true = attribute.path.segments.len() != 1 {
+                //         panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
+                //     }
+                //     let attribute_name = "origin";
+                //     if let true = attribute.path.segments[0].ident == attribute_name {
+                //         Some(true)
+                //     }
+                //     else {
+                //         panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {attribute_name}");
+                //     }
+                // }
+                // else {
+                //     panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing")
+                // };
+                //         // (ErrorFieldName::Error, is_display_not_implemented_option)
+                // //
                 let type_handle = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
                     let unnamed = &fields_unnamed.unnamed;
                     if let false = unnamed.len() == 1 {
