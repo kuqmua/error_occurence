@@ -36,13 +36,12 @@ enum SupportedInnerErrorsContainers {
 }
 
 enum Attributes {
-    Origin,
+    ToString,
     DisplayForeignType,
-    OriginAndDisplayForeignType,
-    NoAttributes,
+    NotSpecified,
 }
 
-#[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type, origin))]
+#[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type, to_string))]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -51,13 +50,20 @@ pub fn derive_impl_error_occurence(
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
-    let origin_stringified = "origin";
-    let display_foreign_type_stringified = "display_foreign_type";
     let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
     let lifetime_stringified = "'a";
     let lifetime_token_stream = lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let to_string_stringified = "to_string";
+    let to_string_token_stream = 
+    to_string_stringified
+        .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let display_foreign_type_stringified = "display_foreign_type";
+    let display_foreign_type_token_stream = display_foreign_type_stringified
+        .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let with_deserialize_camel_case = "WithDeserialize";
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
@@ -249,9 +255,9 @@ pub fn derive_impl_error_occurence(
                     let first_field_ident =
                         first_field.ident.clone()
                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} first_field_ident is None"));
-                    let (error_field_name, is_display_not_implemented_option) = if first_field_ident == *"error" {
+                    let (error_field_name, is_display_foreign_type_option) = if first_field_ident == *"error" {
                         //todo - this must be check on 0, 1, 2 attr elements
-                        let is_display_not_implemented_option = if first_field.attrs.is_empty() {
+                        let is_display_foreign_type_option = if first_field.attrs.is_empty() {
                             Some(false)
                         }
                         else if first_field.attrs.len() == 1 {
@@ -269,7 +275,7 @@ pub fn derive_impl_error_occurence(
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing")
                         };
-                        (ErrorFieldName::Error, is_display_not_implemented_option)
+                        (ErrorFieldName::Error, is_display_foreign_type_option)
                     } else if first_field_ident == *"inner_error" {
                         (ErrorFieldName::InnerError, None)
                     } else if first_field_ident == *"inner_errors" {
@@ -288,7 +294,7 @@ pub fn derive_impl_error_occurence(
                     let error_field_name_token_stream = error_field_name_stringified
                     .parse::<proc_macro2::TokenStream>()
                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                    (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream, is_display_not_implemented_option)
+                    (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream, is_display_foreign_type_option)
                 }
                 else {
                     panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
@@ -309,7 +315,7 @@ pub fn derive_impl_error_occurence(
                 second_field_ident, 
                 second_field_type,
                 error_field_name_token_stream,
-                is_display_not_implemented_option
+                is_display_foreign_type_option
             )|{
                 let second_field_ident_token_stream = if let syn::Type::Path(type_path) = second_field_type {
                     if let Some(path_segment) = type_path.path.segments.last() {
@@ -364,17 +370,15 @@ pub fn derive_impl_error_occurence(
                                 self.#source_to_string_without_config_token_stream()
                             }
                         });
-                        let is_display_not_implemented = is_display_not_implemented_option
-                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_not_implemented_option unexpected logic"));
-                        let is_display_not_implemented_method_token_stream = match is_display_not_implemented {
+                        let is_display_foreign_type = is_display_foreign_type_option
+                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_foreign_type_option unexpected logic"));
+                        let to_string_or_display_foreign_type_method_token_stream = match is_display_foreign_type {
                             true => {
-                                let display_foreign_type_stringified = display_foreign_type_stringified;
                                 display_foreign_type_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                             },
                             false => {
-                                let to_string_stringified = "to_string";
                                 to_string_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -385,8 +389,8 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #second_field_ident: _unused_second_argument,
                             } => {
-                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                #error_field_name_token_stream.#is_display_not_implemented_method_token_stream()
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;//todo - maybe useless in case of to_string()
+                                #error_field_name_token_stream.#to_string_or_display_foreign_type_method_token_stream()
                             }
                         });
                         logic_for_get_code_occurence.push(quote::quote!{
@@ -421,9 +425,9 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #second_field_ident,
                             } => {
-                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;//todo - maybe useless in case of to_string()
                                 #ident_with_deserialize_token_stream::#variant_ident {
-                                    #error_field_name_token_stream: #error_field_name_token_stream.#is_display_not_implemented_method_token_stream(),
+                                    #error_field_name_token_stream: #error_field_name_token_stream.#to_string_or_display_foreign_type_method_token_stream(),
                                     #second_field_ident: #second_field_ident.#into_serialize_deserialize_version_token_stream(),
                                 }
                             }
@@ -834,51 +838,21 @@ pub fn derive_impl_error_occurence(
         },
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
-                println!("{:#?}", variant);
                 let attributes = match variant.attrs.len() {
-                    0 => Attributes::NoAttributes,
+                    0 => Attributes::NotSpecified,
                     1 => {
                         let first_attribute = variant.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} cannot get first variant attribute"));
                         if let true = first_attribute.path.segments.len() != 1 {
                             panic!("{proc_macro_name} {ident_stringified} first attribute.path.segments.len() != 1");
                         }
-                        if let true = first_attribute.path.segments[0].ident == origin_stringified {
-                            Attributes::Origin
+                        if let true = first_attribute.path.segments[0].ident == to_string_stringified {
+                            Attributes::ToString
                         }
                         else if let true = first_attribute.path.segments[0].ident == display_foreign_type_stringified {
                             Attributes::DisplayForeignType
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {origin_stringified} or {display_foreign_type_stringified}");
-                        }
-                    }
-                    2 => {
-                        let first_attribute = variant.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} cannot get first variant attribute"));
-                        if let true = first_attribute.path.segments.len() != 1 {
-                            panic!("{proc_macro_name} {ident_stringified} first attribute.path.segments.len() != 1");
-                        }
-                        let second_attribute = variant.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} cannot get second variant attribute"));
-                        if let true = second_attribute.path.segments.len() != 1 {
-                            panic!("{proc_macro_name} {ident_stringified} second attribute.path.segments.len() != 1");
-                        }
-                        let helper = "(ordering matters: first - origin, second - display_foreign_type)";
-                        let is_origin_attribute = if let true = first_attribute.path.segments[0].ident == origin_stringified {
-                            true
-                        }
-                        else {
-                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {origin_stringified} {helper}");
-                        };
-                        let is_display_foreign_type_attribute = if let true = second_attribute.path.segments[0].ident == display_foreign_type_stringified {
-                            true
-                        }
-                        else {
-                            panic!("{proc_macro_name} {ident_stringified} second_attribute.path.segments[0].ident != {display_foreign_type_stringified} {helper}");
-                        };
-                        match (is_origin_attribute, is_display_foreign_type_attribute) {
-                            (true, true) => Attributes::OriginAndDisplayForeignType,
-                            (true, false) => Attributes::Origin,
-                            (false, true) => Attributes::DisplayForeignType,
-                            (false, false) => Attributes::NoAttributes,
+                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {to_string_stringified} or {display_foreign_type_stringified}");
                         }
                     }
                     _ => {
@@ -907,6 +881,77 @@ pub fn derive_impl_error_occurence(
                 first_field_type, 
                 attributes
             )|{
+                // logic_for_to_string_with_config_for_source_to_string_with_config
+                // logic_for_to_string_without_config
+                // logic_for_enum_with_deserialize
+                // logic_for_to_string_without_config_with_deserialize
+                // logic_for_into_serialize_deserialize_version
+                let (
+                    logic_for_to_string_with_config_for_source_to_string_with_config_inner,
+                    logic_for_to_string_without_config_inner,
+                    logic_for_enum_with_deserialize_inner,
+                    logic_for_to_string_without_config_with_deserialize_inner,
+                    logic_for_into_serialize_deserialize_version_inner,
+                ) = match attributes {
+                    Attributes::ToString => {
+                        (
+                            quote::quote!{
+                                i.#to_string_token_stream()
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+                    },
+                    Attributes::DisplayForeignType => {
+                        (
+                            quote::quote!{
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                i.#display_foreign_type_token_stream()
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+                    },
+                    Attributes::NotSpecified => {
+                        (
+                            quote::quote!{
+                                i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+                    },
+                };
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
                     quote::quote!{
                         #ident::#variant_ident(i) => {
