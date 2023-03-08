@@ -35,6 +35,13 @@ enum SupportedInnerErrorsContainers {
     HashMap,
 }
 
+enum Attributes {
+    Origin,
+    DisplayForeignType,
+    OriginAndDisplayForeignType,
+    NoAttributes,
+}
+
 #[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type, origin))]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
@@ -44,6 +51,7 @@ pub fn derive_impl_error_occurence(
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
+    let origin_stringified = "origin";
     let display_foreign_type_stringified = "display_foreign_type";
     let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
     let lifetime_stringified = "'a";
@@ -242,6 +250,7 @@ pub fn derive_impl_error_occurence(
                         first_field.ident.clone()
                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} first_field_ident is None"));
                     let (error_field_name, is_display_not_implemented_option) = if first_field_ident == *"error" {
+                        //todo - this must be check on 0, 1, 2 attr elements
                         let is_display_not_implemented_option = if first_field.attrs.is_empty() {
                             Some(false)
                         }
@@ -250,12 +259,11 @@ pub fn derive_impl_error_occurence(
                             if let true = attribute.path.segments.len() != 1 {
                                 panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
                             }
-                            let attribute_name = display_foreign_type_stringified;
-                            if let true = attribute.path.segments[0].ident == attribute_name {
+                            if let true = attribute.path.segments[0].ident == display_foreign_type_stringified {
                                 Some(true)
                             }
                             else {
-                                panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {attribute_name}");
+                                panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {display_foreign_type_stringified}");
                             }
                         }
                         else {
@@ -827,39 +835,56 @@ pub fn derive_impl_error_occurence(
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
                 println!("{:#?}", variant);
-                // //
-                // let mut is_origin_attribute_exists = false;
-                // let (is_origin_attribute_exists, is_display_foreign_type_attribute_exists) = match variant.attrs.len() {
-                //     0 => (false, false),
-                //     1 => {
-                //         let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
-                //     }
-                //     _ => {
-                //         panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing");
-                //     } 
-                // };
-                // //
-                // let is_display_not_implemented_option = if variant.attrs.is_empty() {
-                //     Some(false)
-                // }
-                // else if first_field.attrs.len() == 1 {
-                //     let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
-                //     if let true = attribute.path.segments.len() != 1 {
-                //         panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
-                //     }
-                //     let attribute_name = "origin";
-                //     if let true = attribute.path.segments[0].ident == attribute_name {
-                //         Some(true)
-                //     }
-                //     else {
-                //         panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {attribute_name}");
-                //     }
-                // }
-                // else {
-                //     panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing")
-                // };
-                //         // (ErrorFieldName::Error, is_display_not_implemented_option)
-                // //
+                let attributes = match variant.attrs.len() {
+                    0 => Attributes::NoAttributes,
+                    1 => {
+                        let first_attribute = variant.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} cannot get first variant attribute"));
+                        if let true = first_attribute.path.segments.len() != 1 {
+                            panic!("{proc_macro_name} {ident_stringified} first attribute.path.segments.len() != 1");
+                        }
+                        if let true = first_attribute.path.segments[0].ident == origin_stringified {
+                            Attributes::Origin
+                        }
+                        else if let true = first_attribute.path.segments[0].ident == display_foreign_type_stringified {
+                            Attributes::DisplayForeignType
+                        }
+                        else {
+                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {origin_stringified} or {display_foreign_type_stringified}");
+                        }
+                    }
+                    2 => {
+                        let first_attribute = variant.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} cannot get first variant attribute"));
+                        if let true = first_attribute.path.segments.len() != 1 {
+                            panic!("{proc_macro_name} {ident_stringified} first attribute.path.segments.len() != 1");
+                        }
+                        let second_attribute = variant.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} cannot get second variant attribute"));
+                        if let true = second_attribute.path.segments.len() != 1 {
+                            panic!("{proc_macro_name} {ident_stringified} second attribute.path.segments.len() != 1");
+                        }
+                        let helper = "(ordering matters: first - origin, second - display_foreign_type)";
+                        let is_origin_attribute = if let true = first_attribute.path.segments[0].ident == origin_stringified {
+                            true
+                        }
+                        else {
+                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {origin_stringified} {helper}");
+                        };
+                        let is_display_foreign_type_attribute = if let true = second_attribute.path.segments[0].ident == display_foreign_type_stringified {
+                            true
+                        }
+                        else {
+                            panic!("{proc_macro_name} {ident_stringified} second_attribute.path.segments[0].ident != {display_foreign_type_stringified} {helper}");
+                        };
+                        match (is_origin_attribute, is_display_foreign_type_attribute) {
+                            (true, true) => Attributes::OriginAndDisplayForeignType,
+                            (true, false) => Attributes::Origin,
+                            (false, true) => Attributes::DisplayForeignType,
+                            (false, false) => Attributes::NoAttributes,
+                        }
+                    }
+                    _ => {
+                        panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing");
+                    } 
+                };
                 let type_handle = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
                     let unnamed = &fields_unnamed.unnamed;
                     if let false = unnamed.len() == 1 {
@@ -870,8 +895,8 @@ pub fn derive_impl_error_occurence(
                 else {
                     panic!("{proc_macro_name} {ident_stringified} only works with named fields");
                 };
-                (&variant.ident, type_handle)
-            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type)>>();
+                (&variant.ident, type_handle, attributes)
+            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, Attributes)>>();
             let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
@@ -880,6 +905,7 @@ pub fn derive_impl_error_occurence(
             vec_variants_and_variants_types.iter().for_each(|(
                 variant_ident, 
                 first_field_type, 
+                attributes
             )|{
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
                     quote::quote!{
