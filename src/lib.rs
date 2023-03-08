@@ -374,7 +374,7 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_foreign_type_option unexpected logic"));
                         let to_string_or_display_foreign_type_method_token_stream = match is_display_foreign_type {
                             true => quote::quote!{
-                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;//todo - maybe useless in case of to_string()
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
                                 #error_field_name_token_stream.#display_foreign_type_token_stream()
                             },
                             false => quote::quote!{
@@ -896,7 +896,7 @@ pub fn derive_impl_error_occurence(
                                 i.#to_string_token_stream()
                             },
                             quote::quote!{
-
+                                i.#to_string_token_stream()
                             },
                             quote::quote!{
 
@@ -916,7 +916,8 @@ pub fn derive_impl_error_occurence(
                                 i.#display_foreign_type_token_stream()
                             },
                             quote::quote!{
-
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                i.#display_foreign_type_token_stream()
                             },
                             quote::quote!{
 
@@ -935,7 +936,7 @@ pub fn derive_impl_error_occurence(
                                 i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
                             },
                             quote::quote!{
-
+                                i.#to_string_without_config_token_stream()
                             },
                             quote::quote!{
 
@@ -952,29 +953,31 @@ pub fn derive_impl_error_occurence(
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
                     quote::quote!{
                         #ident::#variant_ident(i) => {
-                            i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                            #logic_for_to_string_with_config_for_source_to_string_with_config_inner
                         }
                     }
                 });
                 logic_for_to_string_without_config.push(quote::quote!{
-                    #ident::#variant_ident(i) => i.#to_string_without_config_token_stream()
+                    #ident::#variant_ident(i) => {
+                        #logic_for_to_string_without_config_inner
+                    }
                 });
                 logic_for_enum_with_deserialize.push({
                     let variant_type_with_deserialize_token_stream = if let syn::Type::Path(type_path) = first_field_type {
-                            let variant_type = {
-                                let mut segments_stringified = type_path.path.segments.iter()
-                                .fold(String::from(""), |mut acc, elem| {
-                                    acc.push_str(&format!("{}::", elem.ident));
-                                    acc
-                                });
-                                segments_stringified.pop();
-                                segments_stringified.pop();
-                                segments_stringified
-                            };
-                            let variant_type_with_deserialize_stringified = format!("{variant_type}{with_deserialize_camel_case}");
-                            variant_type_with_deserialize_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {variant_type_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))  
+                        let variant_type = {
+                            let mut segments_stringified = type_path.path.segments.iter()
+                            .fold(String::from(""), |mut acc, elem| {
+                                acc.push_str(&format!("{}::", elem.ident));
+                                acc
+                            });
+                            segments_stringified.pop();
+                            segments_stringified.pop();
+                            segments_stringified
+                        };
+                        let variant_type_with_deserialize_stringified = format!("{variant_type}{with_deserialize_camel_case}");
+                        variant_type_with_deserialize_stringified
+                        .parse::<proc_macro2::TokenStream>()
+                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {variant_type_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))  
                     }
                     else {
                         panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path")
@@ -1077,7 +1080,7 @@ pub fn derive_impl_error_occurence(
         }
         #generated_impl_with_deserialize_alternatives
     };
-    // println!("{uuu}");
+    println!("{uuu}");
     uuu.into()
 }
 
