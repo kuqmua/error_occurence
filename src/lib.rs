@@ -45,13 +45,6 @@ enum Attributes {
     NotSpecified,
 }
 
-    //
-    // //   #[to_string] #[display_foreign_type]
-    // ForeignHashmap(std::collections::HashMap<String, Kekw>), //todo - #[display_foreign_type] and #[to_string] for key
-    // // #[display_foreign_type]  #[display_foreign_type]
-    // ForeignKVHashmap(std::collections::HashMap<Kekw, Kekw>),
-    // // #[display_foreign_type]  #[to_string]
-    // ForeignKHashmap(std::collections::HashMap<Kekw, String>),
 #[proc_macro_derive(
     ImplErrorOccurence, 
     attributes(
@@ -939,10 +932,10 @@ pub fn derive_impl_error_occurence(
 
                             },
                             quote::quote!{
-
+                                i.#to_string_token_stream()
                             },
                             quote::quote!{
-
+                                #ident_with_deserialize_token_stream::#variant_ident(i)
                             },
                         )
                     },
@@ -960,10 +953,11 @@ pub fn derive_impl_error_occurence(
 
                             },
                             quote::quote!{
-
+                                i.#to_string_token_stream()
                             },
                             quote::quote!{
-
+                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                i.#display_foreign_type_token_stream()
                             },
                         )
                     },
@@ -979,10 +973,10 @@ pub fn derive_impl_error_occurence(
 
                             },
                             quote::quote!{
-
+                                i.#to_string_without_config_with_deserialize_token_stream()
                             },
                             quote::quote!{
-
+                                #ident_with_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
                             },
                         )
 
@@ -990,76 +984,210 @@ pub fn derive_impl_error_occurence(
                     Attributes::HashMapKeyToStringValueToString => {
                         (
                             quote::quote!{
-                                
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.lines().fold(String::from(""), |mut accc, line| {
+                                        accc.push_str(&format!(" {}\n", line));
+                                        accc
+                                    });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value =
+                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
 
                             },
                             quote::quote!{
-
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value =
+                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-
+                                #ident_with_deserialize_token_stream::#variant_ident(i)
                             },
                         )
                     },
                     Attributes::HashMapKeyToStringValueDisplayForeignType => {
                         (
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.display_foreign_type().lines().fold(String::from(""), |mut accc, line| {
+                                        accc.push_str(&format!(" {}\n", line));
+                                        accc
+                                    });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.display_foreign_type().lines().fold(
+                                        String::from(""),
+                                        |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        },
+                                    );
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
 
                             },
                             quote::quote!{
-
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value =
+                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-
+                                #ident_with_deserialize_token_stream::#variant_ident({
+                                    i
+                                    .into_iter()
+                                    .map(|(k, v)| {
+                                        use crate::traits::display_foreign_type::DisplayForeignType;
+                                        (k, v.display_foreign_type())
+                                    })
+                                    .collect()
+                                })
                             },
                         )
                     },
                     Attributes::HashMapKeyDisplayForeignTypeValueToString => {
                         (
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.lines().fold(String::from(""), |mut accc, line| {
+                                        accc.push_str(&format!(" {}\n", line));
+                                        accc
+                                    });
+                                    acc.push_str(&format!("{} [\n{}]\n", key.display_foreign_type(), stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value =
+                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!(
+                                        "{} [\n{}]\n",
+                                        key.display_foreign_type(),
+                                        stringified_value
+                                    ));
+                                    acc
+                                })
                             },
                             quote::quote!{
 
                             },
                             quote::quote!{
-
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value =
+                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-
+                                #ident_with_deserialize_token_stream::#variant_ident({
+                                    i
+                                    .into_iter()
+                                    .map(|(k, v)| {
+                                        use crate::traits::display_foreign_type::DisplayForeignType;
+                                        (k.display_foreign_type(), v)
+                                    })
+                                    .collect()
+                                })
                             },
                         )
                     },
                     Attributes::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
                         (
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.display_foreign_type().lines().fold(String::from(""), |mut accc, line| {
+                                        accc.push_str(&format!(" {}\n", line));
+                                        accc
+                                    });
+                                    acc.push_str(&format!("{} [\n{}]\n", key.display_foreign_type(), stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.display_foreign_type().lines().fold(
+                                        String::from(""),
+                                        |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        },
+                                    );
+                                    acc.push_str(&format!(
+                                        "{} [\n{}]\n",
+                                        key.display_foreign_type(),
+                                        stringified_value
+                                    ));
+                                    acc
+                                })
                             },
                             quote::quote!{
 
                             },
                             quote::quote!{
-
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value =
+                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-
+                                #ident_with_deserialize_token_stream::#variant_ident({
+                                    i
+                                    .into_iter()
+                                    .map(|(k, v)| {
+                                        use crate::traits::display_foreign_type::DisplayForeignType;
+                                        (k.display_foreign_type(), v.display_foreign_type())
+                                    })
+                                    .collect()
+                                })
                             },
                         )
                     },
