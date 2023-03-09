@@ -38,10 +38,31 @@ enum SupportedInnerErrorsContainers {
 enum Attributes {
     ToString,
     DisplayForeignType,
+    HashMapKeyToStringValueToString,
+    HashMapKeyToStringValueDisplayForeignType,
+    HashMapKeyDisplayForeignTypeValueToString,
+    HashMapKeyDisplayForeignTypeValueDisplayForeignType,
     NotSpecified,
 }
 
-#[proc_macro_derive(ImplErrorOccurence, attributes(display_foreign_type, to_string))]
+    //
+    // //   #[to_string] #[display_foreign_type]
+    // ForeignHashmap(std::collections::HashMap<String, Kekw>), //todo - #[display_foreign_type] and #[to_string] for key
+    // // #[display_foreign_type]  #[display_foreign_type]
+    // ForeignKVHashmap(std::collections::HashMap<Kekw, Kekw>),
+    // // #[display_foreign_type]  #[to_string]
+    // ForeignKHashmap(std::collections::HashMap<Kekw, String>),
+#[proc_macro_derive(
+    ImplErrorOccurence, 
+    attributes(
+        display_foreign_type, 
+        to_string, 
+        hashmap_key_to_string_value_to_string,
+        hashmap_key_to_string_value_display_foreign_type,
+        hashmap_key_display_foreign_type_value_to_string,
+        hashmap_key_display_foreign_type_value_display_foreign_type,
+    )
+)]
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
@@ -64,6 +85,10 @@ pub fn derive_impl_error_occurence(
     let display_foreign_type_token_stream = display_foreign_type_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let hashmap_key_to_string_value_to_string_stringified = "hashmap_key_to_string_value_to_string";
+    let hashmap_key_to_string_value_display_foreign_type_stringified = "hashmap_key_to_string_value_display_foreign_type";
+    let hashmap_key_display_foreign_type_value_to_string_stringified = "hashmap_key_display_foreign_type_value_to_string";
+    let hashmap_key_display_foreign_type_value_display_foreign_type_stringified = "hashmap_key_display_foreign_type_value_display_foreign_type";
     let with_deserialize_camel_case = "WithDeserialize";
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
@@ -848,8 +873,20 @@ pub fn derive_impl_error_occurence(
                         else if let true = first_attribute.path.segments[0].ident == display_foreign_type_stringified {
                             Attributes::DisplayForeignType
                         }
+                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_to_string_value_to_string_stringified {
+                            Attributes::HashMapKeyToStringValueToString
+                        }
+                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_to_string_value_display_foreign_type_stringified {
+                            Attributes::HashMapKeyToStringValueDisplayForeignType
+                        }
+                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_display_foreign_type_value_to_string_stringified {
+                            Attributes::HashMapKeyDisplayForeignTypeValueToString
+                        }
+                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                            Attributes::HashMapKeyDisplayForeignTypeValueDisplayForeignType
+                        }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {to_string_stringified} or {display_foreign_type_stringified}");
+                            panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident != {to_string_stringified} or {display_foreign_type_stringified} or {hashmap_key_to_string_value_to_string_stringified} or {hashmap_key_to_string_value_display_foreign_type_stringified} or {hashmap_key_display_foreign_type_value_to_string_stringified} or {hashmap_key_display_foreign_type_value_display_foreign_type_stringified}");
                         }
                     }
                     _ => {
@@ -937,6 +974,83 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                 i.#to_string_without_config_token_stream()
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+
+                    },
+                    Attributes::HashMapKeyToStringValueToString => {
+                        (
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+                    },
+                    Attributes::HashMapKeyToStringValueDisplayForeignType => {
+                        (
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+                    },
+                    Attributes::HashMapKeyDisplayForeignTypeValueToString => {
+                        (
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                            quote::quote!{
+
+                            },
+                        )
+                    },
+                    Attributes::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                        (
+                            quote::quote!{
+                                
+                            },
+                            quote::quote!{
+                                
                             },
                             quote::quote!{
 
