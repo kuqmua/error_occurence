@@ -994,7 +994,7 @@ pub fn derive_impl_error_occurence(
                                 i.#display_foreign_type_token_stream()
                             },
                             quote::quote!{
-
+                                #variant_ident(String)
                             },
                             quote::quote!{
                                 i.#to_string_token_stream()
@@ -1006,6 +1006,19 @@ pub fn derive_impl_error_occurence(
                         )
                     },
                     Attributes::NotSpecified => {
+                        let (type_token_stringified, serde_borrow_option_token_stream) = match lifetime_handle {
+                            Lifetime::Specified => (
+                                format!("{variant_type_stringified}{with_deserialize_camel_case}{}", lifetime_handle.to_string(lifetime_stringified)),
+                                quote::quote!{#[serde(borrow)]}
+                            ),
+                            Lifetime::NotSpecified => (
+                                variant_type_stringified,
+                                quote::quote!{}
+                            ),
+                        };
+                        let type_token_stream = type_token_stringified
+                        .parse::<proc_macro2::TokenStream>()
+                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
                                 i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
@@ -1014,7 +1027,8 @@ pub fn derive_impl_error_occurence(
                                 i.#to_string_without_config_token_stream()
                             },
                             quote::quote!{
-
+                                #serde_borrow_option_token_stream
+                                #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
                                 i.#to_string_without_config_with_deserialize_token_stream()
@@ -1026,6 +1040,21 @@ pub fn derive_impl_error_occurence(
 
                     },
                     Attributes::HashMapKeyToStringValueToString => {
+                        //todo - must generate fuul path for key and value
+                        
+                        // let (type_token_stringified, serde_borrow_option_token_stream) = match lifetime_handle {
+                        //     Lifetime::Specified => (
+                        //         format!("{variant_type_stringified}{}", lifetime_handle.to_string(lifetime_stringified)),
+                        //         quote::quote!{#[serde(borrow)]}
+                        //     ),
+                        //     Lifetime::NotSpecified => (
+                        //         variant_type_stringified,
+                        //         quote::quote!{}
+                        //     ),
+                        // };
+                        // let type_token_stream = type_token_stringified
+                        // .parse::<proc_macro2::TokenStream>()
+                        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
@@ -1049,7 +1078,7 @@ pub fn derive_impl_error_occurence(
                                 })
                             },
                             quote::quote!{
-
+                                // #variant_ident(std::collections::HashMap<String, String>)//todo - full paths
                             },
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
