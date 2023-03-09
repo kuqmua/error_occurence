@@ -35,6 +35,20 @@ enum SupportedInnerErrorsContainers {
     HashMap,
 }
 
+enum Lifetime {
+    Specified,
+    NotSpecified,
+}
+
+impl Lifetime {
+    fn to_string(&self, lftm: &str) -> String {
+        match self {
+            Lifetime::Specified => format!("<{lftm}>"),
+            Lifetime::NotSpecified => String::from("{}"),
+        }
+    }
+}
+
 enum Attributes {
     ToString,
     DisplayForeignType,
@@ -357,9 +371,8 @@ pub fn derive_impl_error_occurence(
                                 type_path, 
                                     proc_macro_name, 
                                     &ident_stringified,
-                                    lifetime_stringified,
                                     first_field_type_stringified_name,
-                                );
+                                ).to_string(lifetime_stringified);
                                 acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
                                 code_occurence_checker = Some(());
                                 },
@@ -479,9 +492,8 @@ pub fn derive_impl_error_occurence(
                                     type_path_handle, 
                                     proc_macro_name, 
                                     &ident_stringified,
-                                    lifetime_stringified,
                                     first_field_type_stringified_name
-                                );
+                                ).to_string(lifetime_stringified);
                                 let mut segments_stringified = type_path_handle.path.segments.iter()
                                 .fold(String::from(""), |mut acc, elem| {
                                     acc.push_str(&format!("{}::", elem.ident));
@@ -641,9 +653,8 @@ pub fn derive_impl_error_occurence(
                                                             type_path_handle, 
                                                             proc_macro_name, 
                                                             &ident_stringified,
-                                                            lifetime_stringified,
                                                             first_field_type_stringified_name
-                                                        );
+                                                        ).to_string(lifetime_stringified);
                                                         let mut segments_stringified = type_path_handle.path.segments.iter()
                                                         .fold(String::from(""), |mut acc, elem| {
                                                             acc.push_str(&format!("{}::", elem.ident));
@@ -908,6 +919,25 @@ pub fn derive_impl_error_occurence(
                 first_field_type, 
                 attributes
             )|{
+                let (variant_type_stringified, lifetime_handle) = if let syn::Type::Path(type_path) = first_field_type {
+                    let last_arg_option_lifetime = form_last_arg_lifetime(
+                        type_path, 
+                        proc_macro_name, 
+                        &ident_stringified,
+                        first_field_type_stringified_name
+                    );
+                    let mut segments_stringified = type_path.path.segments.iter()
+                    .fold(String::from(""), |mut acc, elem| {
+                        acc.push_str(&format!("{}::", elem.ident));
+                        acc
+                    });
+                    segments_stringified.pop();
+                    segments_stringified.pop();
+                    (segments_stringified, last_arg_option_lifetime) 
+                }
+                else {
+                    panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path")
+                };
                 // logic_for_to_string_with_config_for_source_to_string_with_config
                 // logic_for_to_string_without_config
                 // logic_for_enum_with_deserialize
@@ -921,6 +951,19 @@ pub fn derive_impl_error_occurence(
                     logic_for_into_serialize_deserialize_version_inner,
                 ) = match attributes {
                     Attributes::ToString => {
+                        let (type_token_stringified, serde_borrow_option_token_stream) = match lifetime_handle {
+                            Lifetime::Specified => (
+                                format!("{variant_type_stringified}{}", lifetime_handle.to_string(lifetime_stringified)),
+                                quote::quote!{#[serde(borrow)]}
+                            ),
+                            Lifetime::NotSpecified => (
+                                variant_type_stringified,
+                                quote::quote!{}
+                            ),
+                        };
+                        let type_token_stream = type_token_stringified
+                        .parse::<proc_macro2::TokenStream>()
+                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
                                 i.#to_string_token_stream()
@@ -929,7 +972,8 @@ pub fn derive_impl_error_occurence(
                                 i.#to_string_token_stream()
                             },
                             quote::quote!{
-
+                                #serde_borrow_option_token_stream
+                                #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
                                 i.#to_string_token_stream()
@@ -1322,7 +1366,7 @@ pub fn derive_impl_error_occurence(
         }
         #generated_impl_with_deserialize_alternatives
     };
-    println!("{uuu}");
+    // println!("{uuu}");
     uuu.into()
 }
 
@@ -1330,18 +1374,19 @@ fn form_last_arg_lifetime(
     type_path_handle: &syn::TypePath, 
     proc_macro_name: &str, 
     ident_stringified: &String,
-    lifetime_stringified: &str,
+    // lifetime_stringified: &str,
     first_field_type_stringified_name: &str,
-) -> String {
+) -> Lifetime {
     if let Some(path_segment) = type_path_handle.path.segments.last() {
         match &path_segment.arguments {
-            syn::PathArguments::None => String::from(""),
+            syn::PathArguments::None => Lifetime::NotSpecified,
             syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
                 if let false = angle_bracketed_generic_argument.args.len() == 1 {
                     panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} angle_bracketed_generic_argument.args.len() != 1");
                 }
                 if let syn::GenericArgument::Lifetime(_) = &angle_bracketed_generic_argument.args[0] {
-                    format!("<{lifetime_stringified}>")
+                    // format!("<{lifetime_stringified}>")
+                    Lifetime::Specified
                 }
                 else {
                     panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime");
