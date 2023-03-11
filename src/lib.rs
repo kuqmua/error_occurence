@@ -78,9 +78,6 @@ enum Attributes {
     HashMapKeyDisplayForeignTypeValueToString,
     HashMapKeyDisplayForeignTypeValueDisplayForeignType,
     HashMapKeyDisplayForeignTypeValueErrorOccurence,
-    HashMapKeyErrorOccurenceValueToString,
-    HashMapKeyErrorOccurenceValueDisplayForeignType,
-    HashMapKeyErrorOccurenceValueErrorOccurence,
 }
 
 #[proc_macro_derive(
@@ -98,9 +95,6 @@ enum Attributes {
         hashmap_key_display_foreign_type_value_to_string,
         hashmap_key_display_foreign_type_value_display_foreign_type,
         hashmap_key_display_foreign_type_value_error_occurence,
-        hashmap_key_error_occurence_value_to_string,
-        hashmap_key_error_occurence_value_display_foreign_type,
-        hashmap_key_error_occurence_value_error_occurence,
     )
 )]
 pub fn derive_impl_error_occurence(
@@ -137,9 +131,6 @@ pub fn derive_impl_error_occurence(
     let hashmap_key_display_foreign_type_value_to_string_stringified = "hashmap_key_display_foreign_type_value_to_string";
     let hashmap_key_display_foreign_type_value_display_foreign_type_stringified = "hashmap_key_display_foreign_type_value_display_foreign_type";
     let hashmap_key_display_foreign_type_value_error_occurence_stringified = "hashmap_key_display_foreign_type_value_error_occurence";
-    let hashmap_key_error_occurence_value_to_string_stringified = "hashmap_key_error_occurence_value_to_string";
-    let hashmap_key_error_occurence_value_display_foreign_type_stringified = "hashmap_key_error_occurence_value_display_foreign_type";
-    let hashmap_key_error_occurence_value_error_occurence_stringified = "hashmap_key_error_occurence_value_error_occurence";
     let with_deserialize_camel_case = "WithDeserialize";
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
@@ -948,15 +939,6 @@ pub fn derive_impl_error_occurence(
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_display_foreign_type_value_error_occurence_stringified {
                             Attributes::HashMapKeyDisplayForeignTypeValueErrorOccurence
                         }
-                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_error_occurence_value_to_string_stringified {
-                            Attributes::HashMapKeyErrorOccurenceValueToString
-                        }
-                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_error_occurence_value_display_foreign_type_stringified {
-                            Attributes::HashMapKeyErrorOccurenceValueDisplayForeignType
-                        }
-                        else if let true = first_attribute.path.segments[0].ident == hashmap_key_error_occurence_value_error_occurence_stringified {
-                            Attributes::HashMapKeyErrorOccurenceValueErrorOccurence
-                        }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident must be equal one of the supported attributes");
                         }
@@ -1595,63 +1577,6 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::HashMapKeyErrorOccurenceValueToString => {
-                        (
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                        )
-                    },
-                    Attributes::HashMapKeyErrorOccurenceValueDisplayForeignType => {
-                        (
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                        )
-                    },
-                    Attributes::HashMapKeyErrorOccurenceValueErrorOccurence => {
-                        (
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                            quote::quote!{
-                                
-                            },
-                        )
-                    }
                 };
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
                     quote::quote!{
