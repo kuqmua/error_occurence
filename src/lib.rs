@@ -38,7 +38,8 @@ enum SupportedContainer {
     },
     HashMap{
         path: String,
-        key_stringified: String,
+        key_segments_stringified: String, 
+        key_lifetime_enum: Lifetime,
         value_segments_stringified: String, 
         value_lifetime_enum: Lifetime
     },
@@ -961,6 +962,7 @@ pub fn derive_impl_error_occurence(
                 };
                 (&variant.ident, type_handle, attributes)
             }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, Attributes)>>();
+            let mut is_lifetime_need_for_serialize_deserialize = false;
             let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
@@ -1034,9 +1036,9 @@ pub fn derive_impl_error_occurence(
                         });
                         segments_stringified.pop();
                         segments_stringified.pop();
-                        let (key_stringified, value_segments_stringified, value_lifetime_enum) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
+                        let (key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
                             if let true = angle_brackets_generic_arguments.args.len() == 2 {
-                                let key_stringified = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
+                                let (key_segments_stringified, key_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
                                     if let syn::Type::Path(type_path) = type_handle {
                                         let key_last_arg_option_lifetime = form_last_arg_lifetime(
                                             type_path, 
@@ -1044,7 +1046,6 @@ pub fn derive_impl_error_occurence(
                                             &ident_stringified,
                                             first_field_type_stringified_name
                                         );
-                                        let key_last_arg_option_lifetime_stringified = key_last_arg_option_lifetime.to_string();
                                         let mut key_segments_stringified = type_path.path.segments.iter()
                                         .fold(String::from(""), |mut acc, elem| {
                                             acc.push_str(&format!("{}::", elem.ident));
@@ -1052,7 +1053,7 @@ pub fn derive_impl_error_occurence(
                                         });
                                         key_segments_stringified.pop();
                                         key_segments_stringified.pop();
-                                        format!("{key_segments_stringified}{key_last_arg_option_lifetime_stringified}")
+                                        (key_segments_stringified, key_last_arg_option_lifetime)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
@@ -1086,7 +1087,7 @@ pub fn derive_impl_error_occurence(
                                 else {
                                     panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type");
                                 };
-                                (key_stringified, value_segments_stringified, value_lifetime_enum)
+                                (key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum)
                             }
                             else {
                                 panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 2");
@@ -1100,7 +1101,8 @@ pub fn derive_impl_error_occurence(
                         // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         SupportedContainer::HashMap{
                             path: segments_stringified,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum
                         }
@@ -1431,12 +1433,13 @@ pub fn derive_impl_error_occurence(
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            format!("{path}<{key_stringified},{value_segments_stringified}{value_lifetime_enum}>")
+                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_to_string_value_to_string_stringified}] only supports std::collections::HashMap");
@@ -1495,12 +1498,13 @@ pub fn derive_impl_error_occurence(
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            format!("{path}<{key_stringified},String>")
+                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},String>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_to_string_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
@@ -1569,12 +1573,13 @@ pub fn derive_impl_error_occurence(
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            format!("{path}<{key_stringified},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
+                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_to_string_value_error_occurence_stringified}] only supports std::collections::HashMap");
@@ -1639,7 +1644,8 @@ pub fn derive_impl_error_occurence(
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum,
                         }
@@ -1721,7 +1727,8 @@ pub fn derive_impl_error_occurence(
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum,
                         }
@@ -1796,7 +1803,8 @@ pub fn derive_impl_error_occurence(
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
-                            key_stringified,
+                            key_segments_stringified, 
+                            key_lifetime_enum,
                             value_segments_stringified, 
                             value_lifetime_enum,
                         }
@@ -2012,7 +2020,7 @@ pub fn derive_impl_error_occurence(
         }
         #generated_impl_with_deserialize_alternatives
     };
-    println!("{uuu}");
+    // println!("{uuu}");
     uuu.into()
 }
 
