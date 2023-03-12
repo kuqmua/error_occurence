@@ -1257,59 +1257,170 @@ pub fn derive_impl_error_occurence(
 
                     },
                     Attributes::VecToString => {
+                        //todo enum withdeserialize
                         (
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element = element.to_string().lines().fold(String::from(""), |mut acc, line| {
+                                        acc.push_str(&format!(" {}\n", line));
+                                        acc
+                                    });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element =
+                                        element
+                                        .to_string()
+                                        .lines()
+                                        .fold(String::from(""), |mut acc, line| {
+                                            acc.push_str(&format!(" {}\n", line));
+                                            acc
+                                        });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                // VecToString(std::vec::Vec<crate::dev::Omegalul>),
+                                // or just 
+                                // std::vec::Vec<crate::dev::Omegalul>
                             },
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element =
+                                        element
+                                        .to_string()
+                                        .lines()
+                                        .fold(String::from(""), |mut acc, line| {
+                                            acc.push_str(&format!(" {}\n", line));
+                                            acc
+                                        });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                // OneErrorEnumWithDeserialize::VecToString(i)
                             },
                         )
                     }
                     Attributes::VecDisplayForeignType => {
                         (
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element = element.display_foreign_type().lines().fold(String::from(""), |mut acc, line| {
+                                        acc.push_str(&format!(" {}\n", line));
+                                        acc
+                                    });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element = element.display_foreign_type().lines().fold(
+                                        String::from(""),
+                                        |mut acc, line| {
+                                            acc.push_str(&format!(" {}\n", line));
+                                            acc
+                                        },
+                                    );
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                // VecDisplayForeignType(std::vec::Vec<String>),
+                                // std::vec::Vec<String>
                             },
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element =
+                                        element.lines().fold(String::from(""), |mut acc, line| {
+                                            acc.push_str(&format!(" {}\n", line));
+                                            acc
+                                        });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                // OneErrorEnumWithDeserialize::VecDisplayForeignType({
+                                //     i.into_iter()
+                                //         .map(|e| {
+                                //             use crate::traits::display_foreign_type::DisplayForeignType;
+                                //             e.display_foreign_type()
+                                //         })
+                                //         .collect()
+                                // })
                             },
                         )
                     }
                     Attributes::VecErrorOccurence => {
                         (
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element = element.to_string_with_config_for_source_to_string_with_config(config).lines().fold(String::from(""), |mut acc, line| {
+                                        acc.push_str(&format!(" {}\n", line));
+                                        acc
+                                    });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element = element.to_string_without_config().lines().fold(
+                                        String::from(""),
+                                        |mut acc, line| {
+                                            acc.push_str(&format!(" {}\n", line));
+                                            acc
+                                        },
+                                    );
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                // VecErrorOccurence(std::vec::Vec<crate::dev::SevenErrorWithDeserialize<'a>>),
+                                // std::vec::Vec<crate::dev::SevenErrorWithDeserialize<'a>>
                             },
                             quote::quote!{
-                                
+                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
+                                    let stringified_element = element
+                                        .to_string_without_config_with_deserialize()
+                                        .lines()
+                                        .fold(String::from(""), |mut acc, line| {
+                                            acc.push_str(&format!(" {}\n", line));
+                                            acc
+                                        });
+                                    acc.push_str(&stringified_element);
+                                    acc
+                                });
+                                format!("[\n{}]", stringified_vec)
                             },
                             quote::quote!{
-                                
+                                OneErrorEnumWithDeserialize::VecErrorOccurence({
+                                    i.into_iter()
+                                    .map(|e| {
+                                        use crate::traits::display_foreign_type::DisplayForeignType;
+                                        e.into_serialize_deserialize_version()
+                                    })
+                                    .collect()
+                                })
                             },
                         )
                     }
@@ -1332,7 +1443,7 @@ pub fn derive_impl_error_occurence(
                         (
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.lines().fold(String::from(""), |mut accc, line| {
+                                    let stringified_value = value.to_string().lines().fold(String::from(""), |mut accc, line| {
                                         accc.push_str(&format!(" {}\n", line));
                                         accc
                                     });
@@ -1343,7 +1454,10 @@ pub fn derive_impl_error_occurence(
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
                                     let stringified_value =
-                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                        value
+                                        .to_string()
+                                        .lines()
+                                        .fold(String::from(""), |mut accc, line| {
                                             accc.push_str(&format!(" {}\n", line));
                                             accc
                                         });
@@ -1354,11 +1468,19 @@ pub fn derive_impl_error_occurence(
                             quote::quote!{
                                 // #variant_ident(std::collections::HashMap<String, String>)//todo - full paths
                                 // AnotherHashmap(std::collections::HashMap<std::string::String, std::string::String>)
+                                
+                                // HashMapKeyToStringValueToString(
+                                //     std::collections::HashMap<crate::dev::Omegalul, crate::dev::Omegalul>,
+                                // ),
+                                // std::collections::HashMap<crate::dev::Omegalul, crate::dev::Omegalul>,
                             },
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
                                     let stringified_value =
-                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                        value
+                                        .to_string()
+                                        .lines()
+                                        .fold(String::from(""), |mut accc, line| {
                                             accc.push_str(&format!(" {}\n", line));
                                             accc
                                         });
@@ -1399,7 +1521,10 @@ pub fn derive_impl_error_occurence(
                                 })
                             },
                             quote::quote!{
-
+                                // HashMapKeyToStringValueDisplayForeignType(
+                                //     std::collections::HashMap<crate::dev::Omegalul, String>,
+                                // ),
+                                // std::collections::HashMap<crate::dev::Omegalul, String>,
                             },
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
@@ -1428,19 +1553,52 @@ pub fn derive_impl_error_occurence(
                     Attributes::HashMapKeyToStringValueErrorOccurence => {
                         (
                             quote::quote!{
-                                
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.to_string_with_config_for_source_to_string_with_config(config).lines().fold(String::from(""), |mut accc, line| {
+                                        accc.push_str(&format!(" {}\n", line));
+                                        accc
+                                    });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.to_string_without_config().lines().fold(
+                                        String::from(""),
+                                        |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        },
+                                    );
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                // HashMapKeyToStringValueErrorOccurence(
+                                //     std::collections::HashMap<crate::dev::Omegalul, crate::dev::SevenErrorWithDeserialize<'a>>,
+                                // ),
                             },
                             quote::quote!{
-                                
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value
+                                        .to_string_without_config_with_deserialize()
+                                        .lines()
+                                        .fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                // OneErrorEnumWithDeserialize::HashMapKeyToStringValueErrorOccurence({
+                                //     i.into_iter()
+                                //         .map(|(k, v)| (k, v.into_serialize_deserialize_version()))
+                                //         .collect()
+                                // })
                             },
                         )
                     }
@@ -1449,7 +1607,7 @@ pub fn derive_impl_error_occurence(
                             quote::quote!{
                                 use crate::traits::display_foreign_type::DisplayForeignType;
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.lines().fold(String::from(""), |mut accc, line| {
+                                    let stringified_value = value.to_string().lines().fold(String::from(""), |mut accc, line| {
                                         accc.push_str(&format!(" {}\n", line));
                                         accc
                                     });
@@ -1461,7 +1619,10 @@ pub fn derive_impl_error_occurence(
                                 use crate::traits::display_foreign_type::DisplayForeignType;
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
                                     let stringified_value =
-                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                        value
+                                        .to_string()
+                                        .lines()
+                                        .fold(String::from(""), |mut accc, line| {
                                             accc.push_str(&format!(" {}\n", line));
                                             accc
                                         });
@@ -1474,12 +1635,18 @@ pub fn derive_impl_error_occurence(
                                 })
                             },
                             quote::quote!{
-
+                                // HashMapKeyDisplayForeignTypeValueToString(
+                                //     std::collections::HashMap<String, crate::dev::Omegalul>,
+                                // ),
+                                // std::collections::HashMap<String, crate::dev::Omegalul>,
                             },
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
                                     let stringified_value =
-                                        value.lines().fold(String::from(""), |mut accc, line| {
+                                        value
+                                        .to_string()
+                                        .lines()
+                                        .fold(String::from(""), |mut accc, line| {
                                             accc.push_str(&format!(" {}\n", line));
                                             accc
                                         });
@@ -1532,7 +1699,7 @@ pub fn derive_impl_error_occurence(
                                 })
                             },
                             quote::quote!{
-
+                                // HashMapKeyDisplayForeignTypeValueDisplayForeignType(std::collections::HashMap<String, String>),
                             },
                             quote::quote!{
                                 i.iter().fold(String::from(""), |mut acc, (key, value)| {
@@ -1561,19 +1728,65 @@ pub fn derive_impl_error_occurence(
                     Attributes::HashMapKeyDisplayForeignTypeValueErrorOccurence => {
                         (
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.to_string_with_config_for_source_to_string_with_config(config).lines().fold(String::from(""), |mut accc, line| {
+                                        accc.push_str(&format!(" {}\n", line));
+                                        accc
+                                    });
+                                    acc.push_str(&format!("{} [\n{}]\n", key.display_foreign_type(), stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value.to_string_without_config().lines().fold(
+                                        String::from(""),
+                                        |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        },
+                                    );
+                                    acc.push_str(&format!(
+                                        "{} [\n{}]\n",
+                                        key.display_foreign_type(),
+                                        stringified_value
+                                    ));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                // HashMapKeyDisplayForeignTypeValueErrorOccurence(
+                                //     std::collections::HashMap<String, crate::dev::SevenErrorWithDeserialize<'a>>,
+                                // ),
                             },
                             quote::quote!{
-                                
+                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
+                                    let stringified_value = value
+                                        .to_string_without_config_with_deserialize()
+                                        .lines()
+                                        .fold(String::from(""), |mut accc, line| {
+                                            accc.push_str(&format!(" {}\n", line));
+                                            accc
+                                        });
+                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
+                                    acc
+                                })
                             },
                             quote::quote!{
-                                
+                                // OneErrorEnumWithDeserialize::HashMapKeyDisplayForeignTypeValueErrorOccurence({
+                                //     i
+                                //     .into_iter()
+                                //     .map(|(k, v)| {
+                                //         use crate::traits::display_foreign_type::DisplayForeignType;
+                                //         (
+                                //             k.display_foreign_type(),
+                                //             v.into_serialize_deserialize_version(),
+                                //         )
+                                //     })
+                                //     .collect()
+                                // })
                             },
                         )
                     },
