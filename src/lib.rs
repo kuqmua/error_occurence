@@ -1981,33 +1981,9 @@ pub fn derive_impl_error_occurence(
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_generated),*
             };
-            let ident_with_deserialize_lifetime_token_stream = match is_lifetime_need_for_serialize_deserialize {
-                true => {
-                    let ident_with_deserialize_lifetime_stringified = format!("{ident_with_deserialize_stringified}<{lifetime_stringified}>");
-                    ident_with_deserialize_lifetime_stringified
-                    .parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {ident_with_deserialize_lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                },
-                false => ident_with_deserialize_token_stream.clone(),
-            };
-            let impl_lifetime_for_deserialize_token_stream = match is_lifetime_need_for_serialize_deserialize {
-                true => {
-                    let impl_lifetime_for_deserialize_stringified = format!("impl<{lifetime_stringified}>");
-                    impl_lifetime_for_deserialize_stringified
-                    .parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {impl_lifetime_for_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                },
-                false => quote::quote! { impl },
-            };
-            let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_lifetime_token_stream = match is_lifetime_need_for_serialize_deserialize {
-                true => {
-                    println!("\n\n\n{ident_with_deserialize_lifetime_token_stream}\n\n\n");
-                    let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_lifetime_stringified = format!("{crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_stringified}<{lifetime_stringified}>");
-                    crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_lifetime_stringified
-                    .parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                },
-                false => quote::quote! { #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream },
+            let lifetime_deserialize_token_stream = match is_lifetime_need_for_serialize_deserialize {
+                true => quote::quote!{ #lifetime_token_stream },//todo different lifetimes support
+                false => quote::quote!{},
             };
             quote::quote! {
                 impl<#lifetime_token_stream, #config_generic_token_stream>
@@ -2036,16 +2012,14 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
-                pub enum #ident_with_deserialize_lifetime_token_stream {//#ident_with_deserialize_token_stream<#lifetime_token_stream>
+                pub enum #ident_with_deserialize_token_stream<#lifetime_deserialize_token_stream> {
                     #logic_for_enum_with_deserialize
                 }
-                #impl_lifetime_for_deserialize_token_stream
-
-                    #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_lifetime_token_stream
-                    // #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
-                    //     #lifetime_token_stream
-                    // > 
-                    for #ident_with_deserialize_lifetime_token_stream
+                impl< #lifetime_deserialize_token_stream >
+                    #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
+                        #lifetime_deserialize_token_stream
+                    > 
+                    for #ident_with_deserialize_token_stream<#lifetime_deserialize_token_stream>
                 {
                     fn #to_string_without_config_with_deserialize_token_stream(&self) -> String {
                         match self {
@@ -2054,7 +2028,7 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 impl<#lifetime_token_stream> #ident<#lifetime_token_stream> {
-                    pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_deserialize_lifetime_token_stream {
+                    pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_deserialize_token_stream<#lifetime_deserialize_token_stream> {
                         match self {
                             #logic_for_into_serialize_deserialize_version
                         }
