@@ -270,21 +270,23 @@ pub fn derive_impl_error_occurence(
         panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum");
     };
     let generics = {
-        let mut lifetimes_stringified = String::from("");
-        let lifetime_iterator_token_stream = ast.generics.params.iter().map(|gen_param|{
+        let mut lifetimes_stringified = ast.generics.params.iter()
+        .fold(String::from(""), |mut acc, gen_param| {
             if let syn::GenericParam::Lifetime(lifetime_deref) = gen_param {
-                let lifetime_ident_stringified = format!("'{},", lifetime_deref.lifetime.ident);
-                lifetime_ident_stringified
-                .parse::<proc_macro2::TokenStream>()
-                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetime_ident_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                acc.push_str(&format!("'{},", lifetime_deref.lifetime.ident));
+                acc
             }
             else {
                 panic!("{proc_macro_name} {ident_stringified} only works with syn::GenericParam::Lifetime");
             }
         });
-        quote::quote!{
-            #(#lifetime_iterator_token_stream)*
+        lifetimes_stringified.pop();
+        if let true = lifetimes_stringified.contains(trait_lifetime_stringified) {
+            panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
         }
+        lifetimes_stringified
+                .parse::<proc_macro2::TokenStream>()
+                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_stringified} {parse_proc_macro2_token_stream_failed_message}"))
     };
     let mut all_equal: Option<SuportedEnumVariant> = None;
     let named_or_unnamed_error_name = "only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed";
@@ -845,10 +847,10 @@ pub fn derive_impl_error_occurence(
                 #(#logic_for_into_serialize_deserialize_version_iter),*
             };
             quote::quote! {
-                impl<#generics #config_generic_token_stream>
+                impl<#config_generic_token_stream, #generics>
                     #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
-                        #generics
                         #config_generic_token_stream,
+                        #generics
                     > for #ident<#generics>
                     where #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
                         + #crate_traits_fields_get_timezone_token_stream
@@ -1999,7 +2001,6 @@ pub fn derive_impl_error_occurence(
             };
             quote::quote! {
                 impl<
-                    //todo check if config_generic_token_stream and trait_lifetime_token_stream do not contain inside generics
                     #trait_lifetime_token_stream,
                     #config_generic_token_stream,
                     #generics
@@ -2020,8 +2021,8 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 impl<
-                    #generics
                     #trait_lifetime_token_stream,
+                    #generics
                 > #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<
                     #trait_lifetime_token_stream,
                 >
@@ -2039,11 +2040,11 @@ pub fn derive_impl_error_occurence(
                 }
                 impl<
                     //todo - check if _token_stream does not contains inside lifetime_deserialize_token_stream
-                    #lifetime_deserialize_token_stream
                     #trait_lifetime_token_stream,
+                    #lifetime_deserialize_token_stream
                 >
                     #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
-                        #trait_lifetime_token_stream,
+                        #trait_lifetime_token_stream
                     > 
                     for #ident_with_deserialize_token_stream<
                         #lifetime_deserialize_token_stream
