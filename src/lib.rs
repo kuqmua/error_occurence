@@ -2029,15 +2029,15 @@ pub fn derive_impl_error_occurence(
                 #(#logic_for_into_serialize_deserialize_version_generated),*
             };
             let lifetime_deserialize_token_stream = {
+                if let true = lifetimes_for_serialize_deserialize.contains(&trait_lifetime_stringified.to_string()) {
+                    panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+                };
                 let lifetimes_for_serialize_deserialize_stringified = lifetimes_for_serialize_deserialize
                 .iter()
                 .fold(String::from(""), |mut acc, gen_param| {
                     acc.push_str(&format!("'{gen_param},"));
                     acc
                 });
-                if let true = lifetimes_for_serialize_deserialize_stringified.contains(&trait_lifetime_stringified) {
-                    panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-                };
                 lifetimes_for_serialize_deserialize_stringified
                 .parse::<proc_macro2::TokenStream>()
                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_for_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
