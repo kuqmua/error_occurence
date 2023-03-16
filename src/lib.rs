@@ -54,6 +54,9 @@ enum SupportedInnerErrorsContainers {
     HashMap,
 }
 
+#[derive(
+    Clone
+)]
 enum Lifetime {
     Specified(String),
     NotSpecified,
@@ -270,7 +273,7 @@ pub fn derive_impl_error_occurence(
         panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum");
     };
     let generics = {
-        let mut lifetimes_stringified = ast.generics.params.iter()
+        let lifetimes_stringified = ast.generics.params.iter()
         .fold(String::from(""), |mut acc, gen_param| {
             if let syn::GenericParam::Lifetime(lifetime_deref) = gen_param {
                 acc.push_str(&format!("'{},", lifetime_deref.lifetime.ident));
@@ -280,13 +283,12 @@ pub fn derive_impl_error_occurence(
                 panic!("{proc_macro_name} {ident_stringified} only works with syn::GenericParam::Lifetime");
             }
         });
-        lifetimes_stringified.pop();
         if let true = lifetimes_stringified.contains(trait_lifetime_stringified) {
             panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
         }
         lifetimes_stringified
-                .parse::<proc_macro2::TokenStream>()
-                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+        .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_stringified} {parse_proc_macro2_token_stream_failed_message}"))
     };
     let mut all_equal: Option<SuportedEnumVariant> = None;
     let named_or_unnamed_error_name = "only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed";
@@ -981,7 +983,7 @@ pub fn derive_impl_error_occurence(
                 };
                 (&variant.ident, type_handle, attributes)
             }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, Attributes)>>();
-            let mut is_lifetime_need_for_serialize_deserialize = false;
+            let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
@@ -1162,8 +1164,10 @@ pub fn derive_impl_error_occurence(
                             (
                                 format!("{path}{should_add_serde_borrow}"),
                                 match should_add_serde_borrow {
-                                    Lifetime::Specified(_) => {
-                                        is_lifetime_need_for_serialize_deserialize = true;
+                                    Lifetime::Specified(lifetime_specified) => {
+                                        if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
+                                            lifetimes_for_serialize_deserialize.push(lifetime_specified);
+                                        };
                                         quote::quote!{#[serde(borrow)]}
                                     },
                                     Lifetime::NotSpecified => quote::quote!{},
@@ -1224,8 +1228,10 @@ pub fn derive_impl_error_occurence(
                             (
                                 format!("{path}{with_deserialize_camel_case}{should_add_serde_borrow}"),
                                 match should_add_serde_borrow {
-                                    Lifetime::Specified(_) => {
-                                        is_lifetime_need_for_serialize_deserialize = true;
+                                    Lifetime::Specified(lifetime_specified) => {
+                                        if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
+                                            lifetimes_for_serialize_deserialize.push(lifetime_specified);
+                                        };
                                         quote::quote!{#[serde(borrow)]}
                                     },
                                     Lifetime::NotSpecified => quote::quote!{},
@@ -1256,12 +1262,13 @@ pub fn derive_impl_error_occurence(
                                 #ident_with_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
                             },
                         )
-
                     },
                     Attributes::VecToString => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
-                            if let Lifetime::Specified(_) = element_lifetime {
-                                is_lifetime_need_for_serialize_deserialize = true;
+                            if let Lifetime::Specified(lifetime_specified) = element_lifetime.clone() {
+                                if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
+                                    lifetimes_for_serialize_deserialize.push(lifetime_specified);
+                                };
                             }
                             format!("{path}<{element_path}{element_lifetime}>")
                         }
@@ -1389,8 +1396,10 @@ pub fn derive_impl_error_occurence(
                     }
                     Attributes::VecErrorOccurence => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
-                            if let Lifetime::Specified(_) = element_lifetime {
-                                is_lifetime_need_for_serialize_deserialize = true;
+                            if let Lifetime::Specified(lifetime_specified) = element_lifetime.clone() {
+                                if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
+                                    lifetimes_for_serialize_deserialize.push(lifetime_specified);
+                                };
                             }
                             format!("{path}<{element_path}{with_deserialize_camel_case}{element_lifetime}>")
                         }
@@ -1467,14 +1476,23 @@ pub fn derive_impl_error_occurence(
                         }
                          = supported_container {
                             match (&key_lifetime_enum, &value_lifetime_enum) {
-                                (Lifetime::Specified(_), Lifetime::Specified(_)) => {
-                                    is_lifetime_need_for_serialize_deserialize = true;
+                                (Lifetime::Specified(key_lifetime_specified), Lifetime::Specified(value_lifetime_specified)) => {
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified.to_string());
+                                    };
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified.to_string());
+                                    };
                                 },
-                                (Lifetime::Specified(_), Lifetime::NotSpecified) => {
-                                    is_lifetime_need_for_serialize_deserialize = true;
+                                (Lifetime::Specified(key_lifetime_specified), Lifetime::NotSpecified) => {
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified.to_string());
+                                    };
                                 },
-                                (Lifetime::NotSpecified, Lifetime::Specified(_)) => {
-                                    is_lifetime_need_for_serialize_deserialize = true;
+                                (Lifetime::NotSpecified, Lifetime::Specified(value_lifetime_specified)) => {
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified.to_string());
+                                    };
                                 },
                                 (Lifetime::NotSpecified, Lifetime::NotSpecified) => (),
                             }
@@ -1543,8 +1561,10 @@ pub fn derive_impl_error_occurence(
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            if let Lifetime::Specified(_) = key_lifetime_enum {
-                                is_lifetime_need_for_serialize_deserialize = true;
+                            if let Lifetime::Specified(key_lifetime_specified) = key_lifetime_enum.clone() {
+                                if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                                    lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
+                                };
                             }
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},String>")
                         }
@@ -1618,14 +1638,23 @@ pub fn derive_impl_error_occurence(
                         }
                          = supported_container {
                             match (&key_lifetime_enum, &value_lifetime_enum) {
-                                (Lifetime::Specified(_), Lifetime::Specified(_)) => {
-                                    is_lifetime_need_for_serialize_deserialize = true;
+                                (Lifetime::Specified(key_lifetime_specified), Lifetime::Specified(value_lifetime_specified)) => {
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified.to_string());
+                                    };
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified.to_string());
+                                    };
                                 },
-                                (Lifetime::Specified(_), Lifetime::NotSpecified) => {
-                                    is_lifetime_need_for_serialize_deserialize = true;
+                                (Lifetime::Specified(key_lifetime_specified), Lifetime::NotSpecified) => {
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified.to_string());
+                                    };
                                 },
-                                (Lifetime::NotSpecified, Lifetime::Specified(_)) => {
-                                    is_lifetime_need_for_serialize_deserialize = true;
+                                (Lifetime::NotSpecified, Lifetime::Specified(value_lifetime_specified)) => {
+                                    if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified.to_string());
+                                    };
                                 },
                                 (Lifetime::NotSpecified, Lifetime::NotSpecified) => (),
                             }
@@ -1697,8 +1726,10 @@ pub fn derive_impl_error_occurence(
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            if let Lifetime::Specified(_) = value_lifetime_enum {
-                                is_lifetime_need_for_serialize_deserialize = true;
+                            if let Lifetime::Specified(value_lifetime_specified) = value_lifetime_enum.clone() {
+                                if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                                    lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
+                                };
                             }
                             format!("{path}<String,{value_segments_stringified}{value_lifetime_enum}>")
                         }
@@ -1854,8 +1885,10 @@ pub fn derive_impl_error_occurence(
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            if let Lifetime::Specified(_) = value_lifetime_enum {
-                                is_lifetime_need_for_serialize_deserialize = true;
+                            if let Lifetime::Specified(value_lifetime_specified) = value_lifetime_enum.clone() {
+                                if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                                    lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
+                                };
                             }
                             format!("{path}<String,{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
@@ -1995,15 +2028,25 @@ pub fn derive_impl_error_occurence(
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_generated),*
             };
-            let lifetime_deserialize_token_stream = match is_lifetime_need_for_serialize_deserialize {
-                true => quote::quote!{ #generics },//todo put all generic lifetimes here is wrong, must add one by one
-                false => quote::quote!{},
+            let lifetime_deserialize_token_stream = {
+                let lifetimes_for_serialize_deserialize_stringified = lifetimes_for_serialize_deserialize
+                .iter()
+                .fold(String::from(""), |mut acc, gen_param| {
+                    acc.push_str(&format!("'{gen_param},"));
+                    acc
+                });
+                if let true = lifetimes_for_serialize_deserialize_stringified.contains(&trait_lifetime_stringified) {
+                    panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+                };
+                lifetimes_for_serialize_deserialize_stringified
+                .parse::<proc_macro2::TokenStream>()
+                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_for_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
             };
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
-                    #config_generic_token_stream,
                     #generics
+                    #config_generic_token_stream,
                 >
                     #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream<
                         #trait_lifetime_token_stream,
@@ -2039,7 +2082,6 @@ pub fn derive_impl_error_occurence(
                     #logic_for_enum_with_deserialize
                 }
                 impl<
-                    //todo - check if _token_stream does not contains inside lifetime_deserialize_token_stream
                     #trait_lifetime_token_stream,
                     #lifetime_deserialize_token_stream
                 >
