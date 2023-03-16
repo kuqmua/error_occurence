@@ -109,10 +109,10 @@ pub fn derive_impl_error_occurence(
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
     let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
-    let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
-    let lifetime_token_stream = lifetime_stringified
+    let trait_lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
+    let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {trait_lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let vec_name = "Vec";
     let hashmap_name = "HashMap";
     let to_string_stringified = "to_string";
@@ -635,7 +635,7 @@ pub fn derive_impl_error_occurence(
                                                         });
                                                         segments_stringified.pop();
                                                         segments_stringified.pop();
-                                                        acc.push_str(&format!("{vec_name}<{segments_stringified}{with_deserialize_camel_case}<{lifetime_stringified}>>"))
+                                                        acc.push_str(&format!("{vec_name}<{segments_stringified}{with_deserialize_camel_case}<'error_occurence_proc_macro_reserved_lifetime_name>>"))//todo add here lifetime from variant instead of 'error_occurence_proc_macro_reserved_lifetime_name
                                                     }
                                                     else {
                                                         panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {vec_name}");
@@ -1998,53 +1998,15 @@ pub fn derive_impl_error_occurence(
                 false => quote::quote!{},
             };
             quote::quote! {
-//
-// impl<'a, ConfigGeneric> 
-//     crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig<
-//         'a,
-//         ConfigGeneric,
-//     > 
-//     for 
-//     TestErrorEnum<> 
-// where 
-//     ConfigGeneric: 
-//         crate::traits::fields::GetSourcePlaceType
-//         + crate::traits::fields::GetTimezone
-//         + crate::traits::get_server_address::GetServerAddress,
-// {
-//     fn to_string_with_config_for_source_to_string_with_config(&self, config: &ConfigGeneric) -> String
-//     { 
-//         match self { 
-//             TestErrorEnum::ToString(i) => {
-//                 i.to_string() 
-//             } 
-//         } 
-//     }
-// }
-// impl<'a> crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig<'a>
-//     for TestErrorEnum
-// {
-//     fn to_string_without_config(&self) -> String {
-//         match self {
-//             TestErrorEnum::ToString(i) => i.to_string(),
-//         }
-//     }
-// }
-// impl<'a> crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfigWithDeserialize<'a>
-//     for TestErrorEnumWithDeserialize
-// {
-//     fn to_string_without_config_with_deserialize(&self) -> String {
-//         match self {
-//             TestErrorEnumWithDeserialize::ToString(i) => i.to_string(),
-//         }
-//     }
-// }
-//
-                impl<#generics #config_generic_token_stream>//todo - add let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
+                impl<
+                    //todo check if config_generic_token_stream and trait_lifetime_token_stream do not contain inside generics
+                    #trait_lifetime_token_stream,
+                    #config_generic_token_stream,
+                    #generics
+                >
                     #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream<
-                        #generics
+                        #trait_lifetime_token_stream,
                         #config_generic_token_stream,
-                        //todo - add let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
                     > for #ident<#generics>
                 where
                     #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
@@ -2059,10 +2021,9 @@ pub fn derive_impl_error_occurence(
                 }
                 impl<
                     #generics
-                    //todo - add let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
+                    #trait_lifetime_token_stream,
                 > #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<
-                    #generics
-                    //todo - add let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
+                    #trait_lifetime_token_stream,
                 >
                     for #ident<#generics>
                 {
@@ -2076,17 +2037,16 @@ pub fn derive_impl_error_occurence(
                 pub enum #ident_with_deserialize_token_stream<#lifetime_deserialize_token_stream> {
                     #logic_for_enum_with_deserialize
                 }
-                impl< 
+                impl<
+                    //todo - check if _token_stream does not contains inside lifetime_deserialize_token_stream
                     #lifetime_deserialize_token_stream
-                    //todo - change lifetime_deserialize_token_stream let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
+                    #trait_lifetime_token_stream,
                 >
                     #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
-                        #lifetime_deserialize_token_stream
-                        //todo - change lifetime_deserialize_token_stream to let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
+                        #trait_lifetime_token_stream,
                     > 
                     for #ident_with_deserialize_token_stream<
                         #lifetime_deserialize_token_stream
-                        //todo - add  AND CHECK IF ITS IN THE lifetime_deserialize_token_stream let lifetime_stringified = "'error_occurence_proc_macro_reserved_lifetime_name";
                     >
                 {
                     fn #to_string_without_config_with_deserialize_token_stream(&self) -> String {
