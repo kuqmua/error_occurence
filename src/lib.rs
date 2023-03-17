@@ -290,45 +290,48 @@ pub fn derive_impl_error_occurence(
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_stringified} {parse_proc_macro2_token_stream_failed_message}"))
     };
-    let mut all_equal: Option<SuportedEnumVariant> = None;
-    let named_or_unnamed_error_name = "only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed";
-    if let true = &data_enum.variants.is_empty() {
-        panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
-    }
-    for variant in &data_enum.variants {
-        match &variant.fields {
-            syn::Fields::Named(_) => {
-                match &all_equal {
-                    Some(supported_variant) => {
-                        if let SuportedEnumVariant::Unnamed = supported_variant {
-                            panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}");
-                        }
-                    },
-                    None => {
-                        all_equal = Some(SuportedEnumVariant::Named);
-                    },
-                }
-            },
-            syn::Fields::Unnamed(_) => {
-                match &all_equal {
-                    Some(supported_variant) => {
-                        if let SuportedEnumVariant::Named = supported_variant {
-                            panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}");
-                        }
-                    },
-                    None => {
-                        all_equal = Some(SuportedEnumVariant::Unnamed);
-                    },
-                }
-            },
-            syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
+    let supported_enum_variant = {
+        let mut all_equal: Option<SuportedEnumVariant> = None;
+        let named_or_unnamed_error_name = "only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed";
+        if let true = &data_enum.variants.is_empty() {
+            panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
         }
-    }
-    let supported_enum_variant = if let Some(supported_enum_variant) = all_equal {
-        supported_enum_variant
-    }
-    else {
-        panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
+        for variant in &data_enum.variants {
+            // println!("{variant:#?}");
+            match &variant.fields {
+                syn::Fields::Named(_) => {
+                    match &all_equal {
+                        Some(supported_variant) => {
+                            if let SuportedEnumVariant::Unnamed = supported_variant {
+                                panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}");
+                            }
+                        },
+                        None => {
+                            all_equal = Some(SuportedEnumVariant::Named);
+                        },
+                    }
+                },
+                syn::Fields::Unnamed(_) => {
+                    match &all_equal {
+                        Some(supported_variant) => {
+                            if let SuportedEnumVariant::Named = supported_variant {
+                                panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}");
+                            }
+                        },
+                        None => {
+                            all_equal = Some(SuportedEnumVariant::Unnamed);
+                        },
+                    }
+                },
+                syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
+            }
+        }
+        if let Some(supported_enum_variant) = all_equal {
+            supported_enum_variant
+        }
+        else {
+            panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
+        }
     };
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
@@ -849,10 +852,10 @@ pub fn derive_impl_error_occurence(
                 #(#logic_for_into_serialize_deserialize_version_iter),*
             };
             quote::quote! {
-                impl<#config_generic_token_stream, #generics>
+                impl<#generics #config_generic_token_stream>
                     #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
-                        #config_generic_token_stream,
                         #generics
+                        #config_generic_token_stream
                     > for #ident<#generics>
                     where #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
                         + #crate_traits_fields_get_timezone_token_stream
@@ -915,6 +918,19 @@ pub fn derive_impl_error_occurence(
                         match self {
                             #logic_for_into_serialize_deserialize_version
                         }
+                    }
+                }
+                //dublicate inside names and unnamed
+                impl<#generics> std::fmt::Display for #ident<#generics> {
+                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+                        write!(f, "{}", self.#to_string_without_config_token_stream())
+                    }
+                }
+                impl<#generics> std::fmt::Display for #ident_with_deserialize_token_stream<#generics> {
+                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
+                        write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
                     }
                 }
             }
@@ -2028,7 +2044,7 @@ pub fn derive_impl_error_occurence(
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_generated),*
             };
-            let lifetime_deserialize_token_stream = {
+            let lifetimes_for_serialize_deserialize_token_stream = {
                 if let true = lifetimes_for_serialize_deserialize.contains(&trait_lifetime_stringified.to_string()) {
                     panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
                 };
@@ -2078,18 +2094,18 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
-                pub enum #ident_with_deserialize_token_stream<#lifetime_deserialize_token_stream> {
+                pub enum #ident_with_deserialize_token_stream<#lifetimes_for_serialize_deserialize_token_stream> {
                     #logic_for_enum_with_deserialize
                 }
                 impl<
                     #trait_lifetime_token_stream,
-                    #lifetime_deserialize_token_stream
+                    #lifetimes_for_serialize_deserialize_token_stream
                 >
                     #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream<
                         #trait_lifetime_token_stream
                     > 
                     for #ident_with_deserialize_token_stream<
-                        #lifetime_deserialize_token_stream
+                        #lifetimes_for_serialize_deserialize_token_stream
                     >
                 {
                     fn #to_string_without_config_with_deserialize_token_stream(&self) -> String {
@@ -2099,28 +2115,29 @@ pub fn derive_impl_error_occurence(
                     }
                 }
                 impl<#generics> #ident<#generics> {
-                    pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_deserialize_token_stream<#lifetime_deserialize_token_stream> {
+                    pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_deserialize_token_stream<#lifetimes_for_serialize_deserialize_token_stream> {
                         match self {
                             #logic_for_into_serialize_deserialize_version
                         }
+                    }
+                }
+                //dublicate inside names and unnamed
+                impl<#generics> std::fmt::Display for #ident<#generics> {
+                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+                        write!(f, "{}", self.#to_string_without_config_token_stream())
+                    }
+                }
+                impl<#lifetimes_for_serialize_deserialize_token_stream> std::fmt::Display for #ident_with_deserialize_token_stream<#lifetimes_for_serialize_deserialize_token_stream> {
+                    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
+                        write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
                     }
                 }
             }
         },
     };
     let uuu = quote::quote! {
-        impl<#generics> std::fmt::Display for #ident<#generics> {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                write!(f, "{}", self.#to_string_without_config_token_stream())
-            }
-        }
-        impl<#generics> std::fmt::Display for #ident_with_deserialize_token_stream<#generics> {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
-                write!(f, "{}", self.#to_string_without_config_with_deserialize_token_stream())
-            }
-        }
         #generated_impl_with_deserialize_alternatives
     };
     println!("{uuu}");
