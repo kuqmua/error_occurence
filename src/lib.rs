@@ -443,24 +443,30 @@ pub fn derive_impl_error_occurence(
                         error_field_name, 
                         &first_field.ty, 
                         second_field_ident, 
-                        &second_field.ty, 
+                        code_occurence_type_token_stream,
                         error_field_name_token_stream, 
                         is_display_foreign_type_option, 
-                        code_occurence_type_token_stream
                     )
                 }
                 else {
                     panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
                 };
-                (variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3, needed_info.4, needed_info.5, needed_info.6)
+                (
+                    variant_ident, 
+                    needed_info.0, 
+                    needed_info.1, 
+                    needed_info.2, 
+                    needed_info.3, 
+                    needed_info.4, 
+                    needed_info.5, 
+                )
             }).collect::<Vec<(
                 &proc_macro2::Ident, 
                 ErrorFieldName, &syn::Type, 
                 proc_macro2::Ident, 
-                &syn::Type, 
+                proc_macro2::TokenStream,
                 proc_macro2::TokenStream, 
                 Option<bool>, 
-                proc_macro2::TokenStream
             )>>();
             let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
             let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
@@ -474,52 +480,10 @@ pub fn derive_impl_error_occurence(
                 error_field_name, 
                 first_field_type,
                 second_field_ident, 
-                second_field_type,//todo - use code_occurence_field_type instead and remove second_field_type later
+                code_occurence_field_type,
                 error_field_name_token_stream,
                 is_display_foreign_type_option,
-                code_occurence_field_type,
             )|{
-                let second_field_ident_token_stream = if let syn::Type::Path(type_path) = second_field_type {
-                    if let Some(path_segment) = type_path.path.segments.last() {
-                        if let false = path_segment.ident == code_occurence_camel_case {
-                            panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() != {code_occurence_camel_case}");
-                        }
-                    }
-                    else {
-                        panic!("{proc_macro_name} {ident_stringified} second_field_ident type_path.path.segments.last() is None");
-                    };
-                    let mut code_occurence_checker: Option<()> = None;
-                    let second_field_ident_segments_stringified = type_path.path.segments.iter()
-                    .fold(String::from(""), |mut acc, path_segment| {
-                        let path_segment_ident = &path_segment.ident;
-                        match *path_segment_ident == code_occurence_camel_case {
-                            true => {
-                                if code_occurence_checker.is_some() {
-                                    panic!("{proc_macro_name} {ident_stringified} second_field_ident detected more than one {code_occurence_camel_case} inside type path");
-                                }
-                                let last_arg_option_lifetime = form_last_arg_lifetime(
-                                type_path, 
-                                    proc_macro_name, 
-                                    &ident_stringified,
-                                    first_field_type_stringified_name,
-                                ).to_string();
-                                acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-                                code_occurence_checker = Some(());
-                                },
-                            false => acc.push_str(&format!("{path_segment_ident}::")),
-                        }
-                        acc
-                    });
-                    if code_occurence_checker.is_none() {
-                        panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
-                    }
-                    second_field_ident_segments_stringified
-                    .parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {second_field_ident_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                }
-                else {
-                    panic!("{proc_macro_name} {ident_stringified} second_field_type supports only syn::Type::Path");
-                };
                 match error_field_name {
                     ErrorFieldName::Error => {
                         logic_for_source_to_string_with_config.push(quote::quote! {
@@ -561,7 +525,7 @@ pub fn derive_impl_error_occurence(
                                 #variant_ident {
                                     #error_field_name_token_stream: String,//#first_field_type,
                                     #[serde(borrow)]
-                                    #second_field_ident: #second_field_ident_token_stream
+                                    #second_field_ident: #code_occurence_field_type
                                 }
                             }
                         });
@@ -644,7 +608,7 @@ pub fn derive_impl_error_occurence(
                                     #[serde(borrow)]
                                     #error_field_name_token_stream: #first_field_type_token_stream,
                                     #[serde(borrow)]
-                                    #second_field_ident: #second_field_ident_token_stream
+                                    #second_field_ident: #code_occurence_field_type
                                 }
                             }
                         });
@@ -860,7 +824,7 @@ pub fn derive_impl_error_occurence(
                                     #[serde(borrow)]
                                     #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
                                     #[serde(borrow)]
-                                    #second_field_ident: #second_field_ident_token_stream
+                                    #second_field_ident: #code_occurence_field_type
                                 }
                             }
                         });
