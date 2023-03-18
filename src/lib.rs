@@ -5,19 +5,6 @@
     clippy::float_arithmetic
 )]
 #![allow(clippy::too_many_arguments)]
-use convert_case::Casing;
-
-#[derive(
-    Debug,
-    strum_macros::EnumIter,
-    strum_macros::Display,
-    enum_extension::EnumExtension
-)]
-enum ErrorFieldName {
-    Error,
-    InnerError,
-    InnerErrors,
-}
 
 impl ErrorFieldName {
     fn to_all_variants_lower_case_string_vec() -> Vec<String> {
@@ -69,6 +56,18 @@ impl std::fmt::Display for Lifetime {
             Lifetime::NotSpecified => write!(f, ""),
         }
     }
+}
+
+#[derive(
+    Debug,
+    strum_macros::EnumIter,
+    strum_macros::Display,
+    enum_extension::EnumExtension
+)]
+enum ErrorFieldName {
+    Error,
+    InnerError,
+    InnerErrors,
 }
 
 enum Attributes {
@@ -138,6 +137,7 @@ pub fn derive_impl_error_occurence(
     let hashmap_key_display_foreign_type_value_display_foreign_type_stringified = "hashmap_key_display_foreign_type_value_display_foreign_type";
     let hashmap_key_display_foreign_type_value_error_occurence_stringified = "hashmap_key_display_foreign_type_value_error_occurence";
     let with_deserialize_camel_case = "WithDeserialize";
+    use convert_case::Casing;
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
     let ident_with_deserialize_token_stream = ident_with_deserialize_stringified
@@ -296,8 +296,7 @@ pub fn derive_impl_error_occurence(
         if let true = &data_enum.variants.is_empty() {
             panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
         }
-        for variant in &data_enum.variants {
-            // println!("{variant:#?}");
+        data_enum.variants.iter().for_each(|variant|{
             match &variant.fields {
                 syn::Fields::Named(_) => {
                     match &all_equal {
@@ -325,7 +324,7 @@ pub fn derive_impl_error_occurence(
                 },
                 syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
             }
-        }
+        });
         if let Some(supported_enum_variant) = all_equal {
             supported_enum_variant
         }
@@ -333,6 +332,7 @@ pub fn derive_impl_error_occurence(
             panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
         }
     };
+    //todo should implement named\unnamed variation or not?
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let vec_needed_info = data_enum.variants.iter().map(|variant| {
@@ -386,13 +386,82 @@ pub fn derive_impl_error_occurence(
                     let error_field_name_token_stream = error_field_name_stringified
                     .parse::<proc_macro2::TokenStream>()
                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                    (error_field_name, &first_field.ty, second_field_ident, &second_field.ty, error_field_name_token_stream, is_display_foreign_type_option)
+                    let mut code_occurence_type_option = None;
+                    fields_named.named.iter().for_each(|named|{
+                        let named_field_ident = named.ident.clone()
+                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident is None"));
+                        if named_field_ident == *code_occurence_lower_case {
+                            match code_occurence_type_option {
+                                Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
+                                None => {
+                                    if let syn::Type::Path(type_path) = &named.ty {
+                                        let mut code_occurence_type_repeat_checker: Option<()> = None;
+                                        let code_occurence_segments_stringified = type_path.path.segments.iter()
+                                        .fold(String::from(""), |mut acc, path_segment| {
+                                            let path_segment_ident = &path_segment.ident;
+                                            match *path_segment_ident == code_occurence_camel_case {
+                                                true => {
+                                                    if code_occurence_type_repeat_checker.is_some() {
+                                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
+                                                    }
+                                                    let last_arg_option_lifetime = form_last_arg_lifetime(
+                                                    type_path, 
+                                                        proc_macro_name, 
+                                                        &ident_stringified,
+                                                        first_field_type_stringified_name,
+                                                    ).to_string();
+                                                    acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                                                    code_occurence_type_repeat_checker = Some(());
+                                                },
+                                                false => acc.push_str(&format!("{path_segment_ident}::")),
+                                            }
+                                            acc
+                                        });
+                                        if code_occurence_type_repeat_checker.is_none() {
+                                            panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} detected inside second_field_ident type path");
+                                        }
+                                        code_occurence_type_option = Some(
+                                            code_occurence_segments_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                        )
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
+                                    }
+                                },
+                            }
+                        }
+                    });
+                    let code_occurence_type_token_stream = if let Some(code_occurence_type) = code_occurence_type_option {
+                        code_occurence_type
+                    }
+                    else {
+                        panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
+                    };
+                    (
+                        error_field_name, 
+                        &first_field.ty, 
+                        second_field_ident, 
+                        &second_field.ty, 
+                        error_field_name_token_stream, 
+                        is_display_foreign_type_option, 
+                        code_occurence_type_token_stream
+                    )
                 }
                 else {
                     panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
                 };
-                (variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3, needed_info.4, needed_info.5)
-            }).collect::<Vec<(&proc_macro2::Ident, ErrorFieldName, &syn::Type, proc_macro2::Ident, &syn::Type, proc_macro2::TokenStream, Option<bool>)>>();
+                (variant_ident, needed_info.0, needed_info.1, needed_info.2, needed_info.3, needed_info.4, needed_info.5, needed_info.6)
+            }).collect::<Vec<(
+                &proc_macro2::Ident, 
+                ErrorFieldName, &syn::Type, 
+                proc_macro2::Ident, 
+                &syn::Type, 
+                proc_macro2::TokenStream, 
+                Option<bool>, 
+                proc_macro2::TokenStream
+            )>>();
             let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
             let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
             let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
@@ -405,9 +474,10 @@ pub fn derive_impl_error_occurence(
                 error_field_name, 
                 first_field_type,
                 second_field_ident, 
-                second_field_type,
+                second_field_type,//todo - use code_occurence_field_type instead and remove second_field_type later
                 error_field_name_token_stream,
-                is_display_foreign_type_option
+                is_display_foreign_type_option,
+                code_occurence_field_type,
             )|{
                 let second_field_ident_token_stream = if let syn::Type::Path(type_path) = second_field_type {
                     if let Some(path_segment) = type_path.path.segments.last() {
@@ -2140,7 +2210,7 @@ pub fn derive_impl_error_occurence(
     let uuu = quote::quote! {
         #generated_impl_with_deserialize_alternatives
     };
-    println!("{uuu}");
+    // println!("{uuu}");
     uuu.into()
 }
 
