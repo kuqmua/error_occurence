@@ -69,8 +69,8 @@ enum ErrorFieldName {
     InnerError,
     InnerErrors,
 }
-
-enum Attributes {
+//todo - atrributes must be marked by proc_macro - if it would be 2 or more macro what uses same attribute name - incorrect generation logic
+enum Attribute {
     ToString,
     DisplayForeignType,
     ErrorOccurence,
@@ -386,6 +386,7 @@ pub fn derive_impl_error_occurence(
                     let error_field_name_token_stream = error_field_name_stringified
                     .parse::<proc_macro2::TokenStream>()
                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                    //
                     let mut code_occurence_type_option = None;
                     fields_named.named.iter().for_each(|named|{
                         let named_field_ident = named.ident.clone()
@@ -978,46 +979,47 @@ pub fn derive_impl_error_occurence(
                             panic!("{proc_macro_name} {ident_stringified} first attribute.path.segments.len() != 1");
                         }
                         if let true = first_attribute.path.segments[0].ident == to_string_stringified {
-                            Attributes::ToString
+                            Attribute::ToString
                         }
                         else if let true = first_attribute.path.segments[0].ident == display_foreign_type_stringified {
-                            Attributes::DisplayForeignType
+                            Attribute::DisplayForeignType
                         }
                         else if let true = first_attribute.path.segments[0].ident == error_occurence_stringified {
-                            Attributes::ErrorOccurence
+                            Attribute::ErrorOccurence
                         }
                         else if let true = first_attribute.path.segments[0].ident == vec_to_string_stringified {
-                            Attributes::VecToString
+                            Attribute::VecToString
                         }
                         else if let true = first_attribute.path.segments[0].ident == vec_display_foreign_type_stringified {
-                            Attributes::VecDisplayForeignType
+                            Attribute::VecDisplayForeignType
                         }
                         else if let true = first_attribute.path.segments[0].ident == vec_error_occurence_stringified {
-                            Attributes::VecErrorOccurence
+                            Attribute::VecErrorOccurence
                         }
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_to_string_value_to_string_stringified {
-                            Attributes::HashMapKeyToStringValueToString
+                            Attribute::HashMapKeyToStringValueToString
                         }
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_to_string_value_display_foreign_type_stringified {
-                            Attributes::HashMapKeyToStringValueDisplayForeignType
+                            Attribute::HashMapKeyToStringValueDisplayForeignType
                         }
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_to_string_value_error_occurence_stringified {
-                            Attributes::HashMapKeyToStringValueErrorOccurence
+                            Attribute::HashMapKeyToStringValueErrorOccurence
                         }
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_display_foreign_type_value_to_string_stringified {
-                            Attributes::HashMapKeyDisplayForeignTypeValueToString
+                            Attribute::HashMapKeyDisplayForeignTypeValueToString
                         }
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-                            Attributes::HashMapKeyDisplayForeignTypeValueDisplayForeignType
+                            Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType
                         }
                         else if let true = first_attribute.path.segments[0].ident == hashmap_key_display_foreign_type_value_error_occurence_stringified {
-                            Attributes::HashMapKeyDisplayForeignTypeValueErrorOccurence
+                            Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} first_attribute.path.segments[0].ident must be equal one of the supported attributes");
                         }
                     }
                     _ => {
+                        //todo - its actually can be more than 1 - attributes from different 
                         panic!("{proc_macro_name} {ident_stringified} must contain attribute");
                     } 
                 };
@@ -1032,7 +1034,7 @@ pub fn derive_impl_error_occurence(
                     panic!("{proc_macro_name} {ident_stringified} only works with named fields");
                 };
                 (&variant.ident, type_handle, attributes)
-            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, Attributes)>>();
+            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, Attribute)>>();
             let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
@@ -1209,7 +1211,7 @@ pub fn derive_impl_error_occurence(
                     logic_for_to_string_without_config_with_deserialize_inner,
                     logic_for_into_serialize_deserialize_version_inner,
                 ) = match attributes {
-                    Attributes::ToString => {
+                    Attribute::ToString => {
                         let (type_token_stringified, serde_borrow_option_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                             (
                                 format!("{path}{should_add_serde_borrow}"),
@@ -1249,7 +1251,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::DisplayForeignType => {
+                    Attribute::DisplayForeignType => {
                         (
                             quote::quote!{
                                 use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
@@ -1273,7 +1275,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::ErrorOccurence => {
+                    Attribute::ErrorOccurence => {
                         let (type_token_stringified, serde_borrow_option_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                             (
                                 format!("{path}{with_deserialize_camel_case}{should_add_serde_borrow}"),
@@ -1313,7 +1315,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::VecToString => {
+                    Attribute::VecToString => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                             if let Lifetime::Specified(lifetime_specified) = element_lifetime.clone() {
                                 if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
@@ -1378,7 +1380,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     }
-                    Attributes::VecDisplayForeignType => {
+                    Attribute::VecDisplayForeignType => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                             format!("{path}<String>")
                         }
@@ -1444,7 +1446,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     }
-                    Attributes::VecErrorOccurence => {
+                    Attribute::VecErrorOccurence => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                             if let Lifetime::Specified(lifetime_specified) = element_lifetime.clone() {
                                 if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
@@ -1515,7 +1517,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     }
-                    Attributes::HashMapKeyToStringValueToString => {
+                    Attribute::HashMapKeyToStringValueToString => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -1601,7 +1603,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::HashMapKeyToStringValueDisplayForeignType => {
+                    Attribute::HashMapKeyToStringValueDisplayForeignType => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -1677,7 +1679,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::HashMapKeyToStringValueErrorOccurence => {
+                    Attribute::HashMapKeyToStringValueErrorOccurence => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -1766,7 +1768,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     }
-                    Attributes::HashMapKeyDisplayForeignTypeValueToString => {
+                    Attribute::HashMapKeyDisplayForeignTypeValueToString => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -1850,7 +1852,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                    Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -1925,7 +1927,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attributes::HashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                    Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -2174,7 +2176,7 @@ pub fn derive_impl_error_occurence(
     let uuu = quote::quote! {
         #generated_impl_with_deserialize_alternatives
     };
-    // println!("{uuu}");
+    println!("{uuu}");
     uuu.into()
 }
 
