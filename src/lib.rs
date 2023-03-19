@@ -61,9 +61,12 @@ impl std::fmt::Display for Lifetime {
 enum ErrorOrCodeOccurence {
     Error {
         attribute: Attribute,
+        field_name: proc_macro2::TokenStream,
+        field_type: syn::Type,
     },
     CodeOccurence {
-        token_stream: proc_macro2::TokenStream,
+        field_name: proc_macro2::TokenStream,
+        field_type: proc_macro2::TokenStream,
     }
 }
 
@@ -371,204 +374,223 @@ pub fn derive_impl_error_occurence(
     //todo should implement named\unnamed variation or not?
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
-            // let variants_vec = data_enum.variants.iter().map(|variant| {
-            //     let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
-            //         let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
-            //         fields_named.named.iter().map(|field|{
-            //             let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident is None"));
-            //             let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
-            //                 true => {
-            //                     let code_occurence_type_token_stream = {
-            //                         let mut code_occurence_type_option = None;
-            //                         fields_named.named.iter().for_each(|named|{
-            //                             let named_field_ident = named.ident.clone()
-            //                             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident is None"));
-            //                             if named_field_ident == *code_occurence_lower_case {
-            //                                 match code_occurence_type_option {
-            //                                     Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
-            //                                     None => {
-            //                                         if let syn::Type::Path(type_path) = &named.ty {
-            //                                             let mut code_occurence_type_repeat_checker: Option<()> = None;
-            //                                             let code_occurence_segments_stringified = type_path.path.segments.iter()
-            //                                             .fold(String::from(""), |mut acc, path_segment| {
-            //                                                 let path_segment_ident = &path_segment.ident;
-            //                                                 match *path_segment_ident == code_occurence_camel_case {
-            //                                                     true => {
-            //                                                         if code_occurence_type_repeat_checker.is_some() {
-            //                                                             panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
-            //                                                         }
-            //                                                         let last_arg_option_lifetime = form_last_arg_lifetime(
-            //                                                         type_path, 
-            //                                                             proc_macro_name, 
-            //                                                             &ident_stringified,
-            //                                                             first_field_type_stringified_name,
-            //                                                         ).to_string();
-            //                                                         acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-            //                                                         code_occurence_type_repeat_checker = Some(());
-            //                                                     },
-            //                                                     false => acc.push_str(&format!("{path_segment_ident}::")),
-            //                                                 }
-            //                                                 acc
-            //                                             });
-            //                                             if code_occurence_type_repeat_checker.is_none() {
-            //                                                 panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
-            //                                             }
-            //                                             code_occurence_type_option = Some(
-            //                                                 code_occurence_segments_stringified
-            //                                                 .parse::<proc_macro2::TokenStream>()
-            //                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-            //                                             )
-            //                                           }
-            //                                         else {
-            //                                             panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
-            //                                           }
-            //                                      },
-            //                                 }
-            //                             }
-            //                         });
-            //                         if let Some(code_occurence_type) = code_occurence_type_option {
-            //                             code_occurence_type
-            //                         }
-            //                         else {
-            //                             panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
-            //                         }
-            //                     };
-            //                     ErrorOrCodeOccurence::CodeOccurence {
-            //                         token_stream: code_occurence_type_token_stream
-            //                     }
-            //                 },
-            //                 false => {
-            //                     let mut option_attribute = None;
-            //                     field.attrs.iter().for_each(|attr|{
-            //                         if let true = attr.path.segments.len() == 1 {
-            //                             if let true = attr.path.segments[0].ident == to_string_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::ToString);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == display_foreign_type_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::DisplayForeignType);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == error_occurence_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::ErrorOccurence);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == vec_to_string_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::VecToString);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == vec_display_foreign_type_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::VecDisplayForeignType);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == vec_error_occurence_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::VecErrorOccurence);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_to_string_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::HashMapKeyToStringValueToString);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_display_foreign_type_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::HashMapKeyToStringValueDisplayForeignType);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_error_occurence_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::HashMapKeyToStringValueErrorOccurence);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_to_string_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueToString);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType);
-            //                                 }
-            //                             }
-            //                             else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_error_occurence_stringified {
-            //                                 if let true = option_attribute.is_some() {
-            //                                     panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-            //                                 }
-            //                                 else {
-            //                                     option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence);
-            //                                 }
-            //                             }//other attributes are not for this proc_macro
-            //                         }//other attributes are not for this proc_macro
-            //                     });
-            //                     ErrorOrCodeOccurence::Error {
-            //                          attribute: option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none")),
-            //                     }
-            //                 },
-            //             };
-            //             (
-            //                 field_ident,
-            //                 error_or_code_occurence,
-            //             )
-            //         })
-            //         .collect::<Vec<(
-            //             proc_macro2::Ident,
-            //             ErrorOrCodeOccurence
-            //         )>>()
-            //     }
-            //     else {
-            //         panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
-            //     };
-            //     (
-            //         &variant.ident, 
-            //         variant_fields_vec,
-            //     )
-            // })
-            // .collect::<Vec<(
-            //     &proc_macro2::Ident, 
-            //      Vec<(
-            //         proc_macro2::Ident,
-            //         ErrorOrCodeOccurence
-            //     )>
-            // )>>();
+            let variants_vec = data_enum.variants.iter().map(|variant| {
+                let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
+                    let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
+                    fields_named.named.iter().map(|field|{
+                        let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident is None"));
+                        let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
+                            true => {
+                                let code_occurence_type_token_stream = {
+                                    let mut code_occurence_type_option = None;
+                                    fields_named.named.iter().for_each(|named|{
+                                        let named_field_ident = named.ident.clone()
+                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident is None"));
+                                        if named_field_ident == *code_occurence_lower_case {
+                                            match code_occurence_type_option {
+                                                Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
+                                                None => {
+                                                    if let syn::Type::Path(type_path) = &named.ty {
+                                                        let mut code_occurence_type_repeat_checker: Option<()> = None;
+                                                        let code_occurence_segments_stringified = type_path.path.segments.iter()
+                                                        .fold(String::from(""), |mut acc, path_segment| {
+                                                            let path_segment_ident = &path_segment.ident;
+                                                            match *path_segment_ident == code_occurence_camel_case {
+                                                                true => {
+                                                                    if code_occurence_type_repeat_checker.is_some() {
+                                                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
+                                                                    }
+                                                                    let last_arg_option_lifetime = form_last_arg_lifetime(
+                                                                    type_path, 
+                                                                        proc_macro_name, 
+                                                                        &ident_stringified,
+                                                                        first_field_type_stringified_name,
+                                                                    ).to_string();
+                                                                    acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                                                                    code_occurence_type_repeat_checker = Some(());
+                                                                },
+                                                                false => acc.push_str(&format!("{path_segment_ident}::")),
+                                                            }
+                                                            acc
+                                                        });
+                                                        if code_occurence_type_repeat_checker.is_none() {
+                                                            panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
+                                                        }
+                                                        code_occurence_type_option = Some(
+                                                            code_occurence_segments_stringified
+                                                            .parse::<proc_macro2::TokenStream>()
+                                                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                        )
+                                                      }
+                                                    else {
+                                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
+                                                      }
+                                                 },
+                                            }
+                                        }
+                                    });
+                                    if let Some(code_occurence_type) = code_occurence_type_option {
+                                        code_occurence_type
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
+                                    }
+                                };
+                                ErrorOrCodeOccurence::CodeOccurence {
+                                    field_name: todo!(),
+                                    field_type: code_occurence_type_token_stream
+                                }
+                            },
+                            false => {
+                                let mut option_attribute = None;
+                                field.attrs.iter().for_each(|attr|{
+                                    if let true = attr.path.segments.len() == 1 {
+                                        if let true = attr.path.segments[0].ident == to_string_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::ToString);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == display_foreign_type_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::DisplayForeignType);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == error_occurence_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::ErrorOccurence);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == vec_to_string_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::VecToString);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == vec_display_foreign_type_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::VecDisplayForeignType);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == vec_error_occurence_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::VecErrorOccurence);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_to_string_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::HashMapKeyToStringValueToString);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_display_foreign_type_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::HashMapKeyToStringValueDisplayForeignType);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_error_occurence_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::HashMapKeyToStringValueErrorOccurence);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_to_string_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueToString);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                                            }
+                                        }
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_error_occurence_stringified {
+                                            if let true = option_attribute.is_some() {
+                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            }
+                                            else {
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence);
+                                            }
+                                        }//other attributes are not for this proc_macro
+                                    }//other attributes are not for this proc_macro
+                                });
+                                ErrorOrCodeOccurence::Error {
+                                    attribute: option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none")),
+                                    field_name: todo!(),
+                                    field_type: code_occurence_type_token_stream
+                                }
+                            },
+                        };
+                        (
+                            field_ident,
+                            error_or_code_occurence,
+                        )
+                    })
+                    .collect::<Vec<(
+                        proc_macro2::Ident,
+                        ErrorOrCodeOccurence
+                    )>>()
+                }
+                else {
+                    panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
+                };
+                (
+                    &variant.ident, 
+                    variant_fields_vec,
+                )
+            })
+            .collect::<Vec<(
+                &proc_macro2::Ident, 
+                 Vec<(
+                    proc_macro2::Ident,
+                    ErrorOrCodeOccurence
+                )>
+            )>>();
+            let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // variants_vec.iter().for_each(|(
+            //     variant_ident, 
+            //     fields_vec
+            // )|{
+            //     fields_vec.iter().for_each(|(field_ident, code_occurence)|{
+            //         match field
+            //     });
+            // });
+            //////////////////////////////////////////
             let vec_needed_info = data_enum.variants.iter().map(|variant| {
                 let needed_info = if let syn::Fields::Named(fields_named) = &variant.fields {
                     let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
@@ -695,7 +717,8 @@ pub fn derive_impl_error_occurence(
                 )
             }).collect::<Vec<(
                 &proc_macro2::Ident, 
-                ErrorFieldName, &syn::Type, 
+                ErrorFieldName, 
+                &syn::Type, 
                 proc_macro2::TokenStream,
                 proc_macro2::TokenStream, 
                 Option<bool>, 
