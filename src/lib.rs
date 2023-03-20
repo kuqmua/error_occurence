@@ -61,11 +61,9 @@ impl std::fmt::Display for Lifetime {
 enum ErrorOrCodeOccurence {
     Error {
         attribute: Attribute,
-        field_name: proc_macro2::TokenStream,
         field_type: syn::Type,
     },
     CodeOccurence {
-        field_name: proc_macro2::TokenStream,
         field_type: proc_macro2::TokenStream,
     }
 }
@@ -437,7 +435,6 @@ pub fn derive_impl_error_occurence(
                                     }
                                 };
                                 ErrorOrCodeOccurence::CodeOccurence {
-                                    field_name: todo!(),
                                     field_type: code_occurence_type_token_stream
                                 }
                             },
@@ -543,10 +540,45 @@ pub fn derive_impl_error_occurence(
                                         }//other attributes are not for this proc_macro
                                     }//other attributes are not for this proc_macro
                                 });
+//
+                                // let field_type = if let syn::Type::Path(type_path) = &field.ty {
+                                //     let mut code_occurence_type_repeat_checker: Option<()> = None;
+                                //     let code_occurence_segments_stringified = type_path.path.segments
+                                //     .iter()
+                                //     .fold(String::from(""), |mut acc, path_segment| {
+                                //         let path_segment_ident = &path_segment.ident;
+                                //         match *path_segment_ident == code_occurence_camel_case {
+                                //             true => {
+                                //                 if code_occurence_type_repeat_checker.is_some() {
+                                //                     panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
+                                //                 }
+                                //                 let last_arg_option_lifetime = form_last_arg_lifetime(
+                                //                 type_path, 
+                                //                     proc_macro_name, 
+                                //                     &ident_stringified,
+                                //                     first_field_type_stringified_name,
+                                //                 ).to_string();
+                                //                 acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                                //                 code_occurence_type_repeat_checker = Some(());
+                                //             },
+                                //             false => acc.push_str(&format!("{path_segment_ident}::")),
+                                //         }
+                                //         acc
+                                //     });
+                                //     if code_occurence_type_repeat_checker.is_none() {
+                                //         panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
+                                //     }
+                                //     code_occurence_segments_stringified
+                                //     .parse::<proc_macro2::TokenStream>()
+                                //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                // }
+                                // else {
+                                //     panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
+                                // };
+//
                                 ErrorOrCodeOccurence::Error {
                                     attribute: option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none")),
-                                    field_name: todo!(),
-                                    field_type: code_occurence_type_token_stream
+                                    field_type: todo!()
                                 }
                             },
                         };
