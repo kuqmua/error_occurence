@@ -640,16 +640,27 @@ pub fn derive_impl_error_occurence(
                 fields_vec
             )|{
                 println!("2");
-                let mut enum_fields: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
-                fields_vec.iter().for_each(|(field_ident, error_or_code_occurence)|{
+                let mut enum_fields_logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                //
+                fields_vec.iter().enumerate().for_each(|(index, (field_ident, error_or_code_occurence))|{
+                    let unused_argument_handle_stringified = format!("_unused_argument_{index}");
+                    let unused_argument_handle_token_stream = unused_argument_handle_stringified
+                    .parse::<proc_macro2::TokenStream>()
+                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {unused_argument_handle_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                     match error_or_code_occurence {
                         ErrorOrCodeOccurence::Error { attribute, field_segments_stringified, field_last_arg_option_lifetime } => {
                             let field_type_stringified = format!("{field_segments_stringified}{field_last_arg_option_lifetime}");
                             let field_type_token_stream = field_type_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                            enum_fields.push(quote::quote! {
-                                #field_ident: #field_type_token_stream,
+                            enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
+                                #field_ident: #unused_argument_handle_token_stream,
                             });
                             // match attribute {
                             //     Attribute::ToString => {
@@ -715,15 +726,15 @@ pub fn derive_impl_error_occurence(
                             // }
                         },
                         ErrorOrCodeOccurence::CodeOccurence { field_type } => {
-                            enum_fields.push(quote::quote! {
-                                #field_ident: #field_type,
+                            enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
+                                #field_ident: #unused_argument_handle_token_stream,
                             });
                         },
                     }
                 });
                 println!("3");
-                println!("{:#?}", enum_fields);
-                enum_fields.iter().for_each(|en|{
+                println!("{:#?}", enum_fields_logic_for_source_to_string_with_config);
+                enum_fields_logic_for_source_to_string_with_config.iter().for_each(|en|{
                     println!("{en}");
                 });
                 // logic_for_source_to_string_with_config.push(quote::quote! {
