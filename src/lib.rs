@@ -61,7 +61,8 @@ impl std::fmt::Display for Lifetime {
 enum ErrorOrCodeOccurence {
     Error {
         attribute: Attribute,
-        field_type: syn::Type,
+        field_segments_stringified: String, 
+        field_last_arg_option_lifetime: Lifetime,
     },
     CodeOccurence {
         field_type: proc_macro2::TokenStream,
@@ -414,6 +415,7 @@ pub fn derive_impl_error_occurence(
                                                         if code_occurence_type_repeat_checker.is_none() {
                                                             panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
                                                         }
+                                                        println!("{code_occurence_segments_stringified}");
                                                         code_occurence_type_option = Some(
                                                             code_occurence_segments_stringified
                                                             .parse::<proc_macro2::TokenStream>()
@@ -540,45 +542,63 @@ pub fn derive_impl_error_occurence(
                                         }//other attributes are not for this proc_macro
                                     }//other attributes are not for this proc_macro
                                 });
-//
-                                // let field_type = if let syn::Type::Path(type_path) = &field.ty {
-                                //     let mut code_occurence_type_repeat_checker: Option<()> = None;
-                                //     let code_occurence_segments_stringified = type_path.path.segments
-                                //     .iter()
-                                //     .fold(String::from(""), |mut acc, path_segment| {
-                                //         let path_segment_ident = &path_segment.ident;
-                                //         match *path_segment_ident == code_occurence_camel_case {
-                                //             true => {
-                                //                 if code_occurence_type_repeat_checker.is_some() {
-                                //                     panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
-                                //                 }
-                                //                 let last_arg_option_lifetime = form_last_arg_lifetime(
-                                //                 type_path, 
-                                //                     proc_macro_name, 
-                                //                     &ident_stringified,
-                                //                     first_field_type_stringified_name,
-                                //                 ).to_string();
-                                //                 acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-                                //                 code_occurence_type_repeat_checker = Some(());
-                                //             },
-                                //             false => acc.push_str(&format!("{path_segment_ident}::")),
-                                //         }
-                                //         acc
-                                //     });
-                                //     if code_occurence_type_repeat_checker.is_none() {
-                                //         panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
-                                //     }
-                                //     code_occurence_segments_stringified
-                                //     .parse::<proc_macro2::TokenStream>()
-                                //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                // }
-                                // else {
-                                //     panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
-                                // };
-//
+                                let (field_segments_stringified, field_last_arg_option_lifetime) = if let syn::Type::Path(type_path) = &field.ty {
+                                    let last_path_segment = type_path.path.segments.last()
+                                    .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field type_path.path.segments.last() is None"));
+                                    match &last_path_segment.arguments {
+                                        syn::PathArguments::None => {
+                                            let mut field_segments_stringified = type_path.path.segments.iter()
+                                            .fold(String::from(""), |mut acc, elem| {
+                                                acc.push_str(&format!("{}::", elem.ident));
+                                                acc
+                                            });
+                                            field_segments_stringified.pop();
+                                            field_segments_stringified.pop();
+                                            (field_segments_stringified, Lifetime::NotSpecified)
+                                        },
+                                        syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) => {
+                                            //todo - can be more than one lifetime or generic
+                                            if let true = angle_brackets_generic_arguments.args.len() == 1 {
+                                                if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
+                                                    if let syn::Type::Path(type_path) = type_handle {
+                                                        let field_last_arg_option_lifetime = form_last_arg_lifetime(
+                                                            type_path, 
+                                                            proc_macro_name, 
+                                                            &ident_stringified,
+                                                            first_field_type_stringified_name
+                                                        );
+                                                        //todo - maybe wrong
+                                                        let mut field_segments_stringified = type_path.path.segments.iter()
+                                                        .fold(String::from(""), |mut acc, elem| {
+                                                            acc.push_str(&format!("{}::", elem.ident));
+                                                            acc
+                                                        });
+                                                        field_segments_stringified.pop();
+                                                        field_segments_stringified.pop();
+                                                        (field_segments_stringified, field_last_arg_option_lifetime)
+                                                    }
+                                                    else {
+                                                        panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
+                                                    }
+                                                }
+                                                else {
+                                                    panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type");
+                                                }
+                                            }
+                                            else {
+                                                panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
+                                            }
+                                        },
+                                        syn::PathArguments::Parenthesized(_) => todo!(),
+                                    }
+                                }
+                                else {
+                                    panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
+                                };
                                 ErrorOrCodeOccurence::Error {
                                     attribute: option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none")),
-                                    field_type: todo!()
+                                    field_segments_stringified, 
+                                    field_last_arg_option_lifetime,
                                 }
                             },
                         };
@@ -607,21 +627,161 @@ pub fn derive_impl_error_occurence(
                     ErrorOrCodeOccurence
                 )>
             )>>();
-            let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            // variants_vec.iter().for_each(|(
-            //     variant_ident, 
-            //     fields_vec
-            // )|{
-            //     fields_vec.iter().for_each(|(field_ident, code_occurence)|{
-            //         match field
-            //     });
-            // });
+            let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            println!("1");
+            variants_vec.iter().for_each(|(
+                variant_ident, 
+                fields_vec
+            )|{
+                println!("2");
+                let mut enum_fields: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                fields_vec.iter().for_each(|(field_ident, error_or_code_occurence)|{
+                    match error_or_code_occurence {
+                        ErrorOrCodeOccurence::Error { attribute, field_segments_stringified, field_last_arg_option_lifetime } => {
+                            let field_type_stringified = format!("{field_segments_stringified}{field_last_arg_option_lifetime}");
+                            let field_type_token_stream = field_type_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                            enum_fields.push(quote::quote! {
+                                #field_ident: #field_type_token_stream,
+                            });
+                            // match attribute {
+                            //     Attribute::ToString => {
+                            //         quote::quote! {
+
+                            //         }
+                            //     },
+                            //     Attribute::DisplayForeignType => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::ErrorOccurence => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::VecToString => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::VecDisplayForeignType => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::VecErrorOccurence => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::HashMapKeyToStringValueToString => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::HashMapKeyToStringValueDisplayForeignType => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::HashMapKeyToStringValueErrorOccurence => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::HashMapKeyDisplayForeignTypeValueToString => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            //     Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                            //         quote::quote! {
+                                        
+                            //         }
+                            //     },
+                            // }
+                        },
+                        ErrorOrCodeOccurence::CodeOccurence { field_type } => {
+                            enum_fields.push(quote::quote! {
+                                #field_ident: #field_type,
+                            });
+                        },
+                    }
+                });
+                println!("3");
+                println!("{:#?}", enum_fields);
+                enum_fields.iter().for_each(|en|{
+                    println!("{en}");
+                });
+                // logic_for_source_to_string_with_config.push(quote::quote! {
+                //     #ident::#variant_ident {
+                //         #error_field_name_token_stream: _unused_first_argument,
+                //         #code_occurence_lower_case_token_stream: _unused_second_argument,
+                //     } => {
+                //         use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+                //         self.#source_to_string_without_config_token_stream()
+                //     }
+                // });
+                // logic_for_source_to_string_without_config.push(quote::quote! {
+                //     #ident::#variant_ident {
+                //         #error_field_name_token_stream,
+                //         #code_occurence_lower_case_token_stream: _unused_second_argument,
+                //     } => {
+                //         #to_string_or_display_foreign_type_method_token_stream
+                //     }
+                // });
+                // logic_for_get_code_occurence.push(quote::quote! {
+                //     #ident::#variant_ident {
+                //         #error_field_name_token_stream: _unused_first_argument,
+                //         #code_occurence_lower_case_token_stream,
+                //     } => #code_occurence_lower_case_token_stream
+                // });
+                // logic_for_enum_with_deserialize.push(quote::quote! {
+                //     #variant_ident {
+                //         #error_field_name_token_stream: String,//#first_field_type,
+                //         #[serde(borrow)]
+                //         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+                //     }
+                // });
+                // logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
+                //     #ident_with_deserialize_token_stream::#variant_ident {
+                //         #error_field_name_token_stream,
+                //         #code_occurence_lower_case_token_stream: _unused_second_argument,
+                //     } => #error_field_name_token_stream.to_string()
+                // });
+                // logic_for_get_code_occurence_with_deserialize.push(quote::quote! {
+                //     #ident_with_deserialize_token_stream::#variant_ident {
+                //         #error_field_name_token_stream: _unused_first_argument,
+                //         #code_occurence_lower_case_token_stream,
+                //     } => #code_occurence_lower_case_token_stream
+                // });
+                // logic_for_into_serialize_deserialize_version.push(quote::quote! {
+                //     #ident::#variant_ident {
+                //         #error_field_name_token_stream,
+                //         #code_occurence_lower_case_token_stream,
+                //     } => {
+                //         #ident_with_deserialize_token_stream::#variant_ident {
+                //             #error_field_name_token_stream: {
+                //                 #to_string_or_display_foreign_type_method_token_stream
+                //             },
+                //             #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+                //         }
+                //     }
+                // });
+            });
             //////////////////////////////////////////
             let vec_needed_info = data_enum.variants.iter().map(|variant| {
                 let needed_info = if let syn::Fields::Named(fields_named) = &variant.fields {
