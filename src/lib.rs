@@ -140,6 +140,7 @@ impl Attribute {
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    //todo add to panic message file line column or occurence
     let proc_macro_name = "ImplErrorOccurence";
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
@@ -662,6 +663,32 @@ pub fn derive_impl_error_occurence(
                             enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
                                 #field_ident: #unused_argument_handle_token_stream,
                             });
+                            enum_fields_logic_for_source_to_string_without_config.push(quote::quote! {
+                                #field_ident,
+                            });
+                            enum_fields_logic_for_get_code_occurence.push(quote::quote!{
+                                #field_ident: #unused_argument_handle_token_stream,
+                            });
+                            enum_fields_logic_for_enum_with_deserialize.push(quote::quote!{
+                //         #error_field_name_token_stream: String,//#first_field_type,
+                //         #[serde(borrow)]
+                //         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+                            });
+                            enum_fields_logic_for_source_to_string_without_config_with_deserialize.push(quote::quote!{
+                                #field_ident,
+                            });
+                            enum_fields_logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
+                                #field_ident: #unused_argument_handle_token_stream,
+                            });
+                            enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
+                //         #ident_with_deserialize_token_stream::#variant_ident {
+                //             #error_field_name_token_stream: {
+                //                 #to_string_or_display_foreign_type_method_token_stream
+                //             },
+                //             #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+                //         }
+                            });
+
                             // match attribute {
                             //     Attribute::ToString => {
                             //         quote::quote! {
@@ -728,6 +755,34 @@ pub fn derive_impl_error_occurence(
                         ErrorOrCodeOccurence::CodeOccurence { field_type } => {
                             enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
                                 #field_ident: #unused_argument_handle_token_stream,
+                            });
+                            enum_fields_logic_for_source_to_string_without_config.push(quote::quote! {
+                                #field_ident: #unused_argument_handle_token_stream,
+                            });
+                            enum_fields_logic_for_get_code_occurence.push(quote::quote!{
+                                #field_ident,
+                            });
+                            enum_fields_logic_for_enum_with_deserialize.push(quote::quote!{
+                                // #[serde(borrow)]//todo - check if CodeOccurence has lifetime
+                                // #field_ident: field_type, //todo - with_deserialize - so it must be string
+
+                //         #error_field_name_token_stream: String,//#first_field_type,
+                //         #[serde(borrow)]
+                //         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+                            });
+                            enum_fields_logic_for_source_to_string_without_config_with_deserialize.push(quote::quote!{
+                                #field_ident: #unused_argument_handle_token_stream,
+                            });
+                            enum_fields_logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
+                                 #field_ident,
+                            });
+                            enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
+                //         #ident_with_deserialize_token_stream::#variant_ident {
+                //             #error_field_name_token_stream: {
+                //                 #to_string_or_display_foreign_type_method_token_stream
+                //             },
+                //             #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+                //         }
                             });
                         },
                     }
