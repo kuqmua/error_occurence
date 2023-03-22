@@ -65,7 +65,8 @@ enum ErrorOrCodeOccurence {
         field_last_arg_option_lifetime: Lifetime,
     },
     CodeOccurence {
-        field_type: proc_macro2::TokenStream,
+        field_type: String,
+        field_lifetime: Lifetime
     }
 }
 
@@ -381,7 +382,7 @@ pub fn derive_impl_error_occurence(
                         let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident is None"));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
                             true => {
-                                let code_occurence_type_token_stream = {
+                                let (code_occurence_type_stringified, code_occurence_lifetime) = {
                                     let mut code_occurence_type_option = None;
                                     fields_named.named.iter().for_each(|named|{
                                         let named_field_ident = named.ident.clone()
@@ -391,8 +392,14 @@ pub fn derive_impl_error_occurence(
                                                 Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
                                                 None => {
                                                     if let syn::Type::Path(type_path) = &named.ty {
+                                                        let lifetime_handle =  form_last_arg_lifetime(
+                                                            type_path, 
+                                                            proc_macro_name, 
+                                                            &ident_stringified,
+                                                            first_field_type_stringified_name,
+                                                        );
                                                         let mut code_occurence_type_repeat_checker: Option<()> = None;
-                                                        let code_occurence_segments_stringified = type_path.path.segments.iter()
+                                                        let mut code_occurence_segments_stringified = type_path.path.segments.iter()
                                                         .fold(String::from(""), |mut acc, path_segment| {
                                                             let path_segment_ident = &path_segment.ident;
                                                             match *path_segment_ident == code_occurence_camel_case {
@@ -400,13 +407,7 @@ pub fn derive_impl_error_occurence(
                                                                     if code_occurence_type_repeat_checker.is_some() {
                                                                         panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
                                                                     }
-                                                                    let last_arg_option_lifetime = form_last_arg_lifetime(
-                                                                    type_path, 
-                                                                        proc_macro_name, 
-                                                                        &ident_stringified,
-                                                                        first_field_type_stringified_name,
-                                                                    ).to_string();
-                                                                    acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+                                                                    acc.push_str(&path_segment_ident.to_string());
                                                                     code_occurence_type_repeat_checker = Some(());
                                                                 },
                                                                 false => acc.push_str(&format!("{path_segment_ident}::")),
@@ -416,11 +417,11 @@ pub fn derive_impl_error_occurence(
                                                         if code_occurence_type_repeat_checker.is_none() {
                                                             panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
                                                         }
-                                                        println!("{code_occurence_segments_stringified}");
                                                         code_occurence_type_option = Some(
-                                                            code_occurence_segments_stringified
-                                                            .parse::<proc_macro2::TokenStream>()
-                                                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                            (
+                                                                code_occurence_segments_stringified,
+                                                                lifetime_handle,
+                                                            )
                                                         )
                                                       }
                                                     else {
@@ -430,15 +431,16 @@ pub fn derive_impl_error_occurence(
                                             }
                                         }
                                     });
-                                    if let Some(code_occurence_type) = code_occurence_type_option {
-                                        code_occurence_type
+                                    if let Some(code_occurence_type_info) = code_occurence_type_option {
+                                        code_occurence_type_info
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
                                     }
                                 };
                                 ErrorOrCodeOccurence::CodeOccurence {
-                                    field_type: code_occurence_type_token_stream
+                                    field_type: code_occurence_type_stringified,
+                                    field_lifetime: code_occurence_lifetime
                                 }
                             },
                             false => {
@@ -635,12 +637,10 @@ pub fn derive_impl_error_occurence(
             let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
-            println!("1");
             variants_vec.iter().for_each(|(
                 variant_ident, 
                 fields_vec
             )|{
-                println!("2");
                 let mut enum_fields_logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
@@ -648,7 +648,6 @@ pub fn derive_impl_error_occurence(
                 let mut enum_fields_logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
-                //
                 fields_vec.iter().enumerate().for_each(|(index, (field_ident, error_or_code_occurence))|{
                     let unused_argument_handle_stringified = format!("_unused_argument_{index}");
                     let unused_argument_handle_token_stream = unused_argument_handle_stringified
@@ -660,6 +659,118 @@ pub fn derive_impl_error_occurence(
                             let field_type_token_stream = field_type_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                            let serde_borrow_attribute_token_stream = match field_last_arg_option_lifetime {
+                                Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
+                                Lifetime::NotSpecified => quote::quote!{},
+                            };
+                            let (something, field_type_with_deserialize_token_stream) = match attribute {
+                                Attribute::ToString => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        field_type_token_stream,
+                                    )
+                                },
+                                Attribute::DisplayForeignType => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+                                            String
+                                        },
+                                    )
+                                },
+                                Attribute::ErrorOccurence => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        field_type_token_stream,
+                                    )
+                                },
+                                Attribute::VecToString => {
+                                    quote::quote! {
+                                        
+                                    }
+                                },
+                                Attribute::VecDisplayForeignType => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+                                            std::vec::Vec<String>
+                                        },
+                                    )
+                                },
+                                Attribute::VecErrorOccurence => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        field_type_token_stream,
+                                    )
+                                },
+                                Attribute::HashMapKeyToStringValueToString => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        field_type_token_stream,
+                                    )
+                                },
+                                Attribute::HashMapKeyToStringValueDisplayForeignType => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+                                            // std::collections::HashMap<String, String> //todo key
+                                        },
+                                    )
+                                },
+                                Attribute::HashMapKeyToStringValueErrorOccurence => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        field_type_token_stream,
+                                    )
+                                },
+                                Attribute::HashMapKeyDisplayForeignTypeValueToString => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+                                            // std::collections::HashMap<String, String> //todo value
+                                        }
+                                    )
+                                },
+                                Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                                    (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+                                            // std::collections::HashMap<String, String> //todo key value
+                                        }
+                                    )
+                                },
+                                Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                                    (
+                                        quote::quote! {
+                                            
+                                        },
+                                        quote::quote! {
+                                            // std::collections::HashMap<String, String> //todo key value
+                                        }
+                                    )
+
+                                },
+                            };
                             enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
                                 #field_ident: #unused_argument_handle_token_stream,
                             });
@@ -670,9 +781,11 @@ pub fn derive_impl_error_occurence(
                                 #field_ident: #unused_argument_handle_token_stream,
                             });
                             enum_fields_logic_for_enum_with_deserialize.push(quote::quote!{
+                                #serde_borrow_attribute_token_stream
+                                // #field_ident: 
+
                 //         #error_field_name_token_stream: String,//#first_field_type,
-                //         #[serde(borrow)]
-                //         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+
                             });
                             enum_fields_logic_for_source_to_string_without_config_with_deserialize.push(quote::quote!{
                                 #field_ident,
@@ -681,78 +794,21 @@ pub fn derive_impl_error_occurence(
                                 #field_ident: #unused_argument_handle_token_stream,
                             });
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
-                //         #ident_with_deserialize_token_stream::#variant_ident {
-                //             #error_field_name_token_stream: {
-                //                 #to_string_or_display_foreign_type_method_token_stream
-                //             },
-                //             #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                //         }
+                                #field_ident,
                             });
-
-                            // match attribute {
-                            //     Attribute::ToString => {
-                            //         quote::quote! {
-
-                            //         }
-                            //     },
-                            //     Attribute::DisplayForeignType => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::ErrorOccurence => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::VecToString => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::VecDisplayForeignType => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::VecErrorOccurence => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::HashMapKeyToStringValueToString => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::HashMapKeyToStringValueDisplayForeignType => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::HashMapKeyToStringValueErrorOccurence => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::HashMapKeyDisplayForeignTypeValueToString => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            //     Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence => {
-                            //         quote::quote! {
-                                        
-                            //         }
-                            //     },
-                            // }
                         },
-                        ErrorOrCodeOccurence::CodeOccurence { field_type } => {
+                        ErrorOrCodeOccurence::CodeOccurence { 
+                            field_type,
+                            field_lifetime,
+                         } => {
+                            let serde_borrow_attribute_token_stream = match field_lifetime {
+                                Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
+                                Lifetime::NotSpecified => quote::quote!{},
+                            };
+                            let code_occurence_type_with_deserialize_stringified = format!("{field_type}{with_deserialize_camel_case}{field_lifetime}");
+                            let code_occurence_type_with_deserialize_token_stream = code_occurence_type_with_deserialize_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_type_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
                                 #field_ident: #unused_argument_handle_token_stream,
                             });
@@ -763,12 +819,8 @@ pub fn derive_impl_error_occurence(
                                 #field_ident,
                             });
                             enum_fields_logic_for_enum_with_deserialize.push(quote::quote!{
-                                // #[serde(borrow)]//todo - check if CodeOccurence has lifetime
-                                // #field_ident: field_type, //todo - with_deserialize - so it must be string
-
-                //         #error_field_name_token_stream: String,//#first_field_type,
-                //         #[serde(borrow)]
-                //         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+                                #serde_borrow_attribute_token_stream
+                                #field_ident: #code_occurence_type_with_deserialize_token_stream,
                             });
                             enum_fields_logic_for_source_to_string_without_config_with_deserialize.push(quote::quote!{
                                 #field_ident: #unused_argument_handle_token_stream,
@@ -777,17 +829,11 @@ pub fn derive_impl_error_occurence(
                                  #field_ident,
                             });
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
-                //         #ident_with_deserialize_token_stream::#variant_ident {
-                //             #error_field_name_token_stream: {
-                //                 #to_string_or_display_foreign_type_method_token_stream
-                //             },
-                //             #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                //         }
+                                #field_ident,
                             });
                         },
                     }
                 });
-                println!("3");
                 println!("{:#?}", enum_fields_logic_for_source_to_string_with_config);
                 enum_fields_logic_for_source_to_string_with_config.iter().for_each(|en|{
                     println!("{en}");
