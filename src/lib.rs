@@ -1255,26 +1255,26 @@ pub fn derive_impl_error_occurence(
                                 },
                             };
                             enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
-                                #field_ident: #unused_argument_handle_token_stream,
+                                #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_source_to_string_without_config.push(quote::quote! {
-                                #field_ident,
+                                #field_ident
                             });
                             enum_fields_logic_for_get_code_occurence.push(quote::quote!{
-                                #field_ident: #unused_argument_handle_token_stream,
+                                #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_enum_with_deserialize.push(quote::quote!{
                                 #serde_borrow_attribute_token_stream
                                 #field_ident: #field_type_with_deserialize_token_stream
                             });
                             enum_fields_logic_for_source_to_string_without_config_with_deserialize.push(quote::quote!{
-                                #field_ident,
+                                #field_ident
                             });
                             enum_fields_logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
-                                #field_ident: #unused_argument_handle_token_stream,
+                                #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
-                                #field_ident,
+                                #field_ident
                             });
                         },
                         ErrorOrCodeOccurence::CodeOccurence { 
@@ -1290,89 +1290,88 @@ pub fn derive_impl_error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_type_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             enum_fields_logic_for_source_to_string_with_config.push(quote::quote! {
-                                #field_ident: #unused_argument_handle_token_stream,
+                                #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_source_to_string_without_config.push(quote::quote! {
-                                #field_ident: #unused_argument_handle_token_stream,
+                                #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_get_code_occurence.push(quote::quote!{
-                                #field_ident,
+                                #field_ident
                             });
                             enum_fields_logic_for_enum_with_deserialize.push(quote::quote!{
                                 #serde_borrow_attribute_token_stream
-                                #field_ident: #code_occurence_type_with_deserialize_token_stream,
+                                #field_ident: #code_occurence_type_with_deserialize_token_stream
                             });
                             enum_fields_logic_for_source_to_string_without_config_with_deserialize.push(quote::quote!{
-                                #field_ident: #unused_argument_handle_token_stream,
+                                #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
-                                 #field_ident,
+                                 #field_ident
                             });
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
-                                #field_ident,
+                                #field_ident
                             });
                         },
                     }
                 });
-                println!("{:#?}", enum_fields_logic_for_source_to_string_with_config);
-                enum_fields_logic_for_source_to_string_with_config.iter().for_each(|en|{
-                    println!("{en}");
+                let enum_fields_logic_for_source_to_string_with_config_iter = enum_fields_logic_for_source_to_string_with_config.iter();
+                let enum_fields_logic_for_source_to_string_without_config_iter = enum_fields_logic_for_source_to_string_without_config.iter();
+                let enum_fields_logic_for_get_code_occurence_iter = enum_fields_logic_for_get_code_occurence.iter();
+                let enum_fields_logic_for_enum_with_deserialize_iter = enum_fields_logic_for_enum_with_deserialize.iter();
+                let enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter = enum_fields_logic_for_source_to_string_without_config_with_deserialize.iter();
+                let enum_fields_logic_for_get_code_occurence_with_deserialize_iter = enum_fields_logic_for_get_code_occurence_with_deserialize.iter();
+                let enum_fields_logic_for_into_serialize_deserialize_version_iter = enum_fields_logic_for_into_serialize_deserialize_version.iter();
+                // println!("{:#?}", enum_fields_logic_for_source_to_string_with_config);
+                // enum_fields_logic_for_source_to_string_with_config.iter().for_each(|en|{
+                //     println!("{en}");
+                // });
+                logic_for_source_to_string_with_config.push(quote::quote! {
+                    #ident::#variant_ident {
+                        #(#enum_fields_logic_for_source_to_string_with_config_iter),*
+                    } => {
+                        use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+                        self.#source_to_string_without_config_token_stream()
+                    }
                 });
-                // logic_for_source_to_string_with_config.push(quote::quote! {
-                //     #ident::#variant_ident {
-                //         #error_field_name_token_stream: _unused_first_argument,
-                //         #code_occurence_lower_case_token_stream: _unused_second_argument,
-                //     } => {
-                //         use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
-                //         self.#source_to_string_without_config_token_stream()
-                //     }
-                // });
-                // logic_for_source_to_string_without_config.push(quote::quote! {
-                //     #ident::#variant_ident {
-                //         #error_field_name_token_stream,
-                //         #code_occurence_lower_case_token_stream: _unused_second_argument,
-                //     } => {
-                //         #to_string_or_display_foreign_type_method_token_stream
-                //     }
-                // });
-                // logic_for_get_code_occurence.push(quote::quote! {
-                //     #ident::#variant_ident {
-                //         #error_field_name_token_stream: _unused_first_argument,
-                //         #code_occurence_lower_case_token_stream,
-                //     } => #code_occurence_lower_case_token_stream
-                // });
-                // logic_for_enum_with_deserialize.push(quote::quote! {
-                //     #variant_ident {
-                //         #error_field_name_token_stream: String,//#first_field_type,
-                //         #[serde(borrow)]
-                //         #code_occurence_lower_case_token_stream: #code_occurence_field_type
-                //     }
-                // });
-                // logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
-                //     #ident_with_deserialize_token_stream::#variant_ident {
-                //         #error_field_name_token_stream,
-                //         #code_occurence_lower_case_token_stream: _unused_second_argument,
-                //     } => #error_field_name_token_stream.to_string()
-                // });
-                // logic_for_get_code_occurence_with_deserialize.push(quote::quote! {
-                //     #ident_with_deserialize_token_stream::#variant_ident {
-                //         #error_field_name_token_stream: _unused_first_argument,
-                //         #code_occurence_lower_case_token_stream,
-                //     } => #code_occurence_lower_case_token_stream
-                // });
-                // logic_for_into_serialize_deserialize_version.push(quote::quote! {
-                //     #ident::#variant_ident {
-                //         #error_field_name_token_stream,
-                //         #code_occurence_lower_case_token_stream,
-                //     } => {
-                //         #ident_with_deserialize_token_stream::#variant_ident {
-                //             #error_field_name_token_stream: {
-                //                 #to_string_or_display_foreign_type_method_token_stream
-                //             },
-                //             #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                //         }
-                //     }
-                // });
+                logic_for_source_to_string_without_config.push(quote::quote! {
+                    #ident::#variant_ident {
+                        #(#enum_fields_logic_for_source_to_string_without_config_iter),*
+                    } => {
+                        #to_string_or_display_foreign_type_method_token_stream
+                    }
+                });
+                logic_for_get_code_occurence.push(quote::quote! {
+                    #ident::#variant_ident {
+                        #(#enum_fields_logic_for_get_code_occurence_iter),*
+                    } => #code_occurence_lower_case_token_stream
+                });
+                logic_for_enum_with_deserialize.push(quote::quote! {
+                    #variant_ident {
+                        #(#enum_fields_logic_for_enum_with_deserialize_iter),*
+                    }
+                });
+                logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
+                    #ident_with_deserialize_token_stream::#variant_ident {
+                        #(#enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter),*
+                    } => #error_field_name_token_stream.to_string()
+                });
+                logic_for_get_code_occurence_with_deserialize.push(quote::quote! {
+                    #ident_with_deserialize_token_stream::#variant_ident {
+                        #(#enum_fields_logic_for_get_code_occurence_with_deserialize_iter),*
+                    } => #code_occurence_lower_case_token_stream
+                });
+                logic_for_into_serialize_deserialize_version.push(quote::quote! {
+                    #ident::#variant_ident {
+                        #(#enum_fields_logic_for_into_serialize_deserialize_version_iter),*
+                    } => {
+                        #ident_with_deserialize_token_stream::#variant_ident {
+                            #error_field_name_token_stream: {
+                                #to_string_or_display_foreign_type_method_token_stream
+                            },
+                            #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+                        }
+                    }
+                });
             });
             //////////////////////////////////////////
             let vec_needed_info = data_enum.variants.iter().map(|variant| {
