@@ -142,6 +142,7 @@ impl Attribute {
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    //todo in WithDeserialize in case of Display foreign type must be &str intead of String
     //todo add to panic message file line column or occurence
     let proc_macro_name = "ImplErrorOccurence";
     let ast: syn::DeriveInput =
@@ -1321,29 +1322,26 @@ pub fn derive_impl_error_occurence(
                 let enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter = enum_fields_logic_for_source_to_string_without_config_with_deserialize.iter();
                 let enum_fields_logic_for_get_code_occurence_with_deserialize_iter = enum_fields_logic_for_get_code_occurence_with_deserialize.iter();
                 let enum_fields_logic_for_into_serialize_deserialize_version_iter = enum_fields_logic_for_into_serialize_deserialize_version.iter();
-                // println!("{:#?}", enum_fields_logic_for_source_to_string_with_config);
-                // enum_fields_logic_for_source_to_string_with_config.iter().for_each(|en|{
-                //     println!("{en}");
-                // });
                 logic_for_source_to_string_with_config.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_with_config_iter),*
                     } => {
-                        use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
-                        self.#source_to_string_without_config_token_stream()
+                        
                     }
                 });
                 logic_for_source_to_string_without_config.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_without_config_iter),*
                     } => {
-                        #to_string_or_display_foreign_type_method_token_stream
+                        
                     }
                 });
                 logic_for_get_code_occurence.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_get_code_occurence_iter),*
-                    } => #code_occurence_lower_case_token_stream
+                    } => {
+                        
+                    }
                 });
                 logic_for_enum_with_deserialize.push(quote::quote! {
                     #variant_ident {
@@ -1353,23 +1351,22 @@ pub fn derive_impl_error_occurence(
                 logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
                     #ident_with_deserialize_token_stream::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter),*
-                    } => #error_field_name_token_stream.to_string()
+                    } => {
+                        
+                    }
                 });
                 logic_for_get_code_occurence_with_deserialize.push(quote::quote! {
                     #ident_with_deserialize_token_stream::#variant_ident {
                         #(#enum_fields_logic_for_get_code_occurence_with_deserialize_iter),*
-                    } => #code_occurence_lower_case_token_stream
+                    } => {
+                        
+                    }
                 });
                 logic_for_into_serialize_deserialize_version.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_into_serialize_deserialize_version_iter),*
                     } => {
-                        #ident_with_deserialize_token_stream::#variant_ident {
-                            #error_field_name_token_stream: {
-                                #to_string_or_display_foreign_type_method_token_stream
-                            },
-                            #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                        }
+                        
                     }
                 });
             });
