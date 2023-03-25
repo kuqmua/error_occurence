@@ -238,22 +238,24 @@ pub fn derive_impl_error_occurence(
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let few_to_string_without_config_stringified = format!("few_{to_string_without_config_lower_case}");
-    let few_to_string_without_config_token_stream = 
-    few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let few_to_string_without_config_with_deserialize_stringified = format!("{few_to_string_without_config_stringified}_{with_deserialize_lower_case}");
-    let few_to_string_without_config_with_deserialize_token_stream = 
-    few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{few_to_string_without_config_stringified}::Few{to_string_without_config_camel_case}");
-    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream = 
-    crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified}{with_deserialize_camel_case}");
-    let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream = 
-    crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // todo few_to_string_without_config became VecToStringWithoutConfigToString and HashmapToStringWithoutConfigToString
+
+    // let few_to_string_without_config_stringified = format!("few_{to_string_without_config_lower_case}");
+    // let few_to_string_without_config_token_stream = 
+    // few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
+        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let few_to_string_without_config_with_deserialize_stringified = format!("{few_to_string_without_config_stringified}_{with_deserialize_lower_case}");
+    // let few_to_string_without_config_with_deserialize_token_stream = 
+    // few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{few_to_string_without_config_stringified}::Few{to_string_without_config_camel_case}");
+    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream = 
+    // crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
+    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified}{with_deserialize_camel_case}");
+    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream = 
+    // crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
+    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let source_to_string_with_config_stringified = format!("source_{to_string_with_config_lower_case}");
     let source_to_string_with_config_token_stream = 
     source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
@@ -292,14 +294,16 @@ pub fn derive_impl_error_occurence(
     let get_code_occurence_with_deserialize_token_stream = 
     get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {get_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let few_to_string_with_config_stringified = format!("few_{to_string_with_config_lower_case}");
-    let few_to_string_with_config_token_stream = 
-    few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{few_to_string_with_config_stringified}::Few{to_string_with_config_camel_case}");
-    let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream = 
-    crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // todo few_to_string_with_config bacame VecToStringWithConfigToString and HashMapImplDisplayToStringWithConfigToString
+
+    // let few_to_string_with_config_stringified = format!("few_{to_string_with_config_lower_case}");
+    // let few_to_string_with_config_token_stream = 
+    // few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
+        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{few_to_string_with_config_stringified}::Few{to_string_with_config_camel_case}");
+    // let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream = 
+    // crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
+        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{source_to_string_with_config_stringified}::{source_to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
@@ -1833,8 +1837,8 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #code_occurence_lower_case_token_stream: _unused_second_argument,
                             } => {
-                                use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
-                                #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
+                                // use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
+                                // #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
                             }
                         });
                         logic_for_source_to_string_without_config.push(quote::quote! {
@@ -1842,8 +1846,8 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #code_occurence_lower_case_token_stream: _unused_second_argument,
                             } => {
-                                use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
-                                #error_field_name_token_stream.#few_to_string_without_config_token_stream()
+                                // use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
+                                // #error_field_name_token_stream.#few_to_string_without_config_token_stream()
                             }
                         });
                         logic_for_get_code_occurence.push(quote::quote!{
@@ -1867,8 +1871,8 @@ pub fn derive_impl_error_occurence(
                                 #error_field_name_token_stream,
                                 #code_occurence_lower_case_token_stream: _unused_second_argument,
                             } => {
-                                use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
-                                #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
+                                // use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
+                                // #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
                             }
                         });
                         logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
