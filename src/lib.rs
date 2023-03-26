@@ -2420,48 +2420,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element = element.to_string().lines().fold(String::from(""), |mut acc, line| {
-                                        acc.push_str(&format!(" {}\n", line));
-                                        acc
-                                    });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                i.vec_impl_display_to_string()
                             },
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element =
-                                        element
-                                        .to_string()
-                                        .lines()
-                                        .fold(String::from(""), |mut acc, line| {
-                                            acc.push_str(&format!(" {}\n", line));
-                                            acc
-                                        });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                i.vec_impl_display_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element =
-                                        element
-                                        .to_string()
-                                        .lines()
-                                        .fold(String::from(""), |mut acc, line| {
-                                            acc.push_str(&format!(" {}\n", line));
-                                            acc
-                                        });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                i.vec_impl_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident(i)
@@ -2480,56 +2451,24 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element = element.display_foreign_type().lines().fold(String::from(""), |mut acc, line| {
-                                        acc.push_str(&format!(" {}\n", line));
-                                        acc
-                                    });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
+                                i.vec_display_foreign_type_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element = element.display_foreign_type().lines().fold(
-                                        String::from(""),
-                                        |mut acc, line| {
-                                            acc.push_str(&format!(" {}\n", line));
-                                            acc
-                                        },
-                                    );
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
+                                i.vec_display_foreign_type_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element =
-                                        element.lines().fold(String::from(""), |mut acc, line| {
-                                            acc.push_str(&format!(" {}\n", line));
-                                            acc
-                                        });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                i.vec_impl_display_to_string()
                             },
                             quote::quote!{
                                  #ident_with_deserialize_token_stream::#variant_ident({
-                                    i
-                                    .into_iter()
-                                    .map(|e| {
-                                        use crate::traits::display_foreign_type::DisplayForeignType;
-                                        e.display_foreign_type()
-                                    })
-                                    .collect()
+                                    use crate::traits::error_logs_logic::vec_display_foreign_type_to_vec_string::VecDisplayForeignTypeToVecString;
+                                    i.vec_display_foreign_type_to_vec_string()
                                  })
                             },
                         )
@@ -2551,55 +2490,25 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element = element.to_string_with_config_for_source_to_string_with_config(config).lines().fold(String::from(""), |mut acc, line| {
-                                        acc.push_str(&format!(" {}\n", line));
-                                        acc
-                                    });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_to_string_with_config_to_string::VecToStringWithConfigToString;
+                                i.vec_to_string_with_config_to_string(config)
                             },
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element = element.to_string_without_config().lines().fold(
-                                        String::from(""),
-                                        |mut acc, line| {
-                                            acc.push_str(&format!(" {}\n", line));
-                                            acc
-                                        },
-                                    );
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToString;
+                                i.vec_to_string_without_config_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                let stringified_vec = i.iter().fold(String::from(""), |mut acc, element| {
-                                    let stringified_element = element
-                                        .to_string_without_config_with_deserialize()
-                                        .lines()
-                                        .fold(String::from(""), |mut acc, line| {
-                                            acc.push_str(&format!(" {}\n", line));
-                                            acc
-                                        });
-                                    acc.push_str(&stringified_element);
-                                    acc
-                                });
-                                format!("[\n{}]", stringified_vec)
+                                use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToStringWithDeserialize;
+                                i.vec_to_string_without_config_to_string_with_deserialize()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
                                     i
                                     .into_iter()
-                                    .map(|e| {
-                                        use crate::traits::display_foreign_type::DisplayForeignType;
-                                        e.into_serialize_deserialize_version()
-                                    })
+                                    .map(|e| e.into_serialize_deserialize_version())
                                     .collect()
                                 })
                             },
@@ -2646,45 +2555,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.to_string().lines().fold(String::from(""), |mut accc, line| {
-                                        accc.push_str(&format!(" {}\n", line));
-                                        accc
-                                    });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                i.hashmap_impl_display_impl_display_to_string()
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value =
-                                        value
-                                        .to_string()
-                                        .lines()
-                                        .fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                i.hashmap_impl_display_impl_display_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value =
-                                        value
-                                        .to_string()
-                                        .lines()
-                                        .fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                i.hashmap_impl_display_impl_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident(i)
@@ -2716,53 +2599,24 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.display_foreign_type().lines().fold(String::from(""), |mut accc, line| {
-                                        accc.push_str(&format!(" {}\n", line));
-                                        accc
-                                    });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_string::HashMapImplDisplayDisplayForeignTypeToString;
+                                i.hashmap_impl_display_display_foreign_type_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.display_foreign_type().lines().fold(
-                                        String::from(""),
-                                        |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        },
-                                    );
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_string::HashMapImplDisplayDisplayForeignTypeToString;
+                                i.hashmap_impl_display_display_foreign_type_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value =
-                                        value.lines().fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                i.hashmap_impl_display_impl_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    i
-                                    .into_iter()
-                                    .map(|(k, v)| {
-                                        use crate::traits::display_foreign_type::DisplayForeignType;
-                                        (k, v.display_foreign_type())
-                                    })
-                                    .collect()
+                                    use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeToHashmapImplDisplayString;
+                                    i.hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string()
                                 })
                             },
                         )
@@ -2808,43 +2662,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.to_string_with_config_for_source_to_string_with_config(config).lines().fold(String::from(""), |mut accc, line| {
-                                        accc.push_str(&format!(" {}\n", line));
-                                        accc
-                                    });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_with_config_to_string::HashMapImplDisplayToStringWithConfigToString;
+                                i.hashmap_impl_display_to_string_with_config_to_string(config)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.to_string_without_config().lines().fold(
-                                        String::from(""),
-                                        |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        },
-                                    );
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToString;
+                                i.hashmap_impl_display_to_string_without_config_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value
-                                        .to_string_without_config_with_deserialize()
-                                        .lines()
-                                        .fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
+                                i.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
@@ -2881,61 +2711,24 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.to_string().lines().fold(String::from(""), |mut accc, line| {
-                                        accc.push_str(&format!(" {}\n", line));
-                                        accc
-                                    });
-                                    acc.push_str(&format!("{} [\n{}]\n", key.display_foreign_type(), stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_impl_display_to_string::HashMapDisplayForeignTypeImplDisplayToString;
+                                i.hashmap_display_foreign_type_impl_display_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value =
-                                        value
-                                        .to_string()
-                                        .lines()
-                                        .fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!(
-                                        "{} [\n{}]\n",
-                                        key.display_foreign_type(),
-                                        stringified_value
-                                    ));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_impl_display_to_string::HashMapDisplayForeignTypeImplDisplayToString;
+                                i.hashmap_display_foreign_type_impl_display_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value =
-                                        value
-                                        .to_string()
-                                        .lines()
-                                        .fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                i.hashmap_impl_display_impl_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    i
-                                    .into_iter()
-                                    .map(|(k, v)| {
-                                        use crate::traits::display_foreign_type::DisplayForeignType;
-                                        (k.display_foreign_type(), v)
-                                    })
-                                    .collect()
+                                    use crate::traits::error_logs_logic::hashmap_display_foreign_type_impl_display_to_hashmap_string_impl_display::HashmapDisplayForeignTypeImplDisplayToHashMapStringImplDisplay;
+                                    i.hashmap_display_foreign_type_impl_display_to_hashmap_string_impl_display()
                                 })
                             },
                         )
@@ -2960,57 +2753,24 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.display_foreign_type().lines().fold(String::from(""), |mut accc, line| {
-                                        accc.push_str(&format!(" {}\n", line));
-                                        accc
-                                    });
-                                    acc.push_str(&format!("{} [\n{}]\n", key.display_foreign_type(), stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_string::HashMapDisplayForeignTypeDisplayForeignTypeToString;
+                                i.hashmap_display_foreign_type_display_foreign_type_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.display_foreign_type().lines().fold(
-                                        String::from(""),
-                                        |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        },
-                                    );
-                                    acc.push_str(&format!(
-                                        "{} [\n{}]\n",
-                                        key.display_foreign_type(),
-                                        stringified_value
-                                    ));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_string::HashMapDisplayForeignTypeDisplayForeignTypeToString;
+                                i.hashmap_display_foreign_type_display_foreign_type_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value =
-                                        value.lines().fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                i.hashmap_impl_display_impl_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    i
-                                    .into_iter()
-                                    .map(|(k, v)| {
-                                        use crate::traits::display_foreign_type::DisplayForeignType;
-                                        (k.display_foreign_type(), v.display_foreign_type())
-                                    })
-                                    .collect()
+                                    use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_hashmap_string_string::HashmapDisplayForeignTypeDisplayForeignTypeToHashMapStringString;
+                                    i.hashmap_display_foreign_type_display_foreign_type_to_hashmap_string_string()
                                 })
                             },
                         )
@@ -3040,49 +2800,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.to_string_with_config_for_source_to_string_with_config(config).lines().fold(String::from(""), |mut accc, line| {
-                                        accc.push_str(&format!(" {}\n", line));
-                                        accc
-                                    });
-                                    acc.push_str(&format!("{} [\n{}]\n", key.display_foreign_type(), stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_to_string_with_config_to_string::HashMapDisplayForeignTypeToStringWithConfigToString;
+                                i.hashmap_display_foreign_type_to_string_with_config_to_string(config)
                             },
                             quote::quote!{
-                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value.to_string_without_config().lines().fold(
-                                        String::from(""),
-                                        |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        },
-                                    );
-                                    acc.push_str(&format!(
-                                        "{} [\n{}]\n",
-                                        key.display_foreign_type(),
-                                        stringified_value
-                                    ));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_to_string_without_config_to_string::HashMapDisplayForeignTypeToStringWithoutConfigToString;
+                                i.hashmap_display_foreign_type_to_string_without_config_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                i.iter().fold(String::from(""), |mut acc, (key, value)| {
-                                    let stringified_value = value
-                                        .to_string_without_config_with_deserialize()
-                                        .lines()
-                                        .fold(String::from(""), |mut accc, line| {
-                                            accc.push_str(&format!(" {}\n", line));
-                                            accc
-                                        });
-                                    acc.push_str(&format!("{} [\n{}]\n", key, stringified_value));
-                                    acc
-                                })
+                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
+                                i.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
