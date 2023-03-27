@@ -1061,7 +1061,9 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                #field_ident.to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1081,7 +1083,10 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                                #field_ident.display_foreign_type()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1103,7 +1108,10 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                                                #field_ident.to_string_without_config()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1363,9 +1371,7 @@ pub fn derive_impl_error_occurence(
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
                                 #field_ident
                             });
-                            //
                             format_logic_for_source_to_string_without_config.push("{}\n ");
-                            //
                         },
                         ErrorOrCodeOccurence::CodeOccurence { 
                             field_type,
