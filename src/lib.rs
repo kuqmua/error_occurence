@@ -1021,6 +1021,9 @@ pub fn derive_impl_error_occurence(
                 let mut enum_fields_logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                //
+                let mut format_logic_for_source_to_string_without_config: Vec<&str> = Vec::with_capacity(fields_vec.len());
+                //
                 fields_vec.iter().enumerate().for_each(|(index, (field_ident, error_or_code_occurence))|{
                     let unused_argument_handle_stringified = format!("_unused_argument_{index}");
                     let unused_argument_handle_token_stream = unused_argument_handle_stringified
@@ -1041,7 +1044,14 @@ pub fn derive_impl_error_occurence(
                                 Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                 Lifetime::NotSpecified => quote::quote!{},
                             };
-                            let (something, field_type_with_deserialize_token_stream) = match attribute {
+                            let ( 
+                                //
+                                logic_for_source_to_string_without_config_for_attribute,
+                                logic_for_source_to_string_without_config_with_deserialize_for_attribute,
+                                logic_for_into_serialize_deserialize_version_for_attribute,
+                                //
+                                field_type_with_deserialize_token_stream
+                            ) = match attribute {
                                 Attribute::ToString => {
                                     if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                                         
@@ -1050,6 +1060,12 @@ pub fn derive_impl_error_occurence(
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::ToString is not a SupportedContainer::Path");
                                     }
                                     (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         quote::quote! {
 
                                         },
@@ -1064,6 +1080,12 @@ pub fn derive_impl_error_occurence(
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::DisplayForeignType is not a SupportedContainer::Path");
                                     }
                                     (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         quote::quote! {
 
                                         },
@@ -1083,6 +1105,12 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
 
                                         },
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         field_type_token_stream,
                                     )
                                 },
@@ -1097,6 +1125,12 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
 
                                         },
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         field_type_token_stream,
                                     )
                                 },
@@ -1108,6 +1142,12 @@ pub fn derive_impl_error_occurence(
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::VecDisplayForeignType is not a SupportedContainer::Vec");
                                     }
                                     (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         quote::quote! {
 
                                         },
@@ -1127,6 +1167,12 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
 
                                         },
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         field_type_token_stream,
                                     )
                                 },
@@ -1138,6 +1184,12 @@ pub fn derive_impl_error_occurence(
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueToString is not a SupportedContainer::Vec");
                                     }
                                     (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         quote::quote! {
 
                                         },
@@ -1165,6 +1217,12 @@ pub fn derive_impl_error_occurence(
 
                                         },
                                         quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
                                             #hashmap_token_stream
                                         },
                                     )
@@ -1177,6 +1235,12 @@ pub fn derive_impl_error_occurence(
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueErrorOccurence is not a SupportedContainer::HashMap");
                                     }
                                     (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         quote::quote! {
 
                                         },
@@ -1200,6 +1264,12 @@ pub fn derive_impl_error_occurence(
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyDisplayForeignTypeValueToString is not a SupportedContainer::HashMap");
                                     };
                                     (
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
                                         quote::quote! {
 
                                         },
@@ -1229,6 +1299,12 @@ pub fn derive_impl_error_occurence(
 
                                         },
                                         quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
                                             #hashmap_token_stream
                                         }
                                     )
@@ -1251,7 +1327,13 @@ pub fn derive_impl_error_occurence(
                                     };
                                     (
                                         quote::quote! {
-                                            
+
+                                        },
+                                        quote::quote! {
+
+                                        },
+                                        quote::quote! {
+
                                         },
                                         quote::quote! {
                                             #hashmap_token_stream
@@ -1281,6 +1363,9 @@ pub fn derive_impl_error_occurence(
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
                                 #field_ident
                             });
+                            //
+                            format_logic_for_source_to_string_without_config.push("{}\n ");
+                            //
                         },
                         ErrorOrCodeOccurence::CodeOccurence { 
                             field_type,
@@ -1326,25 +1411,41 @@ pub fn derive_impl_error_occurence(
                 let enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter = enum_fields_logic_for_source_to_string_without_config_with_deserialize.iter();
                 let enum_fields_logic_for_get_code_occurence_with_deserialize_iter = enum_fields_logic_for_get_code_occurence_with_deserialize.iter();
                 let enum_fields_logic_for_into_serialize_deserialize_version_iter = enum_fields_logic_for_into_serialize_deserialize_version.iter();
+                //
+                let mut format_logic_for_source_to_string_without_config_stringified = format_logic_for_source_to_string_without_config.iter()
+                .fold(String::from(""), |mut acc, path_segment| {
+                    acc.push_str(path_segment);
+                    acc
+                });
+                format_logic_for_source_to_string_without_config_stringified.pop();
+                let format_logic_for_source_to_string_without_config_handle_stringified = format!("{{\n {format_logic_for_source_to_string_without_config_stringified}}}");
+                let format_logic_for_source_to_string_without_config_handle_token_stream = format_logic_for_source_to_string_without_config_handle_stringified
+                .parse::<proc_macro2::TokenStream>()
+                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {format_logic_for_source_to_string_without_config_handle_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                 logic_for_source_to_string_with_config.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_with_config_iter),*
                     } => {
-                        
+                        use crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
+                        self.source_to_string_without_config()
                     }
                 });
                 logic_for_source_to_string_without_config.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_without_config_iter),*
                     } => {
-                        
+                        // format!(
+                        //     #format_logic_for_source_to_string_without_config_handle_token_stream
+                        //     ,
+
+                        // )
                     }
                 });
                 logic_for_get_code_occurence.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_get_code_occurence_iter),*
                     } => {
-                        
+                        code_occurence
                     }
                 });
                 logic_for_enum_with_deserialize.push(quote::quote! {
@@ -1356,14 +1457,18 @@ pub fn derive_impl_error_occurence(
                     #ident_with_deserialize_token_stream::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter),*
                     } => {
-                        
+                        // format!(
+                        //     #format_logic_for_source_to_string_without_config_handle_token_stream
+                        //     ,
+
+                        // )
                     }
                 });
                 logic_for_get_code_occurence_with_deserialize.push(quote::quote! {
                     #ident_with_deserialize_token_stream::#variant_ident {
                         #(#enum_fields_logic_for_get_code_occurence_with_deserialize_iter),*
                     } => {
-                        
+                        code_occurence
                     }
                 });
                 logic_for_into_serialize_deserialize_version.push(quote::quote! {
