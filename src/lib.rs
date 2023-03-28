@@ -1024,6 +1024,10 @@ pub fn derive_impl_error_occurence(
                 //
                 let mut format_logic_for_source_to_string_without_config: Vec<&str> = Vec::with_capacity(fields_vec.len());
                 //
+                let mut fields_logic_for_source_to_string_without_config_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut fields_logic_for_into_serialize_deserialize_version_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                //
                 fields_vec.iter().enumerate().for_each(|(index, (field_ident, error_or_code_occurence))|{
                     let unused_argument_handle_stringified = format!("_unused_argument_{index}");
                     let unused_argument_handle_token_stream = unused_argument_handle_stringified
@@ -1071,7 +1075,9 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident
+                                            }
                                         },
                                         field_type_token_stream,
                                     )
@@ -1096,7 +1102,10 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::display_foreign_type::DisplayForeignType;
+                                                #field_ident.display_foreign_type()
+                                            }
                                         },
                                         quote::quote! {
                                             std::string::String
@@ -1124,7 +1133,9 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident.into_serialize_deserialize_version()
+                                            }
                                         },
                                         field_type_token_stream,
                                     )
@@ -1150,7 +1161,9 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident
+                                            }
                                         },
                                         field_type_token_stream,
                                     )
@@ -1176,7 +1189,10 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_vec_string::VecDisplayForeignTypeToVecString;
+                                                #field_ident.vec_display_foreign_type_to_vec_string()
+                                            }
                                         },
                                         quote::quote! {
                                             std::vec::Vec<std::string::String>
@@ -1204,7 +1220,11 @@ pub fn derive_impl_error_occurence(
                                             },
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident.into_iter()
+                                                .map(|i| i.into_serialize_deserialize_version())
+                                                .collect()
+                                            }
                                         },
                                         field_type_token_stream,
                                     )
@@ -1224,10 +1244,15 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident
+                                            }
                                         },
                                         field_type_token_stream,
                                     )
@@ -1256,10 +1281,16 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeToHashmapImplDisplayString;
+                                                #field_ident.hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string()
+                                            }
                                         },
                                         quote::quote! {
                                             #hashmap_token_stream
@@ -1281,10 +1312,17 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
+                                                #field_ident.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident.into_iter()
+                                                .map(|(k, v)| (k, { v.into_serialize_deserialize_version() }))
+                                                .collect()
+                                            }
                                         },
                                         field_type_token_stream,
                                     )
@@ -1313,10 +1351,16 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_impl_display_to_hashmap_string_impl_display::HashmapDisplayForeignTypeImplDisplayToHashMapStringImplDisplay;
+                                                #field_ident.hashmap_display_foreign_type_impl_display_to_hashmap_string_impl_display()
+                                            }
                                         },
                                         quote::quote! {
                                             #hashmap_token_stream
@@ -1347,10 +1391,16 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_hashmap_string_string::HashmapDisplayForeignTypeDisplayForeignTypeToHashMapStringString;
+                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_to_hashmap_string_string()
+                                            }
                                         },
                                         quote::quote! {
                                             #hashmap_token_stream
@@ -1381,10 +1431,25 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
+                                                #field_ident.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                #field_ident.into_iter()
+                                                .map(|(k, v)| {
+                                                    (
+                                                        {
+                                                            use crate::traits::display_foreign_type::DisplayForeignType;
+                                                            k.display_foreign_type()
+                                                        },
+                                                        { v.into_serialize_deserialize_version() },
+                                                    )
+                                                })
+                                                .collect()
+                                            }
                                         },
                                         quote::quote! {
                                             #hashmap_token_stream
@@ -1415,6 +1480,9 @@ pub fn derive_impl_error_occurence(
                                 #field_ident
                             });
                             format_logic_for_source_to_string_without_config.push("{}\n ");
+                            fields_logic_for_source_to_string_without_config_for_attribute.push(logic_for_source_to_string_without_config_for_attribute);
+                            fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute.push(logic_for_source_to_string_without_config_with_deserialize_for_attribute);
+                            fields_logic_for_into_serialize_deserialize_version_for_attribute.push(logic_for_into_serialize_deserialize_version_for_attribute);
                         },
                         ErrorOrCodeOccurence::CodeOccurence { 
                             field_type,
@@ -1471,6 +1539,9 @@ pub fn derive_impl_error_occurence(
                 let format_logic_for_source_to_string_without_config_handle_token_stream = format_logic_for_source_to_string_without_config_handle_stringified
                 .parse::<proc_macro2::TokenStream>()
                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {format_logic_for_source_to_string_without_config_handle_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                let fields_logic_for_source_to_string_without_config_for_attribute_iter = fields_logic_for_source_to_string_without_config_for_attribute.iter();
+                let fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute_iter = fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute.iter();
+                let fields_logic_for_into_serialize_deserialize_version_for_attribute_iter = fields_logic_for_into_serialize_deserialize_version_for_attribute.iter();
                 logic_for_source_to_string_with_config.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_with_config_iter),*
@@ -1483,11 +1554,11 @@ pub fn derive_impl_error_occurence(
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_without_config_iter),*
                     } => {
-                        // format!(
-                        //     #format_logic_for_source_to_string_without_config_handle_token_stream
-                        //     ,
-
-                        // )
+                        format!(
+                            #format_logic_for_source_to_string_without_config_handle_token_stream
+                            ,
+                            #(#fields_logic_for_source_to_string_without_config_for_attribute_iter),*
+                        )
                     }
                 });
                 logic_for_get_code_occurence.push(quote::quote! {
@@ -1506,11 +1577,11 @@ pub fn derive_impl_error_occurence(
                     #ident_with_deserialize_token_stream::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_without_config_with_deserialize_iter),*
                     } => {
-                        // format!(
-                        //     #format_logic_for_source_to_string_without_config_handle_token_stream
-                        //     ,
-
-                        // )
+                        format!(
+                            #format_logic_for_source_to_string_without_config_handle_token_stream
+                            ,
+                            #(#fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute_iter),*
+                        )
                     }
                 });
                 logic_for_get_code_occurence_with_deserialize.push(quote::quote! {
@@ -1524,531 +1595,531 @@ pub fn derive_impl_error_occurence(
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_into_serialize_deserialize_version_iter),*
                     } => {
-                        
+                        #(#fields_logic_for_into_serialize_deserialize_version_for_attribute_iter),*
                     }
                 });
             });
             //////////////////////////////////////////
-            let vec_needed_info = data_enum.variants.iter().map(|variant| {
-                let needed_info = if let syn::Fields::Named(fields_named) = &variant.fields {
-                    let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
-                    let named = &fields_named.named;
-                    if let false = named.len() == 2 {
-                        panic!("{proc_macro_name} {ident_stringified} only works on named fields with length of 2");
-                    }
-                    let first_field = &named[0];
-                    let first_field_ident =
-                        first_field.ident.clone()
-                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} first_field_ident is None"));
-                    let (error_field_name, is_display_foreign_type_option) = if first_field_ident == *"error" {
-                        //todo - this must be check on 0, 1, 2 attr elements
-                        let is_display_foreign_type_option = if first_field.attrs.is_empty() {
-                            Some(false)
-                        }
-                        else if first_field.attrs.len() == 1 {
-                            let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
-                            if let true = attribute.path.segments.len() != 1 {
-                                panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
-                            }
-                            if let true = attribute.path.segments[0].ident == display_foreign_type_stringified {
-                                Some(true)
-                            }
-                            else {
-                                panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {display_foreign_type_stringified}");
-                            }
-                        }
-                        else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing")
-                        };
-                        (ErrorFieldName::Error, is_display_foreign_type_option)
-                    } else if first_field_ident == *"inner_error" {
-                        (ErrorFieldName::InnerError, None)
-                    } else if first_field_ident == *"inner_errors" {
-                        (ErrorFieldName::InnerErrors, None)
-                    } else {
-                        panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
-                    };
-                    let second_field = &named[1];
-                    let second_field_ident =
-                        second_field.ident.clone()
-                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} second_field_ident is None"));
-                    if second_field_ident != *code_occurence_lower_case {
-                        panic!("{proc_macro_name} {ident_stringified} only works on enums where variants named second field name == {code_occurence_lower_case}");
-                    }
-                    let error_field_name_stringified = error_field_name.to_lower_snake_case();
-                    let error_field_name_token_stream = error_field_name_stringified
-                    .parse::<proc_macro2::TokenStream>()
-                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                    let code_occurence_type_token_stream = {
-                        let mut code_occurence_type_option = None;
-                        fields_named.named.iter().for_each(|named|{
-                            let named_field_ident = named.ident.clone()
-                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident is None"));
-                            if named_field_ident == *code_occurence_lower_case {
-                                match code_occurence_type_option {
-                                    Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
-                                    None => {
-                                        if let syn::Type::Path(type_path) = &named.ty {
-                                            let mut code_occurence_type_repeat_checker: Option<()> = None;
-                                            let code_occurence_segments_stringified = type_path.path.segments.iter()
-                                            .fold(String::from(""), |mut acc, path_segment| {
-                                                let path_segment_ident = &path_segment.ident;
-                                                match *path_segment_ident == code_occurence_camel_case {
-                                                    true => {
-                                                        if code_occurence_type_repeat_checker.is_some() {
-                                                            panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
-                                                        }
-                                                        let last_arg_option_lifetime = form_last_arg_lifetime(
-                                                        type_path, 
-                                                            proc_macro_name, 
-                                                            &ident_stringified,
-                                                            first_field_type_stringified_name,
-                                                        ).to_string();
-                                                        acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
-                                                        code_occurence_type_repeat_checker = Some(());
-                                                    },
-                                                    false => acc.push_str(&format!("{path_segment_ident}::")),
-                                                }
-                                                acc
-                                            });
-                                            if code_occurence_type_repeat_checker.is_none() {
-                                                panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
-                                            }
-                                            code_occurence_type_option = Some(
-                                                code_occurence_segments_stringified
-                                                .parse::<proc_macro2::TokenStream>()
-                                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                            )
-                                        }
-                                        else {
-                                            panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
-                                        }
-                                    },
-                                }
-                            }
-                        });
-                        if let Some(code_occurence_type) = code_occurence_type_option {
-                            code_occurence_type
-                        }
-                        else {
-                            panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
-                        }
-                    };
-                    (
-                        error_field_name, 
-                        &first_field.ty, 
-                        code_occurence_type_token_stream,
-                        error_field_name_token_stream, 
-                        is_display_foreign_type_option, 
-                    )
-                }
-                else {
-                    panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
-                };
-                (
-                    &variant.ident, 
-                    needed_info.0, 
-                    needed_info.1, 
-                    needed_info.2, 
-                    needed_info.3, 
-                    needed_info.4, 
-                )
-            }).collect::<Vec<(
-                &proc_macro2::Ident, 
-                ErrorFieldName, 
-                &syn::Type, 
-                proc_macro2::TokenStream,
-                proc_macro2::TokenStream, 
-                Option<bool>, 
-            )>>();
-            let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
-            vec_needed_info.iter().for_each(|(
-                variant_ident, 
-                error_field_name, 
-                first_field_type,
-                code_occurence_field_type,
-                error_field_name_token_stream,
-                is_display_foreign_type_option,
-            )|{
-                match error_field_name {
-                    ErrorFieldName::Error => {
-                        logic_for_source_to_string_with_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
-                                self.#source_to_string_without_config_token_stream()
-                            }
-                        });
-                        let is_display_foreign_type = is_display_foreign_type_option
-                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_foreign_type_option unexpected logic"));
-                        let to_string_or_display_foreign_type_method_token_stream = match is_display_foreign_type {
-                            true => quote::quote!{
-                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                #error_field_name_token_stream.#display_foreign_type_token_stream()
-                            },
-                            false => quote::quote!{
-                                #error_field_name_token_stream.#to_string_token_stream()
-                            },
-                        };
-                        logic_for_source_to_string_without_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                #to_string_or_display_foreign_type_method_token_stream
-                            }
-                        });
-                        logic_for_get_code_occurence.push(quote::quote!{
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream,
-                            } => #code_occurence_lower_case_token_stream
-                        });
-                        logic_for_enum_with_deserialize.push({
-                            quote::quote!{
-                                #variant_ident {
-                                    #error_field_name_token_stream: String,//#first_field_type,
-                                    #[serde(borrow)]
-                                    #code_occurence_lower_case_token_stream: #code_occurence_field_type
-                                }
-                            }
-                        });
-                        logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
-                            #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => #error_field_name_token_stream.to_string()
-                        });
-                        logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
-                            #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream,
-                            } => #code_occurence_lower_case_token_stream
-                        });
-                        logic_for_into_serialize_deserialize_version.push(quote::quote!{
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream,
-                            } => {
-                                #ident_with_deserialize_token_stream::#variant_ident {
-                                    #error_field_name_token_stream: {
-                                        #to_string_or_display_foreign_type_method_token_stream
-                                    },
-                                    #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                                }
-                            }
-                        });
-                    },
-                    ErrorFieldName::InnerError => {
-                        logic_for_source_to_string_with_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
-                                #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                            }
-                        });
-                        logic_for_source_to_string_without_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                                #error_field_name_token_stream.#to_string_without_config_token_stream()
-                            }
-                        });
-                        logic_for_get_code_occurence.push(quote::quote!{
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream,
-                            } => #code_occurence_lower_case_token_stream
-                        });
-                        logic_for_enum_with_deserialize.push({
-                            let first_field_type_token_stream = if let syn::Type::Path(type_path_handle) = first_field_type {
-                                let last_arg_option_lifetime = form_last_arg_lifetime(
-                                    type_path_handle, 
-                                    proc_macro_name, 
-                                    &ident_stringified,
-                                    first_field_type_stringified_name
-                                ).to_string();
-                                let mut segments_stringified = type_path_handle.path.segments.iter()
-                                .fold(String::from(""), |mut acc, elem| {
-                                    acc.push_str(&format!("{}::", elem.ident));
-                                    acc
-                                });
-                                segments_stringified.pop();
-                                segments_stringified.pop();
-                                let first_field_type_stringified = format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}");
-                                first_field_type_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                            }
-                            else {
-                                panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path");
-                            };
-                            quote::quote!{
-                                #variant_ident {
-                                    #[serde(borrow)]
-                                    #error_field_name_token_stream: #first_field_type_token_stream,
-                                    #[serde(borrow)]
-                                    #code_occurence_lower_case_token_stream: #code_occurence_field_type
-                                }
-                            }
-                        });
-                        logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
-                            #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
-                                #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
-                            }
-                        });
-                        logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
-                            #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream,
-                            } => #code_occurence_lower_case_token_stream
-                        });
-                        logic_for_into_serialize_deserialize_version.push(quote::quote!{
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream,
-                            } => #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream: #error_field_name_token_stream.#into_serialize_deserialize_version_token_stream(),
-                                #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                            }
-                        });
-                    },
-                    ErrorFieldName::InnerErrors => {
-                        let (supported_inner_errors_container, type_path) = 
-                        if let syn::Type::Path(type_path) = first_field_type {
-                            let path_segment = type_path.path.segments.last()
-                            .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None"));
-                            if path_segment.ident == vec_name {
-                                (SupportedInnerErrorsContainers::Vec, type_path)
-                            }
-                            else if path_segment.ident == hashmap_name {
-                                (SupportedInnerErrorsContainers::HashMap, type_path)
-                            }
-                            else {
-                                panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is not {vec_name} or {hashmap_name}")
-                            }
-                        }
-                        else {
-                            panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path");
-                        };
-                        let (first_field_logic_into_serialize_deserialize_version_token_stream, first_field_type_with_deserialize_token_stream) =  match supported_inner_errors_container {
-                            SupportedInnerErrorsContainers::Vec => {
-                                let mut vec_checker: Option<()> = None;
-                                let type_path_path_segments_stringified = type_path.path.segments.iter()
-                                .fold(String::from(""), |mut acc, elem| {
-                                    let elem_ident = &elem.ident;
-                                    if *elem_ident == vec_name {
-                                        if vec_checker.is_some() {
-                                            panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one {vec_name} inside type path");
-                                        }
-                                        if let syn::PathArguments::AngleBracketed(angle_bracketed) = &elem.arguments {
-                                            if let true = angle_bracketed.args.len() == 1 {
-                                                if let syn::GenericArgument::Type(type_handle) = &angle_bracketed.args[0] {
-                                                    if let syn::Type::Path(type_path_handle) = type_handle {
-                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
-                                                        .fold(String::from(""), |mut acc, elem| {
-                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                            acc
-                                                        });
-                                                        segments_stringified.pop();
-                                                        segments_stringified.pop();
-                                                        acc.push_str(&format!("{vec_name}<{segments_stringified}{with_deserialize_camel_case}<'error_occurence_proc_macro_reserved_lifetime_name>>"))//todo add here lifetime from variant instead of 'error_occurence_proc_macro_reserved_lifetime_name
-                                                    }
-                                                    else {
-                                                        panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {vec_name}");
-                                                    }
-                                                }
-                                                else {
-                                                    panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {vec_name}");
-                                                }
-                                            }
-                                            else {
-                                                panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for {vec_name}");
-                                            }
-                                        }
-                                        else {
-                                            panic!("{proc_macro_name} {ident_stringified} first_segment.arguments works only with syn::PathArguments::AngleBracketed for {vec_name}")
-                                        }
-                                        vec_checker = Some(());
-                                    }
-                                    else {
-                                        acc.push_str(&format!("{elem_ident}::"));
-                                    }
-                                    acc
-                                });
-                                (
-                                    quote::quote!{
-                                        #error_field_name_token_stream
-                                        .into_iter()
-                                        .map(|e| e.#into_serialize_deserialize_version_token_stream())
-                                        .collect()
-                                    },
-                                    type_path_path_segments_stringified
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_path_path_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                )
-                            },
-                            SupportedInnerErrorsContainers::HashMap => {
-                                let mut hashmap_checker: Option<()> = None;
-                                let type_path_path_segments_stringified = type_path.path.segments.iter()
-                                .fold(String::from(""), |mut acc, elem| {
-                                    let elem_ident = &elem.ident;
-                                    if *elem_ident == hashmap_name {
-                                        if hashmap_checker.is_some() {
-                                            panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one {hashmap_name} inside type path");
-                                        }
-                                        if let syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) = &elem.arguments {
-                                            if let true = angle_bracketed_generic_arguments.args.len() == 2 {
-                                                let hashmap_key = if let syn::GenericArgument::Type(type_handle) = &angle_bracketed_generic_arguments.args[0] {
-                                                    if let syn::Type::Path(type_path_handle_two) = type_handle {
-                                                        let mut segments_stringified = type_path_handle_two.path.segments.iter()
-                                                        .fold(String::from(""), |mut acc, elem| {
-                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                            acc
-                                                        });
-                                                        segments_stringified.pop();
-                                                        segments_stringified.pop();
-                                                        segments_stringified
-                                                    }
-                                                    else {
-                                                        panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {hashmap_name}");
-                                                    }
-                                                }
-                                                else {
-                                                    panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {hashmap_name} key");
-                                                };
-                                                let hashmap_value = if let syn::GenericArgument::Type(type_handle) = &angle_bracketed_generic_arguments.args[1] {
-                                                    if let syn::Type::Path(type_path_handle) = type_handle {
-                                                        let last_arg_option_lifetime = form_last_arg_lifetime(
-                                                            type_path_handle, 
-                                                            proc_macro_name, 
-                                                            &ident_stringified,
-                                                            first_field_type_stringified_name
-                                                        ).to_string();
-                                                        let mut segments_stringified = type_path_handle.path.segments.iter()
-                                                        .fold(String::from(""), |mut acc, elem| {
-                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                            acc
-                                                        });
-                                                        segments_stringified.pop();
-                                                        segments_stringified.pop();
-                                                        format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
-                                                    }
-                                                    else {
-                                                        panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {hashmap_name}");
-                                                    }
-                                                }
-                                                else {
-                                                    panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {hashmap_name} value");
-                                                };
-                                                acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
-                                            }
-                                            else {
-                                                panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for {hashmap_name}");
-                                            }
-                                        }
-                                        else {
-                                            panic!("{proc_macro_name} {ident_stringified} first_segment.arguments works only with syn::PathArguments::AngleBracketed for {hashmap_name}");
-                                        }
-                                        hashmap_checker = Some(());
-                                    }
-                                    else {
-                                        acc.push_str(&format!("{elem_ident}::"));
-                                    }
-                                    acc
-                                });
-                                (
-                                    quote::quote!{
-                                        #error_field_name_token_stream
-                                        .into_iter()
-                                        .map(|(k, v)| (k, v.#into_serialize_deserialize_version_token_stream()))
-                                        .collect()
-                                    },
-                                    type_path_path_segments_stringified
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_path_path_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                )
-                            },
-                        };
-                        logic_for_source_to_string_with_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                // use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
-                                // #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
-                            }
-                        });
-                        logic_for_source_to_string_without_config.push(quote::quote! {
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                // use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
-                                // #error_field_name_token_stream.#few_to_string_without_config_token_stream()
-                            }
-                        });
-                        logic_for_get_code_occurence.push(quote::quote!{
-                            #ident::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream,
-                            } => #code_occurence_lower_case_token_stream
-                        });
-                        logic_for_enum_with_deserialize.push({
-                            quote::quote!{
-                                #variant_ident {
-                                    #[serde(borrow)]
-                                    #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
-                                    #[serde(borrow)]
-                                    #code_occurence_lower_case_token_stream: #code_occurence_field_type
-                                }
-                            }
-                        });
-                        logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
-                            #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream,
-                                #code_occurence_lower_case_token_stream: _unused_second_argument,
-                            } => {
-                                // use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
-                                // #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
-                            }
-                        });
-                        logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
-                            #ident_with_deserialize_token_stream::#variant_ident {
-                                #error_field_name_token_stream: _unused_first_argument,
-                                #code_occurence_lower_case_token_stream,
-                            } => #code_occurence_lower_case_token_stream
-                        });
-                        logic_for_into_serialize_deserialize_version.push({
-                            quote::quote!{
-                                #ident::#variant_ident {
-                                    #error_field_name_token_stream,
-                                    #code_occurence_lower_case_token_stream,
-                                } => #ident_with_deserialize_token_stream::#variant_ident {
-                                    #error_field_name_token_stream: #first_field_logic_into_serialize_deserialize_version_token_stream,
-                                    #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
-                                }
-                            }
-                        });
-                    },
-                }
-            });
+            // let vec_needed_info = data_enum.variants.iter().map(|variant| {
+            //     let needed_info = if let syn::Fields::Named(fields_named) = &variant.fields {
+            //         let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
+            //         let named = &fields_named.named;
+            //         if let false = named.len() == 2 {
+            //             panic!("{proc_macro_name} {ident_stringified} only works on named fields with length of 2");
+            //         }
+            //         let first_field = &named[0];
+            //         let first_field_ident =
+            //             first_field.ident.clone()
+            //             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} first_field_ident is None"));
+            //         let (error_field_name, is_display_foreign_type_option) = if first_field_ident == *"error" {
+            //             //todo - this must be check on 0, 1, 2 attr elements
+            //             let is_display_foreign_type_option = if first_field.attrs.is_empty() {
+            //                 Some(false)
+            //             }
+            //             else if first_field.attrs.len() == 1 {
+            //                 let attribute = first_field.attrs.get(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} cannot get error attributes"));
+            //                 if let true = attribute.path.segments.len() != 1 {
+            //                     panic!("{proc_macro_name} {ident_stringified} error attribute.path.segments.len() != 1");
+            //                 }
+            //                 if let true = attribute.path.segments[0].ident == display_foreign_type_stringified {
+            //                     Some(true)
+            //                 }
+            //                 else {
+            //                     panic!("{proc_macro_name} {ident_stringified} attribute.path.segments[0].ident != {display_foreign_type_stringified}");
+            //                 }
+            //             }
+            //             else {
+            //                 panic!("{proc_macro_name} {ident_stringified} attribute for error field must be #[{display_foreign_type_stringified}] or nothing")
+            //             };
+            //             (ErrorFieldName::Error, is_display_foreign_type_option)
+            //         } else if first_field_ident == *"inner_error" {
+            //             (ErrorFieldName::InnerError, None)
+            //         } else if first_field_ident == *"inner_errors" {
+            //             (ErrorFieldName::InnerErrors, None)
+            //         } else {
+            //             panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
+            //         };
+            //         let second_field = &named[1];
+            //         let second_field_ident =
+            //             second_field.ident.clone()
+            //             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} second_field_ident is None"));
+            //         if second_field_ident != *code_occurence_lower_case {
+            //             panic!("{proc_macro_name} {ident_stringified} only works on enums where variants named second field name == {code_occurence_lower_case}");
+            //         }
+            //         let error_field_name_stringified = error_field_name.to_lower_snake_case();
+            //         let error_field_name_token_stream = error_field_name_stringified
+            //         .parse::<proc_macro2::TokenStream>()
+            //         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_field_name_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+            //         let code_occurence_type_token_stream = {
+            //             let mut code_occurence_type_option = None;
+            //             fields_named.named.iter().for_each(|named|{
+            //                 let named_field_ident = named.ident.clone()
+            //                 .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident is None"));
+            //                 if named_field_ident == *code_occurence_lower_case {
+            //                     match code_occurence_type_option {
+            //                         Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
+            //                         None => {
+            //                             if let syn::Type::Path(type_path) = &named.ty {
+            //                                 let mut code_occurence_type_repeat_checker: Option<()> = None;
+            //                                 let code_occurence_segments_stringified = type_path.path.segments.iter()
+            //                                 .fold(String::from(""), |mut acc, path_segment| {
+            //                                     let path_segment_ident = &path_segment.ident;
+            //                                     match *path_segment_ident == code_occurence_camel_case {
+            //                                         true => {
+            //                                             if code_occurence_type_repeat_checker.is_some() {
+            //                                                 panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
+            //                                             }
+            //                                             let last_arg_option_lifetime = form_last_arg_lifetime(
+            //                                             type_path, 
+            //                                                 proc_macro_name, 
+            //                                                 &ident_stringified,
+            //                                                 first_field_type_stringified_name,
+            //                                             ).to_string();
+            //                                             acc.push_str(&format!("{path_segment_ident}{with_deserialize_camel_case}{last_arg_option_lifetime}"));
+            //                                             code_occurence_type_repeat_checker = Some(());
+            //                                         },
+            //                                         false => acc.push_str(&format!("{path_segment_ident}::")),
+            //                                     }
+            //                                     acc
+            //                                 });
+            //                                 if code_occurence_type_repeat_checker.is_none() {
+            //                                     panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
+            //                                 }
+            //                                 code_occurence_type_option = Some(
+            //                                     code_occurence_segments_stringified
+            //                                     .parse::<proc_macro2::TokenStream>()
+            //                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            //                                 )
+            //                             }
+            //                             else {
+            //                                 panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
+            //                             }
+            //                         },
+            //                     }
+            //                 }
+            //             });
+            //             if let Some(code_occurence_type) = code_occurence_type_option {
+            //                 code_occurence_type
+            //             }
+            //             else {
+            //                 panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
+            //             }
+            //         };
+            //         (
+            //             error_field_name, 
+            //             &first_field.ty, 
+            //             code_occurence_type_token_stream,
+            //             error_field_name_token_stream, 
+            //             is_display_foreign_type_option, 
+            //         )
+            //     }
+            //     else {
+            //         panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
+            //     };
+            //     (
+            //         &variant.ident, 
+            //         needed_info.0, 
+            //         needed_info.1, 
+            //         needed_info.2, 
+            //         needed_info.3, 
+            //         needed_info.4, 
+            //     )
+            // }).collect::<Vec<(
+            //     &proc_macro2::Ident, 
+            //     ErrorFieldName, 
+            //     &syn::Type, 
+            //     proc_macro2::TokenStream,
+            //     proc_macro2::TokenStream, 
+            //     Option<bool>, 
+            // )>>();
+            // let mut logic_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // let mut logic_for_source_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // let mut logic_for_get_code_occurence: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // let mut logic_for_enum_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // let mut logic_for_source_to_string_without_config_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // let mut logic_for_get_code_occurence_with_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_needed_info.len());
+            // vec_needed_info.iter().for_each(|(
+            //     variant_ident, 
+            //     error_field_name, 
+            //     first_field_type,
+            //     code_occurence_field_type,
+            //     error_field_name_token_stream,
+            //     is_display_foreign_type_option,
+            // )|{
+            //     match error_field_name {
+            //         ErrorFieldName::Error => {
+            //             logic_for_source_to_string_with_config.push(quote::quote! {
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+            //                     self.#source_to_string_without_config_token_stream()
+            //                 }
+            //             });
+            //             let is_display_foreign_type = is_display_foreign_type_option
+            //             .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} is_display_foreign_type_option unexpected logic"));
+            //             let to_string_or_display_foreign_type_method_token_stream = match is_display_foreign_type {
+            //                 true => quote::quote!{
+            //                     use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+            //                     #error_field_name_token_stream.#display_foreign_type_token_stream()
+            //                 },
+            //                 false => quote::quote!{
+            //                     #error_field_name_token_stream.#to_string_token_stream()
+            //                 },
+            //             };
+            //             logic_for_source_to_string_without_config.push(quote::quote! {
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     #to_string_or_display_foreign_type_method_token_stream
+            //                 }
+            //             });
+            //             logic_for_get_code_occurence.push(quote::quote!{
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #code_occurence_lower_case_token_stream
+            //             });
+            //             logic_for_enum_with_deserialize.push({
+            //                 quote::quote!{
+            //                     #variant_ident {
+            //                         #error_field_name_token_stream: String,//#first_field_type,
+            //                         #[serde(borrow)]
+            //                         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+            //                     }
+            //                 }
+            //             });
+            //             logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
+            //                 #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => #error_field_name_token_stream.to_string()
+            //             });
+            //             logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
+            //                 #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #code_occurence_lower_case_token_stream
+            //             });
+            //             logic_for_into_serialize_deserialize_version.push(quote::quote!{
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => {
+            //                     #ident_with_deserialize_token_stream::#variant_ident {
+            //                         #error_field_name_token_stream: {
+            //                             #to_string_or_display_foreign_type_method_token_stream
+            //                         },
+            //                         #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+            //                     }
+            //                 }
+            //             });
+            //         },
+            //         ErrorFieldName::InnerError => {
+            //             logic_for_source_to_string_with_config.push(quote::quote! {
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     use #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream;
+            //                     #error_field_name_token_stream.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+            //                 }
+            //             });
+            //             logic_for_source_to_string_without_config.push(quote::quote! {
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+            //                     #error_field_name_token_stream.#to_string_without_config_token_stream()
+            //                 }
+            //             });
+            //             logic_for_get_code_occurence.push(quote::quote!{
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #code_occurence_lower_case_token_stream
+            //             });
+            //             logic_for_enum_with_deserialize.push({
+            //                 let first_field_type_token_stream = if let syn::Type::Path(type_path_handle) = first_field_type {
+            //                     let last_arg_option_lifetime = form_last_arg_lifetime(
+            //                         type_path_handle, 
+            //                         proc_macro_name, 
+            //                         &ident_stringified,
+            //                         first_field_type_stringified_name
+            //                     ).to_string();
+            //                     let mut segments_stringified = type_path_handle.path.segments.iter()
+            //                     .fold(String::from(""), |mut acc, elem| {
+            //                         acc.push_str(&format!("{}::", elem.ident));
+            //                         acc
+            //                     });
+            //                     segments_stringified.pop();
+            //                     segments_stringified.pop();
+            //                     let first_field_type_stringified = format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}");
+            //                     first_field_type_stringified
+            //                     .parse::<proc_macro2::TokenStream>()
+            //                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            //                 }
+            //                 else {
+            //                     panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path");
+            //                 };
+            //                 quote::quote!{
+            //                     #variant_ident {
+            //                         #[serde(borrow)]
+            //                         #error_field_name_token_stream: #first_field_type_token_stream,
+            //                         #[serde(borrow)]
+            //                         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+            //                     }
+            //                 }
+            //             });
+            //             logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
+            //                 #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
+            //                     #error_field_name_token_stream.#to_string_without_config_with_deserialize_token_stream()
+            //                 }
+            //             });
+            //             logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
+            //                 #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #code_occurence_lower_case_token_stream
+            //             });
+            //             logic_for_into_serialize_deserialize_version.push(quote::quote!{
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream: #error_field_name_token_stream.#into_serialize_deserialize_version_token_stream(),
+            //                     #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+            //                 }
+            //             });
+            //         },
+            //         ErrorFieldName::InnerErrors => {
+            //             let (supported_inner_errors_container, type_path) = 
+            //             if let syn::Type::Path(type_path) = first_field_type {
+            //                 let path_segment = type_path.path.segments.last()
+            //                 .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None"));
+            //                 if path_segment.ident == vec_name {
+            //                     (SupportedInnerErrorsContainers::Vec, type_path)
+            //                 }
+            //                 else if path_segment.ident == hashmap_name {
+            //                     (SupportedInnerErrorsContainers::HashMap, type_path)
+            //                 }
+            //                 else {
+            //                     panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is not {vec_name} or {hashmap_name}")
+            //                 }
+            //             }
+            //             else {
+            //                 panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} supports only syn::Type::Path");
+            //             };
+            //             let (first_field_logic_into_serialize_deserialize_version_token_stream, first_field_type_with_deserialize_token_stream) =  match supported_inner_errors_container {
+            //                 SupportedInnerErrorsContainers::Vec => {
+            //                     let mut vec_checker: Option<()> = None;
+            //                     let type_path_path_segments_stringified = type_path.path.segments.iter()
+            //                     .fold(String::from(""), |mut acc, elem| {
+            //                         let elem_ident = &elem.ident;
+            //                         if *elem_ident == vec_name {
+            //                             if vec_checker.is_some() {
+            //                                 panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one {vec_name} inside type path");
+            //                             }
+            //                             if let syn::PathArguments::AngleBracketed(angle_bracketed) = &elem.arguments {
+            //                                 if let true = angle_bracketed.args.len() == 1 {
+            //                                     if let syn::GenericArgument::Type(type_handle) = &angle_bracketed.args[0] {
+            //                                         if let syn::Type::Path(type_path_handle) = type_handle {
+            //                                             let mut segments_stringified = type_path_handle.path.segments.iter()
+            //                                             .fold(String::from(""), |mut acc, elem| {
+            //                                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                                 acc
+            //                                             });
+            //                                             segments_stringified.pop();
+            //                                             segments_stringified.pop();
+            //                                             acc.push_str(&format!("{vec_name}<{segments_stringified}{with_deserialize_camel_case}<'error_occurence_proc_macro_reserved_lifetime_name>>"))//todo add here lifetime from variant instead of 'error_occurence_proc_macro_reserved_lifetime_name
+            //                                         }
+            //                                         else {
+            //                                             panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {vec_name}");
+            //                                         }
+            //                                     }
+            //                                     else {
+            //                                         panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {vec_name}");
+            //                                     }
+            //                                 }
+            //                                 else {
+            //                                     panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed.args.len() == 1 for {vec_name}");
+            //                                 }
+            //                             }
+            //                             else {
+            //                                 panic!("{proc_macro_name} {ident_stringified} first_segment.arguments works only with syn::PathArguments::AngleBracketed for {vec_name}")
+            //                             }
+            //                             vec_checker = Some(());
+            //                         }
+            //                         else {
+            //                             acc.push_str(&format!("{elem_ident}::"));
+            //                         }
+            //                         acc
+            //                     });
+            //                     (
+            //                         quote::quote!{
+            //                             #error_field_name_token_stream
+            //                             .into_iter()
+            //                             .map(|e| e.#into_serialize_deserialize_version_token_stream())
+            //                             .collect()
+            //                         },
+            //                         type_path_path_segments_stringified
+            //                         .parse::<proc_macro2::TokenStream>()
+            //                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_path_path_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            //                     )
+            //                 },
+            //                 SupportedInnerErrorsContainers::HashMap => {
+            //                     let mut hashmap_checker: Option<()> = None;
+            //                     let type_path_path_segments_stringified = type_path.path.segments.iter()
+            //                     .fold(String::from(""), |mut acc, elem| {
+            //                         let elem_ident = &elem.ident;
+            //                         if *elem_ident == hashmap_name {
+            //                             if hashmap_checker.is_some() {
+            //                                 panic!("{proc_macro_name} {ident_stringified} {first_field_type_name} detected more than one {hashmap_name} inside type path");
+            //                             }
+            //                             if let syn::PathArguments::AngleBracketed(angle_bracketed_generic_arguments) = &elem.arguments {
+            //                                 if let true = angle_bracketed_generic_arguments.args.len() == 2 {
+            //                                     let hashmap_key = if let syn::GenericArgument::Type(type_handle) = &angle_bracketed_generic_arguments.args[0] {
+            //                                         if let syn::Type::Path(type_path_handle_two) = type_handle {
+            //                                             let mut segments_stringified = type_path_handle_two.path.segments.iter()
+            //                                             .fold(String::from(""), |mut acc, elem| {
+            //                                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                                 acc
+            //                                             });
+            //                                             segments_stringified.pop();
+            //                                             segments_stringified.pop();
+            //                                             segments_stringified
+            //                                         }
+            //                                         else {
+            //                                             panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {hashmap_name}");
+            //                                         }
+            //                                     }
+            //                                     else {
+            //                                         panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {hashmap_name} key");
+            //                                     };
+            //                                     let hashmap_value = if let syn::GenericArgument::Type(type_handle) = &angle_bracketed_generic_arguments.args[1] {
+            //                                         if let syn::Type::Path(type_path_handle) = type_handle {
+            //                                             let last_arg_option_lifetime = form_last_arg_lifetime(
+            //                                                 type_path_handle, 
+            //                                                 proc_macro_name, 
+            //                                                 &ident_stringified,
+            //                                                 first_field_type_stringified_name
+            //                                             ).to_string();
+            //                                             let mut segments_stringified = type_path_handle.path.segments.iter()
+            //                                             .fold(String::from(""), |mut acc, elem| {
+            //                                                 acc.push_str(&format!("{}::", elem.ident));
+            //                                                 acc
+            //                                             });
+            //                                             segments_stringified.pop();
+            //                                             segments_stringified.pop();
+            //                                             format!("{segments_stringified}{with_deserialize_camel_case}{last_arg_option_lifetime}")
+            //                                         }
+            //                                         else {
+            //                                             panic!("{proc_macro_name} {ident_stringified} works only with syn::Type::Path for {hashmap_name}");
+            //                                         }
+            //                                     }
+            //                                     else {
+            //                                         panic!("{proc_macro_name} {ident_stringified} works only with syn::GenericArgument::Type for {hashmap_name} value");
+            //                                     };
+            //                                     acc.push_str(&format!("{elem_ident}<{hashmap_key},{hashmap_value}>"));
+            //                                 }
+            //                                 else {
+            //                                     panic!("{proc_macro_name} {ident_stringified} works only with angle_bracketed_generic_arguments.args.len() == 2 for {hashmap_name}");
+            //                                 }
+            //                             }
+            //                             else {
+            //                                 panic!("{proc_macro_name} {ident_stringified} first_segment.arguments works only with syn::PathArguments::AngleBracketed for {hashmap_name}");
+            //                             }
+            //                             hashmap_checker = Some(());
+            //                         }
+            //                         else {
+            //                             acc.push_str(&format!("{elem_ident}::"));
+            //                         }
+            //                         acc
+            //                     });
+            //                     (
+            //                         quote::quote!{
+            //                             #error_field_name_token_stream
+            //                             .into_iter()
+            //                             .map(|(k, v)| (k, v.#into_serialize_deserialize_version_token_stream()))
+            //                             .collect()
+            //                         },
+            //                         type_path_path_segments_stringified
+            //                         .parse::<proc_macro2::TokenStream>()
+            //                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_path_path_segments_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            //                     )
+            //                 },
+            //             };
+            //             logic_for_source_to_string_with_config.push(quote::quote! {
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     // use #crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream;
+            //                     // #error_field_name_token_stream.#few_to_string_with_config_token_stream(config)
+            //                 }
+            //             });
+            //             logic_for_source_to_string_without_config.push(quote::quote! {
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     // use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream;
+            //                     // #error_field_name_token_stream.#few_to_string_without_config_token_stream()
+            //                 }
+            //             });
+            //             logic_for_get_code_occurence.push(quote::quote!{
+            //                 #ident::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #code_occurence_lower_case_token_stream
+            //             });
+            //             logic_for_enum_with_deserialize.push({
+            //                 quote::quote!{
+            //                     #variant_ident {
+            //                         #[serde(borrow)]
+            //                         #error_field_name_token_stream: #first_field_type_with_deserialize_token_stream,
+            //                         #[serde(borrow)]
+            //                         #code_occurence_lower_case_token_stream: #code_occurence_field_type
+            //                     }
+            //                 }
+            //             });
+            //             logic_for_source_to_string_without_config_with_deserialize.push(quote::quote! {
+            //                 #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream,
+            //                     #code_occurence_lower_case_token_stream: _unused_second_argument,
+            //                 } => {
+            //                     // use #crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream;
+            //                     // #error_field_name_token_stream.#few_to_string_without_config_with_deserialize_token_stream()
+            //                 }
+            //             });
+            //             logic_for_get_code_occurence_with_deserialize.push(quote::quote!{
+            //                 #ident_with_deserialize_token_stream::#variant_ident {
+            //                     #error_field_name_token_stream: _unused_first_argument,
+            //                     #code_occurence_lower_case_token_stream,
+            //                 } => #code_occurence_lower_case_token_stream
+            //             });
+            //             logic_for_into_serialize_deserialize_version.push({
+            //                 quote::quote!{
+            //                     #ident::#variant_ident {
+            //                         #error_field_name_token_stream,
+            //                         #code_occurence_lower_case_token_stream,
+            //                     } => #ident_with_deserialize_token_stream::#variant_ident {
+            //                         #error_field_name_token_stream: #first_field_logic_into_serialize_deserialize_version_token_stream,
+            //                         #code_occurence_lower_case_token_stream: #code_occurence_lower_case_token_stream.#into_serialize_deserialize_version_token_stream(),
+            //                     }
+            //                 }
+            //             });
+            //         },
+            //     }
+            // });
             let logic_for_source_to_string_with_config_iter = logic_for_source_to_string_with_config.iter();
             let logic_for_source_to_string_without_config_iter = logic_for_source_to_string_without_config.iter();
             let logic_for_get_code_occurence_iter = logic_for_get_code_occurence.iter();
