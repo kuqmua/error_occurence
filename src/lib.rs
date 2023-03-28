@@ -1066,7 +1066,9 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            { 
+                                                #field_ident.to_string() 
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1089,7 +1091,9 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            { 
+                                                #field_ident.to_string() 
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1114,7 +1118,10 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
+                                                #field_ident.to_string_without_config_with_deserialize()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1131,10 +1138,16 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                                #field_ident.vec_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                                #field_ident.vec_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1151,10 +1164,16 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
+                                                #field_ident.vec_display_foreign_type_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
+                                                #field_ident.vec_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1173,10 +1192,16 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToString;
+                                                #field_ident.vec_to_string_without_config_to_string()
+                                            }
                                         },
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToStringWithDeserialize;
+                                                #field_ident.vec_to_string_without_config_to_string_with_deserialize()
+                                            },
                                         },
                                         quote::quote! {
 
@@ -1193,7 +1218,10 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
+                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1222,7 +1250,10 @@ pub fn derive_impl_error_occurence(
                                     };
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_string::HashMapImplDisplayDisplayForeignTypeToString;
+                                                #field_ident.hashmap_impl_display_display_foreign_type_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1244,7 +1275,10 @@ pub fn derive_impl_error_occurence(
                                     }
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToString;
+                                                #field_ident.hashmap_impl_display_to_string_without_config_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1273,7 +1307,10 @@ pub fn derive_impl_error_occurence(
                                     };
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_impl_display_to_string::HashMapDisplayForeignTypeImplDisplayToString;
+                                                #field_ident.hashmap_display_foreign_type_impl_display_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1304,7 +1341,10 @@ pub fn derive_impl_error_occurence(
                                     };
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_string::HashMapDisplayForeignTypeDisplayForeignTypeToString;
+                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
@@ -1335,7 +1375,10 @@ pub fn derive_impl_error_occurence(
                                     };
                                     (
                                         quote::quote! {
-
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_to_string_without_config_to_string::HashMapDisplayForeignTypeToStringWithoutConfigToString;
+                                                #field_ident.hashmap_display_foreign_type_to_string_without_config_to_string()
+                                            }
                                         },
                                         quote::quote! {
 
