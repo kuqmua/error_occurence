@@ -1482,7 +1482,9 @@ pub fn derive_impl_error_occurence(
                             format_logic_for_source_to_string_without_config.push("{}\n ");
                             fields_logic_for_source_to_string_without_config_for_attribute.push(logic_for_source_to_string_without_config_for_attribute);
                             fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute.push(logic_for_source_to_string_without_config_with_deserialize_for_attribute);
-                            fields_logic_for_into_serialize_deserialize_version_for_attribute.push(logic_for_into_serialize_deserialize_version_for_attribute);
+                            fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
+                                #field_ident: #logic_for_into_serialize_deserialize_version_for_attribute
+                            });
                         },
                         ErrorOrCodeOccurence::CodeOccurence { 
                             field_type,
@@ -1518,6 +1520,9 @@ pub fn derive_impl_error_occurence(
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
                                 #field_ident
                             });
+                            fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
+                                #field_ident: #field_ident.into_serialize_deserialize_version(),
+                            });
                         },
                     }
                 });
@@ -1535,7 +1540,7 @@ pub fn derive_impl_error_occurence(
                     acc
                 });
                 format_logic_for_source_to_string_without_config_stringified.pop();
-                let format_logic_for_source_to_string_without_config_handle_stringified = format!("{{\n {format_logic_for_source_to_string_without_config_stringified}}}");
+                let format_logic_for_source_to_string_without_config_handle_stringified = format!("\"\n {format_logic_for_source_to_string_without_config_stringified}\"");
                 let format_logic_for_source_to_string_without_config_handle_token_stream = format_logic_for_source_to_string_without_config_handle_stringified
                 .parse::<proc_macro2::TokenStream>()
                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {format_logic_for_source_to_string_without_config_handle_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1595,7 +1600,9 @@ pub fn derive_impl_error_occurence(
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_into_serialize_deserialize_version_iter),*
                     } => {
-                        #(#fields_logic_for_into_serialize_deserialize_version_for_attribute_iter),*
+                        #ident_with_deserialize_token_stream::#variant_ident {
+                            #(#fields_logic_for_into_serialize_deserialize_version_for_attribute_iter),*
+                        }
                     }
                 });
             });
