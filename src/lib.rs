@@ -806,7 +806,7 @@ pub fn derive_impl_error_occurence(
                                                     }
                                                 }
                                                 else {
-                                                    panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
+                                                    panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 ###");
                                                 }
                                             }
                                             else {
@@ -935,7 +935,7 @@ pub fn derive_impl_error_occurence(
                                             if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                                 match &angle_brackets_generic_arguments.args[0] {
                                                     syn::GenericArgument::Lifetime(lifetime_handle) => {
-                                                        println!("{:#?}", lifetime_handle);
+                                                        // println!("{:#?}", lifetime_handle);
                                                         //todo - maybe wrong
                                                         let mut field_segments_stringified = type_path.path.segments.iter()
                                                         .fold(String::from(""), |mut acc, elem| {
@@ -994,7 +994,7 @@ pub fn derive_impl_error_occurence(
                                                 // }
                                             }
                                             else {
-                                                panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
+                                                panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 **");
                                             }
                                         },
                                         syn::PathArguments::Parenthesized(_) => todo!(),
@@ -1088,11 +1088,16 @@ pub fn derive_impl_error_occurence(
                                 serde_borrow_attribute_token_stream
                             ) = match attribute {
                                 Attribute::ToString => {
-                                    let serde_borrow_attribute_handle = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
-                                        match should_add_serde_borrow {
+                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
+                                        let serde_borrow_attribute_handle = match should_add_serde_borrow {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
-                                        }
+                                        };
+                                        let path_stringified = format!("{path}{should_add_serde_borrow}");
+                                        let path_token_stream = path_stringified
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                        (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::ToString is not a SupportedContainer::Path");
@@ -1113,7 +1118,7 @@ pub fn derive_impl_error_occurence(
                                                 #field_ident
                                             }
                                         },
-                                        field_type_token_stream,
+                                        path_token_stream,
                                         serde_borrow_attribute_handle
                                     )
                                 },
@@ -1186,11 +1191,16 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::VecToString => {
-                                    let serde_borrow_attribute_handle = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
-                                        match element_lifetime {
+                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
+                                        let serde_borrow_attribute_handle = match element_lifetime {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
-                                        }  
+                                        };
+                                        let path_stringified = format!("{path}<{element_path}{element_lifetime}>");
+                                        let path_token_stream = path_stringified
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                        (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::VecToString is not a SupportedContainer::Vec");
@@ -1213,7 +1223,7 @@ pub fn derive_impl_error_occurence(
                                                 #field_ident
                                             }
                                         },
-                                        field_type_token_stream,
+                                        path_token_stream,
                                         serde_borrow_attribute_handle,
                                     )
                                 },
@@ -1291,13 +1301,18 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::HashMapKeyToStringValueToString => {
-                                    let serde_borrow_attribute_handle = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
-                                        match (key_lifetime_enum, value_lifetime_enum) {
+                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
+                                        let serde_borrow_attribute_handle = match (key_lifetime_enum, value_lifetime_enum) {
                                             (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
                                             (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
                                             (Lifetime::NotSpecified, Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
                                             (Lifetime::NotSpecified, Lifetime::NotSpecified) => quote::quote!{},
-                                        }
+                                        };
+                                        let path_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum}, {value_segments_stringified}{value_lifetime_enum}>");
+                                        let path_token_stream = path_stringified
+                                        .parse::<proc_macro2::TokenStream>()
+                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                        (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueToString is not a SupportedContainer::Vec");
@@ -1320,27 +1335,27 @@ pub fn derive_impl_error_occurence(
                                                 #field_ident
                                             }
                                         },
-                                        field_type_token_stream,
+                                        path_token_stream,
                                         serde_borrow_attribute_handle,
                                     )
                                 },
                                 Attribute::HashMapKeyToStringValueDisplayForeignType => {
-                                    let (hashmap_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { 
+                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
                                         key_lifetime_enum, 
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let hashmap_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},std::string::String>");
-                                        let hashmap_token_stream = hashmap_stringified
+                                        let path_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},std::string::String>");
+                                        let path_token_stream = path_stringified
                                         .parse::<proc_macro2::TokenStream>()
-                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                         let serde_borrow_attribute_handle = match key_lifetime_enum {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
                                         };
-                                        (hashmap_token_stream, serde_borrow_attribute_handle)
+                                        (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueDisplayForeignType is not a SupportedContainer::HashMap");
@@ -1364,9 +1379,7 @@ pub fn derive_impl_error_occurence(
                                                 #field_ident.hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string()
                                             }
                                         },
-                                        quote::quote! {
-                                            #hashmap_token_stream
-                                        },
+                                        path_token_stream,
                                         serde_borrow_attribute_handle,
                                     )
                                 },
@@ -1451,9 +1464,7 @@ pub fn derive_impl_error_occurence(
                                                 #field_ident.hashmap_display_foreign_type_impl_display_to_hashmap_string_impl_display()
                                             }
                                         },
-                                        quote::quote! {
-                                            #hashmap_token_stream
-                                        },
+                                        hashmap_token_stream,
                                         serde_borrow_attribute_handle,
                                     )
                                 },
@@ -1492,9 +1503,7 @@ pub fn derive_impl_error_occurence(
                                                 #field_ident.hashmap_display_foreign_type_display_foreign_type_to_hashmap_string_string()
                                             }
                                         },
-                                        quote::quote! {
-                                            #hashmap_token_stream
-                                        },
+                                        hashmap_token_stream,
                                         quote::quote! {},
                                     )
                                 },
@@ -2501,7 +2510,7 @@ pub fn derive_impl_error_occurence(
                                 }
                             }
                             else {
-                                panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
+                                panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 @@");
                             }
                         }
                         else {
@@ -3338,11 +3347,10 @@ fn form_last_arg_lifetime(
                 if let false = angle_bracketed_generic_argument.args.len() == 1 {
                     panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} angle_bracketed_generic_argument.args.len() != 1");
                 }
-                if let syn::GenericArgument::Lifetime(lfmt) = &angle_bracketed_generic_argument.args[0] {
-                    Lifetime::Specified(lfmt.ident.to_string())
-                }
-                else {
-                    panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime");
+                match &angle_bracketed_generic_argument.args[0] {
+                    syn::GenericArgument::Lifetime(lfmt) => Lifetime::Specified(lfmt.ident.to_string()),
+                    syn::GenericArgument::Type(_) => Lifetime::NotSpecified,
+                    _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
                 }
             },
             syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
