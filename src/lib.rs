@@ -36,6 +36,19 @@ enum SupportedContainer {
     },
 }
 
+enum GenericTypes {
+    One {
+        field_segments_stringified: String, 
+        lifetime: Lifetime,
+    },
+    Two {
+        first_field_segments_stringified: String, 
+        first_lifetime: Lifetime,
+        second_field_segments_stringified: String, 
+        second_lifetime: Lifetime,
+    }
+}
+
 enum SupportedInnerErrorsContainers {
     Vec,
     HashMap,
@@ -61,8 +74,7 @@ impl std::fmt::Display for Lifetime {
 enum ErrorOrCodeOccurence {
     Error {
         attribute: Attribute,
-        field_segments_stringified: String, 
-        field_last_arg_option_lifetime: Lifetime,
+        // generic_types: GenericTypes,
         supported_container: SupportedContainer,
     },
     CodeOccurence {
@@ -764,8 +776,10 @@ pub fn derive_impl_error_occurence(
                                         }//other attributes are not for this proc_macro
                                     }//other attributes are not for this proc_macro
                                 });
-                                let (field_segments_stringified, field_last_arg_option_lifetime, supported_container) = if let syn::Type::Path(type_path) = &field.ty {
-                                    //
+                                let (
+                                    // generic_types, 
+                                    supported_container
+                                ) = if let syn::Type::Path(type_path) = &field.ty {
                                     let supported_container = {
                                         let path = &type_path.path;
                                         let path_segment = type_path.path.segments.last()
@@ -916,98 +930,217 @@ pub fn derive_impl_error_occurence(
                                             }
                                         }
                                     };
-                                    //
                                     let last_path_segment = type_path.path.segments.last()
                                     .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field type_path.path.segments.last() is None"));
-                                    let (field_segments_stringified, lifetime) = match &last_path_segment.arguments {
-                                        syn::PathArguments::None => {
-                                            let mut field_segments_stringified = type_path.path.segments.iter()
-                                            .fold(String::from(""), |mut acc, elem| {
-                                                acc.push_str(&format!("{}::", elem.ident));
-                                                acc
-                                            });
-                                            field_segments_stringified.pop();
-                                            field_segments_stringified.pop();
-                                            (field_segments_stringified, Lifetime::NotSpecified)
-                                        },
-                                        syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) => {
-                                            //todo - can be more than one lifetime or generic
-                                            if let true = angle_brackets_generic_arguments.args.len() == 1 {
-                                                match &angle_brackets_generic_arguments.args[0] {
-                                                    syn::GenericArgument::Lifetime(lifetime_handle) => {
-                                                        // println!("{:#?}", lifetime_handle);
-                                                        //todo - maybe wrong
-                                                        let mut field_segments_stringified = type_path.path.segments.iter()
-                                                        .fold(String::from(""), |mut acc, elem| {
-                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                            acc
-                                                        });
-                                                        field_segments_stringified.pop();
-                                                        field_segments_stringified.pop();
-                                                        (field_segments_stringified, Lifetime::Specified(lifetime_handle.ident.to_string()))
-                                                    },
-                                                    syn::GenericArgument::Type(type_handle) => {
-                                                        //
-                                                        let field_last_arg_option_lifetime = form_last_arg_lifetime(
-                                                            type_path, 
-                                                            proc_macro_name, 
-                                                            &ident_stringified,
-                                                            first_field_type_stringified_name
-                                                        );
-                                                        //todo - maybe wrong
-                                                        let mut field_segments_stringified = type_path.path.segments.iter()
-                                                        .fold(String::from(""), |mut acc, elem| {
-                                                            acc.push_str(&format!("{}::", elem.ident));
-                                                            acc
-                                                        });
-                                                        field_segments_stringified.pop();
-                                                        field_segments_stringified.pop();
-                                                        (field_segments_stringified, field_last_arg_option_lifetime)
-                                                        //
-                                                    },
-                                                    _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type or syn::GenericArgument::Lifetime")
-                                                }
-                                                // if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
-                                                //     // if let syn::Type::Path(type_path) = type_handle {
-                                                //     //     let field_last_arg_option_lifetime = form_last_arg_lifetime(
-                                                //     //         type_path, 
-                                                //     //         proc_macro_name, 
-                                                //     //         &ident_stringified,
-                                                //     //         first_field_type_stringified_name
-                                                //     //     );
-                                                //     //     //todo - maybe wrong
-                                                //     //     let mut field_segments_stringified = type_path.path.segments.iter()
-                                                //     //     .fold(String::from(""), |mut acc, elem| {
-                                                //     //         acc.push_str(&format!("{}::", elem.ident));
-                                                //     //         acc
-                                                //     //     });
-                                                //     //     field_segments_stringified.pop();
-                                                //     //     field_segments_stringified.pop();
-                                                //     //     (field_segments_stringified, field_last_arg_option_lifetime)
-                                                //     // }
-                                                //     // else {
-                                                //     //     panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
-                                                //     // }
-                                                // }
-                                                // else {
-                                                //     panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type4");
-                                                // }
-                                            }
-                                            else {
-                                                panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 **");
-                                            }
-                                        },
-                                        syn::PathArguments::Parenthesized(_) => todo!(),
-                                    };
-                                    (field_segments_stringified, lifetime, supported_container)
+                                    // let generic_types = match &last_path_segment.arguments {
+                                    //     syn::PathArguments::None => {
+                                    //         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //         .fold(String::from(""), |mut acc, elem| {
+                                    //             acc.push_str(&format!("{}::", elem.ident));
+                                    //             acc
+                                    //         });
+                                    //         field_segments_stringified.pop();
+                                    //         field_segments_stringified.pop();
+                                    //         GenericTypes::One {
+                                    //             field_segments_stringified: field_segments_stringified, 
+                                    //             lifetime: Lifetime::NotSpecified,
+                                    //         }
+                                    //     },
+                                    //     syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) => {
+                                    //         println!("{:#?}", angle_brackets_generic_arguments.args);
+                                    //         //todo - can be more than one lifetime or generic
+                                    //         match angle_brackets_generic_arguments.args.len() {
+                                    //             1 => {
+                                    //                 match &angle_brackets_generic_arguments.args[0] {
+                                    //                     syn::GenericArgument::Lifetime(lifetime_handle) => {
+                                    //                         // println!("{:#?}", lifetime_handle);
+                                    //                         //todo - maybe wrong
+                                    //                         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //                         .fold(String::from(""), |mut acc, elem| {
+                                    //                             acc.push_str(&format!("{}::", elem.ident));
+                                    //                             acc
+                                    //                         });
+                                    //                         field_segments_stringified.pop();
+                                    //                         field_segments_stringified.pop();
+                                    //                         GenericTypes::One {
+                                    //                             field_segments_stringified: field_segments_stringified, 
+                                    //                             lifetime: Lifetime::Specified(lifetime_handle.ident.to_string()),
+                                    //                         }
+                                    //                     },
+                                    //                     syn::GenericArgument::Type(type_handle) => {
+                                    //                         let field_last_arg_option_lifetime = form_last_arg_lifetime(
+                                    //                             type_path, 
+                                    //                             proc_macro_name, 
+                                    //                             &ident_stringified,
+                                    //                             first_field_type_stringified_name
+                                    //                         );
+                                    //                         //todo - maybe wrong
+                                    //                         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //                         .fold(String::from(""), |mut acc, elem| {
+                                    //                             acc.push_str(&format!("{}::", elem.ident));
+                                    //                             acc
+                                    //                         });
+                                    //                         field_segments_stringified.pop();
+                                    //                         field_segments_stringified.pop();
+                                    //                         GenericTypes::One {
+                                    //                             field_segments_stringified: field_segments_stringified, 
+                                    //                             lifetime: field_last_arg_option_lifetime,
+                                    //                         }
+                                    //                     },
+                                    //                     _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type or syn::GenericArgument::Lifetime")
+                                    //                 }
+                                    //             }
+                                    //             2 => {
+                                    //                 let (first_segments, first_lifetime) = match &angle_brackets_generic_arguments.args[0] {
+                                    //                     syn::GenericArgument::Lifetime(lifetime_handle) => {
+                                    //                         //todo - maybe wrong
+                                    //                         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //                         .fold(String::from(""), |mut acc, elem| {
+                                    //                             acc.push_str(&format!("{}::", elem.ident));
+                                    //                             acc
+                                    //                         });
+                                    //                         field_segments_stringified.pop();
+                                    //                         field_segments_stringified.pop();
+                                    //                         (field_segments_stringified, Lifetime::Specified(lifetime_handle.ident.to_string()))
+                                    //                     },
+                                    //                     syn::GenericArgument::Type(type_handle) => {
+                                    //                         let field_last_arg_option_lifetime = form_last_arg_lifetime(
+                                    //                             type_path, 
+                                    //                             proc_macro_name, 
+                                    //                             &ident_stringified,
+                                    //                             first_field_type_stringified_name
+                                    //                         );
+                                    //                         //todo - maybe wrong
+                                    //                         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //                         .fold(String::from(""), |mut acc, elem| {
+                                    //                             acc.push_str(&format!("{}::", elem.ident));
+                                    //                             acc
+                                    //                         });
+                                    //                         field_segments_stringified.pop();
+                                    //                         field_segments_stringified.pop();
+                                    //                         (field_segments_stringified, field_last_arg_option_lifetime)
+                                    //                         //
+                                    //                     },
+                                    //                     _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type or syn::GenericArgument::Lifetime")
+                                    //                 };
+                                    //                 let (second_segments, second_lifetime) = match &angle_brackets_generic_arguments.args[1] {
+                                    //                     syn::GenericArgument::Lifetime(lifetime_handle) => {
+                                    //                         //todo - maybe wrong
+                                    //                         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //                         .fold(String::from(""), |mut acc, elem| {
+                                    //                             acc.push_str(&format!("{}::", elem.ident));
+                                    //                             acc
+                                    //                         });
+                                    //                         field_segments_stringified.pop();
+                                    //                         field_segments_stringified.pop();
+                                    //                         (field_segments_stringified, Lifetime::Specified(lifetime_handle.ident.to_string()))
+                                    //                     },
+                                    //                     syn::GenericArgument::Type(type_handle) => {
+                                    //                         let field_last_arg_option_lifetime = form_last_arg_lifetime(
+                                    //                             type_path, 
+                                    //                             proc_macro_name, 
+                                    //                             &ident_stringified,
+                                    //                             first_field_type_stringified_name
+                                    //                         );
+                                    //                         //todo - maybe wrong
+                                    //                         let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //                         .fold(String::from(""), |mut acc, elem| {
+                                    //                             acc.push_str(&format!("{}::", elem.ident));
+                                    //                             acc
+                                    //                         });
+                                    //                         field_segments_stringified.pop();
+                                    //                         field_segments_stringified.pop();
+                                    //                         (field_segments_stringified, field_last_arg_option_lifetime)
+                                    //                     },
+                                    //                     _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type or syn::GenericArgument::Lifetime")
+                                    //                 };
+                                    //                 GenericTypes::Two {
+                                    //                     first_field_segments_stringified: first_segments, 
+                                    //                     first_lifetime: first_lifetime,
+                                    //                     second_field_segments_stringified: second_segments, 
+                                    //                     second_lifetime: second_lifetime,
+                                    //                 }
+                                    //             }
+                                    //             _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 **")
+                                    //         }
+                                    //         // //
+                                    //         // if let true = angle_brackets_generic_arguments.args.len() == 1 {
+                                    //         //     match &angle_brackets_generic_arguments.args[0] {
+                                    //         //         syn::GenericArgument::Lifetime(lifetime_handle) => {
+                                    //         //             // println!("{:#?}", lifetime_handle);
+                                    //         //             //todo - maybe wrong
+                                    //         //             let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //         //             .fold(String::from(""), |mut acc, elem| {
+                                    //         //                 acc.push_str(&format!("{}::", elem.ident));
+                                    //         //                 acc
+                                    //         //             });
+                                    //         //             field_segments_stringified.pop();
+                                    //         //             field_segments_stringified.pop();
+                                    //         //             (field_segments_stringified, Lifetime::Specified(lifetime_handle.ident.to_string()))
+                                    //         //         },
+                                    //         //         syn::GenericArgument::Type(type_handle) => {
+                                    //         //             let field_last_arg_option_lifetime = form_last_arg_lifetime(
+                                    //         //                 type_path, 
+                                    //         //                 proc_macro_name, 
+                                    //         //                 &ident_stringified,
+                                    //         //                 first_field_type_stringified_name
+                                    //         //             );
+                                    //         //             //todo - maybe wrong
+                                    //         //             let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //         //             .fold(String::from(""), |mut acc, elem| {
+                                    //         //                 acc.push_str(&format!("{}::", elem.ident));
+                                    //         //                 acc
+                                    //         //             });
+                                    //         //             field_segments_stringified.pop();
+                                    //         //             field_segments_stringified.pop();
+                                    //         //             (field_segments_stringified, field_last_arg_option_lifetime)
+                                    //         //             //
+                                    //         //         },
+                                    //         //         _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type or syn::GenericArgument::Lifetime")
+                                    //         //     }
+                                    //         //     // if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
+                                    //         //     //     // if let syn::Type::Path(type_path) = type_handle {
+                                    //         //     //     //     let field_last_arg_option_lifetime = form_last_arg_lifetime(
+                                    //         //     //     //         type_path, 
+                                    //         //     //     //         proc_macro_name, 
+                                    //         //     //     //         &ident_stringified,
+                                    //         //     //     //         first_field_type_stringified_name
+                                    //         //     //     //     );
+                                    //         //     //     //     //todo - maybe wrong
+                                    //         //     //     //     let mut field_segments_stringified = type_path.path.segments.iter()
+                                    //         //     //     //     .fold(String::from(""), |mut acc, elem| {
+                                    //         //     //     //         acc.push_str(&format!("{}::", elem.ident));
+                                    //         //     //     //         acc
+                                    //         //     //     //     });
+                                    //         //     //     //     field_segments_stringified.pop();
+                                    //         //     //     //     field_segments_stringified.pop();
+                                    //         //     //     //     (field_segments_stringified, field_last_arg_option_lifetime)
+                                    //         //     //     // }
+                                    //         //     //     // else {
+                                    //         //     //     //     panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
+                                    //         //     //     // }
+                                    //         //     // }
+                                    //         //     // else {
+                                    //         //     //     panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type4");
+                                    //         //     // }
+                                    //         // }
+                                    //         // else {
+                                    //         //     panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 **");
+                                    //         // }
+                                    //     },
+                                    //     syn::PathArguments::Parenthesized(_) => todo!(),
+                                    // };
+                                    (
+                                        // generic_types, 
+                                        supported_container
+                                    )
                                 }
                                 else {
                                     panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
                                 };
                                 ErrorOrCodeOccurence::Error {
                                     attribute: option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none")),
-                                    field_segments_stringified, 
-                                    field_last_arg_option_lifetime,
+                                    // generic_types,
                                     supported_container,
                                 }
                             },
@@ -1070,14 +1203,15 @@ pub fn derive_impl_error_occurence(
                     match error_or_code_occurence {
                         ErrorOrCodeOccurence::Error { 
                             attribute, 
-                            field_segments_stringified, 
-                            field_last_arg_option_lifetime,
+                            // field_segments_stringified, 
+                            // field_last_arg_option_lifetime,
+                            // generic_types,
                             supported_container,
                         } => {
-                            let field_type_stringified = format!("{field_segments_stringified}{field_last_arg_option_lifetime}");
-                            let field_type_token_stream = field_type_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                            // let field_type_stringified = format!("{field_segments_stringified}{field_last_arg_option_lifetime}");
+                            // let field_type_token_stream = field_type_stringified
+                            // .parse::<proc_macro2::TokenStream>()
+                            // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             let ( 
                                 //
                                 logic_for_source_to_string_without_config_for_attribute,
@@ -1287,7 +1421,7 @@ pub fn derive_impl_error_occurence(
                                             {
                                                 use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToStringWithDeserialize;
                                                 #field_ident.vec_to_string_without_config_to_string_with_deserialize()
-                                            },
+                                            }
                                         },
                                         quote::quote! {
                                             {
@@ -1476,7 +1610,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let hashmap_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{value_lifetime_enum}>");
+                                        let hashmap_stringified = format!("{path}<std::string::String,std::string::String>");
                                         hashmap_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1625,7 +1759,7 @@ pub fn derive_impl_error_occurence(
                                 #field_ident
                             });
                             fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
-                                #field_ident: #field_ident.into_serialize_deserialize_version(),
+                                #field_ident: #field_ident.into_serialize_deserialize_version()
                             });
                         },
                     }
