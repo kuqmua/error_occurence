@@ -1086,14 +1086,14 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToString;
-                                                #field_ident.hashmap_impl_display_to_string_without_config_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToString;
+                                                #field_ident.hashmap_display_to_string_without_config_to_string()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
+                                                use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
+                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize()
                                             }
                                         },
                                         quote::quote! {
@@ -1220,8 +1220,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
+                                                use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
+                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize()
                                             }
                                         },
                                         quote::quote! {
@@ -2156,15 +2156,15 @@ pub fn derive_impl_error_occurence(
                                 i.hashmap_display_to_string_with_config_to_string(config)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToString;
-                                i.hashmap_impl_display_to_string_without_config_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToString;
+                                i.hashmap_display_to_string_without_config_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
-                                i.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
+                                use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
+                                i.hashmap_display_to_string_without_config_to_string_with_deserialize()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
@@ -2301,8 +2301,8 @@ pub fn derive_impl_error_occurence(
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_to_string_without_config_to_string::HashmapImplDisplayToStringWithoutConfigToStringWithDeserialize;
-                                i.hashmap_impl_display_to_string_without_config_to_string_with_deserialize()
+                                use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
+                                i.hashmap_display_to_string_without_config_to_string_with_deserialize()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
