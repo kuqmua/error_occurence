@@ -1058,8 +1058,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeToHashmapImplDisplayString;
-                                                #field_ident.hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string()
+                                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeIntoHashmapImplDisplayString;
+                                                #field_ident.hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string()
                                             }
                                         },
                                         path_token_stream,
@@ -2105,8 +2105,8 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeToHashmapImplDisplayString;
-                                    i.hashmap_impl_display_display_foreign_type_to_hashmap_impl_display_string()
+                                    use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeIntoHashmapImplDisplayString;
+                                    i.hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string()
                                 })
                             },
                         )
