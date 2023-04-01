@@ -1046,8 +1046,8 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_string::HashMapImplDisplayDisplayForeignTypeToString;
-                                                #field_ident.hashmap_impl_display_display_foreign_type_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_to_string::HashMapDisplayDisplayForeignTypeToString;
+                                                #field_ident.hashmap_display_display_foreign_type_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -2089,12 +2089,12 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_string::HashMapImplDisplayDisplayForeignTypeToString;
-                                i.hashmap_impl_display_display_foreign_type_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_to_string::HashMapDisplayDisplayForeignTypeToString;
+                                i.hashmap_display_display_foreign_type_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_to_string::HashMapImplDisplayDisplayForeignTypeToString;
-                                i.hashmap_impl_display_display_foreign_type_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_to_string::HashMapDisplayDisplayForeignTypeToString;
+                                i.hashmap_display_display_foreign_type_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
