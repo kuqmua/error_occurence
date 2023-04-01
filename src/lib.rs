@@ -891,14 +891,14 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                                #field_ident.vec_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                                #field_ident.vec_display_to_string()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                                #field_ident.vec_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                                #field_ident.vec_display_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -926,8 +926,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                                #field_ident.vec_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                                #field_ident.vec_display_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -1910,19 +1910,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                i.vec_impl_display_to_string()
+                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                i.vec_display_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                i.vec_impl_display_to_string()
+                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                i.vec_display_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                i.vec_impl_display_to_string()
+                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                i.vec_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident(i)
@@ -1952,8 +1952,8 @@ pub fn derive_impl_error_occurence(
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_impl_display_to_string::VecImplDisplayToString;
-                                i.vec_impl_display_to_string()
+                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
+                                i.vec_display_to_string()
                             },
                             quote::quote!{
                                  #ident_with_deserialize_token_stream::#variant_ident({
