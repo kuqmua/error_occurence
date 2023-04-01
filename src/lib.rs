@@ -2105,8 +2105,8 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeIntoHashmapImplDisplayString;
-                                    i.hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string()
+                                    use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_display_string::HashmapDisplayDisplayForeignTypeIntoHashmapDisplayString;
+                                    i.hashmap_display_display_foreign_type_into_hashmap_display_string()
                                 })
                             },
                         )
