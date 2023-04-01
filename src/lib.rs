@@ -1003,14 +1003,14 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                                #field_ident.hashmap_display_display_to_string()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                                #field_ident.hashmap_display_display_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -1052,8 +1052,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                                #field_ident.hashmap_display_display_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -1137,8 +1137,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                                #field_ident.hashmap_display_display_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -1176,8 +1176,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                                #field_ident.hashmap_impl_display_impl_display_to_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                                #field_ident.hashmap_display_display_to_string()
                                             }
                                         },
                                         quote::quote! {
@@ -2045,19 +2045,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                i.hashmap_impl_display_impl_display_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                i.hashmap_display_display_to_string()
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                i.hashmap_impl_display_impl_display_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                i.hashmap_display_display_to_string()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                i.hashmap_impl_display_impl_display_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                i.hashmap_display_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident(i)
@@ -2100,8 +2100,8 @@ pub fn derive_impl_error_occurence(
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                i.hashmap_impl_display_impl_display_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                i.hashmap_display_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
@@ -2212,8 +2212,8 @@ pub fn derive_impl_error_occurence(
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                i.hashmap_impl_display_impl_display_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                i.hashmap_display_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
@@ -2254,8 +2254,8 @@ pub fn derive_impl_error_occurence(
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::hashmap_impl_display_impl_display_to_string::HashmapImplDisplayImplDisplayToString;
-                                i.hashmap_impl_display_impl_display_to_string()
+                                use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
+                                i.hashmap_display_display_to_string()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
