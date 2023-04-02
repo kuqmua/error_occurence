@@ -1198,8 +1198,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string::HashmapDisplayForeignTypeDisplayForeignTypeIntoHashMapStringString;
-                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_into_hashmap_static_str_static_str::HashmapDisplayForeignTypeDisplayForeignTypeIntoHashMapStaticStrStaticStr;
+                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_into_hashmap_static_str_static_str()
                                             }
                                         },
                                         hashmap_token_stream,
@@ -2277,8 +2277,8 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string::HashmapDisplayForeignTypeDisplayForeignTypeIntoHashMapStringString;
-                                    i.hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string()
+                                    use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_into_hashmap_static_str_static_str::HashmapDisplayForeignTypeDisplayForeignTypeIntoHashMapStaticStrStaticStr;
+                                    i.hashmap_display_foreign_type_display_foreign_type_into_hashmap_static_str_static_str()
                                 })
                             },
                         )
