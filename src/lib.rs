@@ -1068,8 +1068,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_display_string::HashmapDisplayDisplayForeignTypeIntoHashmapDisplayString;
-                                                #field_ident.hashmap_display_display_foreign_type_into_hashmap_display_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_display_static_str::HashmapDisplayDisplayForeignTypeIntoHashmapDisplayStaticStr;
+                                                #field_ident.hashmap_display_display_foreign_type_into_hashmap_display_static_str()
                                             }
                                         },
                                         path_token_stream,
@@ -2123,8 +2123,8 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_display_string::HashmapDisplayDisplayForeignTypeIntoHashmapDisplayString;
-                                    i.hashmap_display_display_foreign_type_into_hashmap_display_string()
+                                    use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_display_static_str::HashmapDisplayDisplayForeignTypeIntoHashmapDisplayStaticStr;
+                                    i.hashmap_display_display_foreign_type_into_hashmap_display_static_str()
                                 })
                             },
                         )
