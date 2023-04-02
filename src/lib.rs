@@ -90,16 +90,16 @@ enum ErrorFieldName {
     enum_extension::EnumExtension
 )]
 enum Attribute {
-    ToString,
+    Display,
     DisplayForeignType,
     ErrorOccurence,
-    VecToString,
+    VecDisplay,
     VecDisplayForeignType,
     VecErrorOccurence,
-    HashMapKeyToStringValueToString,
-    HashMapKeyToStringValueDisplayForeignType,
-    HashMapKeyToStringValueErrorOccurence,
-    HashMapKeyDisplayForeignTypeValueToString,
+    HashMapKeyDisplayValueDisplay,
+    HashMapKeyDisplayValueDisplayForeignType,
+    HashMapKeyDisplayValueErrorOccurence,
+    HashMapKeyDisplayForeignTypeValueDisplay,
     HashMapKeyDisplayForeignTypeValueDisplayForeignType,
     HashMapKeyDisplayForeignTypeValueErrorOccurence,
 }
@@ -124,16 +124,16 @@ impl Attribute {
 #[proc_macro_derive(
     ImplErrorOccurence, 
     attributes(
-        to_string, 
+        display, 
         display_foreign_type,
         error_occurence,
-        vec_to_string,
+        vec_display,
         vec_display_foreign_type,
         vec_error_occurence,
-        hashmap_key_to_string_value_to_string,
-        hashmap_key_to_string_value_display_foreign_type,
-        hashmap_key_to_string_value_error_occurence,
-        hashmap_key_display_foreign_type_value_to_string,
+        hashmap_key_display_value_display,
+        hashmap_key_display_value_display_foreign_type,
+        hashmap_key_display_value_error_occurence,
+        hashmap_key_display_foreign_type_value_display,
         hashmap_key_display_foreign_type_value_display_foreign_type,
         hashmap_key_display_foreign_type_value_error_occurence,
     )
@@ -141,7 +141,6 @@ impl Attribute {
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    //todo in WithDeserialize in case of Display foreign type must be &str intead of String
     //todo add to panic message file line column or occurence
     let proc_macro_name = "ImplErrorOccurence";
     let ast: syn::DeriveInput =
@@ -155,26 +154,26 @@ pub fn derive_impl_error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {trait_lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let vec_name = "Vec";
     let hashmap_name = "HashMap";
-    let to_string_stringified = "to_string";
-    let to_string_token_stream = 
-    to_string_stringified
-        .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let with_deserialize_camel_case = "WithDeserialize";
+    let display_stringified = "display";
     let display_foreign_type_stringified = "display_foreign_type";
     let display_foreign_type_token_stream = display_foreign_type_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let error_occurence_stringified = "error_occurence";
-    let vec_to_string_stringified = "vec_to_string";
+    let vec_display_stringified = "vec_display";
     let vec_display_foreign_type_stringified = "vec_display_foreign_type";
     let vec_error_occurence_stringified = "vec_error_occurence";
-    let hashmap_key_to_string_value_to_string_stringified = "hashmap_key_to_string_value_to_string";
-    let hashmap_key_to_string_value_display_foreign_type_stringified = "hashmap_key_to_string_value_display_foreign_type";
-    let hashmap_key_to_string_value_error_occurence_stringified = "hashmap_key_to_string_value_error_occurence";
-    let hashmap_key_display_foreign_type_value_to_string_stringified = "hashmap_key_display_foreign_type_value_to_string";
+    let hashmap_key_display_value_display_stringified = "hashmap_key_display_value_display";
+    let hashmap_key_display_value_display_foreign_type_stringified = "hashmap_key_display_value_display_foreign_type";
+    let hashmap_key_display_value_error_occurence_stringified = "hashmap_key_display_value_error_occurence";
+    let hashmap_key_display_foreign_type_value_display_stringified = "hashmap_key_display_foreign_type_value_display";
     let hashmap_key_display_foreign_type_value_display_foreign_type_stringified = "hashmap_key_display_foreign_type_value_display_foreign_type";
     let hashmap_key_display_foreign_type_value_error_occurence_stringified = "hashmap_key_display_foreign_type_value_error_occurence";
-    let with_deserialize_camel_case = "WithDeserialize";
+    let to_string_stringified = "to_string";
+    let to_string_token_stream = to_string_stringified
+        .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     use convert_case::Casing;
     let with_deserialize_lower_case = with_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_deserialize_stringified = format!("{ident}{with_deserialize_camel_case}");
@@ -452,12 +451,12 @@ pub fn derive_impl_error_occurence(
                                 let mut option_attribute = None;
                                 field.attrs.iter().for_each(|attr|{
                                     if let true = attr.path.segments.len() == 1 {
-                                        if let true = attr.path.segments[0].ident == to_string_stringified {
+                                        if let true = attr.path.segments[0].ident == display_stringified {
                                             if let true = option_attribute.is_some() {
                                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             }
                                             else {
-                                                option_attribute = Some(Attribute::ToString);
+                                                option_attribute = Some(Attribute::Display);
                                             }
                                         }
                                         else if let true = attr.path.segments[0].ident == display_foreign_type_stringified {
@@ -476,12 +475,12 @@ pub fn derive_impl_error_occurence(
                                                 option_attribute = Some(Attribute::ErrorOccurence);
                                             }
                                         }
-                                        else if let true = attr.path.segments[0].ident == vec_to_string_stringified {
+                                        else if let true = attr.path.segments[0].ident == vec_display_stringified {
                                             if let true = option_attribute.is_some() {
                                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             }
                                             else {
-                                                option_attribute = Some(Attribute::VecToString);
+                                                option_attribute = Some(Attribute::VecDisplay);
                                             }
                                         }
                                         else if let true = attr.path.segments[0].ident == vec_display_foreign_type_stringified {
@@ -500,36 +499,36 @@ pub fn derive_impl_error_occurence(
                                                 option_attribute = Some(Attribute::VecErrorOccurence);
                                             }
                                         }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_to_string_stringified {
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_stringified {
                                             if let true = option_attribute.is_some() {
                                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             }
                                             else {
-                                                option_attribute = Some(Attribute::HashMapKeyToStringValueToString);
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplay);
                                             }
                                         }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_display_foreign_type_stringified {
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_foreign_type_stringified {
                                             if let true = option_attribute.is_some() {
                                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             }
                                             else {
-                                                option_attribute = Some(Attribute::HashMapKeyToStringValueDisplayForeignType);
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplayForeignType);
                                             }
                                         }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_error_occurence_stringified {
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_error_occurence_stringified {
                                             if let true = option_attribute.is_some() {
                                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             }
                                             else {
-                                                option_attribute = Some(Attribute::HashMapKeyToStringValueErrorOccurence);
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayValueErrorOccurence);
                                             }
                                         }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_to_string_stringified {
+                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_stringified {
                                             if let true = option_attribute.is_some() {
                                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             }
                                             else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueToString);
+                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplay);
                                             }
                                         }
                                         else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
@@ -770,7 +769,7 @@ pub fn derive_impl_error_occurence(
                                 field_type_with_deserialize_token_stream,
                                 serde_borrow_attribute_token_stream
                             ) = match attribute {
-                                Attribute::ToString => {
+                                Attribute::Display => {
                                     let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                                         let serde_borrow_attribute_handle = match should_add_serde_borrow {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
@@ -783,7 +782,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::ToString is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} {display_stringified} is not a SupportedContainer::Path");
                                     };
                                     (
                                         quote::quote! {
@@ -810,7 +809,7 @@ pub fn derive_impl_error_occurence(
                                 Attribute::DisplayForeignType => {
                                     if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::DisplayForeignType is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} is not a SupportedContainer::Path");
                                     }
                                     (
                                         quote::quote! {
@@ -851,7 +850,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::ErrorOccurence is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} {error_occurence_stringified} is not a SupportedContainer::Path");
                                     };
                                     (
                                         quote::quote! {
@@ -877,7 +876,7 @@ pub fn derive_impl_error_occurence(
                                         serde_borrow_attribute_handle,
                                     )
                                 },
-                                Attribute::VecToString => {
+                                Attribute::VecDisplay => {
                                     let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                                         let serde_borrow_attribute_handle = match element_lifetime {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
@@ -890,7 +889,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::VecToString is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} {vec_display_stringified} is not a SupportedContainer::Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -919,7 +918,7 @@ pub fn derive_impl_error_occurence(
                                 Attribute::VecDisplayForeignType => {
                                     if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::VecDisplayForeignType is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} {vec_display_foreign_type_stringified} is not a SupportedContainer::Vec");
                                     }
                                     (
                                         quote::quote! {
@@ -961,7 +960,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::VecErrorOccurence is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} {vec_error_occurence_stringified} is not a SupportedContainer::Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -989,7 +988,7 @@ pub fn derive_impl_error_occurence(
                                         serde_borrow_attribute_handle,
                                     )
                                 },
-                                Attribute::HashMapKeyToStringValueToString => {
+                                Attribute::HashMapKeyDisplayValueDisplay => {
                                     let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         let serde_borrow_attribute_handle = match (key_lifetime_enum, value_lifetime_enum) {
                                             (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
@@ -1004,7 +1003,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueToString is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} {hashmap_key_display_value_display_stringified} is not a SupportedContainer::Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -1030,7 +1029,7 @@ pub fn derive_impl_error_occurence(
                                         serde_borrow_attribute_handle,
                                     )
                                 },
-                                Attribute::HashMapKeyToStringValueDisplayForeignType => {
+                                Attribute::HashMapKeyDisplayValueDisplayForeignType => {
                                     let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
@@ -1049,7 +1048,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueDisplayForeignType is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} {hashmap_key_display_value_display_foreign_type_stringified} is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1076,7 +1075,7 @@ pub fn derive_impl_error_occurence(
                                         serde_borrow_attribute_handle,
                                     )
                                 },
-                                Attribute::HashMapKeyToStringValueErrorOccurence => {
+                                Attribute::HashMapKeyDisplayValueErrorOccurence => {
                                     let (serde_borrow_attribute_handle, path_with_deserialize_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         let serde_borrow_attribute_handle = match (key_lifetime_enum, value_lifetime_enum) {
                                             (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
@@ -1091,7 +1090,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyToStringValueErrorOccurence is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} {hashmap_key_display_value_error_occurence_stringified} is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1119,7 +1118,7 @@ pub fn derive_impl_error_occurence(
                                         serde_borrow_attribute_handle,
                                     )
                                 },
-                                Attribute::HashMapKeyDisplayForeignTypeValueToString => {
+                                Attribute::HashMapKeyDisplayForeignTypeValueDisplay => {
                                     let (hashmap_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
@@ -1138,7 +1137,7 @@ pub fn derive_impl_error_occurence(
                                         (hashmap_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyDisplayForeignTypeValueToString is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyDisplayForeignTypeValueDisplay is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1538,12 +1537,12 @@ pub fn derive_impl_error_occurence(
                 let mut option_attribute = None;
                 variant.attrs.iter().for_each(|attr|{
                     if let true = attr.path.segments.len() == 1 {
-                        if let true = attr.path.segments[0].ident == to_string_stringified {
+                        if let true = attr.path.segments[0].ident == display_stringified {
                             if let true = option_attribute.is_some() {
                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                             }
                             else {
-                                option_attribute = Some(Attribute::ToString);
+                                option_attribute = Some(Attribute::Display);
                             }
                         }
                         else if let true = attr.path.segments[0].ident == display_foreign_type_stringified {
@@ -1562,12 +1561,12 @@ pub fn derive_impl_error_occurence(
                                 option_attribute = Some(Attribute::ErrorOccurence);
                             }
                         }
-                        else if let true = attr.path.segments[0].ident == vec_to_string_stringified {
+                        else if let true = attr.path.segments[0].ident == vec_display_stringified {
                             if let true = option_attribute.is_some() {
                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                             }
                             else {
-                                option_attribute = Some(Attribute::VecToString);
+                                option_attribute = Some(Attribute::VecDisplay);
                             }
                         }
                         else if let true = attr.path.segments[0].ident == vec_display_foreign_type_stringified {
@@ -1586,36 +1585,36 @@ pub fn derive_impl_error_occurence(
                                 option_attribute = Some(Attribute::VecErrorOccurence);
                             }
                         }
-                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_to_string_stringified {
+                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_stringified {
                             if let true = option_attribute.is_some() {
                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                             }
                             else {
-                                option_attribute = Some(Attribute::HashMapKeyToStringValueToString);
+                                option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplay);
                             }
                         }
-                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_display_foreign_type_stringified {
+                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_foreign_type_stringified {
                             if let true = option_attribute.is_some() {
                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                             }
                             else {
-                                option_attribute = Some(Attribute::HashMapKeyToStringValueDisplayForeignType);
+                                option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplayForeignType);
                             }
                         }
-                        else if let true = attr.path.segments[0].ident == hashmap_key_to_string_value_error_occurence_stringified {
+                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_error_occurence_stringified {
                             if let true = option_attribute.is_some() {
                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                             }
                             else {
-                                option_attribute = Some(Attribute::HashMapKeyToStringValueErrorOccurence);
+                                option_attribute = Some(Attribute::HashMapKeyDisplayValueErrorOccurence);
                             }
                         }
-                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_to_string_stringified {
+                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_stringified {
                             if let true = option_attribute.is_some() {
                                 panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                             }
                             else {
-                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueToString);
+                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplay);
                             }
                         }
                         else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
@@ -1807,7 +1806,7 @@ pub fn derive_impl_error_occurence(
                     logic_for_to_string_without_config_with_deserialize_inner,
                     logic_for_into_serialize_deserialize_version_inner,
                 ) = match attributes {
-                    Attribute::ToString => {
+                    Attribute::Display => {
                         let (type_token_stringified, serde_borrow_option_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                             (
                                 format!("{path}{should_add_serde_borrow}"),
@@ -1823,7 +1822,7 @@ pub fn derive_impl_error_occurence(
                             )
                         }
                         else {
-                             panic!("{proc_macro_name} {ident_stringified} attribute #[{to_string_stringified}] supports only Path");
+                             panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] supports only Path");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -1911,7 +1910,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attribute::VecToString => {
+                    Attribute::VecDisplay => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                             if let Lifetime::Specified(lifetime_specified) = element_lifetime.clone() {
                                 if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
@@ -1921,7 +1920,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{element_path}{element_lifetime}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_to_string_stringified}] only supports std::vec::Vec");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] only supports std::vec::Vec");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2022,7 +2021,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     }
-                    Attribute::HashMapKeyToStringValueToString => {
+                    Attribute::HashMapKeyDisplayValueDisplay => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -2056,7 +2055,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_to_string_value_to_string_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] only supports std::collections::HashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2082,7 +2081,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attribute::HashMapKeyToStringValueDisplayForeignType => {
+                    Attribute::HashMapKeyDisplayValueDisplayForeignType => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -2100,7 +2099,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},&'static str>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_to_string_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2129,7 +2128,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     },
-                    Attribute::HashMapKeyToStringValueErrorOccurence => {
+                    Attribute::HashMapKeyDisplayValueErrorOccurence => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -2163,7 +2162,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_to_string_value_error_occurence_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_stringified}] only supports std::collections::HashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2194,7 +2193,7 @@ pub fn derive_impl_error_occurence(
                             },
                         )
                     }
-                    Attribute::HashMapKeyDisplayForeignTypeValueToString => {
+                    Attribute::HashMapKeyDisplayForeignTypeValueDisplay => {
                         let type_token_stringified = if let 
                         SupportedContainer::HashMap { 
                             path,
@@ -2212,7 +2211,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<&'static str,{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_to_string_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] only supports std::collections::HashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
