@@ -938,8 +938,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::vec_display_foreign_type_into_vec_string::VecDisplayForeignTypeIntoVecString;
-                                                #field_ident.vec_display_foreign_type_into_vec_string()
+                                                use crate::traits::error_logs_logic::vec_display_foreign_type_into_vec_static_str::VecDisplayForeignTypeIntoVecStaticStr;
+                                                #field_ident.vec_display_foreign_type_into_vec_static_str()
                                             }
                                         },
                                         quote::quote! {
@@ -1975,8 +1975,8 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                  #ident_with_deserialize_token_stream::#variant_ident({
-                                    use crate::traits::error_logs_logic::vec_display_foreign_type_into_vec_string::VecDisplayForeignTypeIntoVecString;
-                                    i.vec_display_foreign_type_into_vec_string()
+                                    use crate::traits::error_logs_logic::vec_display_foreign_type_into_vec_static_str::VecDisplayForeignTypeIntoVecStaticStr;
+                                    i.vec_display_foreign_type_into_vec_static_str()
                                  })
                             },
                         )
