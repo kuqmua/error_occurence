@@ -788,12 +788,14 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                #field_ident.to_string()
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                #field_ident.lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             { 
-                                                #field_ident.to_string() 
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                #field_ident.lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -806,9 +808,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::DisplayForeignType => {
-                                    if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
-                                        
-                                    }
+                                    if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::DisplayForeignType is not a SupportedContainer::Path");
                                     }
@@ -816,12 +816,14 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
                                             {
                                                 use crate::traits::display_foreign_type::DisplayForeignType;
-                                                #field_ident.display_foreign_type()
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                #field_ident.display_foreign_type().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             { 
-                                                #field_ident.to_string() 
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                #field_ident.lines_space_backslash() 
                                             }
                                         },
                                         quote::quote! {
@@ -854,14 +856,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                #field_ident.to_string_without_config()
+                                                #field_ident.to_string_without_config().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                #field_ident.to_string_without_config_with_deserialize()
+                                                #field_ident.to_string_without_config_with_deserialize().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -891,14 +895,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                 use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string()
+                                                #field_ident.vec_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string()
+                                                #field_ident.vec_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -911,23 +917,23 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::VecDisplayForeignType => {
-                                    if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
-                                        
-                                    }
+                                    if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::VecDisplayForeignType is not a SupportedContainer::Vec");
                                     }
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
-                                                #field_ident.vec_display_foreign_type_to_string()
+                                                #field_ident.vec_display_foreign_type_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string()
+                                                #field_ident.vec_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -948,13 +954,11 @@ pub fn derive_impl_error_occurence(
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
                                         };
-                                        //
                                         let path_with_deserialize_stringified = format!("{path}<{element_path}{with_deserialize_camel_case}{element_lifetime}>");
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
-                                        //
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} Attribute::VecErrorOccurence is not a SupportedContainer::Vec");
@@ -962,14 +966,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToString;
-                                                #field_ident.vec_to_string_without_config_to_string()
+                                                #field_ident.vec_to_string_without_config_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.vec_to_string_without_config_to_string_with_deserialize()
+                                                #field_ident.vec_to_string_without_config_to_string_with_deserialize().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -1003,14 +1009,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string()
+                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string()
+                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -1046,20 +1054,22 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_to_string::HashMapDisplayDisplayForeignTypeToString;
-                                                #field_ident.hashmap_display_display_foreign_type_to_string()
+                                                #field_ident.hashmap_display_display_foreign_type_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string()
+                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string::HashmapImplDisplayDisplayForeignTypeIntoHashmapImplDisplayString;
-                                                #field_ident.hashmap_impl_display_display_foreign_type_into_hashmap_impl_display_string()
+                                                use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_display_string::HashmapDisplayDisplayForeignTypeIntoHashmapDisplayString;
+                                                #field_ident.hashmap_display_display_foreign_type_into_hashmap_display_string()
                                             }
                                         },
                                         path_token_stream,
@@ -1086,14 +1096,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToString;
-                                                #field_ident.hashmap_display_to_string_without_config_to_string()
+                                                #field_ident.hashmap_display_to_string_without_config_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize()
+                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -1131,14 +1143,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_to_string::HashMapDisplayForeignTypeDisplayToString;
-                                                #field_ident.hashmap_display_foreign_type_display_to_string()
+                                                #field_ident.hashmap_display_foreign_type_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string()
+                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -1170,14 +1184,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_string::HashMapDisplayForeignTypeDisplayForeignTypeToString;
-                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_to_string()
+                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string()
+                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -1214,14 +1230,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_foreign_type_to_string_without_config_to_string::HashMapDisplayForeignTypeToStringWithoutConfigToString;
-                                                #field_ident.hashmap_display_foreign_type_to_string_without_config_to_string()
+                                                #field_ident.hashmap_display_foreign_type_to_string_without_config_to_string().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
                                             {
+                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
                                                 use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize()
+                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize().lines_space_backslash()
                                             }
                                         },
                                         quote::quote! {
@@ -1266,7 +1284,7 @@ pub fn derive_impl_error_occurence(
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
                                 #field_ident
                             });
-                            format_logic_for_source_to_string_without_config.push("{}\n ");
+                            format_logic_for_source_to_string_without_config.push("{}");
                             fields_logic_for_source_to_string_without_config_for_attribute.push(logic_for_source_to_string_without_config_for_attribute);
                             fields_logic_for_source_to_string_without_config_with_deserialize_for_attribute.push(logic_for_source_to_string_without_config_with_deserialize_for_attribute);
                             fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
@@ -1326,8 +1344,9 @@ pub fn derive_impl_error_occurence(
                     acc.push_str(path_segment);
                     acc
                 });
-                format_logic_for_source_to_string_without_config_stringified.pop();
-                let format_logic_for_source_to_string_without_config_handle_stringified = format!("\"\n {format_logic_for_source_to_string_without_config_stringified}\"");
+                let start_scope_stringified = "{{";
+                let end_scope_stringified = "}}";
+                let format_logic_for_source_to_string_without_config_handle_stringified = format!("\"{start_scope_stringified}\n{format_logic_for_source_to_string_without_config_stringified}{end_scope_stringified}\"");
                 let format_logic_for_source_to_string_without_config_handle_token_stream = format_logic_for_source_to_string_without_config_handle_stringified
                 .parse::<proc_macro2::TokenStream>()
                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {format_logic_for_source_to_string_without_config_handle_stringified} {parse_proc_macro2_token_stream_failed_message}"));
