@@ -236,24 +236,6 @@ pub fn derive_impl_error_occurence(
     let crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // todo few_to_string_without_config became VecToStringWithoutConfigToString and HashmapToStringWithoutConfigToString
-
-    // let few_to_string_without_config_stringified = format!("few_{to_string_without_config_lower_case}");
-    // let few_to_string_without_config_token_stream = 
-    // few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // let few_to_string_without_config_with_deserialize_stringified = format!("{few_to_string_without_config_stringified}_{with_deserialize_lower_case}");
-    // let few_to_string_without_config_with_deserialize_token_stream = 
-    // few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{few_to_string_without_config_stringified}::Few{to_string_without_config_camel_case}");
-    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_token_stream = 
-    // crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified = format!("{crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_stringified}{with_deserialize_camel_case}");
-    // let crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_token_stream = 
-    // crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_without_config_few_to_string_without_config_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let source_to_string_with_config_stringified = format!("source_{to_string_with_config_lower_case}");
     let source_to_string_with_config_token_stream = 
     source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
@@ -292,16 +274,6 @@ pub fn derive_impl_error_occurence(
     let get_code_occurence_with_deserialize_token_stream = 
     get_code_occurence_with_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {get_code_occurence_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // todo few_to_string_with_config bacame VecToStringWithConfigToString and HashMapImplDisplayToStringWithConfigToString
-
-    // let few_to_string_with_config_stringified = format!("few_{to_string_with_config_lower_case}");
-    // let few_to_string_with_config_token_stream = 
-    // few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{few_to_string_with_config_stringified}::Few{to_string_with_config_camel_case}");
-    // let crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_token_stream = 
-    // crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_few_to_string_with_config_few_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{source_to_string_with_config_stringified}::{source_to_string_with_config_camel_case}");
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
@@ -376,7 +348,6 @@ pub fn derive_impl_error_occurence(
             panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
         }
     };
-    //todo should implement named\unnamed variation or not?
     let generated_impl_with_deserialize_alternatives = match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let variants_vec = data_enum.variants.iter().map(|variant| {
@@ -448,107 +419,110 @@ pub fn derive_impl_error_occurence(
                                 }
                             },
                             false => {
-                                let mut option_attribute = None;
-                                field.attrs.iter().for_each(|attr|{
-                                    if let true = attr.path.segments.len() == 1 {
-                                        if let true = attr.path.segments[0].ident == display_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                let attribute = {
+                                    let mut option_attribute = None;
+                                    field.attrs.iter().for_each(|attr|{
+                                        if let true = attr.path.segments.len() == 1 {
+                                            if let true = attr.path.segments[0].ident == display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::Display);
+                                                }
                                             }
-                                            else {
-                                                option_attribute = Some(Attribute::Display);
+                                            else if let true = attr.path.segments[0].ident == display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::DisplayForeignType);
+                                                }
                                             }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == display_foreign_type_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            else if let true = attr.path.segments[0].ident == error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::ErrorOccurence);
+                                                }
                                             }
-                                            else {
-                                                option_attribute = Some(Attribute::DisplayForeignType);
+                                            else if let true = attr.path.segments[0].ident == vec_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::VecDisplay);
+                                                }
                                             }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == error_occurence_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            else if let true = attr.path.segments[0].ident == vec_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::VecDisplayForeignType);
+                                                }
                                             }
-                                            else {
-                                                option_attribute = Some(Attribute::ErrorOccurence);
+                                            else if let true = attr.path.segments[0].ident == vec_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::VecErrorOccurence);
+                                                }
                                             }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == vec_display_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplay);
+                                                }
                                             }
-                                            else {
-                                                option_attribute = Some(Attribute::VecDisplay);
+                                            else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplayForeignType);
+                                                }
                                             }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == vec_display_foreign_type_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            else if let true = attr.path.segments[0].ident == hashmap_key_display_value_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::HashMapKeyDisplayValueErrorOccurence);
+                                                }
                                             }
-                                            else {
-                                                option_attribute = Some(Attribute::VecDisplayForeignType);
+                                            else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplay);
+                                                }
                                             }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == vec_error_occurence_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                            else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                                                }
                                             }
-                                            else {
-                                                option_attribute = Some(Attribute::VecErrorOccurence);
-                                            }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            }
-                                            else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplay);
-                                            }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_display_foreign_type_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            }
-                                            else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayValueDisplayForeignType);
-                                            }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_value_error_occurence_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            }
-                                            else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayValueErrorOccurence);
-                                            }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            }
-                                            else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplay);
-                                            }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            }
-                                            else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType);
-                                            }
-                                        }
-                                        else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_error_occurence_stringified {
-                                            if let true = option_attribute.is_some() {
-                                                panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            }
-                                            else {
-                                                option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence);
-                                            }
+                                            else if let true = attr.path.segments[0].ident == hashmap_key_display_foreign_type_value_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
+                                                }
+                                                else {
+                                                    option_attribute = Some(Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence);
+                                                }
+                                            }//other attributes are not for this proc_macro
                                         }//other attributes are not for this proc_macro
-                                    }//other attributes are not for this proc_macro
-                                });
+                                    });
+                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
+                                };
                                 let supported_container = if let syn::Type::Path(type_path) = &field.ty {
                                     let path = &type_path.path;
                                     let path_segment = type_path.path.segments.last()
@@ -700,7 +674,7 @@ pub fn derive_impl_error_occurence(
                                     panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
                                 };
                                 ErrorOrCodeOccurence::Error {
-                                    attribute: option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none")),
+                                    attribute,
                                     supported_container,
                                 }
                             },
@@ -2498,11 +2472,9 @@ pub fn derive_impl_error_occurence(
             }
         },
     };
-    let uuu = quote::quote! {
+    quote::quote! {
         #generated_impl_with_deserialize_alternatives
-    };
-    println!("{uuu}");
-    uuu.into()
+    }.into()
 }
 
 fn form_last_arg_lifetime(
