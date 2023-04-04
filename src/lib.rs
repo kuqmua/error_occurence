@@ -506,6 +506,7 @@ pub fn derive_impl_error_occurence(
     let static_str_token_stream = static_str_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {static_str_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let only_supports_supported_container_stringified = "only supports SupportedContainer::";
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
         data_enum
     }
@@ -983,7 +984,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] only_supports_supported_container_stringifiedPath");
                                     };
                                     (
                                         quote::quote! {
@@ -1010,7 +1011,7 @@ pub fn derive_impl_error_occurence(
                                 Attribute::DisplayForeignType => {
                                     if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{display_foreign_type_stringified}] is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{display_foreign_type_stringified}] only_supports_supported_container_stringifiedPath");
                                     }
                                     (
                                         quote::quote! {
@@ -1051,7 +1052,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_stringified}] is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_stringified}] only_supports_supported_container_stringifiedPath");
                                     };
                                     (
                                         quote::quote! {
@@ -1090,7 +1091,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] only_supports_supported_container_stringifiedVec");
                                     };
                                     (
                                         quote::quote! {
@@ -1119,7 +1120,7 @@ pub fn derive_impl_error_occurence(
                                 Attribute::VecDisplayForeignType => {
                                     if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] only_supports_supported_container_stringifiedVec");
                                     }
                                     (
                                         quote::quote! {
@@ -1161,7 +1162,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_error_occurence_stringified}] is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_error_occurence_stringified}] only_supports_supported_container_stringifiedVec");
                                     };
                                     (
                                         quote::quote! {
@@ -1204,7 +1205,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] only_supports_supported_container_stringifiedHashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1249,7 +1250,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only_supports_supported_container_stringifiedHashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1291,7 +1292,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_stringified}] is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_stringified}] only_supports_supported_container_stringifiedHashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1338,7 +1339,7 @@ pub fn derive_impl_error_occurence(
                                         (hashmap_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] only_supports_supported_container_stringifiedHashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1379,7 +1380,7 @@ pub fn derive_impl_error_occurence(
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only_supports_supported_container_stringifiedHashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1425,7 +1426,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_stringified}] is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_stringified}] only_supports_supported_container_stringifiedHashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -2023,7 +2024,7 @@ pub fn derive_impl_error_occurence(
                             )
                         }
                         else {
-                             panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] supports only Path");
+                             panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] supports only SupportedContainer::Path");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2087,7 +2088,7 @@ pub fn derive_impl_error_occurence(
                             )
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_stringified}] only support Path");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_stringified}] only support SupportedContainer::Path");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2121,7 +2122,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{element_path}{element_lifetime}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] only supports std::vec::Vec");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] only_supports_supported_container_stringifiedVec");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2152,7 +2153,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{static_str_stringified}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] only supports std::vec::Vec");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] only_supports_supported_container_stringifiedVec");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2191,7 +2192,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{element_path}{with_deserialize_camel_case}{element_lifetime}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_error_occurence_stringified}] only supports std::vec::Vec");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_error_occurence_stringified}] only_supports_supported_container_stringifiedVec");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2256,7 +2257,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] only_supports_supported_container_stringifiedHashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2300,7 +2301,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},{static_str_stringified}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only SupportedContainer::HashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2363,7 +2364,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{key_segments_stringified}{key_lifetime_enum},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_stringified}] only_supports_supported_container_stringifiedHashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2412,7 +2413,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{static_str_stringified},{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] only_supports_supported_container_stringifiedHashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2454,7 +2455,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{static_str_stringified},{static_str_stringified}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only_supports_supported_container_stringifiedHashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
@@ -2501,7 +2502,7 @@ pub fn derive_impl_error_occurence(
                             format!("{path}<{static_str_stringified},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_stringified}] only supports std::collections::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_stringified}] only_supports_supported_container_stringifiedHashMap");
                         };
                         let type_token_stream = type_token_stringified
                         .parse::<proc_macro2::TokenStream>()
