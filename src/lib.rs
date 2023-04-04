@@ -231,6 +231,32 @@ pub fn derive_impl_error_occurence(
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     //
+    let vec_display_to_string_camel_case = "VecDisplayToString";
+    let vec_display_to_string_lower_case = vec_display_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let vec_display_to_string_lower_case_token_stream = 
+    vec_display_to_string_lower_case
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {vec_display_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{vec_display_to_string_lower_case}::{vec_display_to_string_camel_case}");
+    let crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream = 
+    crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    //
+    let vec_display_foreign_type_to_string_camel_case = "VecDisplayForeignTypeToString";
+    let vec_display_foreign_type_to_string_lower_case = vec_display_foreign_type_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let vec_display_foreign_type_to_string_lower_case_token_stream = 
+    vec_display_foreign_type_to_string_lower_case
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {vec_display_foreign_type_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{vec_display_foreign_type_to_string_lower_case}::{vec_display_foreign_type_to_string_camel_case}");
+    let crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_token_stream = 
+    crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    //
+    let into_serialize_deserialize_version_token_stream = quote::quote!{into_serialize_deserialize_version};
+    //
     let first_field_type_name = "first_field_type";
     let first_field_type_stringified_name = "first_field_type_stringified";
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
@@ -863,19 +889,19 @@ pub fn derive_impl_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                                                #field_ident.to_string_without_config().#lines_space_backslash_lower_case_token_stream()
+                                                #field_ident.#to_string_without_config_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                                                #field_ident.to_string_without_config_with_deserialize().#lines_space_backslash_lower_case_token_stream()
+                                                #field_ident.#to_string_without_config_with_deserialize_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                #field_ident.into_serialize_deserialize_version()
+                                                #field_ident.#into_serialize_deserialize_version_token_stream()
                                             }
                                         },
                                         path_with_deserialize_token_stream,
@@ -900,16 +926,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string().#lines_space_backslash_lower_case_token_stream()
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                                #field_ident.#vec_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string().#lines_space_backslash_lower_case_token_stream()
+                                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                                #field_ident.#vec_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -930,15 +956,15 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
-                                                #field_ident.vec_display_foreign_type_to_string().#lines_space_backslash_lower_case_token_stream()
+                                                use #crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_token_stream;
+                                                #field_ident.#vec_display_foreign_type_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string().#lines_space_backslash_lower_case_token_stream()
+                                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                                #field_ident.#vec_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -986,7 +1012,7 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
                                             {
                                                 #field_ident.into_iter()
-                                                .map(|i| i.into_serialize_deserialize_version())
+                                                .map(|i| i.#into_serialize_deserialize_version_token_stream())
                                                 .collect()
                                             }
                                         },
@@ -1116,7 +1142,7 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
                                             {
                                                 #field_ident.into_iter()
-                                                .map(|(k, v)| (k, { v.into_serialize_deserialize_version() }))
+                                                .map(|(k, v)| (k, { v.#into_serialize_deserialize_version_token_stream() }))
                                                 .collect()
                                             }
                                         },
@@ -1256,7 +1282,7 @@ pub fn derive_impl_error_occurence(
                                                             use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
                                                             k.#display_foreign_type_lower_case_token_stream()
                                                         },
-                                                        { v.into_serialize_deserialize_version() },
+                                                        { v.#into_serialize_deserialize_version_token_stream() },
                                                     )
                                                 })
                                                 .collect()
@@ -1331,7 +1357,7 @@ pub fn derive_impl_error_occurence(
                                 #field_ident
                             });
                             fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
-                                #field_ident: #field_ident.into_serialize_deserialize_version()
+                                #field_ident: #field_ident.#into_serialize_deserialize_version_token_stream()
                             });
                         },
                     }
@@ -1933,19 +1959,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                i.vec_display_to_string()
+                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                i.#vec_display_to_string_lower_case_token_stream()
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                i.vec_display_to_string()
+                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                i.#vec_display_to_string_lower_case_token_stream()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                i.vec_display_to_string()
+                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                i.#vec_display_to_string_lower_case_token_stream()
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident(i)
@@ -1964,19 +1990,19 @@ pub fn derive_impl_error_occurence(
                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_token_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                         (
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
-                                i.vec_display_foreign_type_to_string()
+                                use #crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_token_stream;
+                                i.#vec_display_foreign_type_to_string_lower_case_token_stream()
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
-                                i.vec_display_foreign_type_to_string()
+                                use #crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_token_stream;
+                                i.#vec_display_foreign_type_to_string_lower_case_token_stream()
                             },
                             quote::quote!{
                                 #variant_ident(#type_token_stream)
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                i.vec_display_to_string()
+                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                i.#vec_display_to_string_lower_case_token_stream()
                             },
                             quote::quote!{
                                  #ident_with_deserialize_token_stream::#variant_ident({
@@ -2021,7 +2047,7 @@ pub fn derive_impl_error_occurence(
                                 #ident_with_deserialize_token_stream::#variant_ident({
                                     i
                                     .into_iter()
-                                    .map(|e| e.into_serialize_deserialize_version())
+                                    .map(|e| e.#into_serialize_deserialize_version_token_stream())
                                     .collect()
                                 })
                             },
@@ -2193,7 +2219,7 @@ pub fn derive_impl_error_occurence(
                                 #ident_with_deserialize_token_stream::#variant_ident({
                                     i
                                     .into_iter()
-                                    .map(|(k, v)| (k, v.into_serialize_deserialize_version()))
+                                    .map(|(k, v)| (k, v.#into_serialize_deserialize_version_token_stream()))
                                     .collect()
                                 })
                             },
@@ -2335,7 +2361,7 @@ pub fn derive_impl_error_occurence(
                                         use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
                                         (
                                             k.#display_foreign_type_lower_case_token_stream(),
-                                            v.into_serialize_deserialize_version(),
+                                            v.#into_serialize_deserialize_version_token_stream(),
                                         )
                                     })
                                     .collect()
