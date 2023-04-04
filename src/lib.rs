@@ -6,12 +6,6 @@
 )]
 #![allow(clippy::too_many_arguments)]
 
-impl ErrorFieldName {
-    fn to_all_variants_lower_case_string_vec() -> Vec<String> {
-        Self::into_array().into_iter().map(|e|e.to_lower_snake_case()).collect::<Vec<String>>()
-    }
-}
-
 enum SuportedEnumVariant {
     Named,
     Unnamed,
@@ -36,11 +30,6 @@ enum SupportedContainer {
     },
 }
 
-enum SupportedInnerErrorsContainers {
-    Vec,
-    HashMap,
-}
-
 #[derive(
     Clone
 )]
@@ -61,7 +50,6 @@ impl std::fmt::Display for Lifetime {
 enum ErrorOrCodeOccurence {
     Error {
         attribute: Attribute,
-        // generic_types: GenericTypes,
         supported_container: SupportedContainer,
     },
     CodeOccurence {
@@ -81,7 +69,12 @@ enum ErrorFieldName {
     InnerError,
     InnerErrors,
 }
-//todo - atrributes must be marked by proc_macro - if it would be 2 or more macro what uses same attribute name - incorrect generation logic
+
+impl ErrorFieldName {
+    fn to_all_variants_lower_case_string_vec() -> Vec<String> {
+        Self::into_array().into_iter().map(|e|e.to_lower_snake_case()).collect::<Vec<String>>()
+    }
+}
 
 #[derive(
     Debug,
@@ -120,7 +113,7 @@ impl Attribute {
       }
     }
 }
-
+//todo - atrributes must be marked by proc_macro - if it would be 2 or more macro what uses same attribute name - incorrect generation logic
 #[proc_macro_derive(
     ImplErrorOccurence, 
     attributes(
@@ -605,23 +598,23 @@ pub fn derive_impl_error_occurence(
                                                             first_field_type_stringified_name,
                                                         );
                                                         let code_occurence_segments_stringified = {
-                                                            let mut code_occurence_type_repeat_checker: Option<()> = None;
+                                                            let mut code_occurence_type_repeat_checker = false;
                                                             let code_occurence_segments_stringified_handle = type_path.path.segments.iter()
                                                             .fold(String::from(""), |mut acc, path_segment| {
                                                                 let path_segment_ident = &path_segment.ident;
                                                                 match *path_segment_ident == code_occurence_camel_case {
                                                                     true => {
-                                                                        if code_occurence_type_repeat_checker.is_some() {
+                                                                        if code_occurence_type_repeat_checker {
                                                                             panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
                                                                         }
                                                                         acc.push_str(&path_segment_ident.to_string());
-                                                                        code_occurence_type_repeat_checker = Some(());
+                                                                        code_occurence_type_repeat_checker = true;
                                                                     },
                                                                     false => acc.push_str(&format!("{path_segment_ident}::")),
                                                                 }
                                                                 acc
                                                             });
-                                                            if code_occurence_type_repeat_checker.is_none() {
+                                                            if !code_occurence_type_repeat_checker {
                                                                 panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
                                                             }
                                                             code_occurence_segments_stringified_handle
@@ -990,7 +983,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {display_stringified} is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] is not a SupportedContainer::Path");
                                     };
                                     (
                                         quote::quote! {
@@ -1017,7 +1010,7 @@ pub fn derive_impl_error_occurence(
                                 Attribute::DisplayForeignType => {
                                     if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{display_foreign_type_stringified}] is not a SupportedContainer::Path");
                                     }
                                     (
                                         quote::quote! {
@@ -1058,7 +1051,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {error_occurence_stringified} is not a SupportedContainer::Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_stringified}] is not a SupportedContainer::Path");
                                     };
                                     (
                                         quote::quote! {
@@ -1097,7 +1090,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {vec_display_stringified} is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] is not a SupportedContainer::Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -1126,7 +1119,7 @@ pub fn derive_impl_error_occurence(
                                 Attribute::VecDisplayForeignType => {
                                     if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {vec_display_foreign_type_stringified} is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] is not a SupportedContainer::Vec");
                                     }
                                     (
                                         quote::quote! {
@@ -1168,7 +1161,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {vec_error_occurence_stringified} is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_error_occurence_stringified}] is not a SupportedContainer::Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -1211,7 +1204,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {hashmap_key_display_value_display_stringified} is not a SupportedContainer::Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] is not a SupportedContainer::Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -1256,7 +1249,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {hashmap_key_display_value_display_foreign_type_stringified} is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1298,7 +1291,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {hashmap_key_display_value_error_occurence_stringified} is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_stringified}] is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1345,7 +1338,7 @@ pub fn derive_impl_error_occurence(
                                         (hashmap_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyDisplayForeignTypeValueDisplay is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1386,7 +1379,7 @@ pub fn derive_impl_error_occurence(
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyDisplayForeignTypeValueDisplayForeignType is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1432,7 +1425,7 @@ pub fn derive_impl_error_occurence(
                                         (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurence is not a SupportedContainer::HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_stringified}] is not a SupportedContainer::HashMap");
                                     };
                                     (
                                         quote::quote! {
