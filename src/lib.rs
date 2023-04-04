@@ -206,6 +206,31 @@ pub fn derive_impl_error_occurence(
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_fields_stringified = format!("{crate_traits_stringified}fields::");
     let crate_traits_error_logs_logic_stringified = format!("{crate_traits_stringified}error_logs_logic::");
+    //
+    let lines_space_backslash_camel_case = "LinesSpaceBackslash";
+    let lines_space_backslash_lower_case = lines_space_backslash_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let lines_space_backslash_lower_case_token_stream = 
+    lines_space_backslash_lower_case
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lines_space_backslash_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified = format!("{crate_traits_error_logs_logic_stringified}{lines_space_backslash_lower_case}::{lines_space_backslash_camel_case}");
+    let crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream = 
+    crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    //
+    let display_foreign_type_camel_case = "DisplayForeignType";
+    let display_foreign_type_lower_case = display_foreign_type_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let display_foreign_type_lower_case_token_stream = 
+    display_foreign_type_lower_case
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("crate::traits::{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
+    let crate_traits_display_foreign_type_display_foreign_type_token_stream = 
+    crate_traits_display_foreign_type_display_foreign_type_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    //
     let first_field_type_name = "first_field_type";
     let first_field_type_stringified_name = "first_field_type_stringified";
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
@@ -282,6 +307,10 @@ pub fn derive_impl_error_occurence(
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let static_str_stringified = "&'static str";
+    let static_str_token_stream = static_str_stringified
+    .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {static_str_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
         data_enum
     }
@@ -373,25 +402,28 @@ pub fn derive_impl_error_occurence(
                                                             &ident_stringified,
                                                             first_field_type_stringified_name,
                                                         );
-                                                        let mut code_occurence_type_repeat_checker: Option<()> = None;
-                                                        let mut code_occurence_segments_stringified = type_path.path.segments.iter()
-                                                        .fold(String::from(""), |mut acc, path_segment| {
-                                                            let path_segment_ident = &path_segment.ident;
-                                                            match *path_segment_ident == code_occurence_camel_case {
-                                                                true => {
-                                                                    if code_occurence_type_repeat_checker.is_some() {
-                                                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
-                                                                    }
-                                                                    acc.push_str(&path_segment_ident.to_string());
-                                                                    code_occurence_type_repeat_checker = Some(());
-                                                                },
-                                                                false => acc.push_str(&format!("{path_segment_ident}::")),
+                                                        let code_occurence_segments_stringified = {
+                                                            let mut code_occurence_type_repeat_checker: Option<()> = None;
+                                                            let code_occurence_segments_stringified_handle = type_path.path.segments.iter()
+                                                            .fold(String::from(""), |mut acc, path_segment| {
+                                                                let path_segment_ident = &path_segment.ident;
+                                                                match *path_segment_ident == code_occurence_camel_case {
+                                                                    true => {
+                                                                        if code_occurence_type_repeat_checker.is_some() {
+                                                                            panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
+                                                                        }
+                                                                        acc.push_str(&path_segment_ident.to_string());
+                                                                        code_occurence_type_repeat_checker = Some(());
+                                                                    },
+                                                                    false => acc.push_str(&format!("{path_segment_ident}::")),
+                                                                }
+                                                                acc
+                                                            });
+                                                            if code_occurence_type_repeat_checker.is_none() {
+                                                                panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
                                                             }
-                                                            acc
-                                                        });
-                                                        if code_occurence_type_repeat_checker.is_none() {
-                                                            panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
-                                                        }
+                                                            code_occurence_segments_stringified_handle
+                                                        };
                                                         code_occurence_type_option = Some(
                                                             (
                                                                 code_occurence_segments_stringified,
@@ -761,14 +793,14 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
-                                                #field_ident.lines_space_backslash()
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                #field_ident.#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             { 
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
-                                                #field_ident.lines_space_backslash()
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                #field_ident.#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -788,25 +820,25 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
-                                                #field_ident.display_foreign_type().lines_space_backslash()
+                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                #field_ident.#display_foreign_type_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             { 
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
-                                                #field_ident.lines_space_backslash() 
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                #field_ident.#lines_space_backslash_lower_case_token_stream() 
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::display_foreign_type::DisplayForeignType;
-                                                #field_ident.display_foreign_type()
+                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                #field_ident.#display_foreign_type_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
-                                            &'static str
+                                            #static_str_token_stream
                                         },
                                         quote::quote! {},
                                     )
@@ -829,16 +861,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
-                                                use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                #field_ident.to_string_without_config().lines_space_backslash()
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+                                                #field_ident.to_string_without_config().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
-                                                use crate::traits::error_logs_logic::to_string_without_config::ToStringWithoutConfig;
-                                                #field_ident.to_string_without_config_with_deserialize().lines_space_backslash()
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+                                                #field_ident.to_string_without_config_with_deserialize().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -868,16 +900,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                 use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string().lines_space_backslash()
+                                                #field_ident.vec_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string().lines_space_backslash()
+                                                #field_ident.vec_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -897,16 +929,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::vec_display_foreign_type_to_string::VecDisplayForeignTypeToString;
-                                                #field_ident.vec_display_foreign_type_to_string().lines_space_backslash()
+                                                #field_ident.vec_display_foreign_type_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::vec_display_to_string::VecDisplayToString;
-                                                #field_ident.vec_display_to_string().lines_space_backslash()
+                                                #field_ident.vec_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -916,7 +948,7 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-                                            std::vec::Vec<&'static str>
+                                            std::vec::Vec<#static_str_token_stream>
                                         },
                                         quote::quote! {},
                                     )
@@ -939,16 +971,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToString;
-                                                #field_ident.vec_to_string_without_config_to_string().lines_space_backslash()
+                                                #field_ident.vec_to_string_without_config_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::vec_to_string_without_config_to_string::VecToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.vec_to_string_without_config_to_string_with_deserialize().lines_space_backslash()
+                                                #field_ident.vec_to_string_without_config_to_string_with_deserialize().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -982,16 +1014,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1011,7 +1043,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let path_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},&'static str>");
+                                        let path_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},{static_str_stringified}>");
                                         let path_token_stream = path_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1027,16 +1059,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_foreign_type_to_string::HashMapDisplayDisplayForeignTypeToString;
-                                                #field_ident.hashmap_display_display_foreign_type_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_display_foreign_type_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1069,16 +1101,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToString;
-                                                #field_ident.hashmap_display_to_string_without_config_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_to_string_without_config_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize().lines_space_backslash()
+                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1100,7 +1132,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let hashmap_stringified = format!("{path}<&'static str,{value_segments_stringified}{value_lifetime_enum}>");
+                                        let hashmap_stringified = format!("{path}<{static_str_stringified},{value_segments_stringified}{value_lifetime_enum}>");
                                         let hashmap_token_stream = hashmap_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1116,16 +1148,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_to_string::HashMapDisplayForeignTypeDisplayToString;
-                                                #field_ident.hashmap_display_foreign_type_display_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_foreign_type_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1146,7 +1178,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let hashmap_stringified = format!("{path}<&'static str,&'static str>");
+                                        let hashmap_stringified = format!("{path}<{static_str_stringified},{static_str_stringified}>");
                                         hashmap_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1157,16 +1189,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_foreign_type_to_string::HashMapDisplayForeignTypeDisplayForeignTypeToString;
-                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_foreign_type_display_foreign_type_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_display_to_string::HashmapDisplayDisplayToString;
-                                                #field_ident.hashmap_display_display_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_display_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1191,7 +1223,7 @@ pub fn derive_impl_error_occurence(
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
                                         };
-                                        let path_with_deserialize_stringified = format!("{path}<&'static str, {value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>");
+                                        let path_with_deserialize_stringified = format!("{path}<{static_str_stringified}, {value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>");
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1203,16 +1235,16 @@ pub fn derive_impl_error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_foreign_type_to_string_without_config_to_string::HashMapDisplayForeignTypeToStringWithoutConfigToString;
-                                                #field_ident.hashmap_display_foreign_type_to_string_without_config_to_string().lines_space_backslash()
+                                                #field_ident.hashmap_display_foreign_type_to_string_without_config_to_string().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::lines_space_backslash::LinesSpaceBackslash;
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use crate::traits::error_logs_logic::hashmap_display_to_string_without_config_to_string::HashmapDisplayToStringWithoutConfigToStringWithDeserialize;
-                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize().lines_space_backslash()
+                                                #field_ident.hashmap_display_to_string_without_config_to_string_with_deserialize().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1221,8 +1253,8 @@ pub fn derive_impl_error_occurence(
                                                 .map(|(k, v)| {
                                                     (
                                                         {
-                                                            use crate::traits::display_foreign_type::DisplayForeignType;
-                                                            k.display_foreign_type()
+                                                            use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                            k.#display_foreign_type_lower_case_token_stream()
                                                         },
                                                         { v.into_serialize_deserialize_version() },
                                                     )
@@ -1329,8 +1361,8 @@ pub fn derive_impl_error_occurence(
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_with_config_iter),*
                     } => {
-                        use crate::traits::error_logs_logic::source_to_string_without_config::SourceToStringWithoutConfig;
-                        self.source_to_string_without_config()
+                        use #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream;
+                        self.#source_to_string_without_config_token_stream()
                     }
                 });
                 logic_for_source_to_string_without_config.push(quote::quote! {
@@ -1831,7 +1863,7 @@ pub fn derive_impl_error_occurence(
                                 i.#display_foreign_type_token_stream().to_string()
                             },
                             quote::quote!{
-                                #variant_ident(&'static str)
+                                #variant_ident(#static_str_token_stream)
                             },
                             quote::quote!{
                                 i.#to_string_token_stream()
@@ -1922,7 +1954,7 @@ pub fn derive_impl_error_occurence(
                     }
                     Attribute::VecDisplayForeignType => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
-                            format!("{path}<&'static str>")
+                            format!("{path}<{static_str_stringified}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] only supports std::vec::Vec");
@@ -2070,7 +2102,7 @@ pub fn derive_impl_error_occurence(
                                     lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
                                 };
                             }
-                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},&'static str>")
+                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},{static_str_stringified}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
@@ -2182,7 +2214,7 @@ pub fn derive_impl_error_occurence(
                                     lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
                                 };
                             }
-                            format!("{path}<&'static str,{value_segments_stringified}{value_lifetime_enum}>")
+                            format!("{path}<{static_str_stringified},{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] only supports std::collections::HashMap");
@@ -2224,7 +2256,7 @@ pub fn derive_impl_error_occurence(
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            format!("{path}<&'static str,&'static str>")
+                            format!("{path}<{static_str_stringified},{static_str_stringified}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only supports std::collections::HashMap");
@@ -2271,7 +2303,7 @@ pub fn derive_impl_error_occurence(
                                     lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
                                 };
                             }
-                            format!("{path}<&'static str,{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
+                            format!("{path}<{static_str_stringified},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_stringified}] only supports std::collections::HashMap");
@@ -2300,9 +2332,9 @@ pub fn derive_impl_error_occurence(
                                     i
                                     .into_iter()
                                     .map(|(k, v)| {
-                                        use crate::traits::display_foreign_type::DisplayForeignType;
+                                        use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
                                         (
-                                            k.display_foreign_type(),
+                                            k.#display_foreign_type_lower_case_token_stream(),
                                             v.into_serialize_deserialize_version(),
                                         )
                                     })
