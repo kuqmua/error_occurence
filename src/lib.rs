@@ -141,7 +141,13 @@ impl Attribute {
 pub fn derive_impl_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    //todo add to panic message file line column or occurence
+    std::panic::set_hook(Box::new(|panic_info| {
+        if let Some(location) = panic_info.location() {
+            println!("panic occurred in {}:{}:{}", location.file(), location.line(), location.column());
+        } else {
+            println!("panic occurred but can't get location information...");
+        }
+    }));
     let proc_macro_name = "ImplErrorOccurence";
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
