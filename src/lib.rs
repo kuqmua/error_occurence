@@ -1065,7 +1065,7 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
+                                                use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_deserialize_token_stream;
                                                 #field_ident.#to_string_without_config_with_deserialize_token_stream().#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
