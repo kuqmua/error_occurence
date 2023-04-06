@@ -2301,7 +2301,7 @@ pub fn derive_impl_error_occurence(
                             )
                         }
                         else {
-                             panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] supports only SupportedContainer::Path");
+                             panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] {only_supports_supported_container_stringified}Path");
                         };
                         (
                             quote::quote!{
@@ -2323,7 +2323,10 @@ pub fn derive_impl_error_occurence(
                         )
                     },
                     Attribute::DisplayForeignType => {
-                        //todo check supported container
+                        if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {}
+                        else {
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{display_foreign_type_stringified}] {only_supports_supported_container_stringified}Path");
+                        }
                         (
                             quote::quote!{
                                 use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
@@ -2368,7 +2371,7 @@ pub fn derive_impl_error_occurence(
                             )
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_sd_lifetime_stringified}] only support SupportedContainer::Path");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
                         };
                         (
                             quote::quote!{
@@ -2397,7 +2400,7 @@ pub fn derive_impl_error_occurence(
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_no_sd_lifetime_stringified}] only support SupportedContainer::Path");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_no_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
                         };
                         (
                             quote::quote!{
@@ -2654,7 +2657,7 @@ pub fn derive_impl_error_occurence(
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                         }
                         else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only SupportedContainer::HashMap");
+                            panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}HashMap");
                         };
                         (
                             quote::quote!{
