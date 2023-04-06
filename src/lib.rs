@@ -1018,7 +1018,7 @@ pub fn derive_impl_error_occurence(
                                 serde_borrow_attribute_token_stream
                             ) = match attribute {
                                 Attribute::Display => {
-                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
+                                    let (path_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                                         let serde_borrow_attribute_handle = match should_add_serde_borrow {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
@@ -1027,7 +1027,7 @@ pub fn derive_impl_error_occurence(
                                         let path_token_stream = path_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_token_stream)
+                                        (path_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{display_stringified}] {only_supports_supported_container_stringified}Path");
@@ -1086,7 +1086,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::ErrorOccurenceSDLifetime => {
-                                    let (serde_borrow_attribute_handle, path_with_deserialize_token_stream) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
+                                    let (path_with_deserialize_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::Path { path, should_add_serde_borrow } = supported_container {
                                         let serde_borrow_attribute_handle = match should_add_serde_borrow {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
@@ -1095,7 +1095,7 @@ pub fn derive_impl_error_occurence(
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
+                                        (path_with_deserialize_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
@@ -1160,7 +1160,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::VecDisplay => {
-                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
+                                    let (path_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                                         let serde_borrow_attribute_handle = match element_lifetime {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
@@ -1169,7 +1169,7 @@ pub fn derive_impl_error_occurence(
                                         let path_token_stream = path_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_token_stream)
+                                        (path_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_stringified}] {only_supports_supported_container_stringified}Vec");
@@ -1231,7 +1231,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::VecErrorOccurenceSDLifetime => {
-                                    let (serde_borrow_attribute_handle, path_with_deserialize_token_stream) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
+                                    let (path_with_deserialize_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                                         let serde_borrow_attribute_handle = match element_lifetime {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
@@ -1240,7 +1240,7 @@ pub fn derive_impl_error_occurence(
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
+                                        (path_with_deserialize_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Vec");
@@ -1309,7 +1309,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::HashMapKeyDisplayValueDisplay => {
-                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
+                                    let (path_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         let serde_borrow_attribute_handle = match (key_lifetime_enum, value_lifetime_enum) {
                                             (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
                                             (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
@@ -1320,7 +1320,7 @@ pub fn derive_impl_error_occurence(
                                         let path_token_stream = path_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_token_stream)
+                                        (path_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -1350,7 +1350,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::HashMapKeyDisplayValueDisplayForeignType => {
-                                    let (serde_borrow_attribute_handle, path_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (path_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
                                         key_lifetime_enum, 
@@ -1365,7 +1365,7 @@ pub fn derive_impl_error_occurence(
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
                                         };
-                                        (serde_borrow_attribute_handle, path_token_stream)
+                                        (path_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -1396,7 +1396,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::HashMapKeyDisplayValueErrorOccurenceSDLifetime => {
-                                    let (serde_borrow_attribute_handle, path_with_deserialize_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
+                                    let (path_with_deserialize_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         let serde_borrow_attribute_handle = match (key_lifetime_enum, value_lifetime_enum) {
                                             (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
                                             (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
@@ -1407,7 +1407,7 @@ pub fn derive_impl_error_occurence(
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
+                                        (path_with_deserialize_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -1439,7 +1439,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::HashMapKeyDisplayValueErrorOccurenceNoSDLifetime => {
-                                    let (serde_borrow_attribute_handle, path_with_deserialize_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
+                                    let (path_with_deserialize_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         let serde_borrow_attribute_handle = match key_lifetime_enum {
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
@@ -1448,7 +1448,7 @@ pub fn derive_impl_error_occurence(
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
+                                        (path_with_deserialize_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -1567,7 +1567,7 @@ pub fn derive_impl_error_occurence(
                                     )
                                 },
                                 Attribute::HashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime => {
-                                    let (serde_borrow_attribute_handle, path_with_deserialize_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (path_with_deserialize_token_stream, serde_borrow_attribute_handle) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
                                         key_lifetime_enum, 
@@ -1582,7 +1582,7 @@ pub fn derive_impl_error_occurence(
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                        (serde_borrow_attribute_handle, path_with_deserialize_token_stream)
+                                        (path_with_deserialize_token_stream, serde_borrow_attribute_handle)
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
