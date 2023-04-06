@@ -514,10 +514,6 @@ pub fn derive_impl_error_occurence(
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    // let static_str_stringified = "&'static str";
-    // let static_str_token_stream = static_str_stringified
-    // .parse::<proc_macro2::TokenStream>()
-    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {static_str_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let std_string_string_stringified = "std::string::String";
     let std_string_string_token_stream = std_string_string_stringified
     .parse::<proc_macro2::TokenStream>()
