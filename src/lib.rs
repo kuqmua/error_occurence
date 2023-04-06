@@ -38,6 +38,26 @@ enum Lifetime {
     NotSpecified,
 }
 
+impl Lifetime {
+    fn to_proc_macro2_token_stream(&self) -> proc_macro2::TokenStream {
+        match self {
+            Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
+            Lifetime::NotSpecified => quote::quote!{},
+        }
+    }
+    fn into_proc_macro2_token_stream_with_possible_lifetime_addition(self, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
+        match self {
+            Lifetime::Specified(lifetime_specified) => {
+                if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
+                    lifetimes_for_serialize_deserialize.push(lifetime_specified);
+                };
+                quote::quote!{#[serde(borrow)]}
+            },
+            Lifetime::NotSpecified => quote::quote!{},
+        }
+    }
+}
+
 impl std::fmt::Display for Lifetime {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
@@ -1027,11 +1047,8 @@ pub fn derive_impl_error_occurence(
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                            }, 
-                                            match lifetime {
-                                                Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
-                                                Lifetime::NotSpecified => quote::quote!{},
-                                            }
+                                            },
+                                            lifetime.to_proc_macro2_token_stream()
                                         )
                                     }
                                     else {
@@ -1099,10 +1116,7 @@ pub fn derive_impl_error_occurence(
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            match lifetime {
-                                                Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
-                                                Lifetime::NotSpecified => quote::quote!{},
-                                            }
+                                            lifetime.to_proc_macro2_token_stream()
                                         )
                                     }
                                     else {
@@ -2291,15 +2305,7 @@ pub fn derive_impl_error_occurence(
                                     .parse::<proc_macro2::TokenStream>()
                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                 },
-                                match lifetime {
-                                    Lifetime::Specified(lifetime_specified) => {
-                                        if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
-                                            lifetimes_for_serialize_deserialize.push(lifetime_specified);
-                                        };
-                                        quote::quote!{#[serde(borrow)]}
-                                    },
-                                    Lifetime::NotSpecified => quote::quote!{},
-                                }
+                                lifetime.into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                             )
                         }
                         else {
@@ -2361,15 +2367,7 @@ pub fn derive_impl_error_occurence(
                                     .parse::<proc_macro2::TokenStream>()
                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                 },
-                                match lifetime {
-                                    Lifetime::Specified(lifetime_specified) => {
-                                        if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
-                                            lifetimes_for_serialize_deserialize.push(lifetime_specified);
-                                        };
-                                        quote::quote!{#[serde(borrow)]}
-                                    },
-                                    Lifetime::NotSpecified => quote::quote!{},
-                                }
+                                lifetime.into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                             )
                         }
                         else {
