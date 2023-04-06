@@ -318,17 +318,17 @@ pub fn derive_impl_error_occurence(
     crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let hashmap_display_display_foreign_type_into_hashmap_display_static_str_camel_case = "HashmapDisplayDisplayForeignTypeIntoHashmapDisplayStaticStr";
-    let hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case = "hashmap_display_display_foreign_type_into_hashmap_display_static_str";
-    let hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case_token_stream = 
-    hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case
+    let hashmap_display_display_foreign_type_into_hashmap_display_string_camel_case = "HashmapDisplayDisplayForeignTypeIntoHashmapDisplayString";
+    let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case = "hashmap_display_display_foreign_type_into_hashmap_display_string";
+    let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream = 
+    hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case
     .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_static_str_hashmap_display_display_foreign_type_into_hashmap_display_static_str_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case}::{hashmap_display_display_foreign_type_into_hashmap_display_static_str_camel_case}");
-    let crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_static_str_hashmap_display_display_foreign_type_into_hashmap_display_static_str_token_stream = 
-    crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_static_str_hashmap_display_display_foreign_type_into_hashmap_display_static_str_stringified
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case}::{hashmap_display_display_foreign_type_into_hashmap_display_string_camel_case}");
+    let crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream = 
+    crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified
     .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_static_str_hashmap_display_display_foreign_type_into_hashmap_display_static_str_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let hashmap_display_to_string_without_config_to_string_camel_case = "HashmapDisplayToStringWithoutConfigToString";
     let hashmap_display_to_string_without_config_to_string_lower_case = "hashmap_display_to_string_without_config_to_string";
     let hashmap_display_to_string_without_config_to_string_lower_case_token_stream = 
@@ -1405,8 +1405,8 @@ pub fn derive_impl_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use #crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_static_str_hashmap_display_display_foreign_type_into_hashmap_display_static_str_token_stream;
-                                                #field_ident.#hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case_token_stream()
+                                                use #crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream;
+                                                #field_ident.#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream()
                                             }
                                         },
                                         type_token_stream,
@@ -2679,8 +2679,8 @@ pub fn derive_impl_error_occurence(
                             },
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
-                                    use #crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_static_str_hashmap_display_display_foreign_type_into_hashmap_display_static_str_token_stream;
-                                    i.#hashmap_display_display_foreign_type_into_hashmap_display_static_str_lower_case_token_stream()
+                                    use #crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream;
+                                    i.#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream()
                                 })
                             },
                         )
