@@ -514,10 +514,14 @@ pub fn derive_impl_error_occurence(
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let static_str_stringified = "&'static str";
-    let static_str_token_stream = static_str_stringified
+    // let static_str_stringified = "&'static str";
+    // let static_str_token_stream = static_str_stringified
+    // .parse::<proc_macro2::TokenStream>()
+    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {static_str_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let std_string_string_stringified = "std::string::String";
+    let std_string_string_token_stream = std_string_string_stringified
     .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {static_str_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {std_string_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let only_supports_supported_container_stringified = "only supports SupportedContainer::";
     let two_or_more_supported_attributes_error_message = "two or more supported attributes!";
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
@@ -1076,11 +1080,11 @@ pub fn derive_impl_error_occurence(
                                         quote::quote! {
                                             {
                                                 use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                                #field_ident.#display_foreign_type_lower_case_token_stream()
+                                                #field_ident.#display_foreign_type_lower_case_token_stream().#to_string_token_stream()
                                             }
                                         },
                                         quote::quote! {
-                                            #static_str_token_stream
+                                            #std_string_string_token_stream
                                         },
                                         quote::quote! {},
                                     )
@@ -1225,7 +1229,7 @@ pub fn derive_impl_error_occurence(
                                             }
                                         },
                                         quote::quote! {
-                                            std::vec::Vec<#static_str_token_stream>
+                                            std::vec::Vec<#std_string_string_token_stream>
                                         },
                                         quote::quote! {},
                                     )
@@ -1357,7 +1361,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let path_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},{static_str_stringified}>");
+                                        let path_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},{std_string_string_stringified}>");
                                         let path_token_stream = path_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1487,7 +1491,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let hashmap_stringified = format!("{path}<{static_str_stringified},{value_segments_stringified}{value_lifetime_enum}>");
+                                        let hashmap_stringified = format!("{path}<{std_string_string_stringified},{value_segments_stringified}{value_lifetime_enum}>");
                                         let hashmap_token_stream = hashmap_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1533,7 +1537,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let hashmap_stringified = format!("{path}<{static_str_stringified},{static_str_stringified}>");
+                                        let hashmap_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
                                         hashmap_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1578,7 +1582,7 @@ pub fn derive_impl_error_occurence(
                                             Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
                                             Lifetime::NotSpecified => quote::quote!{},
                                         };
-                                        let path_with_deserialize_stringified = format!("{path}<{static_str_stringified}, {value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>");
+                                        let path_with_deserialize_stringified = format!("{path}<{std_string_string_stringified}, {value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>");
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -1629,7 +1633,7 @@ pub fn derive_impl_error_occurence(
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
-                                        let path_with_deserialize_stringified = format!("{path}<{static_str_stringified}, {value_segments_stringified}{with_deserialize_camel_case}>");
+                                        let path_with_deserialize_stringified = format!("{path}<{std_string_string_stringified}, {value_segments_stringified}{with_deserialize_camel_case}>");
                                         let path_with_deserialize_token_stream = path_with_deserialize_stringified
                                         .parse::<proc_macro2::TokenStream>()
                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {path_with_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -2302,7 +2306,7 @@ pub fn derive_impl_error_occurence(
                                 i.#display_foreign_type_token_stream().to_string()
                             },
                             quote::quote!{
-                                #variant_ident(#static_str_token_stream)
+                                #variant_ident(#std_string_string_token_stream)
                             },
                             quote::quote!{
                                 i.#to_string_token_stream()
@@ -2310,7 +2314,7 @@ pub fn derive_impl_error_occurence(
                             quote::quote!{
                                 #ident_with_deserialize_token_stream::#variant_ident({
                                     use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                    i.#display_foreign_type_token_stream()
+                                    i.#display_foreign_type_token_stream().#to_string_token_stream()
                                 })
                             },
                         )
@@ -2433,7 +2437,7 @@ pub fn derive_impl_error_occurence(
                     }
                     Attribute::VecDisplayForeignType => {
                         let type_token_stringified = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
-                            format!("{path}<{static_str_stringified}>")
+                            format!("{path}<{std_string_string_stringified}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}Vec");
@@ -2623,7 +2627,7 @@ pub fn derive_impl_error_occurence(
                                     lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
                                 };
                             }
-                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},{static_str_stringified}>")
+                            format!("{path}<{key_segments_stringified}{key_lifetime_enum},{std_string_string_stringified}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_value_display_foreign_type_stringified}] only SupportedContainer::HashMap");
@@ -2805,7 +2809,7 @@ pub fn derive_impl_error_occurence(
                                     lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
                                 };
                             }
-                            format!("{path}<{static_str_stringified},{value_segments_stringified}{value_lifetime_enum}>")
+                            format!("{path}<{std_string_string_stringified},{value_segments_stringified}{value_lifetime_enum}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -2847,7 +2851,7 @@ pub fn derive_impl_error_occurence(
                             value_lifetime_enum,
                         }
                          = supported_container {
-                            format!("{path}<{static_str_stringified},{static_str_stringified}>")
+                            format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -2894,7 +2898,7 @@ pub fn derive_impl_error_occurence(
                                     lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
                                 };
                             }
-                            format!("{path}<{static_str_stringified},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
+                            format!("{path}<{std_string_string_stringified},{value_segments_stringified}{with_deserialize_camel_case}{value_lifetime_enum}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
@@ -2949,7 +2953,7 @@ pub fn derive_impl_error_occurence(
                             //         lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
                             //     };
                             // }
-                            format!("{path}<{static_str_stringified},{value_segments_stringified}{with_deserialize_camel_case}>")
+                            format!("{path}<{std_string_string_stringified},{value_segments_stringified}{with_deserialize_camel_case}>")
                         }
                         else {
                             panic!("{proc_macro_name} {ident_stringified} attribute #[{hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
