@@ -891,7 +891,7 @@ pub fn derive_error_occurence(
                                     },
                                     syn::Type::Ptr(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
                                     syn::Type::Reference(type_reference) => {
-                                        println!("{:#?}", type_reference);
+                                        // println!("{:#?}", type_reference);
                                         todo!()
                                     },
                                     syn::Type::Slice(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
@@ -963,6 +963,12 @@ pub fn derive_error_occurence(
                             attribute, 
                             supported_container,
                         } => {
+                            let field_name_with_field_value_token_stream = {
+                                let field_name_with_field_value_stringified = format!("\"{field_ident}: {{}}\"");
+                                field_name_with_field_value_stringified
+                                .parse::<proc_macro2::TokenStream>()
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_name_with_field_value_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                            };
                             let ( 
                                 logic_for_source_to_string_without_config_for_attribute,
                                 logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute,
@@ -989,13 +995,21 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                #field_ident.#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             { 
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                #field_ident.#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1017,13 +1031,21 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                #field_ident.#display_foreign_type_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#display_foreign_type_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             { 
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                #field_ident.#lines_space_backslash_lower_case_token_stream() 
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream() 
                                             }
                                         },
                                         quote::quote! {
@@ -1058,14 +1080,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                                                #field_ident.#to_string_without_config_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#to_string_without_config_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream;
-                                                #field_ident.#to_string_without_config_with_serialize_deserialize_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#to_string_without_config_with_serialize_deserialize_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1092,14 +1122,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                                                #field_ident.#to_string_without_config_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#to_string_without_config_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream;
-                                                #field_ident.#to_string_without_config_with_serialize_deserialize_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#to_string_without_config_with_serialize_deserialize_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1134,14 +1172,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
-                                                #field_ident.#vec_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
-                                                #field_ident.#vec_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1163,14 +1209,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_token_stream;
-                                                #field_ident.#vec_display_foreign_type_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_foreign_type_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
-                                                #field_ident.#vec_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1208,14 +1262,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_to_string_without_config_to_string_vec_to_string_without_config_to_string_token_stream;
-                                                #field_ident.#vec_to_string_without_config_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_to_string_without_config_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_to_string_without_config_to_string_with_serialize_deserialize_vec_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                #field_ident.#vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1244,14 +1306,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_to_string_without_config_to_string_vec_to_string_without_config_to_string_token_stream;
-                                                #field_ident.#vec_to_string_without_config_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_to_string_without_config_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_vec_to_string_without_config_to_string_with_serialize_deserialize_vec_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                #field_ident.#vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1290,14 +1360,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
-                                                #field_ident.#hashmap_display_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
-                                                #field_ident.#hashmap_display_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1338,14 +1416,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_token_stream;
-                                                #field_ident.#hashmap_display_display_foreign_type_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_foreign_type_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
-                                                #field_ident.#hashmap_display_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1383,14 +1469,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_token_stream;
-                                                #field_ident.#hashmap_display_to_string_without_config_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1427,14 +1521,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_token_stream;
-                                                #field_ident.#hashmap_display_to_string_without_config_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1477,14 +1579,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
-                                                #field_ident.#hashmap_display_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1518,14 +1628,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
-                                                #field_ident.#hashmap_display_display_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1567,14 +1685,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_without_config_to_string_hashmap_display_foreign_type_to_string_without_config_to_string_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1617,14 +1743,22 @@ pub fn derive_error_occurence(
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_without_config_to_string_hashmap_display_foreign_type_to_string_without_config_to_string_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
                                             {
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 use #crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream().#lines_space_backslash_lower_case_token_stream()
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -2990,7 +3124,7 @@ pub fn derive_error_occurence(
     let uuu = quote::quote! {
         #generated_impl_with_serialize_deserialize_alternatives
     };
-    println!("{uuu}");
+    // println!("{uuu}");
     uuu.into()
 }
 
