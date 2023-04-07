@@ -2028,9 +2028,8 @@ pub fn derive_error_occurence(
                     >
                     for #ident<#generics>
                 {
-                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream<
-                        #generics
-                    > {
+                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream
+                    {
                         match self {
                             #logic_for_get_code_occurence
                         }
@@ -2063,9 +2062,8 @@ pub fn derive_error_occurence(
                 {
                     fn #get_code_occurence_with_serialize_deserialize_token_stream(
                         &self,
-                    ) -> &#crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream<
-                        #lifetimes_for_serialize_deserialize_token_stream //todo - here must be trait_lifetime_token_stream
-                    > {
+                    ) -> &#crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream
+                    {
                         match self {
                             #logic_for_get_code_occurence_with_serialize_deserialize
                         }
