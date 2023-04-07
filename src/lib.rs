@@ -191,9 +191,9 @@ pub fn derive_error_occurence(
 ) -> proc_macro::TokenStream {
     std::panic::set_hook(Box::new(|panic_info| {
         if let Some(location) = panic_info.location() {
-            println!("panic occurred in {}:{}:{}", location.file(), location.line(), location.column());
+            eprintln!("panic occurred in {}:{}:{}", location.file(), location.line(), location.column());
         } else {
-            println!("panic occurred but can't get location information...");
+            eprintln!("panic occurred but can't get location information...");
         }
     }));
     let proc_macro_name = "ErrorOccurence";
@@ -574,6 +574,22 @@ pub fn derive_error_occurence(
     else {
         panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum");
     };
+    //
+    let generics_handle_vec = {
+        ast.generics.params.iter().map(|gen_param|{
+            if let syn::GenericParam::Lifetime(lifetime_deref) = gen_param {
+                let lifetime_ident_stringified = format!("'{}", lifetime_deref.lifetime.ident);
+                lifetime_ident_stringified
+                .parse::<proc_macro2::TokenStream>()
+                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetime_ident_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+            }
+            else {
+                panic!("{proc_macro_name} gen_param only works with syn::GenericParam::Lifetime");
+            }
+        }).collect::<Vec<proc_macro2::TokenStream>>()
+    };
+    let generics_handle = generics_handle_vec.iter();
+    //
     let generics = {
         let lifetimes_stringified = ast.generics.params.iter()
         .fold(String::from(""), |mut acc, gen_param| {
@@ -1957,10 +1973,18 @@ pub fn derive_error_occurence(
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_iter),*
             };
+            //todo - lifetimes for serialize\deserialize
             quote::quote! {
-                impl<#generics #config_generic_token_stream>
+                impl<
+                    #trait_lifetime_token_stream,
+                    #generics 
+                    // 
+                    // #(#generics_handle),*,
+                    //
+                    #config_generic_token_stream
+                >
                     #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
-                        #generics
+                        #trait_lifetime_token_stream,
                         #config_generic_token_stream
                     > for #ident<#generics>
                     where #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
@@ -1976,9 +2000,12 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-                impl<#generics>
+                impl<
+                    #trait_lifetime_token_stream,
+                    #generics
+                >
                     #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
-                        #generics
+                        #trait_lifetime_token_stream
                     > for #ident<#generics>
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
@@ -1987,10 +2014,18 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-                impl<#generics> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<#generics>
+                impl<
+                    #trait_lifetime_token_stream,
+                    #generics
+                > 
+                    #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<
+                        #trait_lifetime_token_stream
+                    >
                     for #ident<#generics>
                 {
-                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream<#generics> {
+                    fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream<
+                        #generics
+                    > {
                         match self {
                             #logic_for_get_code_occurence
                         }
@@ -2000,7 +2035,12 @@ pub fn derive_error_occurence(
                 pub enum #ident_with_serialize_deserialize_token_stream<#generics> {
                     #logic_for_enum_with_serialize_deserialize
                 }
-                impl<#generics> #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<#generics> for #ident_with_serialize_deserialize_token_stream<#generics>
+                impl<
+                    #trait_lifetime_token_stream,
+                    #generics
+                > #crate_traits_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
+                    #trait_lifetime_token_stream
+                > for #ident_with_serialize_deserialize_token_stream<#generics>
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -2008,12 +2048,19 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-                impl<#generics> #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream<#generics>
+                impl<
+                    #trait_lifetime_token_stream,
+                    #generics
+                > #crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream<
+                    #trait_lifetime_token_stream
+                >
                     for #ident_with_serialize_deserialize_token_stream<#generics>
                 {
                     fn #get_code_occurence_with_serialize_deserialize_token_stream(
                         &self,
-                    ) -> &#crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream<#generics> {
+                    ) -> &#crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream<
+                        #generics
+                    > {
                         match self {
                             #logic_for_get_code_occurence_with_serialize_deserialize
                         }
@@ -3043,11 +3090,11 @@ pub fn derive_error_occurence(
                 impl<
                     #trait_lifetime_token_stream,
                     #generics
-                    #config_generic_token_stream,
+                    #config_generic_token_stream
                 >
                     #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream<
                         #trait_lifetime_token_stream,
-                        #config_generic_token_stream,
+                        #config_generic_token_stream
                     > for #ident<#generics>
                 where
                     #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
@@ -3064,7 +3111,7 @@ pub fn derive_error_occurence(
                     #trait_lifetime_token_stream,
                     #generics
                 > #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<
-                    #trait_lifetime_token_stream,
+                    #trait_lifetime_token_stream
                 >
                     for #ident<#generics>
                 {
@@ -3121,7 +3168,7 @@ pub fn derive_error_occurence(
     let uuu = quote::quote! {
         #generated_impl_with_serialize_deserialize_alternatives
     };
-    // println!("{uuu}");
+    println!("{uuu}");
     uuu.into()
 }
 
@@ -3310,7 +3357,7 @@ fn get_supported_named_attribute(
     });
     option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
 }
-//todo - impl try from instead of it?
+
 fn get_supported_unnamed_attribute(
     attrs: &Vec<syn::Attribute>,
     proc_macro_name: &str,
