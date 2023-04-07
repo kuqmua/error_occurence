@@ -15,7 +15,7 @@ enum SupportedContainer {
     Vec{
         path: String,
         element_path: String,
-        element_lifetime: Lifetime,
+        element_lifetime: Lifetime,//Vec<LifetimeHandle>
     },
     HashMap{
         path: String,
@@ -180,6 +180,15 @@ impl std::fmt::Display for LifetimeHandle {
             LifetimeHandle::NotSpecified => write!(f, ""),
         }
     }
+}
+
+fn vec_lifetime_handle_to_string(vec: &Vec<LifetimeHandle>) -> String {
+    let mut lifetimes_stringified_handle = vec.iter().fold(String::from(""), |mut acc, path_segment| {
+        acc.push_str(&format!("{},", path_segment));
+        acc
+    });
+    lifetimes_stringified_handle.pop();
+    format!("<{lifetimes_stringified_handle}>")
 }
 
 /////////////
@@ -849,15 +858,16 @@ pub fn derive_error_occurence(
                                     eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified,
                                     eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified,
                                 );
+                                let error_message = "supports only syn::Type::Path and syn::Type::Reference";
                                 let supported_container = match &field.ty {
-                                    syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::BareFn(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Group(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::ImplTrait(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Infer(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Macro(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Never(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Paren(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
+                                    syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::BareFn(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Group(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::ImplTrait(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Infer(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Macro(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Never(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Paren(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Path(type_path) => {
                                         let path = &type_path.path;
                                         let path_segment = type_path.path.segments.last()
@@ -1005,16 +1015,16 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                     },
-                                    syn::Type::Ptr(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
+                                    syn::Type::Ptr(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Reference(type_reference) => {
                                         // println!("{:#?}", type_reference);
                                         todo!()
                                     },
-                                    syn::Type::Slice(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::TraitObject(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Tuple(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    syn::Type::Verbatim(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
-                                    _ => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path and syn::Type::Reference"),
+                                    syn::Type::Slice(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::TraitObject(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Tuple(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    syn::Type::Verbatim(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                    _ => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                 };
                                 ErrorOrCodeOccurence::Error {
                                     attribute,
@@ -1921,14 +1931,7 @@ pub fn derive_error_occurence(
                                 }
                                 lifetime_handle
                             };
-                            let lifetimes_stringified = {
-                                let mut lifetimes_stringified_handle = field_lifetime.iter().fold(String::from(""), |mut acc, path_segment| {
-                                    acc.push_str(&format!("{},", path_segment));
-                                    acc
-                                });
-                                lifetimes_stringified_handle.pop();
-                                format!("<{lifetimes_stringified_handle}>")
-                            };
+                            let lifetimes_stringified = vec_lifetime_handle_to_string(field_lifetime);
                             let serde_borrow_attribute_token_stream = lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize);
                             let code_occurence_type_with_serialize_deserialize_token_stream = {
                                 let code_occurence_type_with_serialize_deserialize_stringified = format!("{field_type}{with_serialize_deserialize_camel_case}{lifetimes_stringified}");
