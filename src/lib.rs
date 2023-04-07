@@ -681,143 +681,28 @@ pub fn derive_error_occurence(
                                 }
                             },
                             false => {
-                                let attribute = {
-                                    let mut option_attribute = None;
-                                    field.attrs.iter().for_each(|attr|{
-                                        if let true = attr.path.segments.len() == 1 {
-                                            if let true = attr.path.segments[0].ident == eo_display_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoDisplay);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoDisplayForeignType);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoErrorOccurenceSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_error_occurence_no_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoErrorOccurenceNoSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoVecDisplay);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoVecDisplayForeignType);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoVecErrorOccurenceSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_no_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoVecErrorOccurenceNoSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueDisplay);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueDisplayForeignType);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueErrorOccurenceNoSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
-                                                }
-                                            }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified {
-                                                if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                                                }
-                                                else {
-                                                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime);
-                                                }
-                                            }
-                                            //other attributes are not for this proc_macro
-                                        }//other attributes are not for this proc_macro
-                                    });
-                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
-                                };
+                                let attribute = get_supported_attribute(
+                                    &field.attrs,
+                                    proc_macro_name,
+                                    &ident_stringified,
+                                    two_or_more_supported_attributes_error_message,
+                                    eo_display_stringified,
+                                    eo_display_foreign_type_stringified,
+                                    eo_error_occurence_sd_lifetime_stringified,
+                                    eo_error_occurence_no_sd_lifetime_stringified,
+                                    eo_vec_display_stringified,
+                                    eo_vec_display_foreign_type_stringified,
+                                    eo_vec_error_occurence_sd_lifetime_stringified,
+                                    eo_vec_error_occurence_no_sd_lifetime_stringified,
+                                    eo_hashmap_key_display_value_display_stringified,
+                                    eo_hashmap_key_display_value_display_foreign_type_stringified,
+                                    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified,
+                                    eo_hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified,
+                                    eo_hashmap_key_display_foreign_type_value_display_stringified,
+                                    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified,
+                                    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified,
+                                    eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified,
+                                );
                                 let supported_container = if let syn::Type::Path(type_path) = &field.ty {
                                     let path = &type_path.path;
                                     let path_segment = type_path.path.segments.last()
@@ -1990,141 +1875,28 @@ pub fn derive_error_occurence(
                 else {
                     panic!("{proc_macro_name} {ident_stringified} only works with named fields");
                 };
-                let mut option_attribute = None;
-                variant.attrs.iter().for_each(|attr|{
-                    if let true = attr.path.segments.len() == 1 {
-                        if let true = attr.path.segments[0].ident == eo_display_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoDisplay);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoDisplayForeignType);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoErrorOccurenceSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_error_occurence_no_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoErrorOccurenceNoSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoVecDisplay);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoVecDisplayForeignType);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoVecErrorOccurenceSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_no_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoVecErrorOccurenceNoSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayValueDisplay);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayValueDisplayForeignType);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayValueErrorOccurenceNoSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
-                            }
-                        }
-                        else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified {
-                            if let true = option_attribute.is_some() {
-                                panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                            }
-                            else {
-                                option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime);
-                            }
-                        }
-                        //other attributes are not for this proc_macro
-                    }//other attributes are not for this proc_macro
-                });
-                let attribute = option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"));
+                let attribute = get_supported_attribute(
+                    &variant.attrs,
+                    proc_macro_name,
+                    &ident_stringified,
+                    two_or_more_supported_attributes_error_message,
+                    eo_display_stringified,
+                    eo_display_foreign_type_stringified,
+                    eo_error_occurence_sd_lifetime_stringified,
+                    eo_error_occurence_no_sd_lifetime_stringified,
+                    eo_vec_display_stringified,
+                    eo_vec_display_foreign_type_stringified,
+                    eo_vec_error_occurence_sd_lifetime_stringified,
+                    eo_vec_error_occurence_no_sd_lifetime_stringified,
+                    eo_hashmap_key_display_value_display_stringified,
+                    eo_hashmap_key_display_value_display_foreign_type_stringified,
+                    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified,
+                    eo_hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified,
+                    eo_hashmap_key_display_foreign_type_value_display_stringified,
+                    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified,
+                    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified,
+                    eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified,
+                );
                 (&variant.ident, type_handle, attribute)
             }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, Attribute)>>();
             let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(vec_variants_and_variants_types.len());
@@ -3200,4 +2972,163 @@ fn form_last_arg_lifetime(
     else {
         panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None");
     }
+}
+
+fn get_supported_attribute(
+    attrs: &Vec<syn::Attribute>,
+    proc_macro_name: &str,
+    ident_stringified: &String,
+    two_or_more_supported_attributes_error_message: &str,
+    eo_display_stringified: &str,
+    eo_display_foreign_type_stringified: &str,
+    eo_error_occurence_sd_lifetime_stringified: &str,
+    eo_error_occurence_no_sd_lifetime_stringified: &str,
+    eo_vec_display_stringified: &str,
+    eo_vec_display_foreign_type_stringified: &str,
+    eo_vec_error_occurence_sd_lifetime_stringified: &str,
+    eo_vec_error_occurence_no_sd_lifetime_stringified: &str,
+    eo_hashmap_key_display_value_display_stringified: &str,
+    eo_hashmap_key_display_value_display_foreign_type_stringified: &str,
+    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified: &str,
+    eo_hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified: &str,
+    eo_hashmap_key_display_foreign_type_value_display_stringified: &str,
+    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified: &str,
+    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified: &str,
+    eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified: &str,
+) -> Attribute {
+    let mut option_attribute = None;
+    attrs.iter().for_each(|attr|{
+        if let true = attr.path.segments.len() == 1 {
+            if let true = attr.path.segments[0].ident == eo_display_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoDisplay);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoDisplayForeignType);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoErrorOccurenceSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_error_occurence_no_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoErrorOccurenceNoSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoVecDisplay);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoVecDisplayForeignType);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoVecErrorOccurenceSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_no_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoVecErrorOccurenceNoSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueDisplay);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueDisplayForeignType);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_no_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayValueErrorOccurenceNoSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
+                }
+            }
+            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified {
+                if let true = option_attribute.is_some() {
+                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                }
+                else {
+                    option_attribute = Some(Attribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime);
+                }
+            }
+            //other attributes are not for this proc_macro
+        }//other attributes are not for this proc_macro
+    });
+    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
 }
