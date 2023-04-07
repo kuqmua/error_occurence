@@ -574,24 +574,8 @@ pub fn derive_error_occurence(
     else {
         panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum");
     };
-    //
-    let generics_handle_vec = {
-        ast.generics.params.iter().map(|gen_param|{
-            if let syn::GenericParam::Lifetime(lifetime_deref) = gen_param {
-                let lifetime_ident_stringified = format!("'{}", lifetime_deref.lifetime.ident);
-                lifetime_ident_stringified
-                .parse::<proc_macro2::TokenStream>()
-                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetime_ident_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-            }
-            else {
-                panic!("{proc_macro_name} gen_param only works with syn::GenericParam::Lifetime");
-            }
-        }).collect::<Vec<proc_macro2::TokenStream>>()
-    };
-    let generics_handle = generics_handle_vec.iter();
-    //
     let generics = {
-        let lifetimes_stringified = ast.generics.params.iter()
+        let mut lifetimes_stringified = ast.generics.params.iter()
         .fold(String::from(""), |mut acc, gen_param| {
             if let syn::GenericParam::Lifetime(lifetime_deref) = gen_param {
                 acc.push_str(&format!("'{},", lifetime_deref.lifetime.ident));
@@ -601,6 +585,7 @@ pub fn derive_error_occurence(
                 panic!("{proc_macro_name} {ident_stringified} only works with syn::GenericParam::Lifetime");
             }
         });
+        lifetimes_stringified.pop();
         if let true = lifetimes_stringified.contains(trait_lifetime_stringified) {
             panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
         }
@@ -1977,10 +1962,7 @@ pub fn derive_error_occurence(
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
-                    #generics 
-                    // 
-                    // #(#generics_handle),*,
-                    //
+                    #generics,
                     #config_generic_token_stream
                 >
                     #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
@@ -3089,7 +3071,7 @@ pub fn derive_error_occurence(
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
-                    #generics
+                    #generics,
                     #config_generic_token_stream
                 >
                     #crate_traits_error_logs_logic_to_string_with_config_to_string_with_config_for_source_to_string_with_config_token_stream<
