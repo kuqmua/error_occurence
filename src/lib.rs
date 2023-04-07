@@ -105,6 +105,85 @@ impl std::fmt::Display for Lifetime {
     }
 }
 
+
+/////////////
+#[derive(
+    Clone
+)]
+enum LifetimeHandle {
+    Specified(String),
+    NotSpecified,
+}
+
+impl LifetimeHandle {
+    fn to_proc_macro2_token_stream(&self) -> proc_macro2::TokenStream {
+        match self {
+            LifetimeHandle::Specified(_) => quote::quote!{#[serde(borrow)]},
+            LifetimeHandle::NotSpecified => quote::quote!{},
+        }
+    }
+    fn into_proc_macro2_token_stream_with_possible_lifetime_addition(self, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
+        match self {
+            LifetimeHandle::Specified(lifetime_specified) => {
+                if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
+                    lifetimes_for_serialize_deserialize.push(lifetime_specified);
+                };
+                quote::quote!{#[serde(borrow)]}
+            },
+            LifetimeHandle::NotSpecified => quote::quote!{},
+        }
+    }
+}
+
+fn get_proc_macro2_token_stream_with_possible_lifetime_addition_handle(key_lifetime_enum: LifetimeHandle, value_lifetime_enum: LifetimeHandle, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
+    match (key_lifetime_enum, value_lifetime_enum) {
+        (LifetimeHandle::Specified(key_lifetime_specified), LifetimeHandle::Specified(value_lifetime_specified)) => {
+            match (
+                lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified),
+                lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified)
+            ) {
+                (true, true) => (),
+                (true, false) => {
+                    lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
+                },
+                (false, true) => {
+                    lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
+                },
+                (false, false) => match key_lifetime_specified == value_lifetime_specified {
+                    true => {
+                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified);//push key or value - does not matter in this case
+                    },
+                    false => {
+                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
+                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
+                    },
+                },
+            }
+            quote::quote!{#[serde(borrow)]}
+        },
+        (LifetimeHandle::Specified(key_lifetime_specified), LifetimeHandle::NotSpecified) => {
+            lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
+            quote::quote!{#[serde(borrow)]}
+        },
+        (LifetimeHandle::NotSpecified, LifetimeHandle::Specified(value_lifetime_specified)) => {
+            lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
+            quote::quote!{#[serde(borrow)]}
+        },
+        (LifetimeHandle::NotSpecified, LifetimeHandle::NotSpecified) => quote::quote!{},
+    }
+}
+
+impl std::fmt::Display for LifetimeHandle {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            LifetimeHandle::Specified(l) => write!(f, "'{l}"),
+            LifetimeHandle::NotSpecified => write!(f, ""),
+        }
+    }
+}
+
+/////////////
+
 enum ErrorOrCodeOccurence {
     Error {
         attribute: NamedAttribute,
@@ -112,7 +191,7 @@ enum ErrorOrCodeOccurence {
     },
     CodeOccurence {
         field_type: String,
-        field_lifetime: Lifetime
+        field_lifetime: Vec<LifetimeHandle>
     }
 }
 
@@ -693,7 +772,7 @@ pub fn derive_error_occurence(
                                                 Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
                                                 None => {
                                                     if let syn::Type::Path(type_path) = &named.ty {
-                                                        let lifetime_handle =  form_last_arg_lifetime(
+                                                        let lifetime_handle =  form_last_arg_lifetime_vec(
                                                             type_path, 
                                                             proc_macro_name, 
                                                             &ident_stringified,
@@ -1832,9 +1911,27 @@ pub fn derive_error_occurence(
                             field_type,
                             field_lifetime,
                          } => {
-                            let serde_borrow_attribute_token_stream = field_lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize);
+                            let lifetime = {
+                                let mut lifetime_handle = LifetimeHandle::NotSpecified;
+                                for lft in field_lifetime {
+                                    if let LifetimeHandle::Specified(_) = lft {
+                                        lifetime_handle = lft.clone();
+                                        break;
+                                    }
+                                }
+                                lifetime_handle
+                            };
+                            let lifetimes_stringified = {
+                                let mut lifetimes_stringified_handle = field_lifetime.iter().fold(String::from(""), |mut acc, path_segment| {
+                                    acc.push_str(&format!("{},", path_segment));
+                                    acc
+                                });
+                                lifetimes_stringified_handle.pop();
+                                format!("<{lifetimes_stringified_handle}>")
+                            };
+                            let serde_borrow_attribute_token_stream = lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize);
                             let code_occurence_type_with_serialize_deserialize_token_stream = {
-                                let code_occurence_type_with_serialize_deserialize_stringified = format!("{field_type}{with_serialize_deserialize_camel_case}{field_lifetime}");
+                                let code_occurence_type_with_serialize_deserialize_stringified = format!("{field_type}{with_serialize_deserialize_camel_case}{lifetimes_stringified}");
                                 code_occurence_type_with_serialize_deserialize_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_type_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -3178,6 +3275,7 @@ fn form_last_arg_lifetime(
         match &path_segment.arguments {
             syn::PathArguments::None => Lifetime::NotSpecified,
             syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
+                
                 if let false = angle_bracketed_generic_argument.args.len() == 1 {
                     panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} angle_bracketed_generic_argument.args.len() != 1");
                 }
@@ -3186,6 +3284,33 @@ fn form_last_arg_lifetime(
                     syn::GenericArgument::Type(_) => Lifetime::NotSpecified,
                     _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
                 }
+            },
+            syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
+        }
+    }
+    else {
+        panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None");
+    }
+}
+
+fn form_last_arg_lifetime_vec(
+    type_path_handle: &syn::TypePath, 
+    proc_macro_name: &str, 
+    ident_stringified: &String,
+    first_field_type_stringified_name: &str,
+) -> Vec<LifetimeHandle> {
+    if let Some(path_segment) = type_path_handle.path.segments.last() {
+        match &path_segment.arguments {
+            syn::PathArguments::None => Vec::new(),
+            syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
+                angle_bracketed_generic_argument.args.iter().map(|generic_argument|{
+                    match generic_argument {
+                        syn::GenericArgument::Lifetime(lfmt) => LifetimeHandle::Specified(lfmt.ident.to_string()),
+                        syn::GenericArgument::Type(_) => LifetimeHandle::NotSpecified,
+                        _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
+                    }
+                })
+                .collect()
             },
             syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
         }
