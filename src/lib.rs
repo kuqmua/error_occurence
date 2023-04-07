@@ -137,7 +137,7 @@ impl NamedAttribute {
       }
     }
 }
-///////////////
+
 #[derive(
     Debug,
     strum_macros::EnumIter,
@@ -164,10 +164,7 @@ impl UnnamedAttribute {
       }
     }
 }
-///////////////
 
-//todo add fields naming for named fields
-//todo - maybe unnamed must contain only error_occurence-contaning variants?
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
