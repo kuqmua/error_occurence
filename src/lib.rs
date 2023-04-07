@@ -138,10 +138,9 @@ impl Attribute {
     }
 }
 //todo - rename with_deserialize_camel_case to with_serialize_deserialize_camel_case
-//todo - rename ImplErrorOccurence to just ErrorOccurence
 //todo - atrributes must be marked by proc_macro - if it would be 2 or more macro what uses same attribute name - incorrect generation logic
 #[proc_macro_derive(
-    ImplErrorOccurence, 
+    ErrorOccurence, 
     attributes(
         display, 
         display_foreign_type,
@@ -161,7 +160,7 @@ impl Attribute {
         hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime,
     )
 )]
-pub fn derive_impl_error_occurence(
+pub fn derive_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     std::panic::set_hook(Box::new(|panic_info| {
@@ -171,7 +170,7 @@ pub fn derive_impl_error_occurence(
             println!("panic occurred but can't get location information...");
         }
     }));
-    let proc_macro_name = "ImplErrorOccurence";
+    let proc_macro_name = "ErrorOccurence";
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} syn::parse(input) failed"));
     let ident = &ast.ident;
