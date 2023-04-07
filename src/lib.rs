@@ -1975,22 +1975,13 @@ pub fn derive_error_occurence(
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_iter),*
             };
-            //todo - move it into function what share logic between named and unnamed
-            let lifetimes_for_serialize_deserialize_token_stream = {
-                if let true = lifetimes_for_serialize_deserialize.contains(&trait_lifetime_stringified.to_string()) {
-                    panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-                };
-                let mut lifetimes_for_serialize_deserialize_stringified = lifetimes_for_serialize_deserialize
-                .iter()
-                .fold(String::from(""), |mut acc, gen_param| {
-                    acc.push_str(&format!("'{gen_param},"));
-                    acc
-                });
-                lifetimes_for_serialize_deserialize_stringified.pop();
-                lifetimes_for_serialize_deserialize_stringified
-                .parse::<proc_macro2::TokenStream>()
-                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_for_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-            };
+            let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
+                lifetimes_for_serialize_deserialize,
+                trait_lifetime_stringified,
+                proc_macro_name, 
+                &ident_stringified,
+                parse_proc_macro2_token_stream_failed_message,
+            );
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
@@ -3086,21 +3077,13 @@ pub fn derive_error_occurence(
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_generated),*
             };
-            let lifetimes_for_serialize_deserialize_token_stream = {
-                if let true = lifetimes_for_serialize_deserialize.contains(&trait_lifetime_stringified.to_string()) {
-                    panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-                };
-                let mut lifetimes_for_serialize_deserialize_stringified = lifetimes_for_serialize_deserialize
-                .iter()
-                .fold(String::from(""), |mut acc, gen_param| {
-                    acc.push_str(&format!("'{gen_param},"));
-                    acc
-                });
-                lifetimes_for_serialize_deserialize_stringified.pop();
-                lifetimes_for_serialize_deserialize_stringified
-                .parse::<proc_macro2::TokenStream>()
-                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_for_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-            };
+            let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
+                lifetimes_for_serialize_deserialize,
+                trait_lifetime_stringified,
+                proc_macro_name, 
+                &ident_stringified,
+                parse_proc_macro2_token_stream_failed_message,
+            );
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
@@ -3456,4 +3439,26 @@ fn get_supported_unnamed_attribute(
         }//other attributes are not for this proc_macro
     });
     option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
+}
+
+fn lifetimes_for_serialize_deserialize_into_token_stream(
+    lifetimes_for_serialize_deserialize: Vec<String>,
+    trait_lifetime_stringified: &str,
+    proc_macro_name: &str, 
+    ident_stringified: &String,
+    parse_proc_macro2_token_stream_failed_message: &str,
+) -> proc_macro2::TokenStream {
+    if let true = lifetimes_for_serialize_deserialize.contains(&trait_lifetime_stringified.to_string()) {
+        panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+    };
+    let mut lifetimes_for_serialize_deserialize_stringified = lifetimes_for_serialize_deserialize
+    .iter()
+    .fold(String::from(""), |mut acc, gen_param| {
+        acc.push_str(&format!("'{gen_param},"));
+        acc
+    });
+    lifetimes_for_serialize_deserialize_stringified.pop();
+    lifetimes_for_serialize_deserialize_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_for_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
 }
