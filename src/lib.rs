@@ -14,8 +14,7 @@ enum SuportedEnumVariant {
 enum SupportedContainer {
     Vec{
         path: String,
-        element_path: String,
-        vec_lifetime: Vec<Lifetime>,
+        vec_element_type: VecElementType
     },
     HashMap{
         path: String,
@@ -158,6 +157,17 @@ impl ErrorFieldName {
     }
 }
 
+enum VecElementType {
+    Path{
+        element_path: String,
+        vec_lifetime: Vec<Lifetime>
+    },
+    Reference {
+        reference_ident: proc_macro2::Ident,
+        lifetime_ident: proc_macro2::Ident
+    }
+}
+
 enum HashMapKeyType {
     Path{
         key_segments_stringified: String,
@@ -203,6 +213,10 @@ enum NamedAttribute {
 enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
+//todo - for some reason there is no \n symbolin vec<&'str>
+//  al: [
+//   first_vec_elem, second_vec_elem
+//  ]
 //todo if there is ony one tag for unnamed variant -maybe just remove it?
 //todo if only error_occurence would be in unnamed variant - maybe no need for no_sd_lifetime coz error_occurence must have lifetime
 #[proc_macro_derive(
@@ -789,27 +803,52 @@ pub fn derive_error_occurence(
                                             });
                                             segments_stringified.pop();
                                             segments_stringified.pop();
-                                            let (element_path_stringified, vec_lifetime) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
+                                            let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
                                                 if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                                     if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
-                                                        if let syn::Type::Path(type_path) = type_handle {
-                                                            let vec_lifetime = form_last_arg_lifetime_vec(
-                                                                type_path, 
-                                                                proc_macro_name, 
-                                                                &ident_stringified,
-                                                                first_field_type_stringified_name
-                                                            );
-                                                            let mut element_segments_stringified = type_path.path.segments.iter()
-                                                            .fold(String::from(""), |mut acc, elem| {
-                                                                acc.push_str(&format!("{}::", elem.ident));
-                                                                acc
-                                                            });
-                                                            element_segments_stringified.pop();
-                                                            element_segments_stringified.pop();
-                                                            (element_segments_stringified, vec_lifetime)
-                                                        }
-                                                        else {
-                                                            panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
+                                                        match type_handle {
+                                                            syn::Type::Path(type_path) => {
+                                                                let vec_lifetime = form_last_arg_lifetime_vec(
+                                                                    type_path, 
+                                                                    proc_macro_name, 
+                                                                    &ident_stringified,
+                                                                    first_field_type_stringified_name
+                                                                );
+                                                                let mut element_segments_stringified = type_path.path.segments.iter()
+                                                                .fold(String::from(""), |mut acc, elem| {
+                                                                    acc.push_str(&format!("{}::", elem.ident));
+                                                                    acc
+                                                                });
+                                                                element_segments_stringified.pop();
+                                                                element_segments_stringified.pop();
+                                                                VecElementType::Path{
+                                                                    element_path: element_segments_stringified,
+                                                                    vec_lifetime
+                                                                }
+                                                            },
+                                                            syn::Type::Reference(type_reference) => {
+                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
+                                                                    if let true = type_path.path.segments.len() == 1 {
+                                                                        type_path.path.segments[0].ident.clone()
+                                                                    }
+                                                                    else {
+                                                                        panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_path.path.segments.len() != 1");
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
+                                                                };
+                                                                if let true = &reference_ident.to_string() == "str" {
+                                                                    VecElementType::Reference {
+                                                                        reference_ident,
+                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
+                                                                }
+                                                            },
+                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path and syn::Type::Reference"),
                                                         }
                                                     }
                                                     else {
@@ -825,8 +864,7 @@ pub fn derive_error_occurence(
                                             };
                                             SupportedContainer::Vec{
                                                 path: segments_stringified,
-                                                element_path: element_path_stringified,
-                                                vec_lifetime,
+                                                vec_element_type
                                             }
                                         }
                                         else if path_segment.ident == hashmap_name {
@@ -1286,22 +1324,36 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecDisplay => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { path, element_path, vec_lifetime } = supported_container {
-                                        (
-                                            {
-                                                let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(vec_lifetime));
-                                                type_stringified
-                                                .parse::<proc_macro2::TokenStream>()
-                                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                            }, 
-                                            get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                vec_lifetime, 
-                                                &mut lifetimes_for_serialize_deserialize,
-                                                trait_lifetime_stringified,
-                                                proc_macro_name,
-                                                &ident_stringified
-                                            )
-                                        )
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        match vec_element_type {
+                                            VecElementType::Path { element_path, vec_lifetime } => (
+                                                {
+                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(vec_lifetime));
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                }, 
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    trait_lifetime_stringified,
+                                                    proc_macro_name,
+                                                    &ident_stringified
+                                                )
+                                            ),
+                                            VecElementType::Reference { reference_ident, lifetime_ident } => (
+                                                {
+                                                    let type_stringified = format!("{path}<&'{lifetime_ident} {reference_ident}>");
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                },
+                                                quote::quote!{#[serde(borrow)]}
+                                            ),
+                                        }
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_stringified}] {only_supports_supported_container_stringified}Vec");
@@ -1339,7 +1391,15 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecDisplayForeignType => {
-                                    if let SupportedContainer::Vec { path: _path, element_path: _element_path, vec_lifetime: _vec_lifetime } = supported_container {}
+                                    if let SupportedContainer::Vec { 
+                                        path: _path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_foreign_type_stringified}] only supports VecElementType::Path");
+                                        }
+                                    }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}Vec");
                                     }
@@ -1379,22 +1439,30 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecErrorOccurenceSDLifetime => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { path, element_path, vec_lifetime } = supported_container {
-                                        (
-                                            {
-                                                let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(vec_lifetime));
-                                                type_stringified
-                                                .parse::<proc_macro2::TokenStream>()
-                                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                            }, 
-                                            get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                vec_lifetime, 
-                                                &mut lifetimes_for_serialize_deserialize,
-                                                trait_lifetime_stringified,
-                                                proc_macro_name,
-                                                &ident_stringified
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
+                                            (
+                                                {
+                                                    let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                }, 
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    &vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    trait_lifetime_stringified,
+                                                    proc_macro_name,
+                                                    &ident_stringified
+                                                )
                                             )
-                                        )
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_sd_lifetime_stringified}] only supports VecElementType::Path");
+                                        }                                        
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Vec");
@@ -1434,11 +1502,19 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecErrorOccurenceNoSDLifetime => {
-                                    let type_token_stream = if let SupportedContainer::Vec { path, element_path, vec_lifetime: _vec_lifetime } = supported_container {
-                                        let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}>");
-                                        type_stringified
-                                        .parse::<proc_macro2::TokenStream>()
-                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                    let type_token_stream = if let SupportedContainer::Vec { 
+                                        path,  
+                                        vec_element_type
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type  {
+                                            let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}>");
+                                            type_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_no_sd_lifetime_stringified}] supports only VecElementType::Path");
+                                        }
                                     }
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_no_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Vec");
