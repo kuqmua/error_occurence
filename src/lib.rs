@@ -15,19 +15,48 @@ enum SupportedContainer {
     Vec{
         path: String,
         element_path: String,
-        element_lifetime: Lifetime,//Vec<LifetimeHandle>
+        element_lifetime: Vec<Lifetime>,
     },
     HashMap{
         path: String,
         key_segments_stringified: String, 
-        key_lifetime_enum: Lifetime,
+        key_lifetime_enum: Vec<Lifetime>,
         value_segments_stringified: String, 
-        value_lifetime_enum: Lifetime
+        value_lifetime_enum: Vec<Lifetime>
     },
     Path{
         path: String, 
-        lifetime: Lifetime,
+        lifetime: Vec<Lifetime>,
     },
+}
+
+fn get_proc_macro2_token_stream_with_possible_lifetime_addition(
+    key_lifetime_vec: Vec<Lifetime>, 
+    value_lifetime_vec: Vec<Lifetime>, 
+    lifetimes_for_serialize_deserialize: &mut Vec<String>
+) -> proc_macro2::TokenStream {
+    key_lifetime_vec.iter().for_each(|k|{
+        if let Lifetime::Specified(key_lifetime_specified) = k {
+            if let true = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                lifetimes_for_serialize_deserialize.push(key_lifetime_specified.clone());
+            }
+        }
+    });
+    value_lifetime_vec.iter().for_each(|v|{
+        if let Lifetime::Specified(value_lifetime_specified) = v {
+            if let true = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                lifetimes_for_serialize_deserialize.push(value_lifetime_specified.clone());
+            }
+        }
+    });
+    let key_lifetime_enum = vec_lifetime_to_lifetime(&key_lifetime_vec);
+    let value_lifetime_enum = vec_lifetime_to_lifetime(&value_lifetime_vec);
+    match (key_lifetime_enum, value_lifetime_enum) {
+        (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
+        (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
+        (Lifetime::NotSpecified, Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
+        (Lifetime::NotSpecified, Lifetime::NotSpecified) => quote::quote!{},
+    }
 }
 
 #[derive(
@@ -58,131 +87,16 @@ impl Lifetime {
     }
 }
 
-fn get_proc_macro2_token_stream_with_possible_lifetime_addition(key_lifetime_enum: Lifetime, value_lifetime_enum: Lifetime, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
-    match (key_lifetime_enum, value_lifetime_enum) {
-        (Lifetime::Specified(key_lifetime_specified), Lifetime::Specified(value_lifetime_specified)) => {
-            match (
-                lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified),
-                lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified)
-            ) {
-                (true, true) => (),
-                (true, false) => {
-                    lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
-                },
-                (false, true) => {
-                    lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
-                },
-                (false, false) => match key_lifetime_specified == value_lifetime_specified {
-                    true => {
-                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified);//push key or value - does not matter in this case
-                    },
-                    false => {
-                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
-                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
-                    },
-                },
-            }
-            quote::quote!{#[serde(borrow)]}
-        },
-        (Lifetime::Specified(key_lifetime_specified), Lifetime::NotSpecified) => {
-            lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
-            quote::quote!{#[serde(borrow)]}
-        },
-        (Lifetime::NotSpecified, Lifetime::Specified(value_lifetime_specified)) => {
-            lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
-            quote::quote!{#[serde(borrow)]}
-        },
-        (Lifetime::NotSpecified, Lifetime::NotSpecified) => quote::quote!{},
-    }
-}
-
 impl std::fmt::Display for Lifetime {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Lifetime::Specified(l) => write!(f, "<'{l}>"),
+            Lifetime::Specified(l) => write!(f, "'{l}"),
             Lifetime::NotSpecified => write!(f, ""),
         }
     }
 }
 
-
-/////////////
-#[derive(
-    Clone
-)]
-enum LifetimeHandle {
-    Specified(String),
-    NotSpecified,
-}
-
-impl LifetimeHandle {
-    fn to_proc_macro2_token_stream(&self) -> proc_macro2::TokenStream {
-        match self {
-            LifetimeHandle::Specified(_) => quote::quote!{#[serde(borrow)]},
-            LifetimeHandle::NotSpecified => quote::quote!{},
-        }
-    }
-    fn into_proc_macro2_token_stream_with_possible_lifetime_addition(self, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
-        match self {
-            LifetimeHandle::Specified(lifetime_specified) => {
-                if let false = lifetimes_for_serialize_deserialize.contains(&lifetime_specified) {
-                    lifetimes_for_serialize_deserialize.push(lifetime_specified);
-                };
-                quote::quote!{#[serde(borrow)]}
-            },
-            LifetimeHandle::NotSpecified => quote::quote!{},
-        }
-    }
-}
-
-fn get_proc_macro2_token_stream_with_possible_lifetime_addition_handle(key_lifetime_enum: LifetimeHandle, value_lifetime_enum: LifetimeHandle, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
-    match (key_lifetime_enum, value_lifetime_enum) {
-        (LifetimeHandle::Specified(key_lifetime_specified), LifetimeHandle::Specified(value_lifetime_specified)) => {
-            match (
-                lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified),
-                lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified)
-            ) {
-                (true, true) => (),
-                (true, false) => {
-                    lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
-                },
-                (false, true) => {
-                    lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
-                },
-                (false, false) => match key_lifetime_specified == value_lifetime_specified {
-                    true => {
-                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified);//push key or value - does not matter in this case
-                    },
-                    false => {
-                        lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
-                        lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
-                    },
-                },
-            }
-            quote::quote!{#[serde(borrow)]}
-        },
-        (LifetimeHandle::Specified(key_lifetime_specified), LifetimeHandle::NotSpecified) => {
-            lifetimes_for_serialize_deserialize.push(key_lifetime_specified);
-            quote::quote!{#[serde(borrow)]}
-        },
-        (LifetimeHandle::NotSpecified, LifetimeHandle::Specified(value_lifetime_specified)) => {
-            lifetimes_for_serialize_deserialize.push(value_lifetime_specified);
-            quote::quote!{#[serde(borrow)]}
-        },
-        (LifetimeHandle::NotSpecified, LifetimeHandle::NotSpecified) => quote::quote!{},
-    }
-}
-
-impl std::fmt::Display for LifetimeHandle {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            LifetimeHandle::Specified(l) => write!(f, "'{l}"),
-            LifetimeHandle::NotSpecified => write!(f, ""),
-        }
-    }
-}
-
-fn vec_lifetime_handle_to_string(vec: &Vec<LifetimeHandle>) -> String {
+fn vec_lifetime_to_string(vec: &Vec<Lifetime>) -> String {
     let mut lifetimes_stringified_handle = vec.iter().fold(String::from(""), |mut acc, path_segment| {
         acc.push_str(&format!("{},", path_segment));
         acc
@@ -191,7 +105,16 @@ fn vec_lifetime_handle_to_string(vec: &Vec<LifetimeHandle>) -> String {
     format!("<{lifetimes_stringified_handle}>")
 }
 
-/////////////
+fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> Lifetime {
+    let mut lifetime_handle = Lifetime::NotSpecified;
+    for lft in vec {
+        if let Lifetime::Specified(_) = lft {
+            lifetime_handle = lft.clone();
+            break;
+        }
+    }
+    lifetime_handle
+}
 
 enum ErrorOrCodeOccurence {
     Error {
@@ -200,7 +123,7 @@ enum ErrorOrCodeOccurence {
     },
     CodeOccurence {
         field_type: String,
-        field_lifetime: Vec<LifetimeHandle>
+        field_lifetime: Vec<Lifetime>
     }
 }
 
@@ -884,7 +807,7 @@ pub fn derive_error_occurence(
                                                 if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                                     if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
                                                         if let syn::Type::Path(type_path) = type_handle {
-                                                            let element_last_arg_option_lifetime = form_last_arg_lifetime(
+                                                            let element_last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                                                 type_path, 
                                                                 proc_macro_name, 
                                                                 &ident_stringified,
@@ -932,7 +855,7 @@ pub fn derive_error_occurence(
                                                 if let true = angle_brackets_generic_arguments.args.len() == 2 {
                                                     let (key_segments_stringified, key_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
                                                         if let syn::Type::Path(type_path) = type_handle {
-                                                            let key_last_arg_option_lifetime = form_last_arg_lifetime(
+                                                            let key_last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                                                 type_path, 
                                                                 proc_macro_name, 
                                                                 &ident_stringified,
@@ -956,7 +879,7 @@ pub fn derive_error_occurence(
                                                     };
                                                     let (value_segments_stringified, value_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[1] {
                                                         if let syn::Type::Path(type_path) = type_handle {
-                                                            let value_last_arg_option_lifetime = form_last_arg_lifetime(
+                                                            let value_last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                                                 type_path, 
                                                                 proc_macro_name, 
                                                                 &ident_stringified,
@@ -996,7 +919,7 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                         else {
-                                            let last_arg_option_lifetime = form_last_arg_lifetime(
+                                            let last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                                 type_path, 
                                                 proc_macro_name, 
                                                 &ident_stringified,
@@ -1107,12 +1030,12 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, lifetime } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}{lifetime}");
+                                                let type_stringified = format!("{path}{}", vec_lifetime_to_string(lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             },
-                                            lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(lifetime).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1191,12 +1114,12 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, lifetime } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}{lifetime}");
+                                                let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}{}", vec_lifetime_to_string(lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(lifetime).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1280,12 +1203,12 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{element_path}{element_lifetime}>");
+                                                let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(element_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            element_lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(element_lifetime).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1367,12 +1290,12 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{element_lifetime}>");
+                                                let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(element_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            element_lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(element_lifetime).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1460,7 +1383,11 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum}, {value_segments_stringified}{value_lifetime_enum}>");
+                                                let type_stringified = format!(
+                                                    "{path}<{key_segments_stringified}{}, {value_segments_stringified}{}>",
+                                                    vec_lifetime_to_string(key_lifetime_enum),
+                                                    vec_lifetime_to_string(value_lifetime_enum)
+                                                );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1517,12 +1444,15 @@ pub fn derive_error_occurence(
                                     } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum},{std_string_string_stringified}>");
+                                                let type_stringified = format!(
+                                                    "{path}<{key_segments_stringified}{},{std_string_string_stringified}>",
+                                                    vec_lifetime_to_string(key_lifetime_enum)
+                                                );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             },
-                                            key_lifetime_enum.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(key_lifetime_enum).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1565,7 +1495,11 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{value_lifetime_enum}>");
+                                                let type_stringified = format!(
+                                                    "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
+                                                    vec_lifetime_to_string(key_lifetime_enum),
+                                                    vec_lifetime_to_string(value_lifetime_enum)
+                                                );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1618,12 +1552,15 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{key_segments_stringified}{key_lifetime_enum}, {value_segments_stringified}{with_serialize_deserialize_camel_case}>");
+                                                let type_stringified = format!(
+                                                    "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}>",
+                                                    vec_lifetime_to_string(key_lifetime_enum),
+                                                );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            key_lifetime_enum.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(key_lifetime_enum).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1673,12 +1610,15 @@ pub fn derive_error_occurence(
                                     } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{std_string_string_stringified},{value_segments_stringified}{value_lifetime_enum}>");
+                                                let type_stringified = format!(
+                                                    "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
+                                                    vec_lifetime_to_string(value_lifetime_enum)
+                                                );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            value_lifetime_enum.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(value_lifetime_enum).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1776,12 +1716,15 @@ pub fn derive_error_occurence(
                                     } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{value_lifetime_enum}>");
+                                                let type_stringified = format!(
+                                                    "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
+                                                    vec_lifetime_to_string(value_lifetime_enum)
+                                                );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
-                                            value_lifetime_enum.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                            vec_lifetime_to_lifetime(value_lifetime_enum).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                                         )
                                     }
                                     else {
@@ -1921,17 +1864,8 @@ pub fn derive_error_occurence(
                             field_type,
                             field_lifetime,
                          } => {
-                            let lifetime = {
-                                let mut lifetime_handle = LifetimeHandle::NotSpecified;
-                                for lft in field_lifetime {
-                                    if let LifetimeHandle::Specified(_) = lft {
-                                        lifetime_handle = lft.clone();
-                                        break;
-                                    }
-                                }
-                                lifetime_handle
-                            };
-                            let lifetimes_stringified = vec_lifetime_handle_to_string(field_lifetime);
+                            let lifetime = vec_lifetime_to_lifetime(field_lifetime);
+                            let lifetimes_stringified = vec_lifetime_to_string(field_lifetime);
                             let serde_borrow_attribute_token_stream = lifetime.clone().into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize);
                             let code_occurence_type_with_serialize_deserialize_token_stream = {
                                 let code_occurence_type_with_serialize_deserialize_stringified = format!("{field_type}{with_serialize_deserialize_camel_case}{lifetimes_stringified}");
@@ -2254,7 +2188,7 @@ pub fn derive_error_occurence(
                             if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                 if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
                                     if let syn::Type::Path(type_path) = type_handle {
-                                        let element_last_arg_option_lifetime = form_last_arg_lifetime(
+                                        let element_last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                             type_path, 
                                             proc_macro_name, 
                                             &ident_stringified,
@@ -2302,7 +2236,7 @@ pub fn derive_error_occurence(
                             if let true = angle_brackets_generic_arguments.args.len() == 2 {
                                 let (key_segments_stringified, key_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
                                     if let syn::Type::Path(type_path) = type_handle {
-                                        let key_last_arg_option_lifetime = form_last_arg_lifetime(
+                                        let key_last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                             type_path, 
                                             proc_macro_name, 
                                             &ident_stringified,
@@ -2326,7 +2260,7 @@ pub fn derive_error_occurence(
                                 };
                                 let (value_segments_stringified, value_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[1] {
                                     if let syn::Type::Path(type_path) = type_handle {
-                                        let value_last_arg_option_lifetime = form_last_arg_lifetime(
+                                        let value_last_arg_option_lifetime = form_last_arg_lifetime_vec(
                                             type_path, 
                                             proc_macro_name, 
                                             &ident_stringified,
@@ -2366,7 +2300,7 @@ pub fn derive_error_occurence(
                         }
                     }
                     else {
-                        let last_arg_option_lifetime = form_last_arg_lifetime(
+                        let last_arg_option_lifetime = form_last_arg_lifetime_vec(
                             type_path, 
                             proc_macro_name, 
                             &ident_stringified,
@@ -2461,12 +2395,15 @@ pub fn derive_error_occurence(
                         let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, lifetime } = supported_container {
                             (
                                 {
-                                    let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}{lifetime}");
+                                    let type_stringified = format!(
+                                        "{path}{with_serialize_deserialize_camel_case}{}",
+                                        vec_lifetime_to_string(&lifetime)
+                                    );
                                     type_stringified
                                     .parse::<proc_macro2::TokenStream>()
                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                 },
-                                lifetime.into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
+                                vec_lifetime_to_lifetime(&lifetime).into_proc_macro2_token_stream_with_possible_lifetime_addition(&mut lifetimes_for_serialize_deserialize)
                             )
                         }
                         else {
@@ -3268,48 +3205,20 @@ pub fn derive_error_occurence(
     uuu.into()
 }
 
-fn form_last_arg_lifetime(
-    type_path_handle: &syn::TypePath, 
-    proc_macro_name: &str, 
-    ident_stringified: &String,
-    first_field_type_stringified_name: &str,
-) -> Lifetime {
-    if let Some(path_segment) = type_path_handle.path.segments.last() {
-        match &path_segment.arguments {
-            syn::PathArguments::None => Lifetime::NotSpecified,
-            syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
-                
-                if let false = angle_bracketed_generic_argument.args.len() == 1 {
-                    panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} angle_bracketed_generic_argument.args.len() != 1");
-                }
-                match &angle_bracketed_generic_argument.args[0] {
-                    syn::GenericArgument::Lifetime(lfmt) => Lifetime::Specified(lfmt.ident.to_string()),
-                    syn::GenericArgument::Type(_) => Lifetime::NotSpecified,
-                    _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
-                }
-            },
-            syn::PathArguments::Parenthesized(_) => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is unexpected syn::PathArguments::Parenthesized"),
-        }
-    }
-    else {
-        panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None");
-    }
-}
-
 fn form_last_arg_lifetime_vec(
     type_path_handle: &syn::TypePath, 
     proc_macro_name: &str, 
     ident_stringified: &String,
     first_field_type_stringified_name: &str,
-) -> Vec<LifetimeHandle> {
+) -> Vec<Lifetime> {
     if let Some(path_segment) = type_path_handle.path.segments.last() {
         match &path_segment.arguments {
             syn::PathArguments::None => Vec::new(),
             syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
                 angle_bracketed_generic_argument.args.iter().map(|generic_argument|{
                     match generic_argument {
-                        syn::GenericArgument::Lifetime(lfmt) => LifetimeHandle::Specified(lfmt.ident.to_string()),
-                        syn::GenericArgument::Type(_) => LifetimeHandle::NotSpecified,
+                        syn::GenericArgument::Lifetime(lfmt) => Lifetime::Specified(lfmt.ident.to_string()),
+                        syn::GenericArgument::Type(_) => Lifetime::NotSpecified,
                         _ => panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
                     }
                 })
