@@ -844,7 +844,7 @@ pub fn derive_error_occurence(
                                                             (key_segments_stringified, vec_lifetime)
                                                         }
                                                         else {
-                                                            panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
+                                                            panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");//todo reference support (&'a str and &'static str maybe - other just panic)
                                                         }
                                                     }
                                                     else {
@@ -1377,6 +1377,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueDisplay => {
+                                    //todo only String, &'str
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, vec_key_lifetime, value_segments_stringified, vec_value_lifetime } = supported_container {
                                         (
                                             {
@@ -1435,6 +1436,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType => {
+                                    //todo only String, &'str
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
@@ -1498,6 +1500,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime => {
+                                    //todo only String, &'str
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, vec_key_lifetime, value_segments_stringified, vec_value_lifetime } = supported_container {
                                         (
                                             {
@@ -1558,6 +1561,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceNoSDLifetime => {
+                                    //todo only String, &'str
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         key_segments_stringified, 
