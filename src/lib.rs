@@ -68,12 +68,6 @@ enum Lifetime {
 }
 
 impl Lifetime {
-    fn to_proc_macro2_token_stream(&self) -> proc_macro2::TokenStream {
-        match self {
-            Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
-            Lifetime::NotSpecified => quote::quote!{},
-        }
-    }
     fn into_proc_macro2_token_stream_with_possible_lifetime_addition(self, lifetimes_for_serialize_deserialize: &mut Vec<String>) -> proc_macro2::TokenStream {
         match self {
             Lifetime::Specified(lifetime_specified) => {
@@ -170,22 +164,6 @@ enum NamedAttribute {
     EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime,
 }
 
-impl NamedAttribute {
-    fn from_ident(value: proc_macro2::Ident, proc_macro_name: String, ident_stringified: String) -> Self {
-        let array = NamedAttribute::into_array();
-        let mut handle = None;
-        for a in array {
-            if let true = value == a.to_lower_snake_case() {
-                handle = Some(a);
-                break;
-            }
-        }
-       match handle {
-        Some(attr) => attr,
-        None => panic!("{proc_macro_name} {ident_stringified} attribute must be equal one of the supported attributes"),
-      }
-    }
-}
 
 #[derive(
     Debug,
@@ -197,22 +175,6 @@ enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
 
-impl UnnamedAttribute {
-    fn from_ident(value: proc_macro2::Ident, proc_macro_name: String, ident_stringified: String) -> Self {
-        let array = UnnamedAttribute::into_array();
-        let mut handle = None;
-        for a in array {
-            if let true = value == a.to_lower_snake_case() {
-                handle = Some(a);
-                break;
-            }
-        }
-       match handle {
-        Some(attr) => attr,
-        None => panic!("{proc_macro_name} {ident_stringified} attribute must be equal one of the supported attributes"),
-      }
-    }
-}
 
 #[proc_macro_derive(
     ErrorOccurence, 
@@ -275,9 +237,9 @@ pub fn derive_error_occurence(
     let eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified = "eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime";
     let eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime_stringified = "eo_hashmap_key_display_foreign_type_value_error_occurence_no_sd_lifetime";
     let display_foreign_type_stringified = "display_foreign_type";
-    let display_foreign_type_token_stream = display_foreign_type_stringified
-        .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let display_foreign_type_token_stream = display_foreign_type_stringified
+    //     .parse::<proc_macro2::TokenStream>()
+    //     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let to_string_stringified = "to_string";
     let to_string_token_stream = to_string_stringified
         .parse::<proc_macro2::TokenStream>()
@@ -303,15 +265,8 @@ pub fn derive_error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {source_to_string_without_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
     let code_occurence_camel_case = "CodeOccurence";
     let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-    let code_occurence_lower_case_token_stream = code_occurence_lower_case
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
     let get_code_occurence_lower_case = format!("get_{code_occurence_lower_case}");
     let crate_traits_stringified = "crate::traits::";
-    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}{display_foreign_type_stringified}::DisplayForeignType");
-    let crate_traits_display_foreign_type_display_foreign_type_token_stream = crate_traits_display_foreign_type_display_foreign_type_stringified
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_fields_stringified = format!("{crate_traits_stringified}fields::");
     let crate_traits_error_logs_logic_stringified = format!("{crate_traits_stringified}error_logs_logic::");
     let lines_space_backslash_camel_case = "LinesSpaceBackslash";
@@ -331,7 +286,7 @@ pub fn derive_error_occurence(
     display_foreign_type_lower_case
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("crate::traits::{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
+    let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
     let crate_traits_display_foreign_type_display_foreign_type_token_stream = 
     crate_traits_display_foreign_type_display_foreign_type_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -501,40 +456,40 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_without_config_to_string_hashmap_display_foreign_type_to_string_without_config_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_without_config_to_string_hashmap_display_foreign_type_to_string_without_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_to_string_with_config_to_string_camel_case = "VecToStringWithConfigToString";
-    let vec_to_string_with_config_to_string_lower_case = vec_to_string_with_config_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-    let vec_to_string_with_config_to_string_lower_case_token_stream = 
-    vec_to_string_with_config_to_string_lower_case
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {vec_to_string_with_config_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{vec_to_string_with_config_to_string_lower_case}::{vec_to_string_with_config_to_string_camel_case}");
-    let crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_token_stream = 
-    crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let hashmap_display_to_string_with_config_to_string_camel_case = "HashMapDisplayToStringWithConfigToString";
-    let hashmap_display_to_string_with_config_to_string_lower_case = "hashmap_display_to_string_with_config_to_string";
-    let hashmap_display_to_string_with_config_to_string_lower_case_token_stream = 
-    hashmap_display_to_string_with_config_to_string_lower_case
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_to_string_with_config_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_to_string_with_config_to_string_lower_case}::{hashmap_display_to_string_with_config_to_string_camel_case}");
-    let crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_token_stream = 
-    crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_stringified
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let hashmap_display_foreign_type_to_string_with_config_to_string_camel_case = "HashMapDisplayForeignTypeToStringWithConfigToString";
-    let hashmap_display_foreign_type_to_string_with_config_to_string_lower_case = "hashmap_display_foreign_type_to_string_with_config_to_string";
-    let hashmap_display_foreign_type_to_string_with_config_to_string_lower_case_token_stream = 
-    hashmap_display_foreign_type_to_string_with_config_to_string_lower_case
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_foreign_type_to_string_with_config_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_foreign_type_to_string_with_config_to_string_lower_case}::{hashmap_display_foreign_type_to_string_with_config_to_string_camel_case}");
-    let crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_token_stream = 
-    crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_stringified
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let into_serialize_deserialize_version_token_stream = quote::quote!{into_serialize_deserialize_version};
+    // let vec_to_string_with_config_to_string_camel_case = "VecToStringWithConfigToString";
+    // let vec_to_string_with_config_to_string_lower_case = vec_to_string_with_config_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    // let vec_to_string_with_config_to_string_lower_case_token_stream = 
+    // vec_to_string_with_config_to_string_lower_case
+    // .parse::<proc_macro2::TokenStream>()
+    // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {vec_to_string_with_config_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    // let crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{vec_to_string_with_config_to_string_lower_case}::{vec_to_string_with_config_to_string_camel_case}");
+    // let crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_token_stream = 
+    // crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified
+    // .parse::<proc_macro2::TokenStream>()
+    // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let hashmap_display_to_string_with_config_to_string_camel_case = "HashMapDisplayToStringWithConfigToString";
+    // let hashmap_display_to_string_with_config_to_string_lower_case = "hashmap_display_to_string_with_config_to_string";
+    // let hashmap_display_to_string_with_config_to_string_lower_case_token_stream = 
+    // hashmap_display_to_string_with_config_to_string_lower_case
+    // .parse::<proc_macro2::TokenStream>()
+    // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_to_string_with_config_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    // let crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_to_string_with_config_to_string_lower_case}::{hashmap_display_to_string_with_config_to_string_camel_case}");
+    // let crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_token_stream = 
+    // crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_stringified
+    // .parse::<proc_macro2::TokenStream>()
+    // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let hashmap_display_foreign_type_to_string_with_config_to_string_camel_case = "HashMapDisplayForeignTypeToStringWithConfigToString";
+    // let hashmap_display_foreign_type_to_string_with_config_to_string_lower_case = "hashmap_display_foreign_type_to_string_with_config_to_string";
+    // let hashmap_display_foreign_type_to_string_with_config_to_string_lower_case_token_stream = 
+    // hashmap_display_foreign_type_to_string_with_config_to_string_lower_case
+    // .parse::<proc_macro2::TokenStream>()
+    // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_foreign_type_to_string_with_config_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    // let crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_foreign_type_to_string_with_config_to_string_lower_case}::{hashmap_display_foreign_type_to_string_with_config_to_string_camel_case}");
+    // let crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_token_stream = 
+    // crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_stringified
+    // .parse::<proc_macro2::TokenStream>()
+    // .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    // let into_serialize_deserialize_version_token_stream = quote::quote!{into_serialize_deserialize_version};
     let first_field_type_name = "first_field_type";
     let first_field_type_stringified_name = "first_field_type_stringified";
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
@@ -792,7 +747,6 @@ pub fn derive_error_occurence(
                                     syn::Type::Never(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Paren(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Path(type_path) => {
-                                        let path = &type_path.path;
                                         let path_segment = type_path.path.segments.last()
                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() is None"));
                                         if path_segment.ident == vec_name {
@@ -939,7 +893,7 @@ pub fn derive_error_occurence(
                                         }
                                     },
                                     syn::Type::Ptr(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Reference(type_reference) => {
+                                    syn::Type::Reference(_type_reference) => {
                                         // println!("{:#?}", type_reference);
                                         todo!()
                                     },
@@ -1072,7 +1026,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoDisplayForeignType => {
-                                    if let SupportedContainer::Path { path, lifetime } = supported_container {}
+                                    if let SupportedContainer::Path { path: _path, lifetime: _lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{display_foreign_type_stringified}] {only_supports_supported_container_stringified}Path");
                                     }
@@ -1158,7 +1112,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoErrorOccurenceNoSDLifetime => {
-                                    let type_token_stream = if let SupportedContainer::Path { path, lifetime } = supported_container {
+                                    let type_token_stream = if let SupportedContainer::Path { path, lifetime: _lifetime } = supported_container {
                                         let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}");
                                         type_stringified
                                         .parse::<proc_macro2::TokenStream>()
@@ -1247,7 +1201,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecDisplayForeignType => {
-                                    if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {}
+                                    if let SupportedContainer::Vec { path: _path, element_path: _element_path, element_lifetime: _element_lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}Vec");
                                     }
@@ -1336,7 +1290,7 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecErrorOccurenceNoSDLifetime => {
-                                    let type_token_stream = if let SupportedContainer::Vec { path, element_path, element_lifetime } = supported_container {
+                                    let type_token_stream = if let SupportedContainer::Vec { path, element_path, element_lifetime: _element_lifetime } = supported_container {
                                         let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}>");
                                         type_stringified
                                         .parse::<proc_macro2::TokenStream>()
@@ -1439,8 +1393,8 @@ pub fn derive_error_occurence(
                                         path, 
                                         key_segments_stringified, 
                                         key_lifetime_enum, 
-                                        value_segments_stringified, 
-                                        value_lifetime_enum 
+                                        value_segments_stringified: _value_segments_stringified, 
+                                        value_lifetime_enum: _value_lifetime_enum
                                     } = supported_container {
                                         (
                                             {
@@ -1549,7 +1503,13 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceNoSDLifetime => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { path, key_segments_stringified, key_lifetime_enum, value_segments_stringified, value_lifetime_enum } = supported_container {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        key_segments_stringified, 
+                                        key_lifetime_enum, 
+                                        value_segments_stringified, 
+                                        value_lifetime_enum: _value_lifetime_enum
+                                    } = supported_container {
                                         (
                                             {
                                                 let type_stringified = format!(
@@ -1603,8 +1563,8 @@ pub fn derive_error_occurence(
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
-                                        key_segments_stringified, 
-                                        key_lifetime_enum, 
+                                        key_segments_stringified: _key_segments_stringified, 
+                                        key_lifetime_enum: _key_lifetime_enum, 
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
@@ -1660,10 +1620,10 @@ pub fn derive_error_occurence(
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
                                         path, 
-                                        key_segments_stringified, 
-                                        key_lifetime_enum, 
-                                        value_segments_stringified, 
-                                        value_lifetime_enum 
+                                        key_segments_stringified: _key_segments_stringified, 
+                                        key_lifetime_enum: _key_lifetime_enum, 
+                                        value_segments_stringified: _value_segments_stringified, 
+                                        value_lifetime_enum: _value_lifetime_enum 
                                     } = supported_container {
                                         let type_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
                                         type_stringified
@@ -1709,8 +1669,8 @@ pub fn derive_error_occurence(
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
-                                        key_segments_stringified, 
-                                        key_lifetime_enum, 
+                                        key_segments_stringified: _key_segments_stringified, 
+                                        key_lifetime_enum: _key_lifetime_enum, 
                                         value_segments_stringified, 
                                         value_lifetime_enum 
                                     } = supported_container {
@@ -1775,10 +1735,10 @@ pub fn derive_error_occurence(
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
                                         path, 
-                                        key_segments_stringified, 
-                                        key_lifetime_enum, 
+                                        key_segments_stringified: _key_segments_stringified, 
+                                        key_lifetime_enum: _key_lifetime_enum, 
                                         value_segments_stringified, 
-                                        value_lifetime_enum 
+                                        value_lifetime_enum: _value_lifetime_enum 
                                     } = supported_container {
                                         let type_stringified = format!("{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}>");
                                         type_stringified
@@ -1908,7 +1868,7 @@ pub fn derive_error_occurence(
                 let enum_fields_logic_for_source_to_string_without_config_with_serialize_deserialize_iter = enum_fields_logic_for_source_to_string_without_config_with_serialize_deserialize.iter();
                 let enum_fields_logic_for_get_code_occurence_with_serialize_deserialize_iter = enum_fields_logic_for_get_code_occurence_with_serialize_deserialize.iter();
                 let enum_fields_logic_for_into_serialize_deserialize_version_iter = enum_fields_logic_for_into_serialize_deserialize_version.iter();
-                let mut format_logic_for_source_to_string_without_config_stringified = format_logic_for_source_to_string_without_config.iter()
+                let format_logic_for_source_to_string_without_config_stringified = format_logic_for_source_to_string_without_config.iter()
                 .fold(String::from(""), |mut acc, path_segment| {
                     acc.push_str(path_segment);
                     acc
@@ -2173,7 +2133,6 @@ pub fn derive_error_occurence(
                 attributes
             )|{
                 let supported_container = if let syn::Type::Path(type_path) = first_field_type {
-                    let path = &type_path.path;
                     let path_segment = type_path.path.segments.last()
                     .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() is None"));
                     if path_segment.ident == vec_name {
