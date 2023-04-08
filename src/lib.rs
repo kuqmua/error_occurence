@@ -28,15 +28,10 @@ enum SupportedContainer {
         path: String, 
         vec_lifetime: Vec<Lifetime>,
     },
-    //todo support only &str, &static str
-    Reference(ReferenceLifetime),
-}
-
-enum ReferenceLifetime {
-    NotStatic{
+    Reference{
         reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident,
-    }
+        lifetime_ident: proc_macro2::Ident, 
+    },
 }
 
 fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
@@ -933,17 +928,15 @@ pub fn derive_error_occurence(
                                         else {
                                             panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
                                         };
-                                        SupportedContainer::Reference({
-                                            if let true = &reference_ident.to_string() == "str" {
-                                                ReferenceLifetime::NotStatic{
-                                                    reference_ident,
-                                                    lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident,
-                                                }
+                                        if let true = &reference_ident.to_string() == "str" {
+                                             SupportedContainer::Reference{
+                                                reference_ident,
+                                                lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident,
                                             }
-                                            else {
-                                                panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
-                                            }
-                                        })
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
+                                        }
                                     },
                                     syn::Type::Slice(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::TraitObject(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
@@ -1081,43 +1074,41 @@ pub fn derive_error_occurence(
                                                 serde_borrow_token_stream
                                             )
                                         },
-                                        SupportedContainer::Reference(reference_lifetime) => match reference_lifetime {
-                                            ReferenceLifetime::NotStatic { reference_ident, lifetime_ident } => {
-                                                let type_token_stream = {
-                                                    let type_stringified = format!("&\'{lifetime_ident} {reference_ident}");
-                                                    type_stringified.parse::<proc_macro2::TokenStream>()
-                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                                };
-                                                (
-                                                    quote::quote! {
-                                                        {
-                                                            use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                            format!(
-                                                                #field_name_with_field_value_token_stream,
-                                                                #field_ident
-                                                            )
-                                                            .#lines_space_backslash_lower_case_token_stream()
-                                                        }
-                                                    },
-                                                    quote::quote! {
-                                                        { 
-                                                            use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                            format!(
-                                                                #field_name_with_field_value_token_stream,
-                                                                #field_ident
-                                                            )
-                                                            .#lines_space_backslash_lower_case_token_stream()
-                                                        }
-                                                    },
-                                                    quote::quote! {
-                                                        {
+                                        SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
+                                            let type_token_stream = {
+                                                let type_stringified = format!("&\'{lifetime_ident} {reference_ident}");
+                                                type_stringified.parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                            };
+                                            (
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                        format!(
+                                                            #field_name_with_field_value_token_stream,
                                                             #field_ident
-                                                        }
-                                                    },
-                                                    type_token_stream,
-                                                    quote::quote!{#[serde(borrow)]}
-                                                )
-                                            },
+                                                        )
+                                                        .#lines_space_backslash_lower_case_token_stream()
+                                                    }
+                                                },
+                                                quote::quote! {
+                                                    { 
+                                                        use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                        format!(
+                                                            #field_name_with_field_value_token_stream,
+                                                            #field_ident
+                                                        )
+                                                        .#lines_space_backslash_lower_case_token_stream()
+                                                    }
+                                                },
+                                                quote::quote! {
+                                                    {
+                                                        #field_ident
+                                                    }
+                                                },
+                                                type_token_stream,
+                                                quote::quote!{#[serde(borrow)]}
+                                            )
                                         },
                                         _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] only supports SupportedContainer::Path and SupportedContainer::Reference"),
                                     }
