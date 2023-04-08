@@ -164,7 +164,6 @@ enum NamedAttribute {
     EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime,
 }
 
-
 #[derive(
     Debug,
     strum_macros::EnumIter,
@@ -182,7 +181,7 @@ enum UnnamedAttribute {
         eo_display, 
         eo_display_foreign_type,
         eo_error_occurence_sd_lifetime,
-        eo_error_occurence_no_sd_lifetime,
+        eo_error_occurence_no_sd_lifetime,//todo - if more than 1 lifetime - it can be less lifetimes but more than 0. what to do in this case? just force to use 1 lifetime? 
         eo_vec_display,
         eo_vec_display_foreign_type,
         eo_vec_error_occurence_sd_lifetime,
