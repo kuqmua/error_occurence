@@ -213,6 +213,7 @@ enum NamedAttribute {
 enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
+//todo impl empty traits for named and unnamed variants. in field named must be add only unnmaed and in unnamed must be only named
 //todo - for some reason there is no \n symbolin vec<&'str>
 //  al: [
 //   first_vec_elem, second_vec_elem
