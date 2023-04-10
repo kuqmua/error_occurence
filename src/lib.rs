@@ -194,7 +194,7 @@ enum NamedAttribute {
 enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
-
+//todo if there is ony one tag for unnamed variant -maybe just remove it?
 //todo if only error_occurence would be in unnamed variant - maybe no need for no_sd_lifetime coz error_occurence must have lifetime
 #[proc_macro_derive(
     ErrorOccurence, 
