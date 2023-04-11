@@ -2420,7 +2420,11 @@ pub fn derive_error_occurence(
                         write!(f, "{}", self.#to_string_without_config_with_serialize_deserialize_token_stream())
                     }
                 }
-                // impl crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed for #ident {}
+                impl<#generics> crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed for #ident<#generics> {
+                    fn error_occurence_named(&self) -> () {
+                        ()
+                    }
+                }
             }
         },
         SuportedEnumVariant::Unnamed => {
@@ -3499,7 +3503,11 @@ pub fn derive_error_occurence(
                         write!(f, "{}", self.#to_string_without_config_with_serialize_deserialize_token_stream())
                     }
                 }
-                // impl crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed for #ident {}
+                impl<#generics> crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed for #ident<#generics> {
+                    fn error_occurence_unnamed(&self) -> () {
+                        ()
+                    }
+                }
             }
         },
     };
