@@ -213,6 +213,7 @@ enum NamedAttribute {
 enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
+//todo change quote::quote! {} to TokenStream::new() or something
 //todo impl empty traits for named and unnamed variants. in field named must be add only unnmaed and in unnamed must be only named
 //todo - for some reason there is no \n symbolin vec<&'str>
 //  al: [
