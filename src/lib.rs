@@ -2425,6 +2425,21 @@ pub fn derive_error_occurence(
                         ()
                     }
                 }
+                impl<#generics> #ident<#generics> {
+                    fn compile_time_check_error_occurence_members(&self) {
+                        match self {
+                               //#compile_time_check_error_occurence_members_inner_logic
+//                             OneNamed::Something { first, second, three, code_occurence: _code_occurence } => {
+//                                 use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
+//                                 first.error_occurence_unnamed();
+//                                 second.error_occurence_unnamed();
+//                                 three.iter().for_each(|i|{
+//                                     i.error_occurence_unnamed();
+//                                 });
+//                             },
+                        }
+                    }
+                }
             }
         },
         SuportedEnumVariant::Unnamed => {
@@ -3506,6 +3521,17 @@ pub fn derive_error_occurence(
                 impl<#generics> crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed for #ident<#generics> {
                     fn error_occurence_unnamed(&self) -> () {
                         ()
+                    }
+                }
+                impl<#generics> #ident<#generics> {
+                    fn compile_time_check_error_occurence_members(&self) {
+                        match self {
+                            //#compile_time_check_error_occurence_members_inner_generics
+//                             TwoUnnamed::ErrorOccurence(i) => {
+//                                 use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
+//                                    i.error_occurence_named();
+//                             },
+                        }
                     }
                 }
             }
