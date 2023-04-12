@@ -1065,6 +1065,7 @@ pub fn derive_error_occurence(
             let mut logic_for_source_to_string_without_config_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_get_code_occurence_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             variants_vec.iter().for_each(|(
                 variant_ident, 
                 fields_vec
@@ -1076,10 +1077,12 @@ pub fn derive_error_occurence(
                 let mut enum_fields_logic_for_source_to_string_without_config_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_get_code_occurence_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut enum_fields_logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut enum_fields_logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut format_logic_for_source_to_string_without_config: Vec<&str> = Vec::with_capacity(fields_vec.len());
                 let mut fields_logic_for_source_to_string_without_config_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut fields_logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 let mut fields_logic_for_into_serialize_deserialize_version_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                let mut fields_logic_for_compile_time_check_error_occurence_members_for_attribute: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 fields_vec.into_iter().enumerate().for_each(|(index, (field_ident, error_or_code_occurence))|{
                     let unused_argument_handle_stringified = format!("_unused_argument_{index}");
                     let unused_argument_handle_token_stream = unused_argument_handle_stringified
@@ -1101,7 +1104,9 @@ pub fn derive_error_occurence(
                                 logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute,
                                 logic_for_into_serialize_deserialize_version_for_attribute,
                                 field_type_with_serialize_deserialize_token_stream,
-                                serde_borrow_attribute_token_stream
+                                serde_borrow_attribute_token_stream,
+                                enum_fields_logic_for_compile_time_check_error_occurence_members_used_unused,
+                                logic_for_compile_time_check_error_occurence_members_for_attribute
                             ) = match attribute {
                                 NamedAttribute::EoDisplay => {
                                     match supported_container {
@@ -1148,7 +1153,11 @@ pub fn derive_error_occurence(
                                                     }
                                                 },
                                                 type_token_stream,
-                                                serde_borrow_token_stream
+                                                serde_borrow_token_stream, 
+                                                quote::quote! {
+                                                    #field_ident: #unused_argument_handle_token_stream
+                                                },
+                                                quote::quote! {},
                                             )
                                         },
                                         SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
@@ -1184,7 +1193,11 @@ pub fn derive_error_occurence(
                                                     }
                                                 },
                                                 type_token_stream,
-                                                quote::quote!{#[serde(borrow)]}
+                                                quote::quote!{#[serde(borrow)]},
+                                                quote::quote! {
+                                                    #field_ident: #unused_argument_handle_token_stream
+                                                },
+                                                quote::quote! {},
                                             )
                                         },
                                         _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] only supports SupportedContainer::Path and SupportedContainer::Reference"),
@@ -1225,6 +1238,10 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #std_string_string_token_stream
+                                        },
+                                        quote::quote! {},
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
                                         },
                                         quote::quote! {},
                                     )
@@ -1280,6 +1297,12 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.error_occurence_unnamed();
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoErrorOccurenceNoSDLifetime => {
@@ -1322,6 +1345,12 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         quote::quote!{},
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.error_occurence_unnamed();
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoVecDisplay => {
@@ -1389,6 +1418,10 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        quote::quote! {},
                                     )
                                 },
                                 NamedAttribute::EoVecDisplayForeignType => {
@@ -1435,6 +1468,10 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             std::vec::Vec<#std_string_string_token_stream>
+                                        },
+                                        quote::quote! {},
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
                                         },
                                         quote::quote! {},
                                     )
@@ -1500,6 +1537,14 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.iter().for_each(|i|{
+                                                i.error_occurence_unnamed();
+                                            });
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoVecErrorOccurenceNoSDLifetime => {
@@ -1552,6 +1597,14 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         quote::quote! {},
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.iter().for_each(|i|{
+                                                i.error_occurence_unnamed();
+                                            });
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueDisplay => {
@@ -1630,10 +1683,13 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        quote::quote! {},
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType => {
-                                    //todo only String, &'str
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1706,6 +1762,10 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        quote::quote! {},
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime => {
@@ -1786,6 +1846,14 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.iter().for_each(|(_k, v)|{
+                                                v.error_occurence_unnamed();
+                                            });
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceNoSDLifetime => {
@@ -1863,6 +1931,14 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.iter().for_each(|(_k, v)|{
+                                                v.error_occurence_unnamed();
+                                            });
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
@@ -1930,6 +2006,10 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        quote::quote! {},
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
@@ -1982,6 +2062,10 @@ pub fn derive_error_occurence(
                                             }
                                         },
                                         type_token_stream,
+                                        quote::quote! {},
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
                                         quote::quote! {},
                                     )
                                 },
@@ -2059,6 +2143,14 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.iter().for_each(|(_k, v)|{
+                                                v.error_occurence_unnamed();
+                                            });
+                                        },
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceNoSDLifetime => {
@@ -2121,6 +2213,14 @@ pub fn derive_error_occurence(
                                         },
                                         type_token_stream,
                                         quote::quote! {},
+                                        quote::quote! {
+                                            #field_ident
+                                        },
+                                        quote::quote! {
+                                            #field_ident.iter().for_each(|(_k, v)|{
+                                                v.error_occurence_unnamed();
+                                            });
+                                        },
                                     )
                                 },
                             };
@@ -2146,11 +2246,20 @@ pub fn derive_error_occurence(
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
                                 #field_ident
                             });
+                            //
+                            enum_fields_logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
+                                #enum_fields_logic_for_compile_time_check_error_occurence_members_used_unused
+                            });
+                            //
                             format_logic_for_source_to_string_without_config.push("{}");
                             fields_logic_for_source_to_string_without_config_for_attribute.push(logic_for_source_to_string_without_config_for_attribute);
                             fields_logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute.push(logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute);
                             fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
                                 #field_ident: #logic_for_into_serialize_deserialize_version_for_attribute
+                            });
+                            //
+                            fields_logic_for_compile_time_check_error_occurence_members_for_attribute.push(quote::quote!{
+                                #logic_for_compile_time_check_error_occurence_members_for_attribute
                             });
                         },
                         ErrorOrCodeOccurence::CodeOccurence { 
@@ -2192,9 +2301,17 @@ pub fn derive_error_occurence(
                             enum_fields_logic_for_into_serialize_deserialize_version.push(quote::quote!{
                                 #field_ident
                             });
+                            //
+                            enum_fields_logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
+                                #field_ident: #unused_argument_handle_token_stream
+                            });
+                            //
                             fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
                                 #field_ident: #field_ident.#into_serialize_deserialize_version_token_stream()
                             });
+                            //
+                            fields_logic_for_compile_time_check_error_occurence_members_for_attribute.push(quote::quote!{});
+                            //
                         },
                     }
                 });
@@ -2205,6 +2322,7 @@ pub fn derive_error_occurence(
                 let enum_fields_logic_for_source_to_string_without_config_with_serialize_deserialize_iter = enum_fields_logic_for_source_to_string_without_config_with_serialize_deserialize.iter();
                 let enum_fields_logic_for_get_code_occurence_with_serialize_deserialize_iter = enum_fields_logic_for_get_code_occurence_with_serialize_deserialize.iter();
                 let enum_fields_logic_for_into_serialize_deserialize_version_iter = enum_fields_logic_for_into_serialize_deserialize_version.iter();
+                let enum_fields_logic_for_compile_time_check_error_occurence_members_iter = enum_fields_logic_for_compile_time_check_error_occurence_members.iter();
                 let format_logic_for_source_to_string_without_config_stringified = format_logic_for_source_to_string_without_config.iter()
                 .fold(String::from(""), |mut acc, path_segment| {
                     acc.push_str(path_segment);
@@ -2219,6 +2337,7 @@ pub fn derive_error_occurence(
                 let fields_logic_for_source_to_string_without_config_for_attribute_iter = fields_logic_for_source_to_string_without_config_for_attribute.iter();
                 let fields_logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute_iter = fields_logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute.iter();
                 let fields_logic_for_into_serialize_deserialize_version_for_attribute_iter = fields_logic_for_into_serialize_deserialize_version_for_attribute.iter();
+                let fields_logic_for_compile_time_check_error_occurence_members_iter = fields_logic_for_compile_time_check_error_occurence_members_for_attribute.iter();
                 logic_for_source_to_string_with_config.push(quote::quote! {
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_source_to_string_with_config_iter),*
@@ -2277,6 +2396,16 @@ pub fn derive_error_occurence(
                         }
                     }
                 });
+                logic_for_compile_time_check_error_occurence_members.push(quote::quote! {
+                    #ident::#variant_ident {
+                        #(#enum_fields_logic_for_compile_time_check_error_occurence_members_iter),*
+                    } => {
+                        use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;//todo optimize and detect - is there error_occurence attributs or not
+                        // #ident_with_serialize_deserialize_token_stream::#variant_ident {
+                            #(#fields_logic_for_compile_time_check_error_occurence_members_iter)*
+                        // }
+                    }
+                });
             });
             let logic_for_source_to_string_with_config_iter = logic_for_source_to_string_with_config.iter();
             let logic_for_source_to_string_without_config_iter = logic_for_source_to_string_without_config.iter();
@@ -2285,6 +2414,7 @@ pub fn derive_error_occurence(
             let logic_for_source_to_string_without_config_with_serialize_deserialize_iter = logic_for_source_to_string_without_config_with_serialize_deserialize.iter();
             let logic_for_get_code_occurence_with_serialize_deserialize_iter = logic_for_get_code_occurence_with_serialize_deserialize.iter();
             let logic_for_into_serialize_deserialize_version_iter = logic_for_into_serialize_deserialize_version.iter();
+            let logic_for_compile_time_check_error_occurence_members_iter = logic_for_compile_time_check_error_occurence_members.iter();
             let logic_for_source_to_string_with_config = quote::quote! {
                 #(#logic_for_source_to_string_with_config_iter),*
             };
@@ -2305,6 +2435,9 @@ pub fn derive_error_occurence(
             };
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_iter),*
+            };
+            let logic_for_compile_time_check_error_occurence_members = quote::quote! {
+                #(#logic_for_compile_time_check_error_occurence_members_iter),*
             };
             let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
                 lifetimes_for_serialize_deserialize,
@@ -2425,21 +2558,21 @@ pub fn derive_error_occurence(
                         ()
                     }
                 }
-//                 impl<#generics> #ident<#generics> {
-//                     fn compile_time_check_error_occurence_members(&self) {
-//                         match self {
-//                                //#logic_for_compile_time_check_error_occurence_members
-// //                             OneNamed::Something { first, second, three, code_occurence: _code_occurence } => {
-// //                                 use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-// //                                 first.error_occurence_unnamed();
-// //                                 second.error_occurence_unnamed();
-// //                                 three.iter().for_each(|i|{
-// //                                     i.error_occurence_unnamed();
-// //                                 });
-// //                             },
-//                         }
-//                     }
-//                 }
+                impl<#generics> #ident<#generics> {
+                    fn compile_time_check_error_occurence_members(&self) {
+                        match self {
+                               #logic_for_compile_time_check_error_occurence_members
+//                             OneNamed::Something { first, second, three, code_occurence: _code_occurence } => {
+//                                 use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
+//                                 first.error_occurence_unnamed();
+//                                 second.error_occurence_unnamed();
+//                                 three.iter().for_each(|i|{
+//                                     i.error_occurence_unnamed();
+//                                 });
+//                             },
+                        }
+                    }
+                }
             }
         },
         SuportedEnumVariant::Unnamed => {
@@ -2771,7 +2904,6 @@ pub fn derive_error_occurence(
                                 #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
                             },
                             quote::quote!{
-                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
                                 i.error_occurence_named();
                             }
                         )
@@ -3422,6 +3554,7 @@ pub fn derive_error_occurence(
                 });
                 logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
                      #ident::#variant_ident(i) => {
+                        use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;//if over attributes would be supported than check if need to add this import
                         #logic_for_compile_time_check_error_occurence_members_inner
                      }
                 });
