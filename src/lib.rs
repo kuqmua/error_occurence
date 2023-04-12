@@ -2425,21 +2425,21 @@ pub fn derive_error_occurence(
                         ()
                     }
                 }
-                impl<#generics> #ident<#generics> {
-                    fn compile_time_check_error_occurence_members(&self) {
-                        match self {
-                               //#compile_time_check_error_occurence_members_inner_logic
-//                             OneNamed::Something { first, second, three, code_occurence: _code_occurence } => {
-//                                 use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-//                                 first.error_occurence_unnamed();
-//                                 second.error_occurence_unnamed();
-//                                 three.iter().for_each(|i|{
-//                                     i.error_occurence_unnamed();
-//                                 });
-//                             },
-                        }
-                    }
-                }
+//                 impl<#generics> #ident<#generics> {
+//                     fn compile_time_check_error_occurence_members(&self) {
+//                         match self {
+//                                //#logic_for_compile_time_check_error_occurence_members
+// //                             OneNamed::Something { first, second, three, code_occurence: _code_occurence } => {
+// //                                 use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
+// //                                 first.error_occurence_unnamed();
+// //                                 second.error_occurence_unnamed();
+// //                                 three.iter().for_each(|i|{
+// //                                     i.error_occurence_unnamed();
+// //                                 });
+// //                             },
+//                         }
+//                     }
+//                 }
             }
         },
         SuportedEnumVariant::Unnamed => {
@@ -2484,6 +2484,7 @@ pub fn derive_error_occurence(
             let mut logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_without_config_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
+            let mut logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             vec_variants_and_variants_types.iter().for_each(|(
                 variant_ident, 
                 first_field_type, 
@@ -2663,6 +2664,7 @@ pub fn derive_error_occurence(
                     logic_for_enum_with_serialize_deserialize_inner,
                     logic_for_to_string_without_config_with_serialize_deserialize_inner,
                     logic_for_into_serialize_deserialize_version_inner,
+                    logic_for_compile_time_check_error_occurence_members_inner
                 ) = match attributes {
                     //in case of commented logic must be implemented - logic outdated. need to refactor/rewrite it
                     // Attribute::EoDisplay => {
@@ -2768,6 +2770,10 @@ pub fn derive_error_occurence(
                             quote::quote!{
                                 #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
                             },
+                            quote::quote!{
+                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
+                                i.error_occurence_named();
+                            }
                         )
                     },
                     // UnnamedAttribute::EoErrorOccurenceNoSDLifetime => {
@@ -3414,12 +3420,18 @@ pub fn derive_error_occurence(
                         #logic_for_into_serialize_deserialize_version_inner
                      }
                 });
+                logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
+                     #ident::#variant_ident(i) => {
+                        #logic_for_compile_time_check_error_occurence_members_inner
+                     }
+                });
             });
             let logic_for_to_string_with_config_for_source_to_string_with_config_generated = logic_for_to_string_with_config_for_source_to_string_with_config.iter();
             let logic_for_to_string_without_config_generated = logic_for_to_string_without_config.iter();
             let logic_for_enum_with_serialize_deserialize_generated = logic_for_enum_with_serialize_deserialize.iter();
             let logic_for_to_string_without_config_with_serialize_deserialize_generated = logic_for_to_string_without_config_with_serialize_deserialize.iter();
             let logic_for_into_serialize_deserialize_version_generated = logic_for_into_serialize_deserialize_version.iter();
+            let logic_for_compile_time_check_error_occurence_members_generated = logic_for_compile_time_check_error_occurence_members.iter();
             let logic_for_to_string_with_config_for_source_to_string_with_config = quote::quote! {
                 #(#logic_for_to_string_with_config_for_source_to_string_with_config_generated),*
             };
@@ -3434,6 +3446,9 @@ pub fn derive_error_occurence(
             };
             let logic_for_into_serialize_deserialize_version = quote::quote! {
                 #(#logic_for_into_serialize_deserialize_version_generated),*
+            };
+            let logic_for_compile_time_check_error_occurence_members = quote::quote! {
+                #(#logic_for_compile_time_check_error_occurence_members_generated),*
             };
             let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
                 lifetimes_for_serialize_deserialize,
@@ -3526,11 +3541,7 @@ pub fn derive_error_occurence(
                 impl<#generics> #ident<#generics> {
                     fn compile_time_check_error_occurence_members(&self) {
                         match self {
-                            //#compile_time_check_error_occurence_members_inner_generics
-//                             TwoUnnamed::ErrorOccurence(i) => {
-//                                 use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
-//                                    i.error_occurence_named();
-//                             },
+                            #logic_for_compile_time_check_error_occurence_members
                         }
                     }
                 }
@@ -3540,7 +3551,7 @@ pub fn derive_error_occurence(
     let uuu = quote::quote! {
         #generated_impl_with_serialize_deserialize_alternatives
     };
-    // println!("{uuu}");
+    println!("{uuu}");
     uuu.into()
 }
 
