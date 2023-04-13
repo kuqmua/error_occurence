@@ -214,7 +214,6 @@ enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
 
-//todo impl empty traits for named and unnamed variants. in field named must be add only unnmaed and in unnamed must be only named
 //todo - for some reason there is no \n symbolin vec<&'str>
 //  al: [
 //   first_vec_elem, second_vec_elem
@@ -1302,7 +1301,10 @@ pub fn derive_error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.error_occurence_unnamed();
+                                            {
+                                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
+                                                #field_ident.error_occurence_named();
+                                            }
                                         },
                                     )
                                 },
@@ -1350,7 +1352,10 @@ pub fn derive_error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.error_occurence_unnamed();
+                                            {
+                                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
+                                                #field_ident.error_occurence_named();
+                                            }
                                         },
                                     )
                                 },
@@ -1543,6 +1548,7 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.iter().for_each(|i|{
+                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
                                                 i.error_occurence_unnamed();
                                             });
                                         },
@@ -1603,6 +1609,7 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.iter().for_each(|i|{
+                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
                                                 i.error_occurence_unnamed();
                                             });
                                         },
@@ -1852,6 +1859,7 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|{
+                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -1937,6 +1945,7 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|{
+                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -2149,6 +2158,7 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|{
+                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -2219,6 +2229,7 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|{
+                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -2401,10 +2412,7 @@ pub fn derive_error_occurence(
                     #ident::#variant_ident {
                         #(#enum_fields_logic_for_compile_time_check_error_occurence_members_iter),*
                     } => {
-                        use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;//todo optimize and detect - is there error_occurence attributs or not
-                        // #ident_with_serialize_deserialize_token_stream::#variant_ident {
-                            #(#fields_logic_for_compile_time_check_error_occurence_members_iter)*
-                        // }
+                        #(#fields_logic_for_compile_time_check_error_occurence_members_iter)*
                     }
                 });
             });
@@ -2563,14 +2571,6 @@ pub fn derive_error_occurence(
                     fn compile_time_check_error_occurence_members(&self) {
                         match self {
                                #logic_for_compile_time_check_error_occurence_members
-//                             OneNamed::Something { first, second, three, code_occurence: _code_occurence } => {
-//                                 use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-//                                 first.error_occurence_unnamed();
-//                                 second.error_occurence_unnamed();
-//                                 three.iter().for_each(|i|{
-//                                     i.error_occurence_unnamed();
-//                                 });
-//                             },
                         }
                     }
                 }
@@ -2905,7 +2905,10 @@ pub fn derive_error_occurence(
                                 #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
                             },
                             quote::quote!{
-                                i.error_occurence_named();
+                                {
+                                    use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
+                                    i.error_occurence_named();
+                                }
                             }
                         )
                     },
@@ -3555,7 +3558,6 @@ pub fn derive_error_occurence(
                 });
                 logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
                      #ident::#variant_ident(i) => {
-                        use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;//if over attributes would be supported than check if need to add this import
                         #logic_for_compile_time_check_error_occurence_members_inner
                      }
                 });
