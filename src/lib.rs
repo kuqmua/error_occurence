@@ -619,9 +619,10 @@ pub fn derive_error_occurence(
         panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum");
     };
     let generics_len = ast.generics.params.len();
-    // if generics_len != 1 {
-    //     panic!("{proc_macro_name} {ident_stringified} generics_len != 1");
-    // }
+    //its really hard to support more than 1 lifetimes coz dont know how many generics would be in the WithSerializeDeserialize inner error_occurence variants and fields
+    if generics_len != 1 {
+        panic!("{proc_macro_name} {ident_stringified} generics_len != 1");
+    }
     let generics = {
         let mut lifetimes_stringified = ast.generics.params.iter()
         .fold(String::from(""), |mut acc, gen_param| {
