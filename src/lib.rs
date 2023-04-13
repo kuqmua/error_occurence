@@ -213,7 +213,7 @@ enum NamedAttribute {
 enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
-//todo change quote::quote! {} to TokenStream::new() or something
+
 //todo impl empty traits for named and unnamed variants. in field named must be add only unnmaed and in unnamed must be only named
 //todo - for some reason there is no \n symbolin vec<&'str>
 //  al: [
@@ -1158,7 +1158,7 @@ pub fn derive_error_occurence(
                                                 quote::quote! {
                                                     #field_ident: #unused_argument_handle_token_stream
                                                 },
-                                                quote::quote! {},
+                                                proc_macro2::TokenStream::new(),
                                             )
                                         },
                                         SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
@@ -1198,7 +1198,7 @@ pub fn derive_error_occurence(
                                                 quote::quote! {
                                                     #field_ident: #unused_argument_handle_token_stream
                                                 },
-                                                quote::quote! {},
+                                                proc_macro2::TokenStream::new(),
                                             )
                                         },
                                         _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] only supports SupportedContainer::Path and SupportedContainer::Reference"),
@@ -1240,11 +1240,11 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             #std_string_string_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoErrorOccurenceSDLifetime => {
@@ -1422,7 +1422,7 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoVecDisplayForeignType => {
@@ -1470,11 +1470,11 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             std::vec::Vec<#std_string_string_token_stream>
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoVecErrorOccurenceSDLifetime => {
@@ -1597,7 +1597,7 @@ pub fn derive_error_occurence(
                                             }
                                         },
                                         type_token_stream,
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                         quote::quote! {
                                             #field_ident
                                         },
@@ -1687,7 +1687,7 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType => {
@@ -1766,7 +1766,7 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime => {
@@ -2010,7 +2010,7 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
@@ -2063,11 +2063,11 @@ pub fn derive_error_occurence(
                                             }
                                         },
                                         type_token_stream,
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                         quote::quote! {
                                             #field_ident: #unused_argument_handle_token_stream
                                         },
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime => {
@@ -2213,7 +2213,7 @@ pub fn derive_error_occurence(
                                             }
                                         },
                                         type_token_stream,
-                                        quote::quote! {},
+                                        proc_macro2::TokenStream::new(),
                                         quote::quote! {
                                             #field_ident
                                         },
