@@ -214,10 +214,6 @@ enum UnnamedAttribute {
     EoErrorOccurenceSDLifetime,
 }
 
-//todo - for some reason there is no \n symbolin vec<&'str>
-//  al: [
-//   first_vec_elem, second_vec_elem
-//  ]
 //todo if there is ony one tag for unnamed variant -maybe just remove it?
 //todo if only error_occurence would be in unnamed variant - maybe no need for no_sd_lifetime coz error_occurence must have lifetime
 #[proc_macro_derive(
