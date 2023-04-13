@@ -1851,7 +1851,7 @@ pub fn derive_error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.iter().for_each(|(_k, v)|{
+                                            #field_ident.values().for_each(|v|{
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -1936,7 +1936,7 @@ pub fn derive_error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.iter().for_each(|(_k, v)|{
+                                            #field_ident.values().for_each(|v|{
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -2148,7 +2148,7 @@ pub fn derive_error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.iter().for_each(|(_k, v)|{
+                                            #field_ident.values().for_each(|v|{
                                                 v.error_occurence_unnamed();
                                             });
                                         },
@@ -2218,7 +2218,7 @@ pub fn derive_error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.iter().for_each(|(_k, v)|{
+                                            #field_ident.values().for_each(|v|{
                                                 v.error_occurence_unnamed();
                                             });
                                         },
