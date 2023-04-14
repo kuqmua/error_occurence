@@ -4,183 +4,6 @@
 )]
 #![allow(clippy::too_many_arguments)]
 
-enum SuportedEnumVariant {
-    Named,
-    Unnamed,
-}
-
-enum SupportedContainer {
-    Vec{
-        path: String,
-        vec_element_type: VecElementType
-    },
-    HashMap{
-        path: String,
-        hashmap_key_type: HashMapKeyType,
-        value_segments_stringified: String, 
-        vec_value_lifetime: Vec<Lifetime>
-    },
-    Path{
-        path: String, 
-        vec_lifetime: Vec<Lifetime>,
-    },
-    Reference{
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident, 
-    },
-}
-
-fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-    vec_lifetime: &Vec<Lifetime>, 
-    lifetimes_for_serialize_deserialize: &mut Vec<String>,
-    trait_lifetime_stringified: &str,
-    proc_macro_name: &str,
-    ident_stringified: &String
-) -> proc_macro2::TokenStream {
-    vec_lifetime.iter().for_each(|k|{
-        if let Lifetime::Specified(specified_lifetime) = k {
-            if let true = specified_lifetime == &trait_lifetime_stringified.to_string() {
-                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-            }
-            if let false = lifetimes_for_serialize_deserialize.contains(&specified_lifetime) {
-                lifetimes_for_serialize_deserialize.push(specified_lifetime.clone());
-            }
-        }
-    });
-    match vec_lifetime_to_lifetime(&vec_lifetime) {
-        Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
-        Lifetime::NotSpecified => proc_macro2::TokenStream::new(),
-    }
-}
-
-fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-    key_vec_lifetime: Vec<Lifetime>, 
-    value_vec_lifetime: Vec<Lifetime>, 
-    lifetimes_for_serialize_deserialize: &mut Vec<String>,
-    trait_lifetime_stringified: &str,
-    proc_macro_name: &str,
-    ident_stringified: &String,
-) -> proc_macro2::TokenStream {
-    key_vec_lifetime.iter().for_each(|k|{
-        if let Lifetime::Specified(key_lifetime_specified) = k {
-            if let true = key_lifetime_specified == &trait_lifetime_stringified.to_string() {
-                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-            }
-            if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
-                lifetimes_for_serialize_deserialize.push(key_lifetime_specified.clone());
-            }
-        }
-    });
-    value_vec_lifetime.iter().for_each(|v|{
-        if let Lifetime::Specified(value_lifetime_specified) = v {
-            if let true = value_lifetime_specified == &trait_lifetime_stringified.to_string() {
-                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-            }
-            if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
-                lifetimes_for_serialize_deserialize.push(value_lifetime_specified.clone());
-            }
-        }
-    });
-    match (vec_lifetime_to_lifetime(&key_vec_lifetime), vec_lifetime_to_lifetime(&value_vec_lifetime)) {
-        (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
-        (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
-        (Lifetime::NotSpecified, Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
-        (Lifetime::NotSpecified, Lifetime::NotSpecified) => proc_macro2::TokenStream::new(),
-    }
-}
-
-#[derive(
-    Clone
-)]
-enum Lifetime {
-    Specified(String),
-    NotSpecified,
-}
-
-impl std::fmt::Display for Lifetime {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Lifetime::Specified(l) => write!(f, "'{l}"),
-            Lifetime::NotSpecified => write!(f, ""),
-        }
-    }
-}
-
-fn vec_lifetime_to_string(vec: &Vec<Lifetime>) -> String {
-    let mut lifetimes_stringified_handle = vec.iter().fold(String::from(""), |mut acc, path_segment| {
-        acc.push_str(&format!("{},", path_segment));
-        acc
-    });
-    lifetimes_stringified_handle.pop();
-    format!("<{lifetimes_stringified_handle}>")
-}
-
-fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> Lifetime {
-    let mut lifetime_handle = Lifetime::NotSpecified;
-    for lft in vec {
-        if let Lifetime::Specified(_) = lft {
-            lifetime_handle = lft.clone();
-            break;
-        }
-    }
-    lifetime_handle
-}
-
-enum ErrorOrCodeOccurence {
-    Error {
-        attribute: NamedAttribute,
-        supported_container: SupportedContainer,
-    },
-    CodeOccurence {
-        field_type: String,
-        vec_lifetime: Vec<Lifetime>
-    }
-}
-
-enum VecElementType {
-    Path{
-        element_path: String,
-        vec_lifetime: Vec<Lifetime>
-    },
-    Reference {
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident
-    }
-}
-
-enum HashMapKeyType {
-    Path{
-        key_segments_stringified: String,
-        vec_lifetime: Vec<Lifetime>
-    },
-    Reference {
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident
-    }
-}
-
-#[derive(
-    Debug,
-    strum_macros::EnumIter,
-    strum_macros::Display,
-    enum_extension::EnumExtension
-)]
-enum NamedAttribute {
-    EoDisplay,
-    EoDisplayForeignType,
-    EoErrorOccurenceSDLifetime,
-    EoVecDisplay,
-    EoVecDisplayForeignType,
-    EoVecErrorOccurenceSDLifetime,
-    EoHashMapKeyDisplayValueDisplay,
-    EoHashMapKeyDisplayValueDisplayForeignType,
-    EoHashMapKeyDisplayValueErrorOccurenceSDLifetime,
-    EoHashMapKeyDisplayForeignTypeValueDisplay,
-    EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
-    EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime,
-}
-
-//todo if there is ony one tag for unnamed variant -maybe just remove it?
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
@@ -531,7 +354,7 @@ pub fn derive_error_occurence(
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {std_string_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let only_supports_supported_container_stringified = "only supports SupportedContainer::";
-    let two_or_more_supported_attributes_error_message = "two or more supported attributes!";
+    let str_stringified = "str";
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
         data_enum
     }
@@ -678,24 +501,112 @@ pub fn derive_error_occurence(
                                 }
                             },
                             false => {
-                                let attribute = get_supported_named_attribute(
-                                    &field.attrs,
-                                    proc_macro_name,
-                                    &ident_stringified,
-                                    two_or_more_supported_attributes_error_message,
-                                    eo_display_stringified,
-                                    eo_display_foreign_type_stringified,
-                                    eo_error_occurence_sd_lifetime_stringified,
-                                    eo_vec_display_stringified,
-                                    eo_vec_display_foreign_type_stringified,
-                                    eo_vec_error_occurence_sd_lifetime_stringified,
-                                    eo_hashmap_key_display_value_display_stringified,
-                                    eo_hashmap_key_display_value_display_foreign_type_stringified,
-                                    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified,
-                                    eo_hashmap_key_display_foreign_type_value_display_stringified,
-                                    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified,
-                                    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified,
-                                );
+                                let attribute = {
+                                    let mut option_attribute = None;
+                                    field.attrs.iter().for_each(|attr|{
+                                        if let true = attr.path.segments.len() == 1 {
+                                            let two_or_more_supported_attributes_error_message = "two or more supported attributes!";
+                                            if let true = attr.path.segments[0].ident == eo_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoErrorOccurenceSDLifetime);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecErrorOccurenceSDLifetime);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
+                                                }
+                                            }
+                                            //other attributes are not for this proc_macro
+                                        }//other attributes are not for this proc_macro
+                                    });
+                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
+                                };
                                 let error_message = "supports only syn::Type::Path and syn::Type::Reference";
                                 let supported_container = match &field.ty {
                                     syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
@@ -752,7 +663,7 @@ pub fn derive_error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
                                                                 };
-                                                                if let true = &reference_ident.to_string() == "str" {
+                                                                if let true = &reference_ident.to_string() == str_stringified {
                                                                     VecElementType::Reference {
                                                                         reference_ident,
                                                                         lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident
@@ -833,7 +744,7 @@ pub fn derive_error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
                                                                 };
-                                                                if let true = &reference_ident.to_string() == "str" {
+                                                                if let true = &reference_ident.to_string() == str_stringified {
                                                                     HashMapKeyType::Reference {
                                                                         reference_ident,
                                                                         lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident
@@ -926,7 +837,7 @@ pub fn derive_error_occurence(
                                         else {
                                             panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
                                         };
-                                        if let true = &reference_ident.to_string() == "str" {
+                                        if let true = &reference_ident.to_string() == str_stringified {
                                              SupportedContainer::Reference{
                                                 reference_ident,
                                                 lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident,
@@ -2474,6 +2385,183 @@ pub fn derive_error_occurence(
     }
 }
 
+
+enum SuportedEnumVariant {
+    Named,
+    Unnamed,
+}
+
+enum SupportedContainer {
+    Vec{
+        path: String,
+        vec_element_type: VecElementType
+    },
+    HashMap{
+        path: String,
+        hashmap_key_type: HashMapKeyType,
+        value_segments_stringified: String, 
+        vec_value_lifetime: Vec<Lifetime>
+    },
+    Path{
+        path: String, 
+        vec_lifetime: Vec<Lifetime>,
+    },
+    Reference{
+        reference_ident: proc_macro2::Ident,
+        lifetime_ident: proc_macro2::Ident, 
+    },
+}
+
+fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+    vec_lifetime: &Vec<Lifetime>, 
+    lifetimes_for_serialize_deserialize: &mut Vec<String>,
+    trait_lifetime_stringified: &str,
+    proc_macro_name: &str,
+    ident_stringified: &String
+) -> proc_macro2::TokenStream {
+    vec_lifetime.iter().for_each(|k|{
+        if let Lifetime::Specified(specified_lifetime) = k {
+            if let true = specified_lifetime == &trait_lifetime_stringified.to_string() {
+                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+            }
+            if let false = lifetimes_for_serialize_deserialize.contains(&specified_lifetime) {
+                lifetimes_for_serialize_deserialize.push(specified_lifetime.clone());
+            }
+        }
+    });
+    match vec_lifetime_to_lifetime(&vec_lifetime) {
+        Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
+        Lifetime::NotSpecified => proc_macro2::TokenStream::new(),
+    }
+}
+
+fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
+    key_vec_lifetime: Vec<Lifetime>, 
+    value_vec_lifetime: Vec<Lifetime>, 
+    lifetimes_for_serialize_deserialize: &mut Vec<String>,
+    trait_lifetime_stringified: &str,
+    proc_macro_name: &str,
+    ident_stringified: &String,
+) -> proc_macro2::TokenStream {
+    key_vec_lifetime.iter().for_each(|k|{
+        if let Lifetime::Specified(key_lifetime_specified) = k {
+            if let true = key_lifetime_specified == &trait_lifetime_stringified.to_string() {
+                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+            }
+            if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
+                lifetimes_for_serialize_deserialize.push(key_lifetime_specified.clone());
+            }
+        }
+    });
+    value_vec_lifetime.iter().for_each(|v|{
+        if let Lifetime::Specified(value_lifetime_specified) = v {
+            if let true = value_lifetime_specified == &trait_lifetime_stringified.to_string() {
+                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+            }
+            if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
+                lifetimes_for_serialize_deserialize.push(value_lifetime_specified.clone());
+            }
+        }
+    });
+    match (vec_lifetime_to_lifetime(&key_vec_lifetime), vec_lifetime_to_lifetime(&value_vec_lifetime)) {
+        (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
+        (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
+        (Lifetime::NotSpecified, Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
+        (Lifetime::NotSpecified, Lifetime::NotSpecified) => proc_macro2::TokenStream::new(),
+    }
+}
+
+#[derive(
+    Clone
+)]
+enum Lifetime {
+    Specified(String),
+    NotSpecified,
+}
+
+impl std::fmt::Display for Lifetime {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Lifetime::Specified(l) => write!(f, "'{l}"),
+            Lifetime::NotSpecified => write!(f, ""),
+        }
+    }
+}
+
+fn vec_lifetime_to_string(vec: &Vec<Lifetime>) -> String {
+    let mut lifetimes_stringified_handle = vec.iter().fold(String::from(""), |mut acc, path_segment| {
+        acc.push_str(&format!("{},", path_segment));
+        acc
+    });
+    lifetimes_stringified_handle.pop();
+    format!("<{lifetimes_stringified_handle}>")
+}
+
+fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> Lifetime {
+    let mut lifetime_handle = Lifetime::NotSpecified;
+    for lft in vec {
+        if let Lifetime::Specified(_) = lft {
+            lifetime_handle = lft.clone();
+            break;
+        }
+    }
+    lifetime_handle
+}
+
+enum ErrorOrCodeOccurence {
+    Error {
+        attribute: NamedAttribute,
+        supported_container: SupportedContainer,
+    },
+    CodeOccurence {
+        field_type: String,
+        vec_lifetime: Vec<Lifetime>
+    }
+}
+
+enum VecElementType {
+    Path{
+        element_path: String,
+        vec_lifetime: Vec<Lifetime>
+    },
+    Reference {
+        reference_ident: proc_macro2::Ident,
+        lifetime_ident: proc_macro2::Ident
+    }
+}
+
+enum HashMapKeyType {
+    Path{
+        key_segments_stringified: String,
+        vec_lifetime: Vec<Lifetime>
+    },
+    Reference {
+        reference_ident: proc_macro2::Ident,
+        lifetime_ident: proc_macro2::Ident
+    }
+}
+
+#[derive(
+    Debug,
+    strum_macros::EnumIter,
+    strum_macros::Display,
+    enum_extension::EnumExtension
+)]
+enum NamedAttribute {
+    EoDisplay,
+    EoDisplayForeignType,
+    EoErrorOccurenceSDLifetime,
+    EoVecDisplay,
+    EoVecDisplayForeignType,
+    EoVecErrorOccurenceSDLifetime,
+    EoHashMapKeyDisplayValueDisplay,
+    EoHashMapKeyDisplayValueDisplayForeignType,
+    EoHashMapKeyDisplayValueErrorOccurenceSDLifetime,
+    EoHashMapKeyDisplayForeignTypeValueDisplay,
+    EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
+    EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime,
+}
+
 fn form_last_arg_lifetime_vec(
     type_path_handle: &syn::TypePath, 
     proc_macro_name: &str, 
@@ -2499,129 +2587,6 @@ fn form_last_arg_lifetime_vec(
     else {
         panic!("{proc_macro_name} {ident_stringified} {first_field_type_stringified_name} type_path.path.segments.last() is None");
     }
-}
-
-fn get_supported_named_attribute(
-    attrs: &Vec<syn::Attribute>,
-    proc_macro_name: &str,
-    ident_stringified: &String,
-    two_or_more_supported_attributes_error_message: &str,
-    eo_display_stringified: &str,
-    eo_display_foreign_type_stringified: &str,
-    eo_error_occurence_sd_lifetime_stringified: &str,
-    eo_vec_display_stringified: &str,
-    eo_vec_display_foreign_type_stringified: &str,
-    eo_vec_error_occurence_sd_lifetime_stringified: &str,
-    eo_hashmap_key_display_value_display_stringified: &str,
-    eo_hashmap_key_display_value_display_foreign_type_stringified: &str,
-    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified: &str,
-    eo_hashmap_key_display_foreign_type_value_display_stringified: &str,
-    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified: &str,
-    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified: &str,
-) -> NamedAttribute {
-    let mut option_attribute = None;
-    attrs.iter().for_each(|attr|{
-        if let true = attr.path.segments.len() == 1 {
-            if let true = attr.path.segments[0].ident == eo_display_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoDisplay);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoDisplayForeignType);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoErrorOccurenceSDLifetime);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoVecDisplay);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoVecErrorOccurenceSDLifetime);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplay);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
-                }
-            }
-            //other attributes are not for this proc_macro
-        }//other attributes are not for this proc_macro
-    });
-    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
 }
 
 fn lifetimes_for_serialize_deserialize_into_token_stream(
