@@ -137,24 +137,6 @@ enum ErrorOrCodeOccurence {
     }
 }
 
-#[derive(
-    Debug,
-    strum_macros::EnumIter,
-    strum_macros::Display,
-    enum_extension::EnumExtension
-)]
-enum ErrorFieldName {
-    Error,
-    InnerError,
-    InnerErrors,
-}
-
-impl ErrorFieldName {
-    fn to_all_variants_lower_case_string_vec() -> Vec<String> {
-        Self::into_array().into_iter().map(|e|e.to_lower_snake_case()).collect::<Vec<String>>()
-    }
-}
-
 enum VecElementType {
     Path{
         element_path: String,
@@ -196,16 +178,6 @@ enum NamedAttribute {
     EoHashMapKeyDisplayForeignTypeValueDisplay,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
     EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime,
-}
-
-#[derive(
-    Debug,
-    strum_macros::EnumIter,
-    strum_macros::Display,
-    enum_extension::EnumExtension
-)]
-enum UnnamedAttribute {
-    EoErrorOccurenceSDLifetime,
 }
 
 //todo if there is ony one tag for unnamed variant -maybe just remove it?
@@ -629,10 +601,10 @@ pub fn derive_error_occurence(
             supported_enum_variant
         }
         else {
-            panic!("{proc_macro_name} {ident_stringified} only works with enums where variants named first field name is member of {:?}", ErrorFieldName::to_all_variants_lower_case_string_vec());
+            panic!("{proc_macro_name} {ident_stringified} only works with enums where all variants are named or unnamed");
         }
     };
-    let generated_impl_with_serialize_deserialize_alternatives = match supported_enum_variant {
+    match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let variants_vec = data_enum.variants.iter().map(|variant| {
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
@@ -834,13 +806,16 @@ pub fn derive_error_occurence(
                                                                     &ident_stringified,
                                                                     first_field_type_stringified_name
                                                                 );
-                                                                let mut key_segments_stringified = type_path.path.segments.iter()
-                                                                .fold(String::from(""), |mut acc, elem| {
-                                                                    acc.push_str(&format!("{}::", elem.ident));
-                                                                    acc
-                                                                });
-                                                                key_segments_stringified.pop();
-                                                                key_segments_stringified.pop();
+                                                                let key_segments_stringified = {
+                                                                    let mut key_segments_stringified = type_path.path.segments.iter()
+                                                                    .fold(String::from(""), |mut acc, elem| {
+                                                                        acc.push_str(&format!("{}::", elem.ident));
+                                                                        acc
+                                                                    });
+                                                                    key_segments_stringified.pop();
+                                                                    key_segments_stringified.pop();
+                                                                    key_segments_stringified
+                                                                };
                                                                 HashMapKeyType::Path{
                                                                     key_segments_stringified,
                                                                     vec_lifetime
@@ -2214,7 +2189,6 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-                //dublicate inside names and unnamed
                 impl<#generics> std::fmt::Display for #ident<#generics> {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                         use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
@@ -2239,7 +2213,7 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-            }
+            }.into()
         },
         SuportedEnumVariant::Unnamed => {
             let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
@@ -2253,26 +2227,8 @@ pub fn derive_error_occurence(
                 else {
                     panic!("{proc_macro_name} {ident_stringified} only works with named fields");
                 };
-                let attribute = get_supported_unnamed_attribute(
-                    &variant.attrs,
-                    proc_macro_name,
-                    &ident_stringified,
-                    two_or_more_supported_attributes_error_message,
-                    eo_display_stringified,
-                    eo_display_foreign_type_stringified,
-                    eo_error_occurence_sd_lifetime_stringified,
-                    eo_vec_display_stringified,
-                    eo_vec_display_foreign_type_stringified,
-                    eo_vec_error_occurence_sd_lifetime_stringified,
-                    eo_hashmap_key_display_value_display_stringified,
-                    eo_hashmap_key_display_value_display_foreign_type_stringified,
-                    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified,
-                    eo_hashmap_key_display_foreign_type_value_display_stringified,
-                    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified,
-                    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified,
-                );
-                (&variant.ident, type_handle, attribute)
-            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type, UnnamedAttribute)>>();
+                (&variant.ident, type_handle)
+            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type)>>();
             let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(generics_len);
             let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
@@ -2283,7 +2239,6 @@ pub fn derive_error_occurence(
             vec_variants_and_variants_types.iter().for_each(|(
                 variant_ident, 
                 first_field_type, 
-                attributes
             )|{
                 let supported_container = if let syn::Type::Path(type_path) = first_field_type {
                     let vec_lifetime = form_last_arg_lifetime_vec(
@@ -2314,56 +2269,54 @@ pub fn derive_error_occurence(
                     logic_for_to_string_without_config_with_serialize_deserialize_inner,
                     logic_for_into_serialize_deserialize_version_inner,
                     logic_for_compile_time_check_error_occurence_members_inner
-                ) = match attributes {
-                    UnnamedAttribute::EoErrorOccurenceSDLifetime => {
-                        let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
-                            (
-                                {
-                                    let type_stringified = format!(
-                                        "{path}{with_serialize_deserialize_camel_case}{}",
-                                        vec_lifetime_to_string(&vec_lifetime)
-                                    );
-                                    type_stringified
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                },
-                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                    &vec_lifetime, 
-                                    &mut lifetimes_for_serialize_deserialize,
-                                    trait_lifetime_stringified,
-                                    proc_macro_name,
-                                    &ident_stringified,
-                                )
-                            )
-                        }
-                        else {
-                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
-                        };
+                ) = {
+                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                         (
-                            quote::quote!{
-                                i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                            {
+                                let type_stringified = format!(
+                                    "{path}{with_serialize_deserialize_camel_case}{}",
+                                    vec_lifetime_to_string(&vec_lifetime)
+                                );
+                                type_stringified
+                                .parse::<proc_macro2::TokenStream>()
+                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                             },
-                            quote::quote!{
-                                i.#to_string_without_config_token_stream()
-                            },
-                            quote::quote!{
-                                #serde_borrow_token_stream
-                                #variant_ident(#type_token_stream)
-                            },
-                            quote::quote!{
-                                i.#to_string_without_config_with_serialize_deserialize_token_stream()
-                            },
-                            quote::quote!{
-                                #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
-                            },
-                            quote::quote!{
-                                {
-                                    use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
-                                    i.error_occurence_named();
-                                }
-                            }
+                            get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                &vec_lifetime, 
+                                &mut lifetimes_for_serialize_deserialize,
+                                trait_lifetime_stringified,
+                                proc_macro_name,
+                                &ident_stringified,
+                            )
                         )
-                    },
+                    }
+                    else {
+                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
+                    };
+                    (
+                        quote::quote!{
+                            i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
+                        },
+                        quote::quote!{
+                            i.#to_string_without_config_token_stream()
+                        },
+                        quote::quote!{
+                            #serde_borrow_token_stream
+                            #variant_ident(#type_token_stream)
+                        },
+                        quote::quote!{
+                            i.#to_string_without_config_with_serialize_deserialize_token_stream()
+                        },
+                        quote::quote!{
+                            #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
+                        },
+                        quote::quote!{
+                            {
+                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
+                                i.error_occurence_named();
+                            }
+                        }
+                    )
                 };
                 logic_for_to_string_with_config_for_source_to_string_with_config.push({
                     quote::quote!{
@@ -2492,7 +2445,6 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-                //dublicate inside names and unnamed
                 impl<#generics> std::fmt::Display for #ident<#generics> {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                         use #crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
@@ -2517,13 +2469,9 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-            }
+            }.into()
         },
-    };
-    let uuu = quote::quote! {
-        #generated_impl_with_serialize_deserialize_alternatives
-    };
-    uuu.into()
+    }
 }
 
 fn form_last_arg_lifetime_vec(
@@ -2669,75 +2617,6 @@ fn get_supported_named_attribute(
                 else {
                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
                 }
-            }
-            //other attributes are not for this proc_macro
-        }//other attributes are not for this proc_macro
-    });
-    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
-}
-
-fn get_supported_unnamed_attribute(
-    attrs: &Vec<syn::Attribute>,
-    proc_macro_name: &str,
-    ident_stringified: &String,
-    two_or_more_supported_attributes_error_message: &str,
-    eo_display_stringified: &str,
-    eo_display_foreign_type_stringified: &str,
-    eo_error_occurence_sd_lifetime_stringified: &str,
-    eo_vec_display_stringified: &str,
-    eo_vec_display_foreign_type_stringified: &str,
-    eo_vec_error_occurence_sd_lifetime_stringified: &str,
-    eo_hashmap_key_display_value_display_stringified: &str,
-    eo_hashmap_key_display_value_display_foreign_type_stringified: &str,
-    eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified: &str,
-    eo_hashmap_key_display_foreign_type_value_display_stringified: &str,
-    eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified: &str,
-    eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified: &str,
-) -> UnnamedAttribute {
-    let mut option_attribute = None;
-    let does_not_supported_for_unnamed_enum_variant_stringified = "does not supported for unnamed enum variant";
-    attrs.iter().for_each(|attr|{
-        if let true = attr.path.segments.len() == 1 {
-            if let true = attr.path.segments[0].ident == eo_display_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_foreign_type_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
-                if let true = option_attribute.is_some() {
-                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
-                }
-                else {
-                    option_attribute = Some(UnnamedAttribute::EoErrorOccurenceSDLifetime);
-                }
-            }
-            else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_foreign_type_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_sd_lifetime_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_display_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_display_foreign_type_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_display_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
-            }
-            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
-                panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified}] {does_not_supported_for_unnamed_enum_variant_stringified}");
             }
             //other attributes are not for this proc_macro
         }//other attributes are not for this proc_macro
