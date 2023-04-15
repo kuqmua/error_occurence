@@ -9,16 +9,16 @@
     attributes(
         eo_display, 
         eo_display_foreign_type,
-        eo_error_occurence_sd_lifetime,//rename sd_lifetime
+        eo_error_occurence,
         eo_vec_display,
         eo_vec_display_foreign_type,
-        eo_vec_error_occurence_sd_lifetime,
+        eo_vec_error_occurence,
         eo_hashmap_key_display_value_display,
         eo_hashmap_key_display_value_display_foreign_type,
-        eo_hashmap_key_display_value_error_occurence_sd_lifetime,
+        eo_hashmap_key_display_value_error_occurence,
         eo_hashmap_key_display_foreign_type_value_display,
         eo_hashmap_key_display_foreign_type_value_display_foreign_type,
-        eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime,
+        eo_hashmap_key_display_foreign_type_value_error_occurence,
     )
 )]
 pub fn derive_error_occurence(
@@ -56,16 +56,16 @@ pub fn derive_error_occurence(
     let with_serialize_deserialize_camel_case = "WithSerializeDeserialize";
     let eo_display_stringified = format!("eo_{display_lower_case}");
     let eo_display_foreign_type_stringified = format!("eo_{display_foreign_type_lower_case}");
-    let eo_error_occurence_sd_lifetime_stringified = "eo_error_occurence_sd_lifetime";
+    let eo_error_occurence_stringified = "eo_error_occurence";
     let eo_vec_display_stringified = format!("eo_vec_{display_lower_case}");
     let eo_vec_display_foreign_type_stringified = format!("eo_vec_{display_foreign_type_lower_case}");
-    let eo_vec_error_occurence_sd_lifetime_stringified = "eo_vec_error_occurence_sd_lifetime";
+    let eo_vec_error_occurence_stringified = "eo_vec_error_occurence";
     let eo_hashmap_key_display_value_display_stringified = format!("eo_hashmap_key_{display_lower_case}_value_{display_lower_case}");
     let eo_hashmap_key_display_value_display_foreign_type_stringified = format!("eo_hashmap_key_{display_lower_case}_value_{display_foreign_type_lower_case}");
-    let eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified = "eo_hashmap_key_{display_lower_case}_value_error_occurence_sd_lifetime";
+    let eo_hashmap_key_display_value_error_occurence_stringified = "eo_hashmap_key_{display_lower_case}_value_error_occurence";
     let eo_hashmap_key_display_foreign_type_value_display_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_display");
     let eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_{display_foreign_type_lower_case}");
-    let eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_error_occurence_sd_lifetime");
+    let eo_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_error_occurence");
     let to_string_camel_case = "ToString";
     let to_string_lower_case = to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let to_string_token_stream = to_string_lower_case
@@ -527,12 +527,12 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_error_occurence_sd_lifetime_stringified {
+                                            else if let true = attr.path.segments[0].ident == eo_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoErrorOccurenceSDLifetime);
+                                                    option_attribute = Some(NamedAttribute::EoErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
@@ -551,12 +551,12 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_sd_lifetime_stringified {
+                                            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecErrorOccurenceSDLifetime);
+                                                    option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
@@ -575,12 +575,12 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified {
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
@@ -599,12 +599,12 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified {
+                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
                                                 }
                                             }
                                             //other attributes are not for this proc_macro
@@ -1083,7 +1083,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoErrorOccurenceSDLifetime => {
+                                NamedAttribute::EoErrorOccurence => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
@@ -1102,7 +1102,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
                                     };
                                     (
                                         quote::quote! {
@@ -1268,7 +1268,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoVecErrorOccurenceSDLifetime => {
+                                NamedAttribute::EoVecErrorOccurence => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type
@@ -1291,11 +1291,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_sd_lifetime_stringified}] only supports VecElementType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_stringified}] only supports VecElementType::Path");
                                         }                                        
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}{vec_name}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_stringified}] {only_supports_supported_container_stringified}{vec_name}");
                                     };
                                     (
                                         quote::quote! {
@@ -1501,7 +1501,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayValueErrorOccurenceSDLifetime => {
+                                NamedAttribute::EoHashMapKeyDisplayValueErrorOccurence => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1545,7 +1545,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_error_occurence_stringified}] {only_supports_supported_container_stringified}HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -1718,7 +1718,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime => {
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -1746,11 +1746,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_stringified}] only supports HashMapKeyType::Path");
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}HashMap");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_stringified}] {only_supports_supported_container_stringified}HashMap");
                                     };
                                     (
                                         quote::quote! {
@@ -2212,7 +2212,7 @@ pub fn derive_error_occurence(
                         )
                     }
                     else {
-                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_sd_lifetime_stringified}] {only_supports_supported_container_stringified}Path");
+                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
                     };
                     (
                         quote::quote!{
@@ -2560,16 +2560,16 @@ enum HashMapKeyType {
 enum NamedAttribute {
     EoDisplay,
     EoDisplayForeignType,
-    EoErrorOccurenceSDLifetime,
+    EoErrorOccurence,
     EoVecDisplay,
     EoVecDisplayForeignType,
-    EoVecErrorOccurenceSDLifetime,
+    EoVecErrorOccurence,
     EoHashMapKeyDisplayValueDisplay,
     EoHashMapKeyDisplayValueDisplayForeignType,
-    EoHashMapKeyDisplayValueErrorOccurenceSDLifetime,
+    EoHashMapKeyDisplayValueErrorOccurence,
     EoHashMapKeyDisplayForeignTypeValueDisplay,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
-    EoHashMapKeyDisplayForeignTypeValueErrorOccurenceSDLifetime,
+    EoHashMapKeyDisplayForeignTypeValueErrorOccurence,
 }
 
 fn form_last_arg_lifetime_vec(
