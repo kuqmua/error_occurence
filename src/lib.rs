@@ -33,7 +33,8 @@ pub fn derive_error_occurence(
     }));
     
 
-    let vec_name = "Vec";
+    let vec_camel_case = "Vec";
+    let vec_lower_case = vec_camel_case.to_lowercase();
     let hashmap_camel_case = "HashMap";
     let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
     let display_camel_case = "Display";
@@ -64,19 +65,21 @@ pub fn derive_error_occurence(
     display_foreign_type_lower_case
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let key_stringified = "key";
+    let value_stringified = "value"; 
     let attribute_prefix_stringified = "eo_";
     let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
     let attribute_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
     let attribute_error_occurence_stringified = format!("{attribute_prefix_stringified}{error_occurence_lower_case}");
-    let attribute_vec_display_stringified = format!("{attribute_prefix_stringified}vec_{display_lower_case}");
-    let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}vec_{display_foreign_type_lower_case}");
-    let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}vec_{error_occurence_lower_case}");
-    let attribute_hashmap_key_display_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{display_lower_case}");
-    let attribute_hashmap_key_display_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{display_foreign_type_lower_case}");
-    let attribute_hashmap_key_display_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{error_occurence_lower_case}");
-    let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_lower_case}");
-    let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_foreign_type_lower_case}");
-    let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{error_occurence_lower_case}");
+    let attribute_vec_display_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}");
+    let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}");
+    let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{error_occurence_lower_case}");
+    let attribute_hashmap_key_display_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{display_lower_case}");
+    let attribute_hashmap_key_display_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
+    let attribute_hashmap_key_display_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{error_occurence_lower_case}");
+    let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}");
+    let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
+    let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
     let into_camel_case = "Into";
     let into_lower_case = into_camel_case.to_lowercase();
     let string_camel_case = "String";
@@ -129,7 +132,7 @@ pub fn derive_error_occurence(
     crate_traits_display_foreign_type_display_foreign_type_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_display_to_string_camel_case = format!("{vec_name}{display_camel_case}{to_string_camel_case}");
+    let vec_display_to_string_camel_case = format!("{vec_camel_case}{display_camel_case}{to_string_camel_case}");
     let vec_display_to_string_lower_case = vec_display_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_display_to_string_lower_case_token_stream = 
     vec_display_to_string_lower_case
@@ -140,7 +143,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_display_foreign_type_to_string_camel_case = format!("{vec_name}{display_foreign_type_camel_case}{to_string_camel_case}");
+    let vec_display_foreign_type_to_string_camel_case = format!("{vec_camel_case}{display_foreign_type_camel_case}{to_string_camel_case}");
     let vec_display_foreign_type_to_string_lower_case = vec_display_foreign_type_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_display_foreign_type_to_string_lower_case_token_stream = 
     vec_display_foreign_type_to_string_lower_case
@@ -151,7 +154,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_display_foreign_type_to_string_vec_display_foreign_type_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_display_foreign_type_into_vec_string_camel_case = format!("{vec_name}{display_foreign_type_camel_case}{into_camel_case}{vec_name}{string_camel_case}");
+    let vec_display_foreign_type_into_vec_string_camel_case = format!("{vec_camel_case}{display_foreign_type_camel_case}{into_camel_case}{vec_camel_case}{string_camel_case}");
     let vec_display_foreign_type_into_vec_string_lower_case = vec_display_foreign_type_into_vec_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_display_foreign_type_into_vec_string_lower_case_token_stream = 
     vec_display_foreign_type_into_vec_string_lower_case
@@ -162,7 +165,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_vec_display_foreign_type_into_vec_string_vec_display_foreign_type_into_vec_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_display_foreign_type_into_vec_string_vec_display_foreign_type_into_vec_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_to_string_without_config_to_string_camel_case = format!("{vec_name}{to_string_without_config_camel_case}{to_string_camel_case}");
+    let vec_to_string_without_config_to_string_camel_case = format!("{vec_camel_case}{to_string_without_config_camel_case}{to_string_camel_case}");
     let vec_to_string_without_config_to_string_lower_case = vec_to_string_without_config_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_to_string_without_config_to_string_lower_case_token_stream = 
     vec_to_string_without_config_to_string_lower_case
@@ -173,7 +176,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_vec_to_string_without_config_to_string_vec_to_string_without_config_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_to_string_without_config_to_string_vec_to_string_without_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("{vec_name}{to_string_without_config_camel_case}{to_string_camel_case}{with_serialize_deserialize_camel_case}");
+    let vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("{vec_camel_case}{to_string_without_config_camel_case}{to_string_camel_case}{with_serialize_deserialize_camel_case}");
     let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case = vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream = 
     vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case
@@ -229,7 +232,7 @@ pub fn derive_error_occurence(
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("{hashmap_camel_case}{display_camel_case}{to_string_without_config_camel_case}{to_string_camel_case}{with_serialize_deserialize_camel_case}");
-    let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}_with_serialize_deserialize");
+    let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}_{with_serialize_deserialize_lower_case}");
     let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream = 
     hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case
     .parse::<proc_macro2::TokenStream>()
@@ -640,7 +643,7 @@ pub fn derive_error_occurence(
                                     syn::Type::Path(type_path) => {
                                         let path_segment = type_path.path.segments.last()
                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() is None"));
-                                        if path_segment.ident == vec_name {
+                                        if path_segment.ident == vec_camel_case {
                                             let mut segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
                                                 acc.push_str(&format!("{}::", elem.ident));
@@ -1237,7 +1240,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{vec_name}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{vec_camel_case}");
                                     }
                                     (
                                         quote::quote! {
@@ -1305,7 +1308,7 @@ pub fn derive_error_occurence(
                                         }                                        
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] {only_supports_supported_container_stringified}{vec_name}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] {only_supports_supported_container_stringified}{vec_camel_case}");
                                     };
                                     (
                                         quote::quote! {
