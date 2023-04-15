@@ -43,7 +43,7 @@ pub fn derive_error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {trait_lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let vec_name = "Vec";
     let hashmap_camel_case = "HashMap";
-    let hashmap_lower_case = "hashmap";
+    let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
     let display_camel_case = "Display";
     let display_lower_case = display_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let foreign_type_camel_case = "ForeignType";
@@ -63,7 +63,7 @@ pub fn derive_error_occurence(
     let eo_vec_error_occurence_stringified = "eo_vec_error_occurence";
     let eo_hashmap_key_display_value_display_stringified = format!("eo_{hashmap_lower_case}_key_{display_lower_case}_value_{display_lower_case}");
     let eo_hashmap_key_display_value_display_foreign_type_stringified = format!("eo_{hashmap_lower_case}_key_{display_lower_case}_value_{display_foreign_type_lower_case}");
-    let eo_hashmap_key_display_value_error_occurence_stringified = "eo_{hashmap_lower_case}_key_{display_lower_case}_value_error_occurence";
+    let eo_hashmap_key_display_value_error_occurence_stringified = format!("eo_{hashmap_lower_case}_key_{display_lower_case}_value_error_occurence");
     let eo_hashmap_key_display_foreign_type_value_display_stringified = format!("eo_{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_lower_case}");
     let eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("eo_{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_foreign_type_lower_case}");
     let eo_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("eo_{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_error_occurence");
