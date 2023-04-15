@@ -57,10 +57,11 @@ pub fn derive_error_occurence(
     let eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = "eo_hashmap_key_display_foreign_type_value_display_foreign_type";
     let eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified = "eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime";
     let display_foreign_type_stringified = "display_foreign_type";
-    let to_string_stringified = "to_string";
-    let to_string_token_stream = to_string_stringified
+    let to_string_camel_case = "ToString";
+    let to_string_lower_case = to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let to_string_token_stream = to_string_lower_case
         .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
     use convert_case::Casing;
     let with_serialize_deserialize_lower_case = with_serialize_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let ident_with_serialize_deserialize_stringified = format!("{ident}{with_serialize_deserialize_camel_case}");
@@ -141,7 +142,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_vec_display_foreign_type_into_vec_string_vec_display_foreign_type_into_vec_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_display_foreign_type_into_vec_string_vec_display_foreign_type_into_vec_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_to_string_without_config_to_string_camel_case = "VecToStringWithoutConfigToString";
+    let vec_to_string_without_config_to_string_camel_case = format!("Vec{to_string_without_config_camel_case}ToString");
     let vec_to_string_without_config_to_string_lower_case = vec_to_string_without_config_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_to_string_without_config_to_string_lower_case_token_stream = 
     vec_to_string_without_config_to_string_lower_case
@@ -152,7 +153,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_vec_to_string_without_config_to_string_vec_to_string_without_config_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_vec_to_string_without_config_to_string_vec_to_string_without_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("VecToStringWithoutConfigToString{with_serialize_deserialize_camel_case}");
+    let vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("Vec{to_string_without_config_camel_case}ToString{with_serialize_deserialize_camel_case}");
     let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case = vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream = 
     vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case
@@ -196,7 +197,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let hashmap_display_to_string_without_config_to_string_camel_case = "HashmapDisplayToStringWithoutConfigToString";
+    let hashmap_display_to_string_without_config_to_string_camel_case = format!("HashmapDisplay{to_string_without_config_camel_case}ToString");
     let hashmap_display_to_string_without_config_to_string_lower_case = "hashmap_display_to_string_without_config_to_string";
     let hashmap_display_to_string_without_config_to_string_lower_case_token_stream = 
     hashmap_display_to_string_without_config_to_string_lower_case
@@ -207,7 +208,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("HashmapDisplayToStringWithoutConfigToString{with_serialize_deserialize_camel_case}");
+    let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_camel_case = format!("HashmapDisplay{to_string_without_config_camel_case}ToString{with_serialize_deserialize_camel_case}");
     let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case = "hashmap_display_to_string_without_config_to_string_with_serialize_deserialize";
     let hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream = 
     hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case
@@ -262,7 +263,7 @@ pub fn derive_error_occurence(
     crate_traits_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let hashmap_display_foreign_type_to_string_without_config_to_string_camel_case = "HashMapDisplayForeignTypeToStringWithoutConfigToString";
+    let hashmap_display_foreign_type_to_string_without_config_to_string_camel_case = format!("HashMapDisplayForeignType{to_string_without_config_camel_case}ToString");
     let hashmap_display_foreign_type_to_string_without_config_to_string_lower_case = "hashmap_display_foreign_type_to_string_without_config_to_string";
     let hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream = 
     hashmap_display_foreign_type_to_string_without_config_to_string_lower_case
@@ -342,19 +343,20 @@ pub fn derive_error_occurence(
     get_code_occurence_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {get_code_occurence_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{source_to_string_with_config_stringified}::{source_to_string_with_config_camel_case}");
+
+    
+    
+    //
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let into_serialize_deserialize_version_stringified = "into_serialize_deserialize_version";
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let std_string_string_stringified = "std::string::String";
-    let std_string_string_token_stream = std_string_string_stringified
-    .parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {std_string_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let only_supports_supported_container_stringified = "only supports SupportedContainer::";
-    let str_stringified = "str";
+    let supported_container_double_dot_double_dot = "SupportedContainer::";
+    let only_supports_supported_container_stringified = format!("only supports {supported_container_double_dot_double_dot}");
+    //
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
         data_enum
     }
@@ -608,6 +610,7 @@ pub fn derive_error_occurence(
                                     option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
                                 };
                                 let error_message = "supports only syn::Type::Path and syn::Type::Reference";
+                                let str_stringified = "str";
                                 let supported_container = match &field.ty {
                                     syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::BareFn(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
@@ -926,6 +929,10 @@ pub fn derive_error_occurence(
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {field_name_with_field_value_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                             };
+                            let std_string_string_stringified = "std::string::String";
+                            let std_string_string_token_stream = std_string_string_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {std_string_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             let ( 
                                 logic_for_source_to_string_without_config_for_attribute,
                                 logic_for_source_to_string_without_config_with_serialize_deserialize_for_attribute,
@@ -1027,7 +1034,7 @@ pub fn derive_error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] only supports SupportedContainer::Path and SupportedContainer::Reference"),
+                                        _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference"),
                                     }
                                 },
                                 NamedAttribute::EoDisplayForeignType => {
