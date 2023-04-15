@@ -31,7 +31,22 @@ pub fn derive_error_occurence(
             eprintln!("ErrorOccurence panic occurred but can't get location information...");
         }
     }));
-    let proc_macro_name = "ErrorOccurence";
+    
+
+    let vec_name = "Vec";
+    let hashmap_camel_case = "HashMap";
+    let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
+    let display_camel_case = "Display";
+    let display_lower_case = display_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let foreign_type_camel_case = "ForeignType";
+
+    let with_serialize_deserialize_camel_case = "WithSerializeDeserialize";
+    let occurence_camel_case = "Occurence";
+    let occurence_lower_case = occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let error_camel_case = "Error";
+    let error_lower_case = error_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let proc_macro_name = format!("{error_camel_case}{occurence_camel_case}");
+
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} let ast: syn::DeriveInput = syn::parse(input) failed"));
     let ident = &ast.ident;
@@ -41,19 +56,14 @@ pub fn derive_error_occurence(
     let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {trait_lifetime_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let vec_name = "Vec";
-    let hashmap_camel_case = "HashMap";
-    let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
-    let display_camel_case = "Display";
-    let display_lower_case = display_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-    let foreign_type_camel_case = "ForeignType";
+    let code_occurence_camel_case = format!("Code{occurence_camel_case}");
     let display_foreign_type_camel_case = format!("{display_camel_case}{foreign_type_camel_case}");
     let display_foreign_type_lower_case = display_foreign_type_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let display_foreign_type_lower_case_token_stream = 
     display_foreign_type_lower_case
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let with_serialize_deserialize_camel_case = "WithSerializeDeserialize";
+    let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let attribute_prefix_stringified = "eo_";
     let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
     let attribute_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
@@ -99,8 +109,6 @@ pub fn derive_error_occurence(
     let source_to_string_without_config_token_stream = 
     source_to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {source_to_string_without_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let code_occurence_camel_case = "CodeOccurence";
-    let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let get_code_occurence_lower_case = format!("get_{code_occurence_lower_case}");
     let crate_traits_stringified = "crate::traits::";
     let crate_traits_fields_stringified = format!("{crate_traits_stringified}fields::");
@@ -460,7 +468,7 @@ pub fn derive_error_occurence(
                                                     if let syn::Type::Path(type_path) = &named.ty {
                                                         let vec_lifetime =  form_last_arg_lifetime_vec(
                                                             type_path, 
-                                                            proc_macro_name, 
+                                                            &proc_macro_name, 
                                                             &ident_stringified,
                                                         );
                                                         let code_occurence_segments_stringified = {
@@ -647,7 +655,7 @@ pub fn derive_error_occurence(
                                                             syn::Type::Path(type_path) => {
                                                                 let vec_lifetime = form_last_arg_lifetime_vec(
                                                                     type_path, 
-                                                                    proc_macro_name, 
+                                                                    &proc_macro_name, 
                                                                     &ident_stringified,
                                                                 );
                                                                 let mut element_segments_stringified = type_path.path.segments.iter()
@@ -724,7 +732,7 @@ pub fn derive_error_occurence(
                                                             syn::Type::Path(type_path) => {
                                                                 let vec_lifetime = form_last_arg_lifetime_vec(
                                                                     type_path, 
-                                                                    proc_macro_name, 
+                                                                    &proc_macro_name, 
                                                                     &ident_stringified,
                                                                 );
                                                                 let key_segments_stringified = {
@@ -774,7 +782,7 @@ pub fn derive_error_occurence(
                                                         if let syn::Type::Path(type_path) = type_handle {
                                                             let vec_lifetime = form_last_arg_lifetime_vec(
                                                                 type_path, 
-                                                                proc_macro_name, 
+                                                                &proc_macro_name, 
                                                                 &ident_stringified,
                                                             );
                                                             let mut value_segments_stringified = type_path.path.segments.iter()
@@ -816,7 +824,7 @@ pub fn derive_error_occurence(
                                         else {
                                             let vec_lifetime = form_last_arg_lifetime_vec(
                                                 type_path, 
-                                                proc_macro_name, 
+                                                &proc_macro_name, 
                                                 &ident_stringified,
                                             );
                                             let mut segments_stringified = type_path.path.segments.iter()
@@ -961,7 +969,7 @@ pub fn derive_error_occurence(
                                                     vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified
                                                 )
                                             );
@@ -1098,7 +1106,7 @@ pub fn derive_error_occurence(
                                                 vec_lifetime, 
                                                 &mut lifetimes_for_serialize_deserialize,
                                                 trait_lifetime_stringified,
-                                                proc_macro_name,
+                                                &proc_macro_name,
                                                 &ident_stringified
                                             )
                                         )
@@ -1164,7 +1172,7 @@ pub fn derive_error_occurence(
                                                     vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified
                                                 )
                                             ),
@@ -1287,7 +1295,7 @@ pub fn derive_error_occurence(
                                                     &vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified
                                                 )
                                             )
@@ -1366,7 +1374,7 @@ pub fn derive_error_occurence(
                                                     vec_value_lifetime.clone(), 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                         trait_lifetime_stringified,
-                                                        proc_macro_name,
+                                                        &proc_macro_name,
                                                         &ident_stringified,
                                                 )
                                             ),
@@ -1446,7 +1454,7 @@ pub fn derive_error_occurence(
                                                     vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified
                                                 )
                                             ),
@@ -1527,7 +1535,7 @@ pub fn derive_error_occurence(
                                                     vec_value_lifetime.clone(), 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified,
                                                 )
                                             ),
@@ -1614,7 +1622,7 @@ pub fn derive_error_occurence(
                                                     vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified
                                                 )
                                             )
@@ -1742,7 +1750,7 @@ pub fn derive_error_occurence(
                                                     vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     trait_lifetime_stringified,
-                                                    proc_macro_name,
+                                                    &proc_macro_name,
                                                     &ident_stringified
                                                 )
                                             )
@@ -1849,7 +1857,7 @@ pub fn derive_error_occurence(
                                 vec_lifetime, 
                                 &mut lifetimes_for_serialize_deserialize,
                                 trait_lifetime_stringified,
-                                proc_macro_name,
+                                &proc_macro_name,
                                 &ident_stringified
                             );
                             let code_occurence_type_with_serialize_deserialize_token_stream = {
@@ -2014,7 +2022,7 @@ pub fn derive_error_occurence(
             let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
                 lifetimes_for_serialize_deserialize,
                 trait_lifetime_stringified,
-                proc_macro_name, 
+                &proc_macro_name, 
                 &ident_stringified,
                 parse_proc_macro2_token_stream_failed_message,
             );
@@ -2166,7 +2174,7 @@ pub fn derive_error_occurence(
                 let supported_container = if let syn::Type::Path(type_path) = field_type {
                     let vec_lifetime = form_last_arg_lifetime_vec(
                         type_path, 
-                        proc_macro_name, 
+                        &proc_macro_name, 
                         &ident_stringified,
                     );
                     let mut segments_stringified = type_path.path.segments.iter()
@@ -2207,7 +2215,7 @@ pub fn derive_error_occurence(
                                 &vec_lifetime, 
                                 &mut lifetimes_for_serialize_deserialize,
                                 trait_lifetime_stringified,
-                                proc_macro_name,
+                                &proc_macro_name,
                                 &ident_stringified,
                             )
                         )
@@ -2300,7 +2308,7 @@ pub fn derive_error_occurence(
             let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
                 lifetimes_for_serialize_deserialize,
                 trait_lifetime_stringified,
-                proc_macro_name, 
+                &proc_macro_name, 
                 &ident_stringified,
                 parse_proc_macro2_token_stream_failed_message,
             );
@@ -2427,7 +2435,7 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
     vec_lifetime: &Vec<Lifetime>, 
     lifetimes_for_serialize_deserialize: &mut Vec<String>,
     trait_lifetime_stringified: &str,
-    proc_macro_name: &str,
+    proc_macro_name: &String,
     ident_stringified: &String
 ) -> proc_macro2::TokenStream {
     vec_lifetime.iter().for_each(|k|{
@@ -2451,7 +2459,7 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
     value_vec_lifetime: Vec<Lifetime>, 
     lifetimes_for_serialize_deserialize: &mut Vec<String>,
     trait_lifetime_stringified: &str,
-    proc_macro_name: &str,
+    proc_macro_name: &String,
     ident_stringified: &String,
 ) -> proc_macro2::TokenStream {
     key_vec_lifetime.iter().for_each(|k|{
@@ -2575,7 +2583,7 @@ enum NamedAttribute {
 
 fn form_last_arg_lifetime_vec(
     type_path_handle: &syn::TypePath, 
-    proc_macro_name: &str, 
+    proc_macro_name: &String, 
     ident_stringified: &String,
 ) -> Vec<Lifetime> {
     if let Some(path_segment) = type_path_handle.path.segments.last() {
@@ -2602,7 +2610,7 @@ fn form_last_arg_lifetime_vec(
 fn lifetimes_for_serialize_deserialize_into_token_stream(
     lifetimes_for_serialize_deserialize: Vec<String>,
     trait_lifetime_stringified: &str,
-    proc_macro_name: &str, 
+    proc_macro_name: &String, 
     ident_stringified: &String,
     parse_proc_macro2_token_stream_failed_message: &str,
 ) -> proc_macro2::TokenStream {
