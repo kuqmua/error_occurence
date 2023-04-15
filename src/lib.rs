@@ -40,12 +40,11 @@ pub fn derive_error_occurence(
     let display_camel_case = "Display";
     let display_lower_case = display_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let foreign_type_camel_case = "ForeignType";
-
-    let with_serialize_deserialize_camel_case = "WithSerializeDeserialize";
+    let serialize_deserialize_camel_case = "SerializeDeserialize";
+    let serialize_deserialize_lower_case = serialize_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let with_serialize_deserialize_camel_case = format!("With{serialize_deserialize_camel_case}");
     let occurence_camel_case = "Occurence";
-    let occurence_lower_case = occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let error_camel_case = "Error";
-    let error_lower_case = error_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let proc_macro_name = format!("{error_camel_case}{occurence_camel_case}");
     let error_occurence_lower_case = proc_macro_name.to_case(convert_case::Case::Snake).to_lowercase();
     let ast: syn::DeriveInput =
@@ -112,7 +111,9 @@ pub fn derive_error_occurence(
     let source_to_string_without_config_token_stream = 
     source_to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {source_to_string_without_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-    let get_code_occurence_lower_case = format!("get_{code_occurence_lower_case}");
+    let get_camel_case = "Get";
+    let get_code_occurence_camel_case = format!("{get_camel_case}{code_occurence_camel_case}");
+    let get_code_occurence_lower_case = get_code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let crate_traits_stringified = "crate::traits::";
     let crate_traits_fields_stringified = format!("{crate_traits_stringified}fields::");
     let crate_traits_error_logs_logic_stringified = format!("{crate_traits_stringified}error_logs_logic::");
@@ -305,15 +306,17 @@ pub fn derive_error_occurence(
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_fields_get_source_place_type_stringified = format!("{crate_traits_fields_stringified}Get{source_camel_case}PlaceType");
+    let crate_traits_fields_get_source_place_type_stringified = format!("{crate_traits_fields_stringified}{get_camel_case}{source_camel_case}PlaceType");
     let crate_traits_fields_get_source_place_type_token_stream = 
     crate_traits_fields_get_source_place_type_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_fields_get_source_place_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_fields_get_timezone_stringified = format!("{crate_traits_fields_stringified}GetTimezone");
+    let crate_traits_fields_get_timezone_stringified = format!("{crate_traits_fields_stringified}{get_camel_case}Timezone");
     let crate_traits_fields_get_timezone_token_stream = 
     crate_traits_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_fields_get_timezone_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_get_server_address_get_server_address_stringified = format!("{crate_traits_stringified}get_server_address::GetServerAddress");
+    let get_server_address_camel_case = format!("{get_camel_case}ServerAddress");
+    let get_server_address_lower_case = get_server_address_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let crate_traits_get_server_address_get_server_address_stringified = format!("{crate_traits_stringified}{get_server_address_lower_case}::{get_server_address_camel_case}");
     let crate_traits_get_server_address_get_server_address_token_stream = 
     crate_traits_get_server_address_get_server_address_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_get_server_address_get_server_address_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -340,7 +343,7 @@ pub fn derive_error_occurence(
     let to_string_without_config_with_serialize_deserialize_token_stream = 
     to_string_without_config_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_without_config_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified = format!("{crate_traits_error_logs_logic_stringified}{get_code_occurence_lower_case}::Get{code_occurence_camel_case}");
+    let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified = format!("{crate_traits_error_logs_logic_stringified}{get_code_occurence_lower_case}::{get_code_occurence_camel_case}");
     let crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
     crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_get_code_occurence_get_code_occurence_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -371,7 +374,7 @@ pub fn derive_error_occurence(
     let crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
     crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let into_serialize_deserialize_version_stringified = format!("{into_lower_case}_serialize_deserialize_version");
+    let into_serialize_deserialize_version_stringified = format!("{into_lower_case}_{serialize_deserialize_lower_case}_version");
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
