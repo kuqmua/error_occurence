@@ -55,18 +55,18 @@ pub fn derive_error_occurence(
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {display_foreign_type_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
     let with_serialize_deserialize_camel_case = "WithSerializeDeserialize";
     let attribute_prefix_stringified = "eo_";
-    let eo_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
-    let eo_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
-    let eo_error_occurence_stringified = format!("{attribute_prefix_stringified}error_occurence");
-    let eo_vec_display_stringified = format!("{attribute_prefix_stringified}vec_{display_lower_case}");
-    let eo_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}vec_{display_foreign_type_lower_case}");
-    let eo_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}vec_error_occurence");
-    let eo_hashmap_key_display_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{display_lower_case}");
-    let eo_hashmap_key_display_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{display_foreign_type_lower_case}");
-    let eo_hashmap_key_display_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_error_occurence");
-    let eo_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_lower_case}");
-    let eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_foreign_type_lower_case}");
-    let eo_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_error_occurence");
+    let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
+    let attribute_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
+    let attribute_error_occurence_stringified = format!("{attribute_prefix_stringified}error_occurence");
+    let attribute_vec_display_stringified = format!("{attribute_prefix_stringified}vec_{display_lower_case}");
+    let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}vec_{display_foreign_type_lower_case}");
+    let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}vec_error_occurence");
+    let attribute_hashmap_key_display_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{display_lower_case}");
+    let attribute_hashmap_key_display_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_{display_foreign_type_lower_case}");
+    let attribute_hashmap_key_display_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_lower_case}_value_error_occurence");
+    let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_lower_case}");
+    let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_{display_foreign_type_lower_case}");
+    let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_key_{display_foreign_type_lower_case}_value_error_occurence");
     let string_camel_case = "String";
     let string_lower_case = string_camel_case.to_lowercase();
     let to_string_camel_case = format!("To{string_camel_case}");
@@ -515,7 +515,7 @@ pub fn derive_error_occurence(
                                     field.attrs.iter().for_each(|attr|{
                                         if let true = attr.path.segments.len() == 1 {
                                             let two_or_more_supported_attributes_error_message = "two or more supported attributes!";
-                                            if let true = attr.path.segments[0].ident == eo_display_stringified {
+                                            if let true = attr.path.segments[0].ident == attribute_display_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -523,7 +523,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoDisplay);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_display_foreign_type_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -531,7 +531,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_error_occurence_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -539,7 +539,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoErrorOccurence);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_display_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -547,7 +547,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoVecDisplay);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_display_foreign_type_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -555,7 +555,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_vec_error_occurence_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -563,7 +563,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -571,7 +571,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplay);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_display_foreign_type_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -579,7 +579,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_value_error_occurence_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -587,7 +587,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurence);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -595,7 +595,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -603,7 +603,7 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == eo_hashmap_key_display_foreign_type_value_error_occurence_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
                                                 }
@@ -1037,13 +1037,13 @@ pub fn derive_error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_stringified}] only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference"),
+                                        _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_display_stringified}] only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference"),
                                     }
                                 },
                                 NamedAttribute::EoDisplayForeignType => {
                                     if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_display_foreign_type_stringified}] {only_supports_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_display_foreign_type_stringified}] {only_supports_supported_container_stringified}Path");
                                     }
                                     (
                                         quote::quote! {
@@ -1102,7 +1102,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
                                     };
                                     (
                                         quote::quote! {
@@ -1178,7 +1178,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_stringified}] {only_supports_supported_container_stringified}Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_stringified}] {only_supports_supported_container_stringified}Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -1223,11 +1223,11 @@ pub fn derive_error_occurence(
                                     } = supported_container {
                                         if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_foreign_type_stringified}] only supports VecElementType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] only supports VecElementType::Path");
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{vec_name}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{vec_name}");
                                     }
                                     (
                                         quote::quote! {
@@ -1291,11 +1291,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_stringified}] only supports VecElementType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] only supports VecElementType::Path");
                                         }                                        
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_vec_error_occurence_stringified}] {only_supports_supported_container_stringified}{vec_name}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] {only_supports_supported_container_stringified}{vec_name}");
                                     };
                                     (
                                         quote::quote! {
@@ -1384,7 +1384,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_display_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -1462,7 +1462,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -1545,7 +1545,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_value_error_occurence_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_error_occurence_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -1618,11 +1618,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_display_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_stringified}] only supports HashMapKeyType::Path");
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_display_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -1675,11 +1675,11 @@ pub fn derive_error_occurence(
                                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only supports HashMapKeyType::Path");
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -1746,11 +1746,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified}] only supports HashMapKeyType::Path");
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_hashmap_key_display_foreign_type_value_error_occurence_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -2211,7 +2211,7 @@ pub fn derive_error_occurence(
                         )
                     }
                     else {
-                        panic!("{proc_macro_name} {ident_stringified} attribute #[{eo_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
+                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
                     };
                     (
                         quote::quote!{
