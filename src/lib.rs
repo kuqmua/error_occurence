@@ -9,7 +9,7 @@
     attributes(
         eo_display, 
         eo_display_foreign_type,
-        eo_error_occurence_sd_lifetime,
+        eo_error_occurence_sd_lifetime,//rename sd_lifetime
         eo_vec_display,
         eo_vec_display_foreign_type,
         eo_vec_error_occurence_sd_lifetime,
@@ -57,12 +57,12 @@ pub fn derive_error_occurence(
     let eo_display_stringified = format!("eo_{display_lower_case}");
     let eo_display_foreign_type_stringified = format!("eo_{display_foreign_type_lower_case}");
     let eo_error_occurence_sd_lifetime_stringified = "eo_error_occurence_sd_lifetime";
-    let eo_vec_display_stringified = "eo_vec_display";
+    let eo_vec_display_stringified = format!("eo_vec_{display_lower_case}");
     let eo_vec_display_foreign_type_stringified = format!("eo_vec_{display_foreign_type_lower_case}");
     let eo_vec_error_occurence_sd_lifetime_stringified = "eo_vec_error_occurence_sd_lifetime";
-    let eo_hashmap_key_display_value_display_stringified = "eo_hashmap_key_display_value_display";
-    let eo_hashmap_key_display_value_display_foreign_type_stringified = format!("eo_hashmap_key_display_value_{display_foreign_type_lower_case}");
-    let eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified = "eo_hashmap_key_display_value_error_occurence_sd_lifetime";
+    let eo_hashmap_key_display_value_display_stringified = format!("eo_hashmap_key_{display_lower_case}_value_{display_lower_case}");
+    let eo_hashmap_key_display_value_display_foreign_type_stringified = format!("eo_hashmap_key_{display_lower_case}_value_{display_foreign_type_lower_case}");
+    let eo_hashmap_key_display_value_error_occurence_sd_lifetime_stringified = "eo_hashmap_key_{display_lower_case}_value_error_occurence_sd_lifetime";
     let eo_hashmap_key_display_foreign_type_value_display_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_display");
     let eo_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_{display_foreign_type_lower_case}");
     let eo_hashmap_key_display_foreign_type_value_error_occurence_sd_lifetime_stringified = format!("eo_hashmap_key_{display_foreign_type_lower_case}_value_error_occurence_sd_lifetime");
