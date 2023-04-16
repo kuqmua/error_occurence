@@ -243,70 +243,47 @@ pub fn derive_error_occurence(
             let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
             let variants_vec = data_enum.variants.iter().map(|variant| {
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
-                    let suported_enum_variant_named_syn_fields_named = format!("{suported_enum_variant_stringified}::{named_camel_case} {syn_fields}::{named_camel_case}");
                     fields_named.named.iter().map(|field|{
                         let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident {is_none_stringified}"));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
                             true => {
                                 let (code_occurence_type_stringified, code_occurence_lifetime) = {
-                                    let mut code_occurence_type_option = None;
-                                    fields_named.named.iter().for_each(|named|{
-                                        let named_field_ident = named.ident.clone()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident {is_none_stringified}"));
-                                        if named_field_ident == *code_occurence_lower_case {
-                                            match code_occurence_type_option {
-                                                Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
-                                                None => {
-                                                    if let syn::Type::Path(type_path) = &named.ty {
-                                                        let vec_lifetime =  form_last_arg_lifetime_vec(
-                                                            type_path, 
-                                                            &proc_macro_name, 
-                                                            &ident_stringified,
-                                                            supports_only_strinfigied,
-                                                            is_none_stringified,
-                                                            syn_generic_argument_type_stringified
-                                                        );
-                                                        let code_occurence_segments_stringified = {
-                                                            let mut code_occurence_type_repeat_checker = false;
-                                                            let code_occurence_segments_stringified_handle = type_path.path.segments.iter()
-                                                            .fold(String::from(""), |mut acc, path_segment| {
-                                                                let path_segment_ident = &path_segment.ident;
-                                                                match *path_segment_ident == code_occurence_camel_case {
-                                                                    true => {
-                                                                        if code_occurence_type_repeat_checker {
-                                                                            panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
-                                                                        }
-                                                                        acc.push_str(&path_segment_ident.to_string());
-                                                                        code_occurence_type_repeat_checker = true;
-                                                                    },
-                                                                    false => acc.push_str(&format!("{path_segment_ident}::")),
-                                                                }
-                                                                acc
-                                                            });
-                                                            if !code_occurence_type_repeat_checker {
-                                                                panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
+                                    if let syn::Type::Path(type_path) = &field.ty {
+                                        (
+                                            {
+                                                let mut code_occurence_type_repeat_checker = false;
+                                                let code_occurence_segments_stringified_handle = type_path.path.segments.iter()
+                                                .fold(String::from(""), |mut acc, path_segment| {
+                                                    let path_segment_ident = &path_segment.ident;
+                                                    match *path_segment_ident == code_occurence_camel_case {
+                                                        true => {
+                                                            if code_occurence_type_repeat_checker {
+                                                                panic!("{proc_macro_name} {ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
                                                             }
-                                                            code_occurence_segments_stringified_handle
-                                                        };
-                                                        code_occurence_type_option = Some(
-                                                            (
-                                                                code_occurence_segments_stringified,
-                                                                vec_lifetime,
-                                                            )
-                                                        )
-                                                      }
-                                                    else {
-                                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {supports_only_strinfigied} {syn_type_path_stringified}");
-                                                      }
-                                                 },
-                                            }
-                                        }
-                                    });
-                                    if let Some(code_occurence_type_info) = code_occurence_type_option {
-                                        code_occurence_type_info
-                                    }
+                                                            acc.push_str(&path_segment_ident.to_string());
+                                                            code_occurence_type_repeat_checker = true;
+                                                        },
+                                                        false => acc.push_str(&format!("{path_segment_ident}::")),
+                                                    }
+                                                    acc
+                                                });
+                                                if !code_occurence_type_repeat_checker {
+                                                    panic!("{proc_macro_name} {ident_stringified} no {code_occurence_camel_case} named field");
+                                                }
+                                                code_occurence_segments_stringified_handle
+                                            },
+                                            form_last_arg_lifetime_vec(
+                                                type_path, 
+                                                &proc_macro_name, 
+                                                &ident_stringified,
+                                                supports_only_strinfigied,
+                                                is_none_stringified,
+                                                syn_generic_argument_type_stringified
+                                            ),
+                                        )
+                                      }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option {is_none_stringified}");
+                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {supports_only_strinfigied} {syn_type_path_stringified}");
                                     }
                                 };
                                 ErrorOrCodeOccurence::CodeOccurence {
@@ -319,10 +296,10 @@ pub fn derive_error_occurence(
                                     let mut option_attribute = None;
                                     field.attrs.iter().for_each(|attr|{
                                         if let true = attr.path.segments.len() == 1 {
-                                            let two_or_more_supported_attributes_error_message = "two or more supported attributes!";
+                                            let error_message = format!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
                                             if let true = attr.path.segments[0].ident == attribute_display_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoDisplay);
@@ -330,7 +307,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoDisplayForeignType);
@@ -338,7 +315,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoErrorOccurence);
@@ -346,7 +323,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoVecDisplay);
@@ -354,7 +331,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
@@ -362,7 +339,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
@@ -370,7 +347,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplay);
@@ -378,7 +355,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType);
@@ -386,7 +363,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurence);
@@ -394,7 +371,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
@@ -402,7 +379,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
@@ -410,7 +387,7 @@ pub fn derive_error_occurence(
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
-                                                    panic!("{proc_macro_name} {ident_stringified} {two_or_more_supported_attributes_error_message}");
+                                                    panic!("{error_message}");
                                                 }
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
@@ -424,14 +401,6 @@ pub fn derive_error_occurence(
                                 let error_message = format!("{supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}");
                                 let str_stringified = "str";
                                 let supported_container = match &field.ty {
-                                    syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::BareFn(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Group(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::ImplTrait(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Infer(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Macro(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Never(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Paren(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Path(type_path) => {
                                         let path_segment = type_path.path.segments.last()
                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() {is_none_stringified}"));
@@ -647,7 +616,6 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                     },
-                                    syn::Type::Ptr(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Reference(type_reference) => {
                                         let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
                                             if let true = type_path.path.segments.len() == 1 {
@@ -670,10 +638,6 @@ pub fn derive_error_occurence(
                                             panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
                                         }
                                     },
-                                    syn::Type::Slice(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::TraitObject(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Tuple(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
-                                    syn::Type::Verbatim(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     _ => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                 };
                                 ErrorOrCodeOccurence::Error {
