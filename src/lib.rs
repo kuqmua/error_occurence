@@ -3,9 +3,6 @@
     clippy::float_arithmetic
 )]
 #![allow(clippy::too_many_arguments)]
-//todo - make it shared one variable like others camel_case\stringified  tokenstream
-// use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-// v.error_occurence_unnamed();
 
 #[proc_macro_derive(
     ErrorOccurence, 
@@ -136,8 +133,31 @@ pub fn derive_error_occurence(
     let to_string_camel_case = format!("To{string_camel_case}");
     let to_string_with_config_camel_case = format!("{to_string_camel_case}With{config_camel_case}");
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
-    let crate_traits_stringified = "crate::traits::";
-    let crate_traits_error_logs_logic_stringified = format!("{crate_traits_stringified}error_logs_logic::");
+    let named_camel_case = "Named";
+    let named_lower_case = named_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let unnamed_camel_case = format!("Un{named_lower_case}");
+    let unnamed_lower_case = unnamed_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let errors_logs_logic_stringified = "error_logs_logic";
+    let error_occurence_named_camel_case = format!("{proc_macro_name}{named_camel_case}");
+    let error_occurence_named_lower_case = format!("{error_occurence_lower_case}_{named_lower_case}");
+    let error_occurence_named_token_stream = error_occurence_named_lower_case
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_occurence_named_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let error_occurence_unnamed_camel_case = format!("{proc_macro_name}{unnamed_camel_case}");
+    let error_occurence_unnamed_lower_case = format!("{error_occurence_lower_case}_{unnamed_lower_case}");
+    let error_occurence_unnamed_token_stream = error_occurence_unnamed_lower_case
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {error_occurence_unnamed_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_stringified = "crate::traits";
+    let crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_stringified = format!("{crate_traits_stringified}::{errors_logs_logic_stringified}::{error_occurence_named_lower_case}::{error_occurence_named_camel_case}");
+    let crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream = crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified = format!("{crate_traits_stringified}::{errors_logs_logic_stringified}::{error_occurence_unnamed_lower_case}::{error_occurence_unnamed_camel_case}");
+    let crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream = crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_error_logs_logic_stringified = format!("{crate_traits_stringified}::{errors_logs_logic_stringified}::");
     let to_string_without_config_camel_case = format!("{to_string_camel_case}Without{config_camel_case}");
     let to_string_without_config_lower_case = to_string_without_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_traits_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
@@ -148,7 +168,7 @@ pub fn derive_error_occurence(
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_fields_stringified = format!("{crate_traits_stringified}fields::");
+    let crate_traits_fields_stringified = format!("{crate_traits_stringified}::fields::");
     let get_camel_case = "Get";
     let crate_traits_fields_get_source_place_type_stringified = format!("{crate_traits_fields_stringified}{get_camel_case}{source_camel_case}PlaceType");
     let crate_traits_fields_get_source_place_type_token_stream = 
@@ -160,7 +180,7 @@ pub fn derive_error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_fields_get_timezone_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let get_server_address_camel_case = format!("{get_camel_case}ServerAddress");
     let get_server_address_lower_case = get_server_address_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-    let crate_traits_get_server_address_get_server_address_stringified = format!("{crate_traits_stringified}{get_server_address_lower_case}::{get_server_address_camel_case}");
+    let crate_traits_get_server_address_get_server_address_stringified = format!("{crate_traits_stringified}::{get_server_address_lower_case}::{get_server_address_camel_case}");
     let crate_traits_get_server_address_get_server_address_token_stream = 
     crate_traits_get_server_address_get_server_address_stringified.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_get_server_address_get_server_address_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -186,7 +206,8 @@ pub fn derive_error_occurence(
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let supported_container_double_dot_double_dot = "SupportedContainer::";
-    let only_supports_supported_container_stringified = format!("only supports {supported_container_double_dot_double_dot}");
+    let supports_only_strinfigied = "supports only";
+    let supports_only_supported_container_stringified = format!("{supports_only_strinfigied} {supported_container_double_dot_double_dot}");
     match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
@@ -236,6 +257,7 @@ pub fn derive_error_occurence(
                                                             type_path, 
                                                             &proc_macro_name, 
                                                             &ident_stringified,
+                                                            supports_only_strinfigied
                                                         );
                                                         let code_occurence_segments_stringified = {
                                                             let mut code_occurence_type_repeat_checker = false;
@@ -267,7 +289,7 @@ pub fn derive_error_occurence(
                                                         )
                                                       }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} supports only syn::Type::Path");
+                                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {supports_only_strinfigied} syn::Type::Path");
                                                       }
                                                  },
                                             }
@@ -386,13 +408,12 @@ pub fn derive_error_occurence(
                                                 else {
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
                                                 }
-                                            }
-                                            //other attributes are not for this proc_macro
+                                            }//other attributes are not for this proc_macro
                                         }//other attributes are not for this proc_macro
                                     });
                                     option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
                                 };
-                                let error_message = "supports only syn::Type::Path and syn::Type::Reference";
+                                let error_message = format!("{supports_only_strinfigied} syn::Type::Path and syn::Type::Reference");
                                 let str_stringified = "str";
                                 let supported_container = match &field.ty {
                                     syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
@@ -423,6 +444,7 @@ pub fn derive_error_occurence(
                                                                     type_path, 
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
+                                                                    supports_only_strinfigied
                                                                 );
                                                                 let mut element_segments_stringified = type_path.path.segments.iter()
                                                                 .fold(String::from(""), |mut acc, elem| {
@@ -446,7 +468,7 @@ pub fn derive_error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
+                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem {supports_only_strinfigied} syn::Type::Path");
                                                                 };
                                                                 if let true = &reference_ident.to_string() == str_stringified {
                                                                     VecElementType::Reference {
@@ -458,11 +480,11 @@ pub fn derive_error_occurence(
                                                                     panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path and syn::Type::Reference"),
+                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} syn::Type::Path and syn::Type::Reference"),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type1");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} syn::GenericArgument::Type1");
                                                     }
                                                 }
                                                 else {
@@ -470,7 +492,7 @@ pub fn derive_error_occurence(
                                                 }
                                             }
                                             else {
-                                                panic!("{proc_macro_name} {ident_stringified} path_segment.arguments supports only syn::PathArguments::AngleBracketed");
+                                                panic!("{proc_macro_name} {ident_stringified} path_segment.arguments {supports_only_strinfigied} syn::PathArguments::AngleBracketed");
                                             };
                                             SupportedContainer::Vec{
                                                 path: segments_stringified,
@@ -500,6 +522,7 @@ pub fn derive_error_occurence(
                                                                     type_path, 
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
+                                                                    supports_only_strinfigied
                                                                 );
                                                                 let key_segments_stringified = {
                                                                     let mut key_segments_stringified = type_path.path.segments.iter()
@@ -526,7 +549,7 @@ pub fn derive_error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
+                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem {supports_only_strinfigied} syn::Type::Path");
                                                                 };
                                                                 if let true = &reference_ident.to_string() == str_stringified {
                                                                     HashMapKeyType::Reference {
@@ -538,11 +561,11 @@ pub fn derive_error_occurence(
                                                                     panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path and syn::Type::Reference"),
+                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} syn::Type::Path and syn::Type::Reference"),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type2");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} syn::GenericArgument::Type2");
                                                     };
                                                     let (value_segments_stringified, value_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[1] {
                                                         if let syn::Type::Path(type_path) = type_handle {
@@ -550,6 +573,7 @@ pub fn derive_error_occurence(
                                                                 type_path, 
                                                                 &proc_macro_name, 
                                                                 &ident_stringified,
+                                                                supports_only_strinfigied
                                                             );
                                                             let mut value_segments_stringified = type_path.path.segments.iter()
                                                             .fold(String::from(""), |mut acc, elem| {
@@ -561,11 +585,11 @@ pub fn derive_error_occurence(
                                                             (value_segments_stringified, vec_lifetime)
                                                         }
                                                         else {
-                                                            panic!("{proc_macro_name} {ident_stringified} type_handle supports only syn::Type::Path");
+                                                            panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} syn::Type::Path");
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] supports only syn::GenericArgument::Type3");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} syn::GenericArgument::Type3");
                                                     };
                                                     (
                                                         hashmap_key_type,
@@ -578,7 +602,7 @@ pub fn derive_error_occurence(
                                                 }
                                             }
                                             else {
-                                                panic!("{proc_macro_name} {ident_stringified} path_segment.arguments supports only syn::PathArguments::AngleBracketed");
+                                                panic!("{proc_macro_name} {ident_stringified} path_segment.arguments {supports_only_strinfigied} syn::PathArguments::AngleBracketed");
                                             };
                                             SupportedContainer::HashMap{
                                                 path: segments_stringified,
@@ -592,6 +616,7 @@ pub fn derive_error_occurence(
                                                 type_path, 
                                                 &proc_macro_name, 
                                                 &ident_stringified,
+                                                supports_only_strinfigied
                                             );
                                             let mut segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
@@ -617,7 +642,7 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem supports only syn::Type::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem {supports_only_strinfigied} syn::Type::Path");
                                         };
                                         if let true = &reference_ident.to_string() == str_stringified {
                                              SupportedContainer::Reference{
@@ -737,7 +762,7 @@ pub fn derive_error_occurence(
                             crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                            let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
+                            let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}::{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
                             let crate_traits_display_foreign_type_display_foreign_type_token_stream = 
                             crate_traits_display_foreign_type_display_foreign_type_stringified
                             .parse::<proc_macro2::TokenStream>()
@@ -887,7 +912,7 @@ pub fn derive_error_occurence(
                                 NamedAttribute::EoDisplayForeignType => {
                                     if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_display_foreign_type_stringified}] {only_supports_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_display_foreign_type_stringified}] {supports_only_supported_container_stringified}Path");
                                     }
                                     (
                                         quote::quote! {
@@ -946,7 +971,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_error_occurence_stringified}] {only_supports_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_error_occurence_stringified}] {supports_only_supported_container_stringified}Path");
                                     };
                                     (
                                         quote::quote! {
@@ -983,8 +1008,8 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
-                                                #field_ident.error_occurence_named();
+                                                use #crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream;
+                                                #field_ident.#error_occurence_named_token_stream();
                                             }
                                         },
                                     )
@@ -1022,7 +1047,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_stringified}] {only_supports_supported_container_stringified}Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_stringified}] {supports_only_supported_container_stringified}Vec");
                                     };
                                     (
                                         quote::quote! {
@@ -1071,7 +1096,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{vec_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] {supports_only_supported_container_stringified}{vec_camel_case}");
                                     }
                                     let vec_display_foreign_type_to_string_camel_case = format!("{vec_camel_case}{display_foreign_type_camel_case}{to_string_camel_case}");
                                     let vec_display_foreign_type_to_string_lower_case = vec_display_foreign_type_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
@@ -1161,7 +1186,7 @@ pub fn derive_error_occurence(
                                         }                                        
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] {only_supports_supported_container_stringified}{vec_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] {supports_only_supported_container_stringified}{vec_camel_case}");
                                     };
                                     let vec_to_string_without_config_to_string_camel_case = format!("{vec_camel_case}{to_string_without_config_camel_case}{to_string_camel_case}");
                                     let vec_to_string_without_config_to_string_lower_case = vec_to_string_without_config_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
@@ -1222,8 +1247,8 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.iter().for_each(|i|{
-                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-                                                i.error_occurence_unnamed();
+                                                use #crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream;
+                                                i.#error_occurence_unnamed_token_stream();
                                             });
                                         },
                                     )
@@ -1272,7 +1297,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     (
                                         quote::quote! {
@@ -1350,7 +1375,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_foreign_type_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     let hashmap_display_display_foreign_type_to_string_lower_case_token_stream = 
                                     hashmap_display_display_foreign_type_to_string_lower_case
@@ -1451,7 +1476,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_error_occurence_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_error_occurence_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     let hashmap_display_to_string_without_config_to_string_lower_case_token_stream = 
                                     hashmap_display_to_string_without_config_to_string_lower_case
@@ -1499,8 +1524,8 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|{
-                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-                                                v.error_occurence_unnamed();
+                                                use #crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream;
+                                                v.#error_occurence_unnamed_token_stream();
                                             });
                                         },
                                     )
@@ -1537,7 +1562,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     let hashmap_display_foreign_type_display_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_display_to_string_lower_case_token_stream = 
@@ -1614,7 +1639,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     let hashmap_display_foreign_type_display_foreign_type_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_foreign_type_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream = 
@@ -1705,7 +1730,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified}] {only_supports_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
                                     };
                                     let hashmap_display_foreign_type_to_string_without_config_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream = 
@@ -1762,8 +1787,8 @@ pub fn derive_error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|{
-                                                use crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed;
-                                                v.error_occurence_unnamed();
+                                                use #crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream;
+                                                v.#error_occurence_unnamed_token_stream();
                                             });
                                         },
                                     )
@@ -2116,7 +2141,7 @@ pub fn derive_error_occurence(
                         write!(f, "{}", self.#to_string_without_config_with_serialize_deserialize_token_stream())
                     }
                 }
-                impl<#generics> crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed for #ident<#generics> {
+                impl<#generics> #crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream for #ident<#generics> {
                     fn error_occurence_named(&self) -> () {
                         ()
                     }
@@ -2164,6 +2189,7 @@ pub fn derive_error_occurence(
                         type_path, 
                         &proc_macro_name, 
                         &ident_stringified,
+                        supports_only_strinfigied
                     );
                     let mut segments_stringified = type_path.path.segments.iter()
                     .fold(String::from(""), |mut acc, elem| {
@@ -2178,7 +2204,7 @@ pub fn derive_error_occurence(
                     }
                 }
                 else {
-                    panic!("{proc_macro_name} {ident_stringified} supports only syn::Type::Path")
+                    panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} syn::Type::Path")
                 };
                 let (
                     logic_for_to_string_with_config_for_source_to_string_with_config_inner,
@@ -2209,7 +2235,7 @@ pub fn derive_error_occurence(
                         )
                     }
                     else {
-                        panic!("{proc_macro_name} {ident_stringified} {only_supports_supported_container_stringified}Path");
+                        panic!("{proc_macro_name} {ident_stringified} {supports_only_supported_container_stringified}Path");
                     };
                     (
                         quote::quote!{
@@ -2230,8 +2256,8 @@ pub fn derive_error_occurence(
                         },
                         quote::quote!{
                             {
-                                use crate::traits::error_logs_logic::error_occurence_named::ErrorOccurenceNamed;
-                                i.error_occurence_named();
+                                use #crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream;
+                                i.#error_occurence_named_token_stream();
                             }
                         }
                     )
@@ -2379,7 +2405,7 @@ pub fn derive_error_occurence(
                         write!(f, "{}", self.#to_string_without_config_with_serialize_deserialize_token_stream())
                     }
                 }
-                impl<#generics> crate::traits::error_logs_logic::error_occurence_unnamed::ErrorOccurenceUnnamed for #ident<#generics> {
+                impl<#generics> #crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
                     fn error_occurence_unnamed(&self) -> () {
                         ()
                     }
@@ -2577,6 +2603,7 @@ fn form_last_arg_lifetime_vec(
     type_path_handle: &syn::TypePath, 
     proc_macro_name: &String, 
     ident_stringified: &String,
+    supports_only_strinfigied: &str,
 ) -> Vec<Lifetime> {
     if let Some(path_segment) = type_path_handle.path.segments.last() {
         match &path_segment.arguments {
@@ -2586,7 +2613,7 @@ fn form_last_arg_lifetime_vec(
                     match generic_argument {
                         syn::GenericArgument::Lifetime(lfmt) => Lifetime::Specified(lfmt.ident.to_string()),
                         syn::GenericArgument::Type(_) => Lifetime::NotSpecified,
-                        _ => panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] supports only syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
+                        _ => panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] {supports_only_strinfigied} syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
                     }
                 })
                 .collect()
