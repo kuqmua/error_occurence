@@ -449,7 +449,7 @@ pub fn derive_error_occurence(
                                                                 if let true = &reference_ident.to_string() == str_stringified {
                                                                     VecElementType::Reference {
                                                                         reference_ident,
-                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                        lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                     }
                                                                 }
                                                                 else {
