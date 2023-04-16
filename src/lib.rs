@@ -2487,11 +2487,11 @@ fn vec_lifetime_to_string(vec: &Vec<Lifetime>) -> String {
     format!("<{lifetimes_stringified_handle}>")
 }
 
-fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> Lifetime {
-    let mut lifetime_handle = Lifetime::NotSpecified;
+fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> &Lifetime {
+    let mut lifetime_handle = &Lifetime::NotSpecified;
     for lft in vec {
         if let Lifetime::Specified(_) = lft {
-            lifetime_handle = lft.clone();
+            lifetime_handle = lft;
             break;
         }
     }
