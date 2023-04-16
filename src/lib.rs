@@ -79,17 +79,17 @@ pub fn derive_error_occurence(
     let unnamed_camel_case = format!("Un{named_lower_case}");
     let supported_enum_variant = {
         let mut all_equal: Option<SuportedEnumVariant> = None;
-        let named_or_unnamed_error_name = format!("{supports_only_strinfigied} enums where all variants are {syn_fields}::{named_camel_case} or all variants are {syn_fields}::{unnamed_camel_case}");
         if let true = &data_enum.variants.is_empty() {
             panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
         }
+        let error_message = format!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} enums where all variants are {syn_fields}::{named_camel_case} or all variants are {syn_fields}::{unnamed_camel_case}");
         data_enum.variants.iter().for_each(|variant|{
             match &variant.fields {
                 syn::Fields::Named(_) => {
                     match &all_equal {
                         Some(supported_variant) => {
                             if let SuportedEnumVariant::Unnamed = supported_variant {
-                                panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}");
+                                panic!("{error_message}");
                             }
                         },
                         None => {
@@ -101,7 +101,7 @@ pub fn derive_error_occurence(
                     match &all_equal {
                         Some(supported_variant) => {
                             if let SuportedEnumVariant::Named = supported_variant {
-                                panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}");
+                                panic!("{error_message}");
                             }
                         },
                         None => {
@@ -109,7 +109,7 @@ pub fn derive_error_occurence(
                         },
                     }
                 },
-                syn::Fields::Unit => panic!("{proc_macro_name} {ident_stringified} {named_or_unnamed_error_name}"),
+                syn::Fields::Unit => panic!("{error_message}"),
             }
         });
         if let Some(supported_enum_variant) = all_equal {
