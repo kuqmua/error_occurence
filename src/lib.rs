@@ -211,7 +211,8 @@ pub fn derive_error_occurence(
     let supports_only_supported_container_stringified = format!("{supports_only_strinfigied} {supported_container_double_dot_double_dot}");
     let syn_type_path_stringified = "syn::Type::Path";
     let is_none_stringified = "is None";
-    let suported_enum_variant = "SuportedEnumVariant";
+    let suported_enum_variant_stringified = "SuportedEnumVariant";
+    let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
     match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
@@ -242,7 +243,7 @@ pub fn derive_error_occurence(
             let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
             let variants_vec = data_enum.variants.iter().map(|variant| {
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
-                    let suported_enum_variant_named_syn_fields_named = format!("{suported_enum_variant}::{named_camel_case} {syn_fields}::{named_camel_case}");
+                    let suported_enum_variant_named_syn_fields_named = format!("{suported_enum_variant_stringified}::{named_camel_case} {syn_fields}::{named_camel_case}");
                     fields_named.named.iter().map(|field|{
                         let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident {is_none_stringified}"));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
@@ -262,7 +263,8 @@ pub fn derive_error_occurence(
                                                             &proc_macro_name, 
                                                             &ident_stringified,
                                                             supports_only_strinfigied,
-                                                            is_none_stringified
+                                                            is_none_stringified,
+                                                            syn_generic_argument_type_stringified
                                                         );
                                                         let code_occurence_segments_stringified = {
                                                             let mut code_occurence_type_repeat_checker = false;
@@ -451,7 +453,8 @@ pub fn derive_error_occurence(
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
                                                                     supports_only_strinfigied,
-                                                                    is_none_stringified
+                                                                    is_none_stringified,
+                                                                    syn_generic_argument_type_stringified
                                                                 );
                                                                 let mut element_segments_stringified = type_path.path.segments.iter()
                                                                 .fold(String::from(""), |mut acc, elem| {
@@ -484,18 +487,18 @@ pub fn derive_error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
+                                                                    panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != {str_stringified}");
                                                                 }
                                                             },
                                                             _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} syn::GenericArgument::Type1");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
                                                     }
                                                 }
                                                 else {
-                                                    panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1 ###");
+                                                    panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
                                                 }
                                             }
                                             else {
@@ -530,7 +533,8 @@ pub fn derive_error_occurence(
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
                                                                     supports_only_strinfigied,
-                                                                    is_none_stringified
+                                                                    is_none_stringified,
+                                                                    syn_generic_argument_type_stringified
                                                                 );
                                                                 let key_segments_stringified = {
                                                                     let mut key_segments_stringified = type_path.path.segments.iter()
@@ -573,7 +577,7 @@ pub fn derive_error_occurence(
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} syn::GenericArgument::Type2");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
                                                     };
                                                     let (value_segments_stringified, value_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[1] {
                                                         if let syn::Type::Path(type_path) = type_handle {
@@ -582,7 +586,8 @@ pub fn derive_error_occurence(
                                                                 &proc_macro_name, 
                                                                 &ident_stringified,
                                                                 supports_only_strinfigied,
-                                                                is_none_stringified
+                                                                is_none_stringified,
+                                                                syn_generic_argument_type_stringified
                                                             );
                                                             let mut value_segments_stringified = type_path.path.segments.iter()
                                                             .fold(String::from(""), |mut acc, elem| {
@@ -598,7 +603,7 @@ pub fn derive_error_occurence(
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} syn::GenericArgument::Type3");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
                                                     };
                                                     (
                                                         hashmap_key_type,
@@ -626,7 +631,8 @@ pub fn derive_error_occurence(
                                                 &proc_macro_name, 
                                                 &ident_stringified,
                                                 supports_only_strinfigied,
-                                                is_none_stringified
+                                                is_none_stringified,
+                                                syn_generic_argument_type_stringified
                                             );
                                             let mut segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
@@ -2146,7 +2152,7 @@ pub fn derive_error_occurence(
                 let type_handle = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
                     let unnamed = &fields_unnamed.unnamed;
                     if let false = unnamed.len() == 1 {
-                        panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant}::{unnamed_camel_case} variant fields unnamed len != 1");
+                        panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_stringified}::{unnamed_camel_case} variant fields unnamed len != 1");
                     }
                     &unnamed[0].ty
                 }
@@ -2176,7 +2182,8 @@ pub fn derive_error_occurence(
                         &proc_macro_name, 
                         &ident_stringified,
                         supports_only_strinfigied,
-                        is_none_stringified
+                        is_none_stringified,
+                        syn_generic_argument_type_stringified
                     );
                     let segments_stringified = {
                         let mut segments_stringified = type_path.path.segments.iter()
@@ -2535,7 +2542,8 @@ fn form_last_arg_lifetime_vec(
     proc_macro_name: &String, 
     ident_stringified: &String,
     supports_only_strinfigied: &str,
-    is_none_stringified: &str
+    is_none_stringified: &str,
+    syn_generic_argument_type_stringified: &str,
 ) -> Vec<Lifetime> {
     if let Some(path_segment) = type_path_handle.path.segments.last() {
         match &path_segment.arguments {
@@ -2545,7 +2553,7 @@ fn form_last_arg_lifetime_vec(
                     match generic_argument {
                         syn::GenericArgument::Lifetime(lfmt) => Lifetime::Specified(lfmt.ident.to_string()),
                         syn::GenericArgument::Type(_) => Lifetime::NotSpecified,
-                        _ => panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] {supports_only_strinfigied} syn::GenericArgument::Lifetime and syn::GenericArgument::Type")
+                        _ => panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() angle_bracketed_generic_argument.args[0] {supports_only_strinfigied} syn::GenericArgument::Lifetime and {syn_generic_argument_type_stringified}")
                     }
                 })
                 .collect()
