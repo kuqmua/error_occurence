@@ -2413,7 +2413,7 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
     proc_macro_name: &String,
     ident_stringified: &String
 ) -> proc_macro2::TokenStream {
-    let vec_element_lifetime = vec_lifetime_to_lifetime(&vec_lifetime);
+    let vec_element_lifetime = vec_lifetime_to_lifetime(vec_lifetime);
     vec_lifetime.into_iter().for_each(|k|{
         if let Lifetime::Specified(specified_lifetime) = k {
             if let true = specified_lifetime == trait_lifetime_stringified {
@@ -2438,8 +2438,8 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
     proc_macro_name: &String,
     ident_stringified: &String,
 ) -> proc_macro2::TokenStream {
-    let key_lifetime_enum = vec_lifetime_to_lifetime(&key_vec_lifetime);
-    let value_lifetime_enum = vec_lifetime_to_lifetime(&value_vec_lifetime);
+    let key_lifetime_enum = vec_lifetime_to_lifetime(key_vec_lifetime);
+    let value_lifetime_enum = vec_lifetime_to_lifetime(value_vec_lifetime);
     let error_message = "must not contain reserved by macro lifetime name:";
     key_vec_lifetime.into_iter().for_each(|k|{
         if let Lifetime::Specified(key_lifetime_specified) = k {
