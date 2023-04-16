@@ -2194,7 +2194,7 @@ pub fn derive_error_occurence(
                 variant_ident, 
                 field_type, 
             )|{
-                let supported_container = if let syn::Type::Path(type_path) = field_type {
+                let (type_token_stream, serde_borrow_token_stream) = if let syn::Type::Path(type_path) = field_type {
                     let vec_lifetime = form_last_arg_lifetime_vec(
                         type_path, 
                         &proc_macro_name, 
@@ -2202,107 +2202,70 @@ pub fn derive_error_occurence(
                         supports_only_strinfigied,
                         is_none_stringified
                     );
-                    let mut segments_stringified = type_path.path.segments.iter()
-                    .fold(String::from(""), |mut acc, elem| {
-                        acc.push_str(&format!("{}::", elem.ident));
-                        acc
-                    });
-                    segments_stringified.pop();
-                    segments_stringified.pop();
-                    SupportedContainer::Path{
-                        path: segments_stringified, 
-                        vec_lifetime,
-                    }
+                    let segments_stringified = {
+                        let mut segments_stringified = type_path.path.segments.iter()
+                        .fold(String::from(""), |mut acc, elem| {
+                            acc.push_str(&format!("{}::", elem.ident));
+                            acc
+                        });
+                        segments_stringified.pop();
+                        segments_stringified.pop();
+                        segments_stringified
+                    };
+                    (
+                        {
+                            let type_stringified = format!(
+                                "{segments_stringified}{with_serialize_deserialize_camel_case}{}",
+                                vec_lifetime_to_string(&vec_lifetime)
+                            );
+                            type_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                        },
+                        get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                            &vec_lifetime, 
+                            &mut lifetimes_for_serialize_deserialize,
+                            &trait_lifetime_stringified,
+                            &proc_macro_name,
+                            &ident_stringified,
+                        )
+                    )
                 }
                 else {
                     panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} {syn_type_path_stringified}")
                 };
-                let (
-                    logic_for_to_string_with_config_for_source_to_string_with_config_inner,
-                    logic_for_to_string_without_config_inner,
-                    logic_for_enum_with_serialize_deserialize_inner,
-                    logic_for_to_string_without_config_with_serialize_deserialize_inner,
-                    logic_for_into_serialize_deserialize_version_inner,
-                    logic_for_compile_time_check_error_occurence_members_inner
-                ) = {
-                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
-                        (
-                            {
-                                let type_stringified = format!(
-                                    "{path}{with_serialize_deserialize_camel_case}{}",
-                                    vec_lifetime_to_string(&vec_lifetime)
-                                );
-                                type_stringified
-                                .parse::<proc_macro2::TokenStream>()
-                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                            },
-                            get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                &vec_lifetime, 
-                                &mut lifetimes_for_serialize_deserialize,
-                                &trait_lifetime_stringified,
-                                &proc_macro_name,
-                                &ident_stringified,
-                            )
-                        )
-                    }
-                    else {
-                        panic!("{proc_macro_name} {ident_stringified} {supports_only_supported_container_stringified}Path");
-                    };
-                    (
-                        quote::quote!{
-                            i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
-                        },
-                        quote::quote!{
-                            i.#to_string_without_config_token_stream()
-                        },
-                        quote::quote!{
-                            #serde_borrow_token_stream
-                            #variant_ident(#type_token_stream)
-                        },
-                        quote::quote!{
-                            i.#to_string_without_config_with_serialize_deserialize_token_stream()
-                        },
-                        quote::quote!{
-                            #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
-                        },
-                        quote::quote!{
-                            {
-                                use #crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream;
-                                i.#error_occurence_named_token_stream();
-                            }
-                        }
-                    )
-                };
-                logic_for_to_string_with_config_for_source_to_string_with_config.push({
-                    quote::quote!{
-                        #ident::#variant_ident(i) => {
-                            #logic_for_to_string_with_config_for_source_to_string_with_config_inner
-                        }
+                logic_for_to_string_with_config_for_source_to_string_with_config.push(quote::quote!{
+                    #ident::#variant_ident(i) => {
+                        i.#to_string_with_config_for_source_to_string_with_config_token_stream(config)
                     }
                 });
                 logic_for_to_string_without_config.push(quote::quote!{
                     #ident::#variant_ident(i) => {
-                        #logic_for_to_string_without_config_inner
+                        i.#to_string_without_config_token_stream()
                     }
                 });
                 logic_for_enum_with_serialize_deserialize.push({
                     quote::quote!{
-                        #logic_for_enum_with_serialize_deserialize_inner
+                        #serde_borrow_token_stream
+                        #variant_ident(#type_token_stream)
                     }
                 });
                 logic_for_to_string_without_config_with_serialize_deserialize.push(quote::quote!{
                     #ident_with_serialize_deserialize_token_stream::#variant_ident(i) => {
-                        #logic_for_to_string_without_config_with_serialize_deserialize_inner
+                         i.#to_string_without_config_with_serialize_deserialize_token_stream()
                     }
                 });
                 logic_for_into_serialize_deserialize_version.push(quote::quote!{
                      #ident::#variant_ident(i) => {
-                        #logic_for_into_serialize_deserialize_version_inner
+                        #ident_with_serialize_deserialize_token_stream::#variant_ident(i.#into_serialize_deserialize_version_token_stream())
                      }
                 });
                 logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
                      #ident::#variant_ident(i) => {
-                        #logic_for_compile_time_check_error_occurence_members_inner
+                        {
+                            use #crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream;
+                            i.#error_occurence_named_token_stream();
+                        }
                      }
                 });
             });
