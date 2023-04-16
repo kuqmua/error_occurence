@@ -273,7 +273,7 @@ pub fn derive_error_occurence(
                                                 code_occurence_segments_stringified_handle
                                             },
                                             form_last_arg_lifetime_vec(
-                                                type_path, 
+                                                &type_path.path.segments,
                                                 &proc_macro_name, 
                                                 &ident_stringified,
                                                 supports_only_strinfigied,
@@ -403,62 +403,71 @@ pub fn derive_error_occurence(
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
                                         let path = generate_path_from_segments(&type_path.path.segments);
-                                        let path_segment = type_path.path.segments.last()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() {is_none_stringified}"));
+                                        let vec_lifetime = form_last_arg_lifetime_vec(
+                                            &type_path.path.segments,
+                                            &proc_macro_name, 
+                                            &ident_stringified,
+                                            supports_only_strinfigied,
+                                            is_none_stringified,
+                                            syn_generic_argument_type_stringified
+                                        );
+                                        let path_segment = type_path.path.segments.into_iter().last()
+                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().last() {is_none_stringified}"));
                                         if path_segment.ident == vec_camel_case {
-                                            SupportedContainer::Vec{
-                                                path,
-                                                vec_element_type: if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
-                                                    if let true = angle_brackets_generic_arguments.args.len() == 1 {
-                                                        if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
-                                                            match type_handle {
-                                                                syn::Type::Path(type_path) => VecElementType::Path{
-                                                                    element_path: generate_path_from_segments(&type_path.path.segments),
-                                                                    vec_lifetime: form_last_arg_lifetime_vec(
-                                                                        type_path, 
-                                                                        &proc_macro_name, 
-                                                                        &ident_stringified,
-                                                                        supports_only_strinfigied,
-                                                                        is_none_stringified,
-                                                                        syn_generic_argument_type_stringified
-                                                                    )
-                                                                },
-                                                                syn::Type::Reference(type_reference) => {
-                                                                    let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
-                                                                        if let true = type_path.path.segments.len() == 1 {
-                                                                            type_path.path.segments[0].ident.clone()
-                                                                        }
-                                                                        else {
-                                                                            panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
-                                                                        }
+                                            let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
+                                                if let true = angle_brackets_generic_arguments.args.len() == 1 {
+                                                    if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
+                                                        match type_handle {
+                                                            syn::Type::Path(type_path) => VecElementType::Path{
+                                                                element_path: generate_path_from_segments(&type_path.path.segments),
+                                                                vec_lifetime: form_last_arg_lifetime_vec(
+                                                                    &type_path.path.segments, 
+                                                                    &proc_macro_name, 
+                                                                    &ident_stringified,
+                                                                    supports_only_strinfigied,
+                                                                    is_none_stringified,
+                                                                    syn_generic_argument_type_stringified
+                                                                )
+                                                            },
+                                                            syn::Type::Reference(type_reference) => {
+                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
+                                                                    if let true = type_path.path.segments.len() == 1 {
+                                                                        type_path.path.segments[0].ident.clone()
                                                                     }
                                                                     else {
-                                                                        panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
-                                                                    };
-                                                                    if let true = &reference_ident.to_string() == str_stringified {
-                                                                        VecElementType::Reference {
-                                                                            reference_ident,
-                                                                            lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
-                                                                        }
+                                                                        panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
                                                                     }
-                                                                    else {
-                                                                        panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != {str_stringified}");
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
+                                                                };
+                                                                if let true = &reference_ident.to_string() == str_stringified {
+                                                                    VecElementType::Reference {
+                                                                        reference_ident,
+                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                     }
-                                                                },
-                                                                _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
-                                                            }
-                                                        }
-                                                        else {
-                                                            panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != {str_stringified}");
+                                                                }
+                                                            },
+                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
+                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
                                                     }
                                                 }
                                                 else {
-                                                    panic!("{proc_macro_name} {ident_stringified} path_segment.arguments {supports_only_strinfigied} syn::PathArguments::AngleBracketed");
+                                                    panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
                                                 }
+                                            }
+                                            else {
+                                                panic!("{proc_macro_name} {ident_stringified} path_segment.arguments {supports_only_strinfigied} syn::PathArguments::AngleBracketed");
+                                            };
+                                            SupportedContainer::Vec{
+                                                path,
+                                                vec_element_type
                                             }
                                         }
                                         else if path_segment.ident == hashmap_camel_case {
@@ -476,7 +485,7 @@ pub fn derive_error_occurence(
                                                                 HashMapKeyType::Path{
                                                                     key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
                                                                     vec_lifetime: form_last_arg_lifetime_vec(
-                                                                        type_path, 
+                                                                        &type_path.path.segments, 
                                                                         &proc_macro_name, 
                                                                         &ident_stringified,
                                                                         supports_only_strinfigied,
@@ -518,7 +527,7 @@ pub fn derive_error_occurence(
                                                             (
                                                                 generate_path_from_segments(&type_path.path.segments), 
                                                                 form_last_arg_lifetime_vec(
-                                                                    type_path, 
+                                                                    &type_path.path.segments,  
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
                                                                     supports_only_strinfigied,
@@ -555,14 +564,6 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                         else {
-                                            let vec_lifetime = form_last_arg_lifetime_vec(
-                                                &type_path, 
-                                                &proc_macro_name, 
-                                                &ident_stringified,
-                                                supports_only_strinfigied,
-                                                is_none_stringified,
-                                                syn_generic_argument_type_stringified
-                                            );
                                             SupportedContainer::Path{
                                                 path, 
                                                 vec_lifetime,
@@ -2091,7 +2092,7 @@ pub fn derive_error_occurence(
                 };
                 let (type_token_stream, serde_borrow_token_stream) = if let syn::Type::Path(type_path) = field_type {
                     let vec_lifetime = form_last_arg_lifetime_vec(
-                        type_path, 
+                        &type_path.path.segments, 
                         &proc_macro_name, 
                         &ident_stringified,
                         supports_only_strinfigied,
@@ -2452,14 +2453,14 @@ fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> Lifetime {
 }
 
 fn form_last_arg_lifetime_vec(
-    type_path_handle: &syn::TypePath, 
+    segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>, 
     proc_macro_name: &String, 
     ident_stringified: &String,
     supports_only_strinfigied: &str,
     is_none_stringified: &str,
     syn_generic_argument_type_stringified: &str,
 ) -> Vec<Lifetime> {
-    if let Some(path_segment) = type_path_handle.path.segments.last() {
+    if let Some(path_segment) = segments.last() {
         match &path_segment.arguments {
             syn::PathArguments::None => Vec::new(),
             syn::PathArguments::AngleBracketed(angle_bracketed_generic_argument) => {
