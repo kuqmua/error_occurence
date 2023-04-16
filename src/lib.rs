@@ -416,8 +416,12 @@ pub fn derive_error_occurence(
                                         if path_segment.ident == vec_camel_case {
                                             let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
                                                 if let true = angle_brackets_generic_arguments.args.len() == 1 {
-                                                    let generic_argument = angle_brackets_generic_arguments.args.into_iter().nth(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"));
-                                                    if let syn::GenericArgument::Type(type_handle) = generic_argument {
+                                                    if let syn::GenericArgument::Type(type_handle) = 
+                                                        angle_brackets_generic_arguments.args
+                                                        .into_iter()
+                                                        .nth(0)
+                                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"))
+                                                    {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => VecElementType::Path{
                                                                 element_path: generate_path_from_segments(&type_path.path.segments),
@@ -482,9 +486,35 @@ pub fn derive_error_occurence(
                                                 vec_value_lifetime
                                             ) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
                                                 if let true = angle_brackets_generic_arguments.args.len() == 2 {
-                                                    let
-                                                    hashmap_key_type 
-                                                    = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
+                                                    let (
+                                                        key_generic_argument,
+                                                        value_generic_argument
+                                                    ) = {
+                                                        let mut key_generic_argument_option = None;
+                                                        let mut value_generic_argument_option = None;
+                                                        angle_brackets_generic_arguments.args
+                                                        .into_iter()
+                                                        .enumerate()
+                                                        .for_each(|(index, generic_argument)|{
+                                                            match index {
+                                                                0 => {
+                                                                    key_generic_argument_option = Some(generic_argument);
+                                                                }
+                                                                1 => {
+                                                                    value_generic_argument_option = Some(generic_argument);
+                                                                }
+                                                                _ => panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.len() != 2")
+                                                            }
+                                                        });
+                                                        (
+                                                            key_generic_argument_option.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} key_generic_argument_option {is_none_stringified}")),
+                                                            value_generic_argument_option.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} value_generic_argument_option {is_none_stringified}"))
+                                                        )
+                                                    };
+                                                    let hashmap_key_type 
+                                                    = if let syn::GenericArgument::Type(type_handle) = 
+                                                        key_generic_argument
+                                                    {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
                                                                 HashMapKeyType::Path{
@@ -500,9 +530,13 @@ pub fn derive_error_occurence(
                                                                 }
                                                             },
                                                             syn::Type::Reference(type_reference) => {
-                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
+                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
                                                                     if let true = type_path.path.segments.len() == 1 {
-                                                                        type_path.path.segments[0].ident.clone()
+                                                                        type_path.path.segments
+                                                                        .into_iter()
+                                                                        .nth(0)
+                                                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .ident
                                                                     }
                                                                     else {
                                                                         panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
@@ -514,7 +548,7 @@ pub fn derive_error_occurence(
                                                                 if let true = &reference_ident.to_string() == str_stringified {
                                                                     HashMapKeyType::Reference {
                                                                         reference_ident,
-                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                        lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                     }
                                                                 }
                                                                 else {
@@ -525,9 +559,9 @@ pub fn derive_error_occurence(
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
+                                                        panic!("{proc_macro_name} {ident_stringified} key_generic_argument {supports_only_strinfigied} {syn_generic_argument_type_stringified}");
                                                     };
-                                                    let (value_segments_stringified, value_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[1] {
+                                                    let (value_segments_stringified, value_lifetime_enum) = if let syn::GenericArgument::Type(type_handle) = value_generic_argument {
                                                         if let syn::Type::Path(type_path) = type_handle {
                                                             (
                                                                 generate_path_from_segments(&type_path.path.segments), 
@@ -576,9 +610,13 @@ pub fn derive_error_occurence(
                                         }
                                     },
                                     syn::Type::Reference(type_reference) => {
-                                        let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
+                                        let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
                                             if let true = type_path.path.segments.len() == 1 {
-                                                type_path.path.segments[0].ident.clone()
+                                                type_path.path.segments
+                                                .into_iter()
+                                                .nth(0)
+                                                .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                .ident
                                             }
                                             else {
                                                 panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
@@ -590,7 +628,7 @@ pub fn derive_error_occurence(
                                         if let true = &reference_ident.to_string() == str_stringified {
                                              SupportedContainer::Reference{
                                                 reference_ident,
-                                                lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
+                                                lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
                                             }
                                         }
                                         else {
