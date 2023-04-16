@@ -2275,24 +2275,6 @@ pub fn derive_error_occurence(
             let logic_for_to_string_without_config_with_serialize_deserialize_generated = logic_for_to_string_without_config_with_serialize_deserialize.iter();
             let logic_for_into_serialize_deserialize_version_generated = logic_for_into_serialize_deserialize_version.iter();
             let logic_for_compile_time_check_error_occurence_members_generated = logic_for_compile_time_check_error_occurence_members.iter();
-            let logic_for_to_string_with_config_for_source_to_string_with_config = quote::quote! {
-                #(#logic_for_to_string_with_config_for_source_to_string_with_config_generated),*
-            };
-            let logic_for_to_string_without_config = quote::quote! {
-                #(#logic_for_to_string_without_config_generated),*
-            };
-            let logic_for_enum_with_serialize_deserialize = quote::quote! {
-                #(#logic_for_enum_with_serialize_deserialize_generated),*
-            };
-            let logic_for_to_string_without_config_with_serialize_deserialize = quote::quote! {
-                #(#logic_for_to_string_without_config_with_serialize_deserialize_generated),*
-            };
-            let logic_for_into_serialize_deserialize_version = quote::quote! {
-                #(#logic_for_into_serialize_deserialize_version_generated),*
-            };
-            let logic_for_compile_time_check_error_occurence_members = quote::quote! {
-                #(#logic_for_compile_time_check_error_occurence_members_generated),*
-            };
             let lifetimes_for_serialize_deserialize_token_stream = lifetimes_for_serialize_deserialize_into_token_stream(
                 lifetimes_for_serialize_deserialize,
                 &trait_lifetime_stringified,
@@ -2321,7 +2303,7 @@ pub fn derive_error_occurence(
                 {
                     fn #to_string_with_config_for_source_to_string_with_config_token_stream(&self, config: &#config_generic_token_stream) -> String {
                         match self {
-                            #logic_for_to_string_with_config_for_source_to_string_with_config
+                            #(#logic_for_to_string_with_config_for_source_to_string_with_config_generated),*
                         }
                     }
                 }
@@ -2335,13 +2317,13 @@ pub fn derive_error_occurence(
                 {
                     fn #to_string_without_config_token_stream(&self) -> String {
                         match self {
-                            #logic_for_to_string_without_config
+                            #(#logic_for_to_string_without_config_generated),*
                         }
                     }
                 }
                 #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
                 pub enum #ident_with_serialize_deserialize_token_stream<#lifetimes_for_serialize_deserialize_token_stream> {
-                    #logic_for_enum_with_serialize_deserialize
+                    #(#logic_for_enum_with_serialize_deserialize_generated),*
                 }
                 impl<
                     #trait_lifetime_token_stream,
@@ -2356,14 +2338,14 @@ pub fn derive_error_occurence(
                 {
                     fn #to_string_without_config_with_serialize_deserialize_token_stream(&self) -> String {
                         match self {
-                            #logic_for_to_string_without_config_with_serialize_deserialize
+                            #(#logic_for_to_string_without_config_with_serialize_deserialize_generated),*
                         }
                     }
                 }
                 impl<#generics> #ident<#generics> {
                     pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_serialize_deserialize_token_stream<#lifetimes_for_serialize_deserialize_token_stream> {
                         match self {
-                            #logic_for_into_serialize_deserialize_version
+                            #(#logic_for_into_serialize_deserialize_version_generated),*
                         }
                     }
                 }
@@ -2387,7 +2369,7 @@ pub fn derive_error_occurence(
                 impl<#generics> #ident<#generics> {
                     fn compile_time_check_error_occurence_members(&self) {
                         match self {
-                            #logic_for_compile_time_check_error_occurence_members
+                            #(#logic_for_compile_time_check_error_occurence_members_generated),*
                         }
                     }
                 }
