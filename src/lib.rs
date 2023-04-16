@@ -402,11 +402,12 @@ pub fn derive_error_occurence(
                                 let str_stringified = "str";
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
+                                        let path = generate_path_from_segments(&type_path.path.segments);
                                         let path_segment = type_path.path.segments.last()
                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() {is_none_stringified}"));
                                         if path_segment.ident == vec_camel_case {
                                             SupportedContainer::Vec{
-                                                path: generate_path_from_segments(&type_path.path.segments),
+                                                path,
                                                 vec_element_type: if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
                                                     if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                                         if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
@@ -547,7 +548,7 @@ pub fn derive_error_occurence(
                                                 panic!("{proc_macro_name} {ident_stringified} path_segment.arguments {supports_only_strinfigied} syn::PathArguments::AngleBracketed");
                                             };
                                             SupportedContainer::HashMap{
-                                                path: generate_path_from_segments(&type_path.path.segments),
+                                                path,
                                                 hashmap_key_type,
                                                 value_segments_stringified, 
                                                 vec_value_lifetime
@@ -563,7 +564,7 @@ pub fn derive_error_occurence(
                                                 syn_generic_argument_type_stringified
                                             );
                                             SupportedContainer::Path{
-                                                path: generate_path_from_segments(&type_path.path.segments), 
+                                                path, 
                                                 vec_lifetime,
                                             }
                                         }
