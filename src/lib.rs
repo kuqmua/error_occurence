@@ -42,11 +42,12 @@ pub fn derive_error_occurence(
     let trait_lifetime_stringified = format!("'{error_occurence_lower_case}_proc_macro_reserved_lifetime_name");
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
+    let supports_only_strinfigied = "supports only";
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
         data_enum
     }
     else {
-        panic!("{proc_macro_name} {ident_stringified} only works with syn::Data::Enum");
+        panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} syn::Data::Enum");
     };
     let generics_len = ast.generics.params.len();
     //its really hard to support more than 1 lifetimes coz dont know how many generics would be in the WithSerializeDeserialize inner error_occurence variants and fields
@@ -61,7 +62,7 @@ pub fn derive_error_occurence(
                 acc
             }
             else {
-                panic!("{proc_macro_name} {ident_stringified} only works with syn::GenericParam::Lifetime");
+                panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} syn::GenericParam::Lifetime");
             }
         });
         lifetimes_stringified.pop();
@@ -72,9 +73,13 @@ pub fn derive_error_occurence(
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {lifetimes_stringified} {parse_proc_macro2_token_stream_failed_message}"))
     };
+    let syn_fields = "syn::Fields";
+    let named_camel_case = "Named";
+    let named_lower_case = named_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let unnamed_camel_case = format!("Un{named_lower_case}");
     let supported_enum_variant = {
         let mut all_equal: Option<SuportedEnumVariant> = None;
-        let named_or_unnamed_error_name = "only works with enums where all variants are syn::Fields::Named or all variants are syn::Fields::Unnamed";
+        let named_or_unnamed_error_name = format!("{supports_only_strinfigied} enums where all variants are {syn_fields}::{named_camel_case} or all variants are {syn_fields}::{unnamed_camel_case}");
         if let true = &data_enum.variants.is_empty() {
             panic!("{proc_macro_name} {ident_stringified} enum variants are empty");
         }
@@ -111,7 +116,7 @@ pub fn derive_error_occurence(
             supported_enum_variant
         }
         else {
-            panic!("{proc_macro_name} {ident_stringified} only works with enums where all variants are named or unnamed");
+            panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} with enums where all variants are named or unnamed");
         }
     };
     let trait_lifetime_token_stream = trait_lifetime_stringified
@@ -133,9 +138,6 @@ pub fn derive_error_occurence(
     let to_string_camel_case = format!("To{string_camel_case}");
     let to_string_with_config_camel_case = format!("{to_string_camel_case}With{config_camel_case}");
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
-    let named_camel_case = "Named";
-    let named_lower_case = named_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-    let unnamed_camel_case = format!("Un{named_lower_case}");
     let unnamed_lower_case = unnamed_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let errors_logs_logic_stringified = "error_logs_logic";
     let error_occurence_named_camel_case = format!("{proc_macro_name}{named_camel_case}");
@@ -206,10 +208,10 @@ pub fn derive_error_occurence(
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let supported_container_double_dot_double_dot = "SupportedContainer::";
-    let supports_only_strinfigied = "supports only";
     let supports_only_supported_container_stringified = format!("{supports_only_strinfigied} {supported_container_double_dot_double_dot}");
     let syn_type_path_stringified = "syn::Type::Path";
     let is_none_stringified = "is None";
+    let suported_enum_variant = "SuportedEnumVariant";
     match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
@@ -240,7 +242,7 @@ pub fn derive_error_occurence(
             let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
             let variants_vec = data_enum.variants.iter().map(|variant| {
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
-                    let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
+                    let suported_enum_variant_named_syn_fields_named = format!("{suported_enum_variant}::{named_camel_case} {syn_fields}::{named_camel_case}");
                     fields_named.named.iter().map(|field|{
                         let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident {is_none_stringified}"));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
@@ -2168,12 +2170,12 @@ pub fn derive_error_occurence(
                 let type_handle = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
                     let unnamed = &fields_unnamed.unnamed;
                     if let false = unnamed.len() == 1 {
-                        panic!("{proc_macro_name} {ident_stringified} SuportedEnumVariant::Unnamed variant fields unnamed len != 1");
+                        panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant}::{unnamed_camel_case} variant fields unnamed len != 1");
                     }
                     &unnamed[0].ty
                 }
                 else {
-                    panic!("{proc_macro_name} {ident_stringified} only works with named fields");
+                    panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} {syn_fields}::{unnamed_camel_case}");
                 };
                 (&variant.ident, type_handle)
             }).collect::<Vec<(&proc_macro2::Ident, &syn::Type)>>();
@@ -2480,7 +2482,7 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
         Lifetime::NotSpecified => proc_macro2::TokenStream::new(),
     }
 }
-
+//potential support for few lifetime annotations, but now supported only one lifetime annotation
 fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
     key_vec_lifetime: Vec<Lifetime>, 
     value_vec_lifetime: Vec<Lifetime>, 
@@ -2489,10 +2491,11 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
     proc_macro_name: &String,
     ident_stringified: &String,
 ) -> proc_macro2::TokenStream {
+    let error_message = "must not contain reserved by macro lifetime name:";
     key_vec_lifetime.iter().for_each(|k|{
         if let Lifetime::Specified(key_lifetime_specified) = k {
             if let true = key_lifetime_specified == &trait_lifetime_stringified.to_string() {
-                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+                panic!("{proc_macro_name} {ident_stringified} {error_message} {trait_lifetime_stringified}");
             }
             if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
                 lifetimes_for_serialize_deserialize.push(key_lifetime_specified.clone());
@@ -2502,7 +2505,7 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
     value_vec_lifetime.iter().for_each(|v|{
         if let Lifetime::Specified(value_lifetime_specified) = v {
             if let true = value_lifetime_specified == &trait_lifetime_stringified.to_string() {
-                panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
+                panic!("{proc_macro_name} {ident_stringified} {error_message} {trait_lifetime_stringified}");
             }
             if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
                 lifetimes_for_serialize_deserialize.push(value_lifetime_specified.clone());
@@ -2517,9 +2520,7 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
     }
 }
 
-#[derive(
-    Clone
-)]
+#[derive(Clone)]
 enum Lifetime {
     Specified(String),
     NotSpecified,
