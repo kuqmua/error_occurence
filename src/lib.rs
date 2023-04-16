@@ -2413,9 +2413,10 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
     proc_macro_name: &String,
     ident_stringified: &String
 ) -> proc_macro2::TokenStream {
-    vec_lifetime.iter().for_each(|k|{
+    let vec_element_lifetime = vec_lifetime_to_lifetime(&vec_lifetime);
+    vec_lifetime.into_iter().for_each(|k|{
         if let Lifetime::Specified(specified_lifetime) = k {
-            if let true = specified_lifetime == &trait_lifetime_stringified.to_string() {
+            if let true = specified_lifetime == trait_lifetime_stringified {
                 panic!("{proc_macro_name} {ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
             }
             if let false = lifetimes_for_serialize_deserialize.contains(&specified_lifetime) {
@@ -2423,7 +2424,7 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
             }
         }
     });
-    match vec_lifetime_to_lifetime(&vec_lifetime) {
+    match vec_element_lifetime {
         Lifetime::Specified(_) => quote::quote!{#[serde(borrow)]},
         Lifetime::NotSpecified => proc_macro2::TokenStream::new(),
     }
