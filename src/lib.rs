@@ -2264,10 +2264,41 @@ pub fn derive_error_occurence(
     }
 }
 
+#[derive(
+    Debug,
+    strum_macros::EnumIter,
+    strum_macros::Display,
+    enum_extension::EnumExtension
+)]
+enum NamedAttribute {
+    EoDisplay,
+    EoDisplayForeignType,
+    EoErrorOccurence,
+    EoVecDisplay,
+    EoVecDisplayForeignType,
+    EoVecErrorOccurence,
+    EoHashMapKeyDisplayValueDisplay,
+    EoHashMapKeyDisplayValueDisplayForeignType,
+    EoHashMapKeyDisplayValueErrorOccurence,
+    EoHashMapKeyDisplayForeignTypeValueDisplay,
+    EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
+    EoHashMapKeyDisplayForeignTypeValueErrorOccurence,
+}
 
 enum SuportedEnumVariant {
     Named,
     Unnamed,
+}
+
+enum ErrorOrCodeOccurence {
+    Error {
+        attribute: NamedAttribute,
+        supported_container: SupportedContainer,
+    },
+    CodeOccurence {
+        field_type: String,
+        vec_lifetime: Vec<Lifetime>
+    }
 }
 
 enum SupportedContainer {
@@ -2289,6 +2320,34 @@ enum SupportedContainer {
         reference_ident: proc_macro2::Ident,
         lifetime_ident: proc_macro2::Ident, 
     },
+}
+
+enum VecElementType {
+    Path{
+        element_path: String,
+        vec_lifetime: Vec<Lifetime>
+    },
+    Reference {
+        reference_ident: proc_macro2::Ident,
+        lifetime_ident: proc_macro2::Ident
+    }
+}
+
+enum HashMapKeyType {
+    Path{
+        key_segments_stringified: String,
+        vec_lifetime: Vec<Lifetime>
+    },
+    Reference {
+        reference_ident: proc_macro2::Ident,
+        lifetime_ident: proc_macro2::Ident
+    }
+}
+
+#[derive(Clone)]
+enum Lifetime {
+    Specified(String),
+    NotSpecified,
 }
 
 fn generate_path_from_segments(segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>) -> String {
@@ -2362,12 +2421,6 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
     }
 }
 
-#[derive(Clone)]
-enum Lifetime {
-    Specified(String),
-    NotSpecified,
-}
-
 impl std::fmt::Display for Lifetime {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
@@ -2395,60 +2448,6 @@ fn vec_lifetime_to_lifetime(vec: &Vec<Lifetime>) -> Lifetime {
         }
     }
     lifetime_handle
-}
-
-enum ErrorOrCodeOccurence {
-    Error {
-        attribute: NamedAttribute,
-        supported_container: SupportedContainer,
-    },
-    CodeOccurence {
-        field_type: String,
-        vec_lifetime: Vec<Lifetime>
-    }
-}
-
-enum VecElementType {
-    Path{
-        element_path: String,
-        vec_lifetime: Vec<Lifetime>
-    },
-    Reference {
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident
-    }
-}
-
-enum HashMapKeyType {
-    Path{
-        key_segments_stringified: String,
-        vec_lifetime: Vec<Lifetime>
-    },
-    Reference {
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident
-    }
-}
-
-#[derive(
-    Debug,
-    strum_macros::EnumIter,
-    strum_macros::Display,
-    enum_extension::EnumExtension
-)]
-enum NamedAttribute {
-    EoDisplay,
-    EoDisplayForeignType,
-    EoErrorOccurence,
-    EoVecDisplay,
-    EoVecDisplayForeignType,
-    EoVecErrorOccurence,
-    EoHashMapKeyDisplayValueDisplay,
-    EoHashMapKeyDisplayValueDisplayForeignType,
-    EoHashMapKeyDisplayValueErrorOccurence,
-    EoHashMapKeyDisplayForeignTypeValueDisplay,
-    EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
-    EoHashMapKeyDisplayForeignTypeValueErrorOccurence,
 }
 
 fn form_last_arg_lifetime_vec(
