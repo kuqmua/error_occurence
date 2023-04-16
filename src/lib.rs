@@ -208,6 +208,8 @@ pub fn derive_error_occurence(
     let supported_container_double_dot_double_dot = "SupportedContainer::";
     let supports_only_strinfigied = "supports only";
     let supports_only_supported_container_stringified = format!("{supports_only_strinfigied} {supported_container_double_dot_double_dot}");
+    let syn_type_path_stringified = "syn::Type::Path";
+    let is_none_stringified = "is None";
     match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
@@ -240,14 +242,14 @@ pub fn derive_error_occurence(
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
                     let suported_enum_variant_named_syn_fields_named = "SuportedEnumVariant::Named syn::Fields::Named";
                     fields_named.named.iter().map(|field|{
-                        let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident is None"));
+                        let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident {is_none_stringified}"));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
                             true => {
                                 let (code_occurence_type_stringified, code_occurence_lifetime) = {
                                     let mut code_occurence_type_option = None;
                                     fields_named.named.iter().for_each(|named|{
                                         let named_field_ident = named.ident.clone()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident is None"));
+                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_named_syn_fields_named} named_field_ident {is_none_stringified}"));
                                         if named_field_ident == *code_occurence_lower_case {
                                             match code_occurence_type_option {
                                                 Some(_) => panic!("{proc_macro_name} {ident_stringified} field must contain only one {code_occurence_lower_case} field"),
@@ -257,7 +259,8 @@ pub fn derive_error_occurence(
                                                             type_path, 
                                                             &proc_macro_name, 
                                                             &ident_stringified,
-                                                            supports_only_strinfigied
+                                                            supports_only_strinfigied,
+                                                            is_none_stringified
                                                         );
                                                         let code_occurence_segments_stringified = {
                                                             let mut code_occurence_type_repeat_checker = false;
@@ -289,7 +292,7 @@ pub fn derive_error_occurence(
                                                         )
                                                       }
                                                     else {
-                                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {supports_only_strinfigied} syn::Type::Path");
+                                                        panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {supports_only_strinfigied} {syn_type_path_stringified}");
                                                       }
                                                  },
                                             }
@@ -299,7 +302,7 @@ pub fn derive_error_occurence(
                                         code_occurence_type_info
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option is None");
+                                        panic!("{proc_macro_name} {ident_stringified} code_occurence_type_option {is_none_stringified}");
                                     }
                                 };
                                 ErrorOrCodeOccurence::CodeOccurence {
@@ -411,9 +414,10 @@ pub fn derive_error_occurence(
                                             }//other attributes are not for this proc_macro
                                         }//other attributes are not for this proc_macro
                                     });
-                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute is none"))
+                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute {is_none_stringified}"))
                                 };
-                                let error_message = format!("{supports_only_strinfigied} syn::Type::Path and syn::Type::Reference");
+                                let syn_type_reference = "syn::Type::Reference";
+                                let error_message = format!("{supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}");
                                 let str_stringified = "str";
                                 let supported_container = match &field.ty {
                                     syn::Type::Array(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
@@ -426,7 +430,7 @@ pub fn derive_error_occurence(
                                     syn::Type::Paren(_) => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
                                     syn::Type::Path(type_path) => {
                                         let path_segment = type_path.path.segments.last()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() is None"));
+                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() {is_none_stringified}"));
                                         if path_segment.ident == vec_camel_case {
                                             let mut segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
@@ -444,7 +448,8 @@ pub fn derive_error_occurence(
                                                                     type_path, 
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
-                                                                    supports_only_strinfigied
+                                                                    supports_only_strinfigied,
+                                                                    is_none_stringified
                                                                 );
                                                                 let mut element_segments_stringified = type_path.path.segments.iter()
                                                                 .fold(String::from(""), |mut acc, elem| {
@@ -464,23 +469,23 @@ pub fn derive_error_occurence(
                                                                         type_path.path.segments[0].ident.clone()
                                                                     }
                                                                     else {
-                                                                        panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_path.path.segments.len() != 1");
+                                                                        panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem {supports_only_strinfigied} syn::Type::Path");
+                                                                    panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
                                                                 };
                                                                 if let true = &reference_ident.to_string() == str_stringified {
                                                                     VecElementType::Reference {
                                                                         reference_ident,
-                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident
+                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                     }
                                                                 }
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} syn::Type::Path and syn::Type::Reference"),
+                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
                                                         }
                                                     }
                                                     else {
@@ -522,7 +527,8 @@ pub fn derive_error_occurence(
                                                                     type_path, 
                                                                     &proc_macro_name, 
                                                                     &ident_stringified,
-                                                                    supports_only_strinfigied
+                                                                    supports_only_strinfigied,
+                                                                    is_none_stringified
                                                                 );
                                                                 let key_segments_stringified = {
                                                                     let mut key_segments_stringified = type_path.path.segments.iter()
@@ -545,23 +551,23 @@ pub fn derive_error_occurence(
                                                                         type_path.path.segments[0].ident.clone()
                                                                     }
                                                                     else {
-                                                                        panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_path.path.segments.len() != 1");
+                                                                        panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem {supports_only_strinfigied} syn::Type::Path");
+                                                                    panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
                                                                 };
                                                                 if let true = &reference_ident.to_string() == str_stringified {
                                                                     HashMapKeyType::Reference {
                                                                         reference_ident,
-                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident
+                                                                        lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                     }
                                                                 }
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} syn::Type::Path and syn::Type::Reference"),
+                                                            _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
                                                         }
                                                     }
                                                     else {
@@ -573,7 +579,8 @@ pub fn derive_error_occurence(
                                                                 type_path, 
                                                                 &proc_macro_name, 
                                                                 &ident_stringified,
-                                                                supports_only_strinfigied
+                                                                supports_only_strinfigied,
+                                                                is_none_stringified
                                                             );
                                                             let mut value_segments_stringified = type_path.path.segments.iter()
                                                             .fold(String::from(""), |mut acc, elem| {
@@ -585,7 +592,7 @@ pub fn derive_error_occurence(
                                                             (value_segments_stringified, vec_lifetime)
                                                         }
                                                         else {
-                                                            panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} syn::Type::Path");
+                                                            panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified}");
                                                         }
                                                     }
                                                     else {
@@ -616,7 +623,8 @@ pub fn derive_error_occurence(
                                                 type_path, 
                                                 &proc_macro_name, 
                                                 &ident_stringified,
-                                                supports_only_strinfigied
+                                                supports_only_strinfigied,
+                                                is_none_stringified
                                             );
                                             let mut segments_stringified = type_path.path.segments.iter()
                                             .fold(String::from(""), |mut acc, elem| {
@@ -638,16 +646,16 @@ pub fn derive_error_occurence(
                                                 type_path.path.segments[0].ident.clone()
                                             }
                                             else {
-                                                panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_path.path.segments.len() != 1");
+                                                panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
                                             }
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference type_reference.elem {supports_only_strinfigied} syn::Type::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
                                         };
                                         if let true = &reference_ident.to_string() == str_stringified {
                                              SupportedContainer::Reference{
                                                 reference_ident,
-                                                lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} syn::Type::Reference lifetime is None")).ident,
+                                                lifetime_ident: type_reference.lifetime.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
                                             }
                                         }
                                         else {
@@ -2189,7 +2197,8 @@ pub fn derive_error_occurence(
                         type_path, 
                         &proc_macro_name, 
                         &ident_stringified,
-                        supports_only_strinfigied
+                        supports_only_strinfigied,
+                        is_none_stringified
                     );
                     let mut segments_stringified = type_path.path.segments.iter()
                     .fold(String::from(""), |mut acc, elem| {
@@ -2204,7 +2213,7 @@ pub fn derive_error_occurence(
                     }
                 }
                 else {
-                    panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} syn::Type::Path")
+                    panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} {syn_type_path_stringified}")
                 };
                 let (
                     logic_for_to_string_with_config_for_source_to_string_with_config_inner,
@@ -2604,6 +2613,7 @@ fn form_last_arg_lifetime_vec(
     proc_macro_name: &String, 
     ident_stringified: &String,
     supports_only_strinfigied: &str,
+    is_none_stringified: &str
 ) -> Vec<Lifetime> {
     if let Some(path_segment) = type_path_handle.path.segments.last() {
         match &path_segment.arguments {
@@ -2622,7 +2632,7 @@ fn form_last_arg_lifetime_vec(
         }
     }
     else {
-        panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() is None");
+        panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() {is_none_stringified}");
     }
 }
 
