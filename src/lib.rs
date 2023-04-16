@@ -1250,8 +1250,8 @@ pub fn derive_error_occurence(
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                    vec_lifetime.clone(), 
-                                                    vec_value_lifetime.clone(), 
+                                                    vec_lifetime, 
+                                                    vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
                                                         &proc_macro_name,
@@ -1429,8 +1429,8 @@ pub fn derive_error_occurence(
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                    vec_lifetime.clone(), 
-                                                    vec_value_lifetime.clone(), 
+                                                    vec_lifetime, 
+                                                    vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -2430,17 +2430,19 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
 }
 //potential support for few lifetime annotations, but now supported only one lifetime annotation
 fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-    key_vec_lifetime: Vec<Lifetime>, 
-    value_vec_lifetime: Vec<Lifetime>, 
+    key_vec_lifetime: &Vec<Lifetime>, 
+    value_vec_lifetime: &Vec<Lifetime>, 
     lifetimes_for_serialize_deserialize: &mut Vec<String>,
     trait_lifetime_stringified: &String,
     proc_macro_name: &String,
     ident_stringified: &String,
 ) -> proc_macro2::TokenStream {
+    let key_lifetime_enum = vec_lifetime_to_lifetime(&key_vec_lifetime);
+    let value_lifetime_enum = vec_lifetime_to_lifetime(&value_vec_lifetime);
     let error_message = "must not contain reserved by macro lifetime name:";
-    key_vec_lifetime.iter().for_each(|k|{
+    key_vec_lifetime.into_iter().for_each(|k|{
         if let Lifetime::Specified(key_lifetime_specified) = k {
-            if let true = key_lifetime_specified == &trait_lifetime_stringified.to_string() {
+            if let true = key_lifetime_specified == trait_lifetime_stringified {
                 panic!("{proc_macro_name} {ident_stringified} {error_message} {trait_lifetime_stringified}");
             }
             if let false = lifetimes_for_serialize_deserialize.contains(&key_lifetime_specified) {
@@ -2448,9 +2450,9 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
             }
         }
     });
-    value_vec_lifetime.iter().for_each(|v|{
+    value_vec_lifetime.into_iter().for_each(|v|{
         if let Lifetime::Specified(value_lifetime_specified) = v {
-            if let true = value_lifetime_specified == &trait_lifetime_stringified.to_string() {
+            if let true = value_lifetime_specified == trait_lifetime_stringified {
                 panic!("{proc_macro_name} {ident_stringified} {error_message} {trait_lifetime_stringified}");
             }
             if let false = lifetimes_for_serialize_deserialize.contains(&value_lifetime_specified) {
@@ -2458,7 +2460,7 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
             }
         }
     });
-    match (vec_lifetime_to_lifetime(&key_vec_lifetime), vec_lifetime_to_lifetime(&value_vec_lifetime)) {
+    match (key_lifetime_enum, value_lifetime_enum) {
         (Lifetime::Specified(_), Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
         (Lifetime::Specified(_), Lifetime::NotSpecified) => quote::quote!{#[serde(borrow)]},
         (Lifetime::NotSpecified, Lifetime::Specified(_)) => quote::quote!{#[serde(borrow)]},
