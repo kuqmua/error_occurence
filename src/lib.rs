@@ -686,7 +686,7 @@ pub fn derive_error_occurence(
             let mut logic_for_get_code_occurence_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
-            variants_vec.iter().for_each(|(
+            variants_vec.into_iter().for_each(|(
                 variant_ident, 
                 fields_vec
             )|{
@@ -796,13 +796,13 @@ pub fn derive_error_occurence(
                                         SupportedContainer::Path { path, vec_lifetime } => {
                                             let (type_token_stream, serde_borrow_token_stream) = (
                                                 {
-                                                    let type_stringified = format!("{path}{}", vec_lifetime_to_string(vec_lifetime));
+                                                    let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 },
                                                 get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    vec_lifetime, 
+                                                    &vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -933,13 +933,13 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}{}", vec_lifetime_to_string(vec_lifetime));
+                                                let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}{}", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                             }, 
                                             get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                vec_lifetime, 
+                                                &vec_lifetime, 
                                                 &mut lifetimes_for_serialize_deserialize,
                                                 &trait_lifetime_stringified,
                                                 &proc_macro_name,
@@ -999,13 +999,13 @@ pub fn derive_error_occurence(
                                         match vec_element_type {
                                             VecElementType::Path { element_path, vec_lifetime } => (
                                                 {
-                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(vec_lifetime));
+                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    vec_lifetime, 
+                                                    &vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -1242,16 +1242,16 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{}, {value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(vec_lifetime),
-                                                        vec_lifetime_to_string(vec_value_lifetime)
+                                                        vec_lifetime_to_string(&vec_lifetime),
+                                                        vec_lifetime_to_string(&vec_value_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                    vec_lifetime, 
-                                                    vec_value_lifetime, 
+                                                    &vec_lifetime, 
+                                                    &vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
                                                         &proc_macro_name,
@@ -1262,7 +1262,7 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<&'{lifetime_ident} {reference_ident}, {value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(vec_value_lifetime)
+                                                        vec_lifetime_to_string(&vec_value_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1324,14 +1324,14 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{},{std_string_string_stringified}>",
-                                                        vec_lifetime_to_string(vec_lifetime)
+                                                        vec_lifetime_to_string(&vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 },
                                                 get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    vec_lifetime, 
+                                                    &vec_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -1421,16 +1421,16 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                        vec_lifetime_to_string(vec_lifetime),
-                                                        vec_lifetime_to_string(vec_value_lifetime)
+                                                        vec_lifetime_to_string(&vec_lifetime),
+                                                        vec_lifetime_to_string(&vec_value_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                    vec_lifetime, 
-                                                    vec_value_lifetime, 
+                                                    &vec_lifetime, 
+                                                    &vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -1441,7 +1441,7 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<&'{lifetime_ident} {reference_ident}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                        vec_lifetime_to_string(vec_value_lifetime)
+                                                        vec_lifetime_to_string(&vec_value_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1519,14 +1519,14 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(vec_value_lifetime)
+                                                        vec_lifetime_to_string(&vec_value_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    vec_value_lifetime, 
+                                                    &vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -1687,14 +1687,14 @@ pub fn derive_error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                        vec_lifetime_to_string(vec_value_lifetime)
+                                                        vec_lifetime_to_string(&vec_value_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                 }, 
                                                 get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    vec_value_lifetime, 
+                                                    &vec_value_lifetime, 
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name,
@@ -1811,14 +1811,14 @@ pub fn derive_error_occurence(
                             vec_lifetime,
                          } => {
                             let serde_borrow_attribute_token_stream = get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                vec_lifetime, 
+                                &vec_lifetime, 
                                 &mut lifetimes_for_serialize_deserialize,
                                 &trait_lifetime_stringified,
                                 &proc_macro_name,
                                 &ident_stringified
                             );
                             let code_occurence_type_with_serialize_deserialize_token_stream = {
-                                let code_occurence_type_with_serialize_deserialize_stringified = format!("{field_type}{with_serialize_deserialize_camel_case}{}", vec_lifetime_to_string(vec_lifetime));
+                                let code_occurence_type_with_serialize_deserialize_stringified = format!("{field_type}{with_serialize_deserialize_camel_case}{}", vec_lifetime_to_string(&vec_lifetime));
                                 code_occurence_type_with_serialize_deserialize_stringified
                                 .parse::<proc_macro2::TokenStream>()
                                 .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {code_occurence_type_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
