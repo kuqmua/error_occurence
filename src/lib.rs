@@ -414,9 +414,10 @@ pub fn derive_error_occurence(
                                         let path_segment = type_path.path.segments.into_iter().last()
                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().last() {is_none_stringified}"));
                                         if path_segment.ident == vec_camel_case {
-                                            let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
+                                            let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
                                                 if let true = angle_brackets_generic_arguments.args.len() == 1 {
-                                                    if let syn::GenericArgument::Type(type_handle) = &angle_brackets_generic_arguments.args[0] {
+                                                    let generic_argument = angle_brackets_generic_arguments.args.into_iter().nth(0).unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"));
+                                                    if let syn::GenericArgument::Type(type_handle) = generic_argument {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => VecElementType::Path{
                                                                 element_path: generate_path_from_segments(&type_path.path.segments),
@@ -430,9 +431,13 @@ pub fn derive_error_occurence(
                                                                 )
                                                             },
                                                             syn::Type::Reference(type_reference) => {
-                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem.clone() {
+                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
                                                                     if let true = type_path.path.segments.len() == 1 {
-                                                                        type_path.path.segments[0].ident.clone()
+                                                                        type_path.path.segments
+                                                                        .into_iter()
+                                                                        .nth(0)
+                                                                        .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .ident
                                                                     }
                                                                     else {
                                                                         panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
@@ -475,7 +480,7 @@ pub fn derive_error_occurence(
                                                 hashmap_key_type,
                                                 value_segments_stringified, 
                                                 vec_value_lifetime
-                                            ) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = &path_segment.arguments {
+                                            ) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
                                                 if let true = angle_brackets_generic_arguments.args.len() == 2 {
                                                     let
                                                     hashmap_key_type 
