@@ -241,10 +241,10 @@ pub fn derive_error_occurence(
             let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
-            let variants_vec = data_enum.variants.iter().map(|variant| {
-                let variant_fields_vec = if let syn::Fields::Named(fields_named) = &variant.fields {
-                    fields_named.named.iter().map(|field|{
-                        let field_ident = field.ident.clone().unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident {is_none_stringified}"));
+            let variants_vec = data_enum.variants.into_iter().map(|variant| {
+                let variant_fields_vec = if let syn::Fields::Named(fields_named) = variant.fields {
+                    fields_named.named.into_iter().map(|field|{
+                        let field_ident = field.ident.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} field.ident {is_none_stringified}"));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
                             true => {
                                 let (code_occurence_type_stringified, code_occurence_lifetime) = {
@@ -400,7 +400,7 @@ pub fn derive_error_occurence(
                                 let syn_type_reference = "syn::Type::Reference";
                                 let error_message = format!("{supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}");
                                 let str_stringified = "str";
-                                let supported_container = match &field.ty {
+                                let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
                                         let path_segment = type_path.path.segments.last()
                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.last() {is_none_stringified}"));
@@ -555,7 +555,7 @@ pub fn derive_error_occurence(
                                         }
                                         else {
                                             let vec_lifetime = form_last_arg_lifetime_vec(
-                                                type_path, 
+                                                &type_path, 
                                                 &proc_macro_name, 
                                                 &ident_stringified,
                                                 supports_only_strinfigied,
@@ -612,12 +612,12 @@ pub fn derive_error_occurence(
                     panic!("{proc_macro_name} {ident_stringified} expected fields would be named");
                 };
                 (
-                    &variant.ident, 
+                    variant.ident, 
                     variant_fields_vec,
                 )
             })
             .collect::<Vec<(
-                &proc_macro2::Ident, 
+                proc_macro2::Ident, 
                  Vec<(
                     proc_macro2::Ident,
                     ErrorOrCodeOccurence
