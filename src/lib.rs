@@ -2148,8 +2148,21 @@ pub fn derive_error_occurence(
             }.into()
         },
         SuportedEnumVariant::Unnamed => {
-            let vec_variants_and_variants_types = data_enum.variants.iter().map(|variant| {
-                let type_handle = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
+            let to_string_with_config_for_source_to_string_with_config_stringified = format!("{to_string_with_config_lower_case}_for_{source_to_string_with_config_stringified}");
+            let to_string_with_config_for_source_to_string_with_config_token_stream = 
+            to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
+            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_with_config_for_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+            let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(generics_len);
+            let data_enum_variants_len = data_enum.variants.len();
+            let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            let mut logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            let mut logic_for_to_string_without_config_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            let mut logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            data_enum.variants.iter().for_each(|variant|{
+                let variant_ident = &variant.ident;
+                let field_type = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
                     let unnamed = &fields_unnamed.unnamed;
                     if let false = unnamed.len() == 1 {
                         panic!("{proc_macro_name} {ident_stringified} {suported_enum_variant_stringified}::{unnamed_camel_case} variant fields unnamed len != 1");
@@ -2159,23 +2172,6 @@ pub fn derive_error_occurence(
                 else {
                     panic!("{proc_macro_name} {ident_stringified} {supports_only_strinfigied} {syn_fields}::{unnamed_camel_case}");
                 };
-                (&variant.ident, type_handle)
-            }).collect::<Vec<(&proc_macro2::Ident, &syn::Type)>>();
-            let to_string_with_config_for_source_to_string_with_config_stringified = format!("{to_string_with_config_lower_case}_for_{source_to_string_with_config_stringified}");
-            let to_string_with_config_for_source_to_string_with_config_token_stream = 
-            to_string_with_config_for_source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_with_config_for_source_to_string_with_config_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-            let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(generics_len);
-            let mut logic_for_to_string_with_config_for_source_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
-            let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
-            let mut logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
-            let mut logic_for_to_string_without_config_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
-            let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
-            let mut logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(vec_variants_and_variants_types.len());
-            vec_variants_and_variants_types.iter().for_each(|(
-                variant_ident, 
-                field_type, 
-            )|{
                 let (type_token_stream, serde_borrow_token_stream) = if let syn::Type::Path(type_path) = field_type {
                     let vec_lifetime = form_last_arg_lifetime_vec(
                         type_path, 
