@@ -213,7 +213,7 @@ pub fn derive_error_occurence(
     let is_none_stringified = "is None";
     let suported_enum_variant_stringified = "SuportedEnumVariant";
     let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
-    match supported_enum_variant {
+    let token_stream = match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
             let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
@@ -2278,7 +2278,7 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-            }.into()
+            }
         },
         SuportedEnumVariant::Unnamed => {
             let to_string_with_config_for_source_to_string_with_config_stringified = format!("{to_string_with_config_lower_case}_for_{source_to_string_with_config_stringified}");
@@ -2476,9 +2476,11 @@ pub fn derive_error_occurence(
                         }
                     }
                 }
-            }.into()
+            }
         },
-    }
+    };
+    // println!("{token_stream}");
+    token_stream.into()
 }
 
 #[allow(clippy::enum_variant_names)]
