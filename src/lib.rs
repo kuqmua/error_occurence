@@ -418,8 +418,7 @@ pub fn derive_error_occurence(
                                                 if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                                     if let syn::GenericArgument::Type(type_handle) = 
                                                         angle_brackets_generic_arguments.args
-                                                        .into_iter()
-                                                        .nth(0)
+                                                        .into_iter().next()
                                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"))
                                                     {
                                                         match type_handle {
@@ -438,8 +437,7 @@ pub fn derive_error_occurence(
                                                                 let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
                                                                     if let true = type_path.path.segments.len() == 1 {
                                                                         type_path.path.segments
-                                                                        .into_iter()
-                                                                        .nth(0)
+                                                                        .into_iter().next()
                                                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
                                                                         .ident
                                                                     }
@@ -450,7 +448,7 @@ pub fn derive_error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
                                                                 };
-                                                                if let true = &reference_ident.to_string() == str_stringified {
+                                                                if let true = reference_ident == str_stringified {
                                                                     VecElementType::Reference {
                                                                         reference_ident,
                                                                         lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
@@ -533,8 +531,7 @@ pub fn derive_error_occurence(
                                                                 let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
                                                                     if let true = type_path.path.segments.len() == 1 {
                                                                         type_path.path.segments
-                                                                        .into_iter()
-                                                                        .nth(0)
+                                                                        .into_iter().next()
                                                                         .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
                                                                         .ident
                                                                     }
@@ -545,7 +542,7 @@ pub fn derive_error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
                                                                 };
-                                                                if let true = &reference_ident.to_string() == str_stringified {
+                                                                if let true = reference_ident == str_stringified {
                                                                     HashMapKeyType::Reference {
                                                                         reference_ident,
                                                                         lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
@@ -613,8 +610,7 @@ pub fn derive_error_occurence(
                                         let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
                                             if let true = type_path.path.segments.len() == 1 {
                                                 type_path.path.segments
-                                                .into_iter()
-                                                .nth(0)
+                                                .into_iter().next()
                                                 .unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
                                                 .ident
                                             }
@@ -625,7 +621,7 @@ pub fn derive_error_occurence(
                                         else {
                                             panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_strinfigied} {syn_type_path_stringified}");
                                         };
-                                        if let true = &reference_ident.to_string() == str_stringified {
+                                        if let true = reference_ident == str_stringified {
                                              SupportedContainer::Reference{
                                                 reference_ident,
                                                 lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
@@ -2485,6 +2481,7 @@ pub fn derive_error_occurence(
     }
 }
 
+#[allow(clippy::enum_variant_names)]
 #[derive(
     Debug,
     strum_macros::EnumIter,
@@ -2655,7 +2652,7 @@ impl std::fmt::Display for Lifetime {
     }
 }
 
-fn vec_lifetime_to_string(vec: &Vec<Lifetime>) -> String {
+fn vec_lifetime_to_string(vec: &[Lifetime]) -> String {
     let mut lifetimes_stringified_handle = vec.iter().fold(String::from(""), |mut acc, path_segment| {
         acc.push_str(&format!("{},", path_segment));
         acc
