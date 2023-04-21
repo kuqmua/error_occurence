@@ -3,12 +3,6 @@
     clippy::float_arithmetic
 )]
 #![allow(clippy::too_many_arguments)]
-//todo 
-//1 - there is a case - type can implement serde serialize\deserialize, but not implement std::fmt::Display.
-//2 - there is a case - type can implement std::fmt::Display, but not implement serde::serialize\deserialize.
-//second case already done. just convert type to String for WithSerializeDeserialize
-//first case not done - losing information about it 
-//todo display_foreign_type and serde_serialize_deserialize - must be different tags
 
 //todo eo_display - possible situation - this does not implements serde::serialize\deserialize
 
@@ -19,19 +13,19 @@
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
-        eo_display, 
+        eo_display_with_serialize_deserialize, 
         eo_display_foreign_type,
         eo_display_foreign_type_with_serialize_deserialize,
         eo_error_occurence,
-        eo_vec_display,
+        eo_vec_display_with_serialize_deserialize,
         eo_vec_display_foreign_type,
         eo_vec_display_foreign_type_with_serialize_deserialize,
         eo_vec_error_occurence,
-        eo_hashmap_key_display_value_display,
-        eo_hashmap_key_display_value_display_foreign_type,
-        eo_hashmap_key_display_value_display_foreign_type_with_serialize_deserialize,
-        eo_hashmap_key_display_value_error_occurence,
-        eo_hashmap_key_display_foreign_type_value_display,
+        eo_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize,
+        eo_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type,
+        eo_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize,
+        eo_hashmap_key_display_with_serialize_deserialize_value_error_occurence,
+        eo_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize,
         eo_hashmap_key_display_foreign_type_value_display_foreign_type,
         eo_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize,
         eo_hashmap_key_display_foreign_type_value_error_occurence,
@@ -256,19 +250,19 @@ pub fn derive_error_occurence(
             let key_stringified = "key";
             let value_stringified = "value"; 
             let attribute_prefix_stringified = "eo_";
-            let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
+            let attribute_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
             let attribute_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_error_occurence_stringified = format!("{attribute_prefix_stringified}{error_occurence_lower_case}");
-            let attribute_vec_display_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}");
+            let attribute_vec_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}");
             let attribute_vec_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{error_occurence_lower_case}");
-            let attribute_hashmap_key_display_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{display_lower_case}");
-            let attribute_hashmap_key_display_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
-            let attribute_hashmap_key_display_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
-            let attribute_hashmap_key_display_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{value_stringified}_{error_occurence_lower_case}");
-            let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{error_occurence_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
@@ -328,12 +322,12 @@ pub fn derive_error_occurence(
                                     field.attrs.iter().for_each(|attr|{
                                         if let true = attr.path.segments.len() == 1 {
                                             let error_message = format!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            if let true = attr.path.segments[0].ident == attribute_display_stringified {
+                                            if let true = attr.path.segments[0].ident == attribute_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplay);
+                                                    option_attribute = Some(NamedAttribute::EoDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_stringified {
@@ -360,12 +354,12 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoErrorOccurence);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplay);
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_stringified {
@@ -392,44 +386,44 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplay);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_foreign_type_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_display_foreign_type_with_serialize_deserialize_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_value_error_occurence_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayValueErrorOccurence);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
                                                 }
                                             }
-                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
@@ -865,7 +859,7 @@ pub fn derive_error_occurence(
                                 enum_fields_logic_for_compile_time_check_error_occurence_members_used_unused,
                                 logic_for_compile_time_check_error_occurence_members_for_attribute
                             ) = match attribute {
-                                NamedAttribute::EoDisplay => {
+                                NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
                                         SupportedContainer::Path { path, vec_lifetime } => {
                                             let (type_token_stream, serde_borrow_token_stream) = (
@@ -977,7 +971,7 @@ pub fn derive_error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        _ => panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference", attribute_view(&attribute_display_stringified)),
+                                        _ => panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference", attribute_view(&attribute_display_with_serialize_deserialize_stringified)),
                                     }
                                 },
                                 NamedAttribute::EoDisplayForeignType => {
@@ -1176,7 +1170,7 @@ pub fn derive_error_occurence(
                                         },
                                     )
                                 },
-                                NamedAttribute::EoVecDisplay => {
+                                NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
@@ -1209,7 +1203,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Vec", attribute_view(&attribute_vec_display_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Vec", attribute_view(&attribute_vec_display_with_serialize_deserialize_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1542,7 +1536,7 @@ pub fn derive_error_occurence(
                                         },
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayValueDisplay => {
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1586,7 +1580,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_display_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1635,7 +1629,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignType => {
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1675,7 +1669,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_display_foreign_type_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified));
                                     };
                                     let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream = 
                                     hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case
@@ -1734,7 +1728,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayValueDisplayForeignTypeWithSerializeDeserialize => {
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1777,7 +1771,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_display_foreign_type_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified));
                                     };
                                     let hashmap_display_display_foreign_type_to_string_lower_case_token_stream = 
                                     hashmap_display_display_foreign_type_to_string_lower_case
@@ -1833,7 +1827,7 @@ pub fn derive_error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayValueErrorOccurence => {
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1877,7 +1871,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_error_occurence_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified));
                                     };
                                     let hashmap_display_to_string_without_config_to_string_lower_case_token_stream = 
                                     hashmap_display_to_string_without_config_to_string_lower_case
@@ -1951,7 +1945,7 @@ pub fn derive_error_occurence(
                                         },
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -1979,11 +1973,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified));
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified));
                                     };
                                     let hashmap_display_foreign_type_display_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_display_to_string_lower_case_token_stream = 
@@ -2890,19 +2884,19 @@ pub fn derive_error_occurence(
     enum_extension::EnumExtension
 )]
 enum NamedAttribute {
-    EoDisplay,
+    EoDisplayWithSerializeDeserialize,
     EoDisplayForeignType,
     EoDisplayForeignTypeWithSerializeDeserialize,
     EoErrorOccurence,
-    EoVecDisplay,
+    EoVecDisplayWithSerializeDeserialize,
     EoVecDisplayForeignType,
     EoVecDisplayForeignTypeWithSerializeDeserialize,
     EoVecErrorOccurence,
-    EoHashMapKeyDisplayValueDisplay,
-    EoHashMapKeyDisplayValueDisplayForeignType,
-    EoHashMapKeyDisplayValueDisplayForeignTypeWithSerializeDeserialize,
-    EoHashMapKeyDisplayValueErrorOccurence,
-    EoHashMapKeyDisplayForeignTypeValueDisplay,
+    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize,
+    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType,
+    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize,
+    EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence,
+    EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize,
     EoHashMapKeyDisplayForeignTypeValueErrorOccurence,
