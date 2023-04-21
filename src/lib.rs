@@ -13,18 +13,30 @@
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
+        //
+        eo_display,
+        //
         eo_display_with_serialize_deserialize, 
         eo_display_foreign_type,
         eo_display_foreign_type_with_serialize_deserialize,
         eo_error_occurence,
+        //
+        eo_vec_display,
+        //
         eo_vec_display_with_serialize_deserialize,
         eo_vec_display_foreign_type,
         eo_vec_display_foreign_type_with_serialize_deserialize,
         eo_vec_error_occurence,
+        //
+        eo_hashmap_key_display_with_serialize_deserialize_value_display,
+        //
         eo_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize,
         eo_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type,
         eo_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize,
         eo_hashmap_key_display_with_serialize_deserialize_value_error_occurence,
+        //
+        eo_hashmap_key_display_foreign_type_value_display,
+        //
         eo_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize,
         eo_hashmap_key_display_foreign_type_value_display_foreign_type,
         eo_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize,
@@ -250,18 +262,30 @@ pub fn derive_error_occurence(
             let key_stringified = "key";
             let value_stringified = "value"; 
             let attribute_prefix_stringified = "eo_";
+            //
+            let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
+            //
             let attribute_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
             let attribute_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_error_occurence_stringified = format!("{attribute_prefix_stringified}{error_occurence_lower_case}");
+            //
+            let attribute_vec_display_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}");
+            //
             let attribute_vec_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}");
             let attribute_vec_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{error_occurence_lower_case}");
+            //
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_lower_case}");
+            //
             let attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
             let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{error_occurence_lower_case}");
+            //
+            let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}");
+            //
             let attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
             let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
@@ -322,7 +346,17 @@ pub fn derive_error_occurence(
                                     field.attrs.iter().for_each(|attr|{
                                         if let true = attr.path.segments.len() == 1 {
                                             let error_message = format!("{proc_macro_name} {ident_stringified} two or more supported attributes!");
-                                            if let true = attr.path.segments[0].ident == attribute_display_with_serialize_deserialize_stringified {
+                                            //
+                                            if let true = attr.path.segments[0].ident == attribute_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplay);
+                                                }
+                                            }
+                                            //
+                                            else if let true = attr.path.segments[0].ident == attribute_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
                                                 }
@@ -354,6 +388,16 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoErrorOccurence);
                                                 }
                                             }
+                                            //
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplay);
+                                                }
+                                            }
+                                            //
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
@@ -386,6 +430,16 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
                                                 }
                                             }
+                                            //
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay);
+                                                }
+                                            }
+                                            //
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
@@ -418,6 +472,16 @@ pub fn derive_error_occurence(
                                                     option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
                                                 }
                                             }
+                                            //
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                                                }
+                                            }
+                                            //
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified {
                                                 if let true = option_attribute.is_some() {
                                                     panic!("{error_message}");
@@ -859,6 +923,75 @@ pub fn derive_error_occurence(
                                 enum_fields_logic_for_compile_time_check_error_occurence_members_used_unused,
                                 logic_for_compile_time_check_error_occurence_members_for_attribute
                             ) = match attribute {
+                                //
+                                NamedAttribute::EoDisplay => {
+                                    if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {
+                                        // let (type_token_stream, serde_borrow_token_stream) = (
+                                        //         {
+                                        //             let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                        //             type_stringified
+                                        //             .parse::<proc_macro2::TokenStream>()
+                                        //             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                        //         },
+                                        //         get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                        //             vec_lifetime, 
+                                        //             &mut lifetimes_for_serialize_deserialize,
+                                        //             &trait_lifetime_stringified,
+                                        //             &proc_macro_name,
+                                        //             &ident_stringified
+                                        //         )
+                                        //     );
+                                            (
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                        format!(
+                                                            #field_name_with_field_value_token_stream,
+                                                            #field_ident
+                                                        )
+                                                        .#lines_space_backslash_lower_case_token_stream()
+                                                    }
+                                                },
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                        format!(
+                                                            #field_name_with_field_value_token_stream,
+                                                            #field_ident
+                                                        )
+                                                        .#lines_space_backslash_lower_case_token_stream()
+                                                    }
+                                                },
+                                                quote::quote! {
+                                                    { 
+                                                        use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                        format!(
+                                                            #field_name_with_field_value_token_stream,
+                                                            #field_ident
+                                                        )
+                                                        .#lines_space_backslash_lower_case_token_stream()
+                                                    }
+                                                },
+                                                quote::quote! {
+                                                    {
+                                                        #field_ident.#to_string_token_stream()
+                                                    }
+                                                },
+                                                quote::quote! {
+                                                    #std_string_string_token_stream
+                                                },
+                                                proc_macro2::TokenStream::new(), 
+                                                quote::quote! {
+                                                    #field_ident: #unused_argument_handle_token_stream
+                                                },
+                                                proc_macro2::TokenStream::new(),
+                                            )
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}Path", attribute_view(&attribute_display_stringified))
+                                    }
+                                },
+                                //
                                 NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
                                         SupportedContainer::Path { path, vec_lifetime } => {
@@ -1015,7 +1148,7 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             {
                                                 use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                                #field_ident.#display_foreign_type_lower_case_token_stream().#to_string_token_stream()
+                                                #field_ident.#display_foreign_type_lower_case_token_stream().#to_string_token_stream()//todo - remove .#to_string_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -1170,6 +1303,74 @@ pub fn derive_error_occurence(
                                         },
                                     )
                                 },
+                                //
+                                NamedAttribute::EoVecDisplay => {
+                                    let type_token_stream = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
+                                            let type_stringified = format!("{path}<{std_string_string_stringified}>");
+                                            type_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} {} supports only VecElementType::Path", attribute_view(&attribute_vec_display_stringified));//todo
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Vec", attribute_view(&attribute_vec_display_stringified));
+                                    };
+                                    (
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_vec_display_to_string_vec_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#vec_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use crate::traits::error_logs_logic::vec_display_into_vec_string::VecDisplayIntoVecString;//todo
+                                                #field_ident.vec_display_into_vec_string()//todo
+                                            }
+                                        },
+                                        type_token_stream,
+                                        proc_macro2::TokenStream::new(),
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        proc_macro2::TokenStream::new(),
+                                    )
+                                },
+                                //
                                 NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
                                         path, 
@@ -1536,6 +1737,90 @@ pub fn derive_error_occurence(
                                         },
                                     )
                                 },
+                                //
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                        path,
+                                        hashmap_key_type, 
+                                        value_segments_stringified: _value_segments_stringified, 
+                                        vec_value_lifetime: _vec_value_lifetime 
+                                    } = supported_container {
+                                        if let HashMapKeyType::Path { key_segments_stringified, vec_lifetime } = hashmap_key_type {
+                                            (
+                                                {
+                                                    let type_stringified = format!(
+                                                        "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
+                                                        vec_lifetime_to_string(&vec_lifetime),
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                },
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name,
+                                                    &ident_stringified
+                                                )
+                                            )
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} {} supports only HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
+                                    };
+                                    (
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_display_into_hashmap_display_string::HashMapDisplayDisplayIntoHashMapDisplayString;
+                                                #field_ident.hashmap_display_display_into_hashmap_display_string()
+                                            }
+                                        },
+                                        type_token_stream,
+                                        serde_borrow_token_stream,
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        proc_macro2::TokenStream::new(),
+                                    )
+                                },
+                                //
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
@@ -1945,6 +2230,88 @@ pub fn derive_error_occurence(
                                         },
                                     )
                                 },
+                                //
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
+                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        hashmap_key_type,
+                                        value_segments_stringified: _value_segments_stringified, 
+                                        vec_value_lifetime: _vec_value_lifetime 
+                                    } = supported_container {
+                                        if let HashMapKeyType::Path { key_segments_stringified: _key_segments_stringified, vec_lifetime: _vec_lifetime } = hashmap_key_type {
+                                            {
+                                                let type_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
+                                                type_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                            }
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
+                                    };
+                                    let hashmap_display_foreign_type_display_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{to_string_lower_case}");
+                                    let hashmap_display_foreign_type_display_to_string_lower_case_token_stream = 
+                                    hashmap_display_foreign_type_display_to_string_lower_case
+                                    .parse::<proc_macro2::TokenStream>()
+                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {hashmap_display_foreign_type_display_to_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+                                    let crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_stringified = format!("{crate_traits_error_logs_logic_stringified}{hashmap_display_foreign_type_display_to_string_lower_case}::{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{to_string_camel_case}");
+                                    let crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream = 
+                                    crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_stringified
+                                    .parse::<proc_macro2::TokenStream>()
+                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                    (
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
+                                                use #crate_traits_error_logs_logic_hashmap_display_display_to_string_hashmap_display_display_to_string_token_stream;
+                                                format!(
+                                                    #field_name_with_field_value_token_stream,
+                                                    #field_ident.#hashmap_display_display_to_string_lower_case_token_stream()
+                                                )
+                                                .#lines_space_backslash_lower_case_token_stream()
+                                            }
+                                        },
+                                        quote::quote! {
+                                            {
+                                                use crate::traits::error_logs_logic::hashmap_display_foreign_type_display_into_hashmap_string_string::HashMapDisplayForeignTypeDisplayIntoHashMapStringString;
+                                                #field_ident.hashmap_display_foreign_type_display_into_hashmap_string_string()
+                                            }
+                                        },
+                                        type_token_stream,
+                                        proc_macro2::TokenStream::new(),
+                                        quote::quote! {
+                                            #field_ident: #unused_argument_handle_token_stream
+                                        },
+                                        proc_macro2::TokenStream::new(),
+                                    )
+                                },
+                                //
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
@@ -2884,18 +3251,30 @@ pub fn derive_error_occurence(
     enum_extension::EnumExtension
 )]
 enum NamedAttribute {
+    //
+    EoDisplay,
+    //
     EoDisplayWithSerializeDeserialize,
     EoDisplayForeignType,
     EoDisplayForeignTypeWithSerializeDeserialize,
     EoErrorOccurence,
+    //
+    EoVecDisplay,
+    //
     EoVecDisplayWithSerializeDeserialize,
     EoVecDisplayForeignType,
     EoVecDisplayForeignTypeWithSerializeDeserialize,
     EoVecErrorOccurence,
+    //
+    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay,
+    //
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize,
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType,
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize,
     EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence,
+    //
+    EoHashMapKeyDisplayForeignTypeValueDisplay,
+    //
     EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize,
