@@ -213,6 +213,10 @@ pub fn derive_error_occurence(
     let is_none_stringified = "is None";
     let suported_enum_variant_stringified = "SuportedEnumVariant";
     let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
+    let compile_time_check_error_occurence_members_stringified = format!("compile_time_check_{error_occurence_lower_case}_members");
+    let compile_time_check_error_occurence_members_token_stream = compile_time_check_error_occurence_members_stringified
+    .parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {compile_time_check_error_occurence_members_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let token_stream = match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
@@ -2267,12 +2271,12 @@ pub fn derive_error_occurence(
                     }
                 }
                 impl<#generics> #crate_traits_error_logs_logic_error_occurence_named_error_occurence_named_token_stream for #ident<#generics> {
-                    fn error_occurence_named(&self) -> () {
+                    fn #error_occurence_named_token_stream(&self) -> () {
                         ()
                     }
                 }
                 impl<#generics> #ident<#generics> {
-                    fn compile_time_check_error_occurence_members(&self) {
+                    fn #compile_time_check_error_occurence_members_token_stream(&self) {
                         match self {
                             #(#logic_for_compile_time_check_error_occurence_members_iter),*
                         }
@@ -2465,12 +2469,12 @@ pub fn derive_error_occurence(
                     }
                 }
                 impl<#generics> #crate_traits_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
-                    fn error_occurence_unnamed(&self) -> () {
+                    fn #error_occurence_unnamed_token_stream(&self) -> () {
                         ()
                     }
                 }
                 impl<#generics> #ident<#generics> {
-                    fn compile_time_check_error_occurence_members(&self) {
+                    fn #compile_time_check_error_occurence_members_token_stream(&self) {
                         match self {
                             #(#logic_for_compile_time_check_error_occurence_members_generated),*
                         }
