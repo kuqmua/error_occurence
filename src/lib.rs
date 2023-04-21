@@ -8,7 +8,8 @@
 //2 - there is a case - type can implement std::fmt::Display, but not implement serde::serialize\deserialize.
 //second case already done. just convert type to String for WithSerializeDeserialize
 //first case not done - losing information about it 
-// todo display_foreign_type and serde_serialize_deserialize - must be different tags
+//todo display_foreign_type and serde_serialize_deserialize - must be different tags
+//todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
