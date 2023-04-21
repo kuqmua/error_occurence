@@ -6,8 +6,6 @@
 
 //todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
 //todo (not number one priority) implement compile_time_check_error_occurence_members only if there are error_occurence attributes 
-
-//todo into_serialize_deserialize_version .display_foreign_type().to_string() - remove .to_string() here (#display_foreign_type_lower_case_token_stream().#to_string_token_stream())
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
@@ -550,7 +548,7 @@ pub fn derive_error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != {str_stringified}");
+                                                                    panic!("{proc_macro_name} {ident_stringified} reference_ident != {str_stringified}");
                                                                 }
                                                             },
                                                             _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
@@ -644,7 +642,7 @@ pub fn derive_error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
+                                                                    panic!("{proc_macro_name} {ident_stringified} reference_ident != str");
                                                                 }
                                                             },
                                                             _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_strinfigied} {syn_type_path_stringified} and {syn_type_reference}"),
@@ -723,7 +721,7 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} &reference_ident.to_string() != str");
+                                            panic!("{proc_macro_name} {ident_stringified} reference_ident != str");
                                         }
                                     },
                                     _ => panic!("{proc_macro_name} {ident_stringified} {code_occurence_lower_case} {error_message}"),
@@ -1105,7 +1103,7 @@ pub fn derive_error_occurence(
                                         quote::quote! {
                                             {
                                                 use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                                #field_ident.#display_foreign_type_lower_case_token_stream().#to_string_token_stream()//todo - remove .#to_string_token_stream()
+                                                #field_ident.#display_foreign_type_lower_case_token_stream()
                                             }
                                         },
                                         quote::quote! {
@@ -2639,7 +2637,7 @@ pub fn derive_error_occurence(
                                                     (
                                                         {
                                                             use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
-                                                            k.#display_foreign_type_lower_case_token_stream().#to_string_token_stream()
+                                                            k.#display_foreign_type_lower_case_token_stream()
                                                         },
                                                         { v.#into_serialize_deserialize_version_token_stream() },
                                                     )
