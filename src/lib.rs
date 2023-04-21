@@ -3,7 +3,12 @@
     clippy::float_arithmetic
 )]
 #![allow(clippy::too_many_arguments)]
-
+//todo 
+//1 - there is a case - type can implement serde serialize\deserialize, but not implement std::fmt::Display.
+//2 - there is a case - type can implement std::fmt::Display, but not implement serde::serialize\deserialize.
+//second case already done. just convert type to String for WithSerializeDeserialize
+//first case not done - losing information about it 
+// todo display_foreign_type and serde_serialize_deserialize - must be different tags
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
