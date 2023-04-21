@@ -995,7 +995,11 @@ pub fn derive_error_occurence(
                                                 use #crate_traits_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream;
                                                 format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#source_to_string_with_config_token_stream(config)
+                                                    // #field_ident.#source_to_string_with_config_token_stream(config)
+                                                    {
+                                                        use crate::traits::error_logs_logic::to_string_with_config::ToStringWithConfigForSourceToStringWithConfig;
+                                                        #field_ident.to_string_with_config_for_source_to_string_with_config(config)
+                                                    }
                                                 )
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
@@ -2483,7 +2487,7 @@ pub fn derive_error_occurence(
             }
         },
     };
-    // println!("{token_stream}");
+    println!("#{token_stream}");
     token_stream.into()
 }
 
