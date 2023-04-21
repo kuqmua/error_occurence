@@ -922,13 +922,13 @@ pub fn derive_error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        _ => panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_display_stringified}] only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference"),
+                                        _ => panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference", attribute_view(&attribute_display_stringified)),
                                     }
                                 },
                                 NamedAttribute::EoDisplayForeignType => {
                                     if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_display_foreign_type_stringified}] {supports_only_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Path", attribute_view(&attribute_display_foreign_type_stringified));
                                     }
                                     (
                                         quote::quote! {
@@ -998,7 +998,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_error_occurence_stringified}] {supports_only_supported_container_stringified}Path");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Path", attribute_view(&attribute_error_occurence_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1088,7 +1088,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_stringified}] {supports_only_supported_container_stringified}Vec");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Vec", attribute_view(&attribute_vec_display_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1144,11 +1144,11 @@ pub fn derive_error_occurence(
                                     } = supported_container {
                                         if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] only supports VecElementType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports VecElementType::Path", attribute_view(&attribute_vec_display_foreign_type_stringified));
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_display_foreign_type_stringified}] {supports_only_supported_container_stringified}{vec_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute_view(&attribute_vec_display_foreign_type_stringified));
                                     }
                                     let vec_display_foreign_type_to_string_camel_case = format!("{vec_camel_case}{display_foreign_type_camel_case}{to_string_camel_case}");
                                     let vec_display_foreign_type_to_string_lower_case = vec_display_foreign_type_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
@@ -1245,11 +1245,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] only supports VecElementType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports VecElementType::Path", attribute_view(&attribute_vec_error_occurence_stringified));
                                         }                                        
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_vec_error_occurence_stringified}] {supports_only_supported_container_stringified}{vec_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute_view(&attribute_vec_error_occurence_stringified));
                                     };
                                     let vec_to_string_without_config_to_string_camel_case = format!("{vec_camel_case}{to_string_without_config_camel_case}{to_string_camel_case}");
                                     let vec_to_string_without_config_to_string_lower_case = vec_to_string_without_config_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
@@ -1380,7 +1380,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_display_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1469,7 +1469,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_display_foreign_type_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_display_foreign_type_stringified));
                                     };
                                     let hashmap_display_display_foreign_type_to_string_lower_case_token_stream = 
                                     hashmap_display_display_foreign_type_to_string_lower_case
@@ -1581,7 +1581,7 @@ pub fn derive_error_occurence(
                                         
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_value_error_occurence_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_value_error_occurence_stringified));
                                     };
                                     let hashmap_display_to_string_without_config_to_string_lower_case_token_stream = 
                                     hashmap_display_to_string_without_config_to_string_lower_case
@@ -1683,11 +1683,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
                                     };
                                     let hashmap_display_foreign_type_display_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_display_to_string_lower_case_token_stream = 
@@ -1771,11 +1771,11 @@ pub fn derive_error_occurence(
                                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified));
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified));
                                     };
                                     let hashmap_display_foreign_type_display_foreign_type_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_foreign_type_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream = 
@@ -1873,11 +1873,11 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified}] only supports HashMapKeyType::Path");
+                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified));
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} attribute #[{attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified}] {supports_only_supported_container_stringified}{hashmap_camel_case}");
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified));
                                     };
                                     let hashmap_display_foreign_type_to_string_without_config_to_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}");
                                     let hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream = 
@@ -2579,6 +2579,10 @@ enum HashMapKeyType {
 enum Lifetime {
     Specified(String),
     NotSpecified,
+}
+
+fn attribute_view(attribute: &String) -> String {
+    format!("attribute #[{attribute}]")
 }
 
 fn generate_path_from_segments(segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>) -> String {
