@@ -2259,7 +2259,7 @@ pub fn derive_error_occurence(
                     for #ident_with_serialize_deserialize_token_stream<#lifetimes_for_serialize_deserialize_token_stream>
                 {
                     fn #get_code_occurence_with_serialize_deserialize_token_stream(
-                        &self,
+                        &self
                     ) -> &#crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream
                     {
                         match self {
@@ -2491,7 +2491,7 @@ pub fn derive_error_occurence(
             }
         },
     };
-    println!("#{token_stream}");
+    // println!("{token_stream}");
     token_stream.into()
 }
 
