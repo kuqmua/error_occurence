@@ -12,6 +12,11 @@
 //     #[doc = include_str!("x.md")]
 //     x: u32
 // }
+//todo remove dublicates _stringified and token_stream for this cases and other like them
+// NamedAttribute::EoDisplay
+// NamedAttribute::EoDisplayWithSerializeDeserialize
+// NamedAttribute::EoDisplayForeignType
+// NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
