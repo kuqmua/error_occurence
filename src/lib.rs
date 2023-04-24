@@ -891,6 +891,7 @@ pub fn derive_error_occurence(
                             crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                            let vec_element_type_path_stringified = "VecElementType::Path";
                             let (
                                 logic_for_source_to_string_with_config_for_attribute, 
                                 logic_for_source_to_string_without_config_for_attribute,
@@ -950,7 +951,7 @@ pub fn derive_error_occurence(
                                             )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}Path", attribute_view(&attribute_display_stringified))
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {supported_container_double_dot_double_dot}Path", attribute_view(&attribute_display_stringified))
                                     }
                                 },
                                 NamedAttribute::EoDisplayWithSerializeDeserialize => {
@@ -1280,7 +1281,7 @@ pub fn derive_error_occurence(
                                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} supports only VecElementType::Path", attribute_view(&attribute_vec_display_stringified));//todo
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {vec_element_type_path_stringified}", attribute_view(&attribute_vec_display_stringified));
                                         }
                                     }
                                     else {
@@ -1438,7 +1439,7 @@ pub fn derive_error_occurence(
                                     } = supported_container {
                                         if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports VecElementType::Path", attribute_view(&attribute_vec_display_foreign_type_stringified));//todo
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {vec_element_type_path_stringified}", attribute_view(&attribute_vec_display_foreign_type_stringified));
                                         }
                                     }
                                     else {
@@ -1539,7 +1540,7 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports VecElementType::Path", attribute_view(&attribute_vec_display_foreign_type_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {vec_element_type_path_stringified}", attribute_view(&attribute_vec_display_foreign_type_stringified));
                                         }
                                     }
                                     else {
@@ -1624,7 +1625,7 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports VecElementType::Path", attribute_view(&attribute_vec_error_occurence_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {vec_element_type_path_stringified}", attribute_view(&attribute_vec_error_occurence_stringified));
                                         }                                        
                                     }
                                     else {
@@ -1743,7 +1744,7 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} supports only HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
                                         }
                                     }
                                     else {
@@ -2255,7 +2256,7 @@ pub fn derive_error_occurence(
                                             }
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified));
                                         }
                                     }
                                     else {
@@ -2356,7 +2357,7 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified));
                                         }
                                     }
                                     else {
@@ -2444,7 +2445,7 @@ pub fn derive_error_occurence(
                                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified));
                                         }
                                     }
                                     else {
@@ -2546,7 +2547,7 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified));
                                         }
                                     }
                                     else {
@@ -2647,7 +2648,7 @@ pub fn derive_error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name} {ident_stringified} {} only supports HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified));
+                                            panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} HashMapKeyType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified));
                                         }
                                     }
                                     else {
