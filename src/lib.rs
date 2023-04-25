@@ -5,7 +5,6 @@
 #![allow(clippy::too_many_arguments)]
 
 //todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
-//todo (not number one priority) implement compile_time_check_error_occurence_members only if there are error_occurence attributes 
 //todo maybe add multiple lifetimes supports with attribute parameters like this 
 // #[derive(Serialize)]
 // struct Foo {
@@ -785,6 +784,7 @@ pub fn derive_error_occurence(
             let mut logic_for_get_code_occurence_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_into_serialize_deserialize_version: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
             let mut logic_for_compile_time_check_error_occurence_members: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut should_generate_impl_compile_time_check_error_occurence_members = false;
             variants_vec.into_iter().for_each(|(
                 variant_ident, 
                 fields_vec
@@ -1225,6 +1225,9 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
@@ -1612,6 +1615,9 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type
@@ -2117,6 +2123,9 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -2581,6 +2590,9 @@ pub fn derive_error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -2914,6 +2926,18 @@ pub fn derive_error_occurence(
             let get_code_occurence_with_serialize_deserialize_token_stream = 
             get_code_occurence_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {get_code_occurence_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+            let compile_time_check_error_occurence_members_impl_token_stream = match should_generate_impl_compile_time_check_error_occurence_members {
+                true => quote::quote!{
+                    impl<#generics> #ident<#generics> {
+                        fn #compile_time_check_error_occurence_members_token_stream(&self) {
+                            match self {
+                                #(#logic_for_compile_time_check_error_occurence_members_iter),*
+                            }
+                        }
+                    }
+                },
+                false => proc_macro2::TokenStream::new(),
+            };
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
@@ -3025,13 +3049,7 @@ pub fn derive_error_occurence(
                         ()
                     }
                 }
-                impl<#generics> #ident<#generics> {
-                    fn #compile_time_check_error_occurence_members_token_stream(&self) {
-                        match self {
-                            #(#logic_for_compile_time_check_error_occurence_members_iter),*
-                        }
-                    }
-                }
+                #compile_time_check_error_occurence_members_impl_token_stream
             }
         },
         SuportedEnumVariant::Unnamed => {
@@ -3237,30 +3255,22 @@ pub fn derive_error_occurence(
     enum_extension::EnumExtension
 )]
 enum NamedAttribute {
-    //
     EoDisplay,
-    //
     EoDisplayWithSerializeDeserialize,
     EoDisplayForeignType,
     EoDisplayForeignTypeWithSerializeDeserialize,
     EoErrorOccurence,
-    //
     EoVecDisplay,
-    //
     EoVecDisplayWithSerializeDeserialize,
     EoVecDisplayForeignType,
     EoVecDisplayForeignTypeWithSerializeDeserialize,
     EoVecErrorOccurence,
-    //
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay,
-    //
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize,
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType,
     EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize,
     EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence,
-    //
     EoHashMapKeyDisplayForeignTypeValueDisplay,
-    //
     EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
     EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize,
