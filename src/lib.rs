@@ -4,6 +4,7 @@
 )]
 #![allow(clippy::too_many_arguments)]
 
+//todo change how hashmap shows in console
 //todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
 //todo maybe add multiple lifetimes supports with attribute parameters like this 
 // #[derive(Serialize)]
