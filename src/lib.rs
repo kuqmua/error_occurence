@@ -2374,7 +2374,6 @@ pub fn derive_error_occurence(
                                         value_segments_stringified, 
                                         vec_value_lifetime 
                                     } = supported_container {
-                                        //todo - add HashMapKeyType::reference here
                                         if let HashMapKeyType::Path { key_segments_stringified: _key_segments_stringified, vec_lifetime: _vec_lifetime } = hashmap_key_type {
                                             (
                                                 {
