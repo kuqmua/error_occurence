@@ -1804,96 +1804,116 @@ pub fn derive_error_occurence(
                                         hashmap_key_type, 
                                         hashmap_value_type,
                                     } = supported_container {
-                                        // let hashmap_key_type_path_case
-                                        // let expensive_closure = |
-                                        //     key_segments_stringified: String,
-                                        //     vec_lifetime: Vec<Lifetime>,
-
-                                        // | -> u32 {
-                                        //     println!("calculating slowly...");
-                                        //     thread::sleep(Duration::from_secs(2));
-                                        //     num
-                                        // };
+                                        let hashmap_key_type_path_case = |
+                                            key_segments_stringified: String,
+                                            key_vec_lifetime: Vec<Lifetime>,
+                                            lifetimes_for_serialize_deserialize: &mut Vec<String>
+                                        | -> (
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream
+                                        ) {
+                                            if let false = key_segments_stringified == std_string_string_stringified {
+                                                panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
+                                            }
+                                            (
+                                                {
+                                                    let type_stringified = format!(
+                                                        "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
+                                                        vec_lifetime_to_string(&key_vec_lifetime),
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                },
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    key_vec_lifetime, 
+                                                    lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name,
+                                                    &ident_stringified
+                                                )
+                                            )
+                                        };
+                                        let hashmap_key_type_reference_case = |
+                                            key_reference_ident: proc_macro2::Ident,
+                                            key_lifetime_ident: proc_macro2::Ident,
+                                            lifetimes_for_serialize_deserialize: &mut Vec<String>
+                                        | -> (
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream
+                                        ) {
+                                            (
+                                                {
+                                                    let type_stringified = format!("{path}<&'{key_lifetime_ident} {key_reference_ident}, {std_string_string_stringified}>");
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                },
+                                                {
+                                                    possible_lifetime_addition(
+                                                        key_lifetime_ident.to_string(),
+                                                        lifetimes_for_serialize_deserialize
+                                                    );
+                                                    quote::quote!{#[serde(borrow)]}
+                                                }
+                                            )
+                                        };
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
-                                                //same code in the second case
-                                                if let false = key_segments_stringified == std_string_string_stringified {
-                                                    panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                                (
-                                                    {
-                                                        let type_stringified = format!(
-                                                            "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                            vec_lifetime_to_string(&key_vec_lifetime),
-                                                        );
-                                                        type_stringified
-                                                        .parse::<proc_macro2::TokenStream>()
-                                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                                    },
-                                                    get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                        key_vec_lifetime, 
-                                                        &mut lifetimes_for_serialize_deserialize,
-                                                        &trait_lifetime_stringified,
-                                                        &proc_macro_name,
-                                                        &ident_stringified
-                                                    )
-                                                )
-                                            },
-                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => {
-                                                //same code in the first case
-                                                if let false = key_segments_stringified == std_string_string_stringified {
-                                                    panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
-                                                }
-                                                (
-                                                    {
-                                                        let type_stringified = format!(
-                                                            "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                            vec_lifetime_to_string(&key_vec_lifetime),
-                                                        );
-                                                        type_stringified
-                                                        .parse::<proc_macro2::TokenStream>()
-                                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                                    },
-                                                    get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                        key_vec_lifetime, 
-                                                        &mut lifetimes_for_serialize_deserialize,
-                                                        &trait_lifetime_stringified,
-                                                        &proc_macro_name,
-                                                        &ident_stringified
-                                                    )
-                                                )
-                                            },
-                                            (HashMapKeyType::Reference { key_reference_ident, key_lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
-                                                //same code in the fourth case
-                                                {
-                                                    let type_stringified = format!("{path}<&'{key_lifetime_ident} {key_reference_ident}, {std_string_string_stringified}>");
-                                                    type_stringified
-                                                    .parse::<proc_macro2::TokenStream>()
-                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                                },
-                                                {
-                                                    possible_lifetime_addition(
-                                                        key_lifetime_ident.to_string(),
-                                                        &mut lifetimes_for_serialize_deserialize
-                                                    );
-                                                    quote::quote!{#[serde(borrow)]}
-                                                }
+                                            ) => hashmap_key_type_path_case(
+                                                key_segments_stringified,
+                                                key_vec_lifetime,
+                                                &mut lifetimes_for_serialize_deserialize
                                             ),
-                                            (HashMapKeyType::Reference { key_reference_ident, key_lifetime_ident }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => (
-                                                //same code in the third case
-                                                {
-                                                    let type_stringified = format!("{path}<&'{key_lifetime_ident} {key_reference_ident}, {std_string_string_stringified}>");
-                                                    type_stringified
-                                                    .parse::<proc_macro2::TokenStream>()
-                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                                },
-                                                {
-                                                    possible_lifetime_addition(
-                                                        key_lifetime_ident.to_string(),
-                                                        &mut lifetimes_for_serialize_deserialize
-                                                    );
-                                                    quote::quote!{#[serde(borrow)]}
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
                                                 }
+                                            ) => hashmap_key_type_path_case(
+                                                key_segments_stringified,
+                                                key_vec_lifetime,
+                                                &mut lifetimes_for_serialize_deserialize
+                                            ),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => hashmap_key_type_reference_case(
+                                                key_reference_ident,
+                                                key_lifetime_ident,
+                                                &mut lifetimes_for_serialize_deserialize
+                                            ),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => hashmap_key_type_reference_case(
+                                                key_reference_ident,
+                                                key_lifetime_ident,
+                                                &mut lifetimes_for_serialize_deserialize
                                             ),
                                         }
                                     }
