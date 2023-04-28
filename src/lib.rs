@@ -615,7 +615,7 @@ pub fn derive_error_occurence(
                                                             syn::Type::Path(type_path) => {
                                                                 HashMapKeyType::Path{
                                                                     key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
-                                                                    vec_lifetime: form_last_arg_lifetime_vec(
+                                                                    key_vec_lifetime: form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
                                                                         &proc_macro_name, 
                                                                         &ident_stringified,
@@ -1802,10 +1802,21 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
-                                        hashmap_value_type: _hashmap_value_type,
+                                        hashmap_value_type,
                                     } = supported_container {
-                                        match hashmap_key_type {
-                                            HashMapKeyType::Path { key_segments_stringified, vec_lifetime } => {
+                                        // let hashmap_key_type_path_case
+                                        // let expensive_closure = |
+                                        //     key_segments_stringified: String,
+                                        //     vec_lifetime: Vec<Lifetime>,
+
+                                        // | -> u32 {
+                                        //     println!("calculating slowly...");
+                                        //     thread::sleep(Duration::from_secs(2));
+                                        //     num
+                                        // };
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
+                                                //same code in the second case
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
                                                 }
@@ -1813,14 +1824,14 @@ pub fn derive_error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                            vec_lifetime_to_string(&vec_lifetime),
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                     },
                                                     get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                        vec_lifetime, 
+                                                        key_vec_lifetime, 
                                                         &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
                                                         &proc_macro_name,
@@ -1828,7 +1839,48 @@ pub fn derive_error_occurence(
                                                     )
                                                 )
                                             },
-                                            HashMapKeyType::Reference { reference_ident, lifetime_ident } => (
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => {
+                                                //same code in the first case
+                                                if let false = key_segments_stringified == std_string_string_stringified {
+                                                    panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified));
+                                                }
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                    },
+                                                    get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                        key_vec_lifetime, 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                        &trait_lifetime_stringified,
+                                                        &proc_macro_name,
+                                                        &ident_stringified
+                                                    )
+                                                )
+                                            },
+                                            (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
+                                                //same code in the fourth case
+                                                {
+                                                    let type_stringified = format!("{path}<&'{lifetime_ident} {reference_ident}, {std_string_string_stringified}>");
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                },
+                                                {
+                                                    possible_lifetime_addition(
+                                                        lifetime_ident.to_string(),
+                                                        &mut lifetimes_for_serialize_deserialize
+                                                    );
+                                                    quote::quote!{#[serde(borrow)]}
+                                                }
+                                            ),
+                                            (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => (
+                                                //same code in the third case
                                                 {
                                                     let type_stringified = format!("{path}<&'{lifetime_ident} {reference_ident}, {std_string_string_stringified}>");
                                                     type_stringified
@@ -1913,7 +1965,7 @@ pub fn derive_error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
                                                 //todo - checks on == str move here for more elegant code
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified));
@@ -1922,7 +1974,7 @@ pub fn derive_error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, {value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&vec_lifetime),
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
                                                             vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
@@ -1930,7 +1982,7 @@ pub fn derive_error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                     }, 
                                                     get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                        vec_lifetime, 
+                                                        key_vec_lifetime, 
                                                         value_vec_lifetime, 
                                                         &mut lifetimes_for_serialize_deserialize,
                                                             &trait_lifetime_stringified,
@@ -1939,7 +1991,7 @@ pub fn derive_error_occurence(
                                                     )
                                                 )
                                             },
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => {
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => {
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified));
                                                 }
@@ -1947,14 +1999,14 @@ pub fn derive_error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, &'{value_lifetime_ident} {value_reference_ident}>",
-                                                            vec_lifetime_to_string(&vec_lifetime)
+                                                            vec_lifetime_to_string(&key_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                     }, 
                                                     get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                        vec_lifetime, 
+                                                        key_vec_lifetime, 
                                                         vec![Lifetime::Specified(value_lifetime_ident.to_string())], 
                                                         &mut lifetimes_for_serialize_deserialize,
                                                             &trait_lifetime_stringified,
@@ -2056,10 +2108,10 @@ pub fn derive_error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
-                                        hashmap_value_type
+                                        hashmap_value_type: _hashmap_value_type
                                     } = supported_container {
                                         match hashmap_key_type {
-                                            HashMapKeyType::Path { key_segments_stringified, vec_lifetime } => {
+                                            HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime } => {
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified));
                                                 }
@@ -2067,14 +2119,14 @@ pub fn derive_error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{},{std_string_string_stringified}>",
-                                                            vec_lifetime_to_string(&vec_lifetime)
+                                                            vec_lifetime_to_string(&key_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                     },
                                                     get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                        vec_lifetime, 
+                                                        key_vec_lifetime, 
                                                         &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
                                                         &proc_macro_name,
@@ -2168,7 +2220,7 @@ pub fn derive_error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified));
                                                 }
@@ -2176,7 +2228,7 @@ pub fn derive_error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{},{value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&vec_lifetime),
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
                                                             vec_lifetime_to_string(&value_vec_lifetime),
                                                         );
                                                         type_stringified
@@ -2184,7 +2236,7 @@ pub fn derive_error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                     },
                                                     get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                        vec_lifetime, 
+                                                        key_vec_lifetime, 
                                                         value_vec_lifetime, 
                                                         &mut lifetimes_for_serialize_deserialize,
                                                             &trait_lifetime_stringified,
@@ -2193,7 +2245,11 @@ pub fn derive_error_occurence(
                                                     )
                                                 )
                                             },
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
                                                 {
                                                     let type_stringified = format!(
@@ -2273,7 +2329,7 @@ pub fn derive_error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => {
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name} {ident_stringified} {} {supports_only_strinfigied} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified));
                                                 }
@@ -2281,7 +2337,7 @@ pub fn derive_error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                            vec_lifetime_to_string(&vec_lifetime),
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
                                                             vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
@@ -2289,7 +2345,7 @@ pub fn derive_error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                                                     }, 
                                                     get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
-                                                        vec_lifetime, 
+                                                        key_vec_lifetime, 
                                                         value_vec_lifetime, 
                                                         &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
@@ -2298,7 +2354,7 @@ pub fn derive_error_occurence(
                                                     )
                                                 )
                                             },
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
                                                 {
                                                     let type_stringified = format!(
@@ -2401,7 +2457,7 @@ pub fn derive_error_occurence(
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
-                                        if let HashMapKeyType::Path { key_segments_stringified: _key_segments_stringified, vec_lifetime: _vec_lifetime } = hashmap_key_type {
+                                        if let HashMapKeyType::Path { key_segments_stringified: _key_segments_stringified, key_vec_lifetime: _key_vec_lifetime } = hashmap_key_type {
                                             {
                                                 let type_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
                                                 type_stringified
@@ -2480,7 +2536,7 @@ pub fn derive_error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
@@ -2498,7 +2554,7 @@ pub fn derive_error_occurence(
                                                     &ident_stringified
                                                 )
                                             ),
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                         }
@@ -2570,7 +2626,7 @@ pub fn derive_error_occurence(
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
-                                        if let HashMapKeyType::Path { key_segments_stringified: _key_segments_stringified, vec_lifetime: _vec_lifetime } = hashmap_key_type {
+                                        if let HashMapKeyType::Path { key_segments_stringified: _key_segments_stringified, key_vec_lifetime: _key_vec_lifetime } = hashmap_key_type {
                                             let type_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
                                             type_stringified
                                             .parse::<proc_macro2::TokenStream>()
@@ -2648,7 +2704,7 @@ pub fn derive_error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
                                                 {
                                                    let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
@@ -2666,7 +2722,7 @@ pub fn derive_error_occurence(
                                                     &ident_stringified
                                                 )
                                             ),
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                         }
@@ -2741,7 +2797,7 @@ pub fn derive_error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => (
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
@@ -2759,7 +2815,7 @@ pub fn derive_error_occurence(
                                                     &ident_stringified
                                                 )
                                             ),
-                                            (HashMapKeyType::Path { key_segments_stringified, vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
+                                            (HashMapKeyType::Path { key_segments_stringified, key_vec_lifetime }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Path { value_segments_stringified, value_vec_lifetime }) => todo!(),
                                             (HashMapKeyType::Reference { reference_ident, lifetime_ident }, HashMapValueType::Reference { value_reference_ident, value_lifetime_ident }) => todo!(),
                                         }
@@ -3470,7 +3526,7 @@ enum VecElementType {
 enum HashMapKeyType {
     Path{
         key_segments_stringified: String,
-        vec_lifetime: Vec<Lifetime>//todo rename
+        key_vec_lifetime: Vec<Lifetime>
     },
     Reference {
         reference_ident: proc_macro2::Ident,
