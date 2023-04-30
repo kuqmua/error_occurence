@@ -1802,9 +1802,14 @@ pub fn derive_error_occurence(
                                             proc_macro2::TokenStream,
                                             proc_macro2::TokenStream
                                         ) {
-                                            if let false = key_segments_stringified == std_string_string_stringified {
-                                                panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
-                                            }
+                                            panic_if_not_string(
+                                                &key_segments_stringified,
+                                                &std_string_string_stringified,
+                                                &proc_macro_name_ident_stringified,
+                                                supports_only_stringified,
+                                                &as_std_collections_hashmap_key_type_stringified,
+                                                &attribute
+                                            );
                                             (
                                                 {
                                                     let type_stringified = format!(
@@ -1990,10 +1995,14 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                //todo - why only String?
-                                                if let false = key_segments_stringified == std_string_string_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -2024,9 +2033,14 @@ pub fn derive_error_occurence(
                                                     value_lifetime_ident 
                                                 }
                                             ) => {
-                                                if let false = key_segments_stringified == std_string_string_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
                                                 panic_if_not_str(
                                                     &value_reference_ident,
                                                     str_stringified,
@@ -2370,9 +2384,14 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                if let false = key_segments_stringified == std_string_string_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -2519,9 +2538,14 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                if let false = key_segments_stringified == std_string_string_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -4025,18 +4049,18 @@ fn panic_if_not_str(
     }
 }
 
-// fn panic_if_not_string(
-//     segments_stringified: &String,
-//     std_string_string_stringified: &String,
-//     proc_macro_name_ident_stringified: &String,
-//     supports_only_stringified: &str,
-//     std_str_stringified: &String,
-//     attribute: &NamedAttribute
-// ) {
-//     if let false = segments_stringified == std_string_string_stringified {
-//         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
-//     }
-// }
+fn panic_if_not_string(
+    segments_stringified: &String,
+    std_string_string_stringified: &String,
+    proc_macro_name_ident_stringified: &String,
+    supports_only_stringified: &str,
+    as_std_collections_hashmap_key_type_stringified: &String,
+    attribute: &NamedAttribute
+) {
+    if let false = segments_stringified == std_string_string_stringified {
+        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
+    }
+}
 
 
 fn generate_path_from_segments(segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>) -> String {
