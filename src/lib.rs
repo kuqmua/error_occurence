@@ -225,7 +225,8 @@ pub fn derive_error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {into_serialize_deserialize_version_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let supported_container_double_dot_double_dot = "SupportedContainer::";
     let supports_only_supported_container_stringified = format!("{supports_only_stringified} {supported_container_double_dot_double_dot}");
-    let syn_type_path_stringified = "syn::Type::Path";
+    let path_camel_case = "Path";
+    let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
     let is_none_stringified = "is None";
     let suported_enum_variant_stringified = "SuportedEnumVariant";
     let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
@@ -240,6 +241,15 @@ pub fn derive_error_occurence(
     let to_string_with_config_token_stream = 
     to_string_with_config_lower_case.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {to_string_with_config_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+    let key_camel_case = "Key";
+    let value_camel_case = "Value";
+    let key_lower_case = key_camel_case.to_lowercase();
+    let value_lower_case = value_camel_case.to_lowercase();
+    let reference_camel_case = "Reference";
+    let hashmap_camel_case = "HashMap";
+    let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
+    let vec_camel_case = "Vec";
+    let vec_lower_case = vec_camel_case.to_lowercase(); 
     let token_stream = match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
@@ -249,12 +259,6 @@ pub fn derive_error_occurence(
             let display_foreign_type_camel_case = format!("{display_camel_case}{foreign_type_camel_case}");
             let display_foreign_type_lower_case = display_foreign_type_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
             let display_lower_case = display_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-            let hashmap_camel_case = "HashMap";
-            let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
-            let vec_camel_case = "Vec";
-            let vec_lower_case = vec_camel_case.to_lowercase();
-            let key_stringified = "key";
-            let value_stringified = "value"; 
             let attribute_prefix_stringified = "eo_";
             let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
             let attribute_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_lower_case}_{with_serialize_deserialize_lower_case}");
@@ -266,16 +270,16 @@ pub fn derive_error_occurence(
             let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}");
             let attribute_vec_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
             let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{error_occurence_lower_case}");
-            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_lower_case}");
-            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
-            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
-            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
-            let attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_stringified}_{error_occurence_lower_case}");
-            let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}");
-            let attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
-            let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}");
-            let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
-            let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_stringified}_{display_foreign_type_lower_case}_{value_stringified}_{error_occurence_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{error_occurence_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{error_occurence_lower_case}");
             let variants_vec = data_enum.variants.into_iter().map(|variant| {
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = variant.fields {
                     fields_named.named.into_iter().map(|field|{
@@ -496,9 +500,8 @@ pub fn derive_error_occurence(
                                     });
                                     option_attribute.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} option attribute {is_none_stringified}"))
                                 };
-                                let syn_type_reference = "syn::Type::Reference";
+                                let syn_type_reference = format!("syn::Type::{reference_camel_case}");
                                 let error_message = format!("{supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}");
-                                let str_stringified = "str";
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
                                         let path = generate_path_from_segments(&type_path.path.segments);
@@ -551,16 +554,6 @@ pub fn derive_error_occurence(
                                                                     reference_ident,
                                                                     lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
-                                                                //todo
-                                                                // if let true = reference_ident == str_stringified {
-                                                                //     VecElementType::Reference {
-                                                                //         reference_ident,
-                                                                //         lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
-                                                                //     }
-                                                                // }
-                                                                // else {
-                                                                //     panic!("{proc_macro_name} {ident_stringified} reference_ident != {str_stringified}");
-                                                                // }
                                                             },
                                                             _ => panic!("{proc_macro_name} {ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}"),
                                                         }
@@ -645,15 +638,6 @@ pub fn derive_error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                // if let true = key_reference_ident == str_stringified {
-                                                                //     HashMapKeyType::Reference {
-                                                                //         key_reference_ident,
-                                                                //         key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
-                                                                //     }
-                                                                // }
-                                                                // else {
-                                                                //     panic!("{proc_macro_name} {ident_stringified} reference_ident != str");
-                                                                // }
                                                                 HashMapKeyType::Reference {
                                                                     key_reference_ident,
                                                                     key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
@@ -695,15 +679,6 @@ pub fn derive_error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                // if let true = value_reference_ident == str_stringified {
-                                                                //     HashMapValueType::Reference {
-                                                                //         value_reference_ident,
-                                                                //         value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
-                                                                //     }
-                                                                // }
-                                                                // else {
-                                                                //     panic!("{proc_macro_name} {ident_stringified} reference_ident != str");
-                                                                // }
                                                                 HashMapValueType::Reference {
                                                                     value_reference_ident,
                                                                     value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
@@ -755,15 +730,6 @@ pub fn derive_error_occurence(
                                         else {
                                             panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                         };
-                                        // if let true = reference_ident == str_stringified {
-                                        //      SupportedContainer::Reference{
-                                        //         reference_ident,
-                                        //         lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
-                                        //     }
-                                        // }
-                                        // else {
-                                        //     panic!("{proc_macro_name} {ident_stringified} reference_ident != str");
-                                        // }
                                         SupportedContainer::Reference{
                                             reference_ident,
                                             lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name} {ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
@@ -931,7 +897,7 @@ pub fn derive_error_occurence(
                             crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name} {ident_stringified} {crate_traits_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                            let vec_element_type_path_stringified = "VecElementType::Path";
+                            let vec_element_type_path_stringified = format!("VecElementType::{path_camel_case}");
                             let vec_display_foreign_type_to_string_camel_case = format!("{vec_camel_case}{display_foreign_type_camel_case}{to_string_camel_case}");
                             let vec_display_foreign_type_to_string_lower_case = vec_display_foreign_type_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
                             let vec_display_foreign_type_to_string_lower_case_token_stream = 
@@ -971,6 +937,14 @@ pub fn derive_error_occurence(
                             let string_string_stringified = "string::String";
                             let string_stringified = "String";
                             let must_be_used_with_stringified = "must be used with";
+                            let does_not_support_stringified = "does not support";
+                            let type_camel_case = "Type";
+                            let hashmap_key_type_stringified = format!("{hashmap_camel_case}{key_camel_case}{type_camel_case}");
+                            let hashmap_value_type_stringified = format!("{hashmap_camel_case}{value_camel_case}{type_camel_case}");
+                            let hashmap_key_type_path_stringified = format!("{hashmap_key_type_stringified}::{path_camel_case}");
+                            let hashmap_key_type_reference_stringified = format!("{hashmap_key_type_stringified}::{reference_camel_case}");
+                            let hashmap_value_type_path_stringified = format!("{hashmap_value_type_stringified}::{path_camel_case}");
+                            let hashmap_value_type_reference_stringified = format!("{hashmap_value_type_stringified}::{reference_camel_case}");
                             let inform_use_str_string_in_different_attribute = |
                                 path: String,
                                 wrong_attribute: &String,
@@ -1061,7 +1035,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_stringified} {supported_container_double_dot_double_dot}Path", attribute_view(&attribute_display_stringified))
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_stringified} {supported_container_double_dot_double_dot}{path_camel_case}", attribute_view(&attribute_display_stringified))
                                     }
                                 },
                                 NamedAttribute::EoDisplayWithSerializeDeserialize => {
@@ -1183,13 +1157,13 @@ pub fn derive_error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        _ => panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}Path and {supported_container_double_dot_double_dot}Reference", attribute_view(&attribute_display_with_serialize_deserialize_stringified)),
+                                        _ => panic!("{proc_macro_name} {ident_stringified} {} only supports {supported_container_double_dot_double_dot}{path_camel_case} and {supported_container_double_dot_double_dot}{reference_camel_case}", attribute_view(&attribute_display_with_serialize_deserialize_stringified)),
                                     }
                                 },
                                 NamedAttribute::EoDisplayForeignType => {
                                     if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Path", attribute_view(&attribute_display_foreign_type_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute_view(&attribute_display_foreign_type_stringified));
                                     }
                                     (
                                         quote::quote! {
@@ -1259,7 +1233,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Path", attribute_view(&attribute_display_foreign_type_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute_view(&attribute_display_foreign_type_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1328,7 +1302,7 @@ pub fn derive_error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Path", attribute_view(&attribute_error_occurence_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute_view(&attribute_error_occurence_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1406,7 +1380,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Vec", attribute_view(&attribute_vec_display_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute_view(&attribute_vec_display_stringified));
                                     };
                                     let vec_display_into_vec_string_camel_case: String = format!("{vec_camel_case}{display_camel_case}{into_camel_case}{vec_camel_case}{string_camel_case}");
                                     let vec_display_into_vec_string_lower_case = vec_display_into_vec_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
@@ -1509,7 +1483,7 @@ pub fn derive_error_occurence(
                                         }
                                     }
                                     else {
-                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}Vec", attribute_view(&attribute_vec_display_with_serialize_deserialize_stringified));
+                                        panic!("{proc_macro_name} {ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute_view(&attribute_vec_display_with_serialize_deserialize_stringified));
                                     };
                                     (
                                         quote::quote! {
@@ -1914,7 +1888,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -1945,7 +1919,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified)),
                                         }
                                     }
                                     else {
@@ -2290,7 +2264,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -2314,7 +2288,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
                                         }
                                     }
                                     else {
@@ -2427,7 +2401,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }//todo reusage
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -2469,7 +2443,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified)),
                                         }
                                     }
                                     else {
@@ -2573,7 +2547,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -2615,7 +2589,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified)),
                                         }
                                     }
                                     else {
@@ -2732,7 +2706,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident  
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -2742,7 +2716,7 @@ pub fn derive_error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -2752,7 +2726,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_stringified)),
                                         }
                                     }
                                     else {
@@ -2889,7 +2863,7 @@ pub fn derive_error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -2899,7 +2873,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified)),
                                         }
                                     }
                                     else {
@@ -2994,7 +2968,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3004,7 +2978,7 @@ pub fn derive_error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3014,7 +2988,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
                                         }
                                     }
                                     else {
@@ -3121,7 +3095,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident,
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3131,7 +3105,7 @@ pub fn derive_error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3141,7 +3115,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified)),
                                         }
                                     }
                                     else {
@@ -3250,7 +3224,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Path && HashMapValueType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3260,7 +3234,7 @@ pub fn derive_error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapValueType::Path", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified)),
                                             (
                                                 HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3270,7 +3244,7 @@ pub fn derive_error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name} {ident_stringified} {} does not support HashMapKeyType::Reference && HashMapKeyType::Reference", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified)),
+                                            ) => panic!("{proc_macro_name} {ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_key_type_reference_stringified}", attribute_view(&attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified)),
                                         }
                                     }
                                     else {
