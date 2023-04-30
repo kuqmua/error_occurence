@@ -928,7 +928,6 @@ pub fn derive_error_occurence(
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             let as_std_collections_hashmap_key_type_stringified = format!("as {std_stringified}::collections::{hashmap_camel_case} key type");
                             let str_stringified = "str";
-                            let std_str_stringified = format!("{std_stringified}::{str_stringified}");
                             let string_string_stringified: String = format!("{string_lower_case}::{string_camel_case}");
                             let std_string_string_stringified = format!("{std_stringified}::{string_string_stringified}");
                             let must_be_used_with_stringified = "must be used with";
@@ -947,13 +946,8 @@ pub fn derive_error_occurence(
                             | {
                                 let wrong_attribute_view = attribute_view(wrong_attribute);
                                 let attribute_to_use_view = attribute_view(attribute_to_use);
-                                if path == as_std_collections_hashmap_key_type_stringified  {
-                                    panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {as_std_collections_hashmap_key_type_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
-                                }
-                                else if path == std_str_stringified {
-                                    panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {std_str_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
-                                }
-                                else if path == str_stringified {
+                                //maybe additional cases exists
+                                if path == str_stringified {
                                     panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {str_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
                                 }
                                 else if path == std_string_string_stringified {
@@ -1100,7 +1094,6 @@ pub fn derive_error_occurence(
                                                 str_stringified,
                                                 &proc_macro_name_ident_stringified,
                                                 supports_only_stringified,
-                                                &std_str_stringified,
                                                 &attribute
                                             );
                                             possible_lifetime_addition(
@@ -1462,7 +1455,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -2040,7 +2032,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -2077,7 +2068,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -2114,7 +2104,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 panic_if_not_str(
@@ -2122,7 +2111,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -2430,7 +2418,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -2580,7 +2567,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -2859,7 +2845,6 @@ pub fn derive_error_occurence(
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
                                                     supports_only_stringified,
-                                                    &std_str_stringified,
                                                     &attribute
                                                 );
                                                 (
@@ -4033,13 +4018,26 @@ fn panic_if_not_str(
     str_stringified: &str,
     proc_macro_name_ident_stringified: &String,
     supports_only_stringified: &str,
-    std_str_stringified: &String,
     attribute: &NamedAttribute
 ) {
     if let false = reference_ident == str_stringified {
-        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}, but got {reference_ident}", attribute.attribute_view());
+        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {str_stringified}, but got {reference_ident}", attribute.attribute_view());
     }
 }
+
+// fn panic_if_not_string(
+//     segments_stringified: &String,
+//     std_string_string_stringified: &String,
+//     proc_macro_name_ident_stringified: &String,
+//     supports_only_stringified: &str,
+//     std_str_stringified: &String,
+//     attribute: &NamedAttribute
+// ) {
+//     if let false = segments_stringified == std_string_string_stringified {
+//         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
+//     }
+// }
+
 
 fn generate_path_from_segments(segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>) -> String {
     let mut segments_stringified = segments.iter()
