@@ -1095,9 +1095,14 @@ pub fn derive_error_occurence(
                                             )
                                         },
                                         SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
-                                            if let false = reference_ident == str_stringified {
-                                                panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                            }
+                                            panic_if_not_str(
+                                                &reference_ident,
+                                                str_stringified,
+                                                &proc_macro_name_ident_stringified,
+                                                supports_only_stringified,
+                                                &std_str_stringified,
+                                                &attribute
+                                            );
                                             possible_lifetime_addition(
                                                 lifetime_ident.to_string(),
                                                 &mut lifetimes_for_serialize_deserialize
@@ -1452,9 +1457,14 @@ pub fn derive_error_occurence(
                                                 )
                                             ),
                                             VecElementType::Reference { reference_ident, lifetime_ident } => {
-                                                if let false = reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!("{path}<&'{lifetime_ident} {reference_ident}>");
@@ -1988,6 +1998,7 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
+                                                //todo - why only String?
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
                                                 }
@@ -2024,9 +2035,14 @@ pub fn derive_error_occurence(
                                                 if let false = key_segments_stringified == std_string_string_stringified {
                                                     panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified}", attribute.attribute_view());
                                                 }
-                                                if let false = value_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &value_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -2056,10 +2072,14 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                //todo add context
-                                                if let false = key_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -2089,12 +2109,22 @@ pub fn derive_error_occurence(
                                                     value_lifetime_ident 
                                                 }
                                             ) => {
-                                                if let false = key_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
-                                                if let false = value_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
+                                                panic_if_not_str(
+                                                    &value_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!("{path}<&'{key_lifetime_ident} {key_reference_ident}, &'{value_lifetime_ident} {value_reference_ident}>");
@@ -2395,9 +2425,14 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                if let false = key_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -2540,9 +2575,14 @@ pub fn derive_error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                if let false = key_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -2814,9 +2854,14 @@ pub fn derive_error_occurence(
                                                     value_lifetime_ident 
                                                 }
                                             ) => {
-                                                if let false = value_reference_ident == str_stringified {
-                                                    panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}", attribute.attribute_view());
-                                                }
+                                                panic_if_not_str(
+                                                    &value_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &std_str_stringified,
+                                                    &attribute
+                                                );
                                                 (
                                                     {
                                                         let type_stringified = format!(
@@ -3981,6 +4026,19 @@ enum Lifetime {
 
 fn attribute_view(attribute: &String) -> String {
     format!("attribute #[{attribute}]")
+}
+
+fn panic_if_not_str(
+    reference_ident: &proc_macro2::Ident,
+    str_stringified: &str,
+    proc_macro_name_ident_stringified: &String,
+    supports_only_stringified: &str,
+    std_str_stringified: &String,
+    attribute: &NamedAttribute
+) {
+    if let false = reference_ident == str_stringified {
+        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_str_stringified}, but got {reference_ident}", attribute.attribute_view());
+    }
 }
 
 fn generate_path_from_segments(segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>) -> String {
