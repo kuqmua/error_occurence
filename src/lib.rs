@@ -40,13 +40,7 @@
 pub fn derive_error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    std::panic::set_hook(Box::new(|panic_info| {
-        if let Some(location) = panic_info.location() {
-            eprintln!("ErrorOccurence panic occurred in {}:{}:{}", location.file(), location.line(), location.column());
-        } else {
-            eprintln!("ErrorOccurence panic occurred but can't get location information...");
-        }
-    }));
+    proc_macro_helpers::panic_location::panic_location("ErrorOccurence");
     use convert_case::Casing;
     let occurence_camel_case = "Occurence";
     let error_camel_case = "Error";
