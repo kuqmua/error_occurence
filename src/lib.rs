@@ -37,7 +37,7 @@
         eo_hashmap_key_display_foreign_type_value_error_occurence,
     )
 )]
-pub fn derive_error_occurence(
+pub fn error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     proc_macro_helpers::panic_location::panic_location("ErrorOccurence");
