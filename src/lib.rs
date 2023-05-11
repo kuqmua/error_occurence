@@ -182,21 +182,22 @@ pub fn error_occurence(
     let crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream = crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_fields_stringified = format!("{crate_traits_stringified}::fields::");
+    let config_fields_stringified = "config_fields";
+    let crate_traits_config_fields_stringified = format!("{crate_traits_stringified}::{config_fields_stringified}::");
     let get_camel_case = "Get";
-    let crate_traits_fields_get_source_place_type_stringified = format!("{crate_traits_fields_stringified}{get_camel_case}{source_camel_case}PlaceType");
-    let crate_traits_fields_get_source_place_type_token_stream = 
-    crate_traits_fields_get_source_place_type_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_fields_get_source_place_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-    let crate_traits_fields_get_timezone_stringified = format!("{crate_traits_fields_stringified}{get_camel_case}Timezone");
-    let crate_traits_fields_get_timezone_token_stream = 
-    crate_traits_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
-        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_fields_get_timezone_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_config_fields_get_source_place_type_stringified = format!("{crate_traits_config_fields_stringified}{get_camel_case}{source_camel_case}PlaceType");
+    let crate_traits_config_fields_get_source_place_type_token_stream = 
+    crate_traits_config_fields_get_source_place_type_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_config_fields_get_source_place_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_config_fields_get_timezone_stringified = format!("{crate_traits_config_fields_stringified}{get_camel_case}Timezone");
+    let crate_traits_config_fields_get_timezone_token_stream = 
+    crate_traits_config_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
+        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_config_fields_get_timezone_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let get_server_port_camel_case = format!("{get_camel_case}ServerPort");
-    let crate_traits_fields_get_server_port_stringified = format!("{crate_traits_stringified}::fields::{get_server_port_camel_case}");
-    let crate_traits_fields_get_server_port_token_stream = 
-    crate_traits_fields_get_server_port_stringified.parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_fields_get_server_port_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+    let crate_traits_config_fields_get_server_port_stringified = format!("{crate_traits_stringified}::{config_fields_stringified}::{get_server_port_camel_case}");
+    let crate_traits_config_fields_get_server_port_token_stream = 
+    crate_traits_config_fields_get_server_port_stringified.parse::<proc_macro2::TokenStream>()
+    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_config_fields_get_server_port_stringified} {parse_proc_macro2_token_stream_failed_message}"));
     let source_lower_case = source_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let to_string_with_config_lower_case = to_string_with_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let source_to_string_with_config_stringified = format!("{source_lower_case}_{to_string_with_config_lower_case}");
@@ -3596,9 +3597,9 @@ pub fn error_occurence(
                         #trait_lifetime_token_stream,
                         #config_generic_token_stream
                     > for #ident<#generics>
-                    where #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
-                        + #crate_traits_fields_get_timezone_token_stream
-                        + #crate_traits_fields_get_server_port_token_stream
+                    where #config_generic_token_stream: #crate_traits_config_fields_get_source_place_type_token_stream
+                        + #crate_traits_config_fields_get_timezone_token_stream
+                        + #crate_traits_config_fields_get_server_port_token_stream
                 {
                     fn #source_to_string_with_config_token_stream(
                         &self,
@@ -3809,9 +3810,9 @@ pub fn error_occurence(
                         #config_generic_token_stream
                     > for #ident<#generics>
                 where
-                    #config_generic_token_stream: #crate_traits_fields_get_source_place_type_token_stream
-                    + #crate_traits_fields_get_timezone_token_stream
-                    + #crate_traits_fields_get_server_port_token_stream
+                    #config_generic_token_stream: #crate_traits_config_fields_get_source_place_type_token_stream
+                    + #crate_traits_config_fields_get_timezone_token_stream
+                    + #crate_traits_config_fields_get_server_port_token_stream
                 {
                     fn #to_string_with_config_token_stream(&self, config: &#config_generic_token_stream) -> String {
                         match self {
