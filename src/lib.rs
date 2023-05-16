@@ -40,11 +40,10 @@
 pub fn error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    proc_macro_helpers::panic_location::panic_location("ErrorOccurence");
+    let proc_macro_name = "ErrorOccurence";
+    proc_macro_helpers::panic_location::panic_location(proc_macro_name);
     use convert_case::Casing;
     let occurence_camel_case = "Occurence";
-    let error_camel_case = "Error";
-    let proc_macro_name = format!("{error_camel_case}{occurence_camel_case}");
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} let ast: syn::DeriveInput = syn::parse(input) failed"));
     let parse_proc_macro2_token_stream_failed_message = ".parse::<proc_macro2::TokenStream>() failed";
