@@ -832,11 +832,12 @@ pub fn error_occurence(
                             crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                            let crate_traits_display_foreign_type_display_foreign_type_stringified = format!("{crate_traits_stringified}::{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
-                            let crate_traits_display_foreign_type_display_foreign_type_token_stream = 
-                            crate_traits_display_foreign_type_display_foreign_type_stringified
+                            let crate_common_stringified = "crate::common"; 
+                            let crate_common_display_foreign_type_display_foreign_type_stringified = format!("{crate_common_stringified}::{display_foreign_type_lower_case}::{display_foreign_type_camel_case}");
+                            let crate_common_display_foreign_type_display_foreign_type_token_stream = 
+                            crate_common_display_foreign_type_display_foreign_type_stringified
                             .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_traits_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_display_foreign_type_display_foreign_type_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                             let vec_display_to_string_camel_case = format!("{vec_camel_case}{display_camel_case}{to_string_camel_case}");
                             let vec_display_to_string_lower_case = vec_display_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
                             let vec_display_to_string_lower_case_token_stream = 
@@ -1151,7 +1152,7 @@ pub fn error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 format!(
                                                     #field_name_with_field_value_token_stream,
@@ -1162,7 +1163,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 format!(
                                                     #field_name_with_field_value_token_stream,
@@ -1183,7 +1184,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                 #field_ident.#display_foreign_type_lower_case_token_stream()
                                             }
                                         },
@@ -1220,7 +1221,7 @@ pub fn error_occurence(
                                     (
                                         quote::quote! {
                                             {
-                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 format!(
                                                     #field_name_with_field_value_token_stream,
@@ -1231,7 +1232,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             {
-                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 format!(
                                                     #field_name_with_field_value_token_stream,
@@ -1242,7 +1243,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             { 
-                                                use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                 use #crate_traits_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
                                                 format!(
                                                     #field_name_with_field_value_token_stream,
@@ -3332,7 +3333,7 @@ pub fn error_occurence(
                                                 .map(|(k, v)| {
                                                     (
                                                         {
-                                                            use #crate_traits_display_foreign_type_display_foreign_type_token_stream;
+                                                            use #crate_common_display_foreign_type_display_foreign_type_token_stream;
                                                             k.#display_foreign_type_lower_case_token_stream()
                                                         },
                                                         { v.#into_serialize_deserialize_version_token_stream() },
