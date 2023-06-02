@@ -3690,9 +3690,7 @@ pub fn error_occurence(
                     }
                 }
                 impl<#generics> #crate_common_error_logs_logic_error_occurence_named_error_occurence_named_token_stream for #ident<#generics> {
-                    fn #error_occurence_named_token_stream(&self) -> () {
-                        ()
-                    }
+                    fn #error_occurence_named_token_stream(&self) {}
                 }
                 #compile_time_check_error_occurence_members_impl_token_stream
             }
