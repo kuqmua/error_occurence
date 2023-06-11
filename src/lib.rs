@@ -3882,7 +3882,9 @@ pub fn error_occurence(
             }
         },
     };
-    // println!("{token_stream}");
+    // if ident_stringified == "" {
+    //     println!("{token_stream}");
+    // }
     token_stream.into()
 }
 
