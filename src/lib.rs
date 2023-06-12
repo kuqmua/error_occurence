@@ -12,6 +12,7 @@
 //     #[doc = include_str!("x.md")]
 //     x: u32
 // }
+//todo - maybe remove possibility to use references for display, display_foreign_type, error occurence for WithSerializeDeserialize
 #[proc_macro_derive(
     ErrorOccurence, 
     attributes(
@@ -1130,10 +1131,10 @@ pub fn error_occurence(
                                                 },
                                                 quote::quote! {
                                                     {
-                                                        #field_ident
+                                                        #field_ident.to_string()
                                                     }
                                                 },
-                                                type_token_stream,
+                                                quote::quote!{#std_string_string_token_stream},
                                                 quote::quote!{#[serde(borrow)]},
                                                 quote::quote! {
                                                     #field_ident: #unused_argument_handle_token_stream
@@ -1422,7 +1423,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
@@ -1439,7 +1444,12 @@ pub fn error_occurence(
                                                     &mut lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name_ident_stringified
-                                                )
+                                                ),
+                                                quote::quote! {
+                                                    {
+                                                        #field_ident
+                                                    }
+                                                }
                                             ),
                                             VecElementType::Reference { reference_ident, lifetime_ident } => {
                                                 panic_if_not_str(
@@ -1451,7 +1461,7 @@ pub fn error_occurence(
                                                 );
                                                 (
                                                     {
-                                                        let type_stringified = format!("{path}<&'{lifetime_ident} {reference_ident}>");
+                                                        let type_stringified = format!("{path}<{std_string_string_stringified}>");
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1462,6 +1472,12 @@ pub fn error_occurence(
                                                             &mut lifetimes_for_serialize_deserialize,
                                                         );
                                                         quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use crate::common::error_logs_logic::vec_display_into_vec_string::VecDisplayIntoVecString;
+                                                            #field_ident.vec_display_into_vec_string()
+                                                        }
                                                     }
                                                 )
                                             },
@@ -1504,11 +1520,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            {
-                                                #field_ident
-                                            }
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -1781,7 +1793,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type,
@@ -1791,6 +1807,7 @@ pub fn error_occurence(
                                             key_vec_lifetime: Vec<Lifetime>,
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
+                                            proc_macro2::TokenStream,
                                             proc_macro2::TokenStream,
                                             proc_macro2::TokenStream
                                         ) {
@@ -1802,6 +1819,16 @@ pub fn error_occurence(
                                                 &as_std_collections_hashmap_key_type_stringified,
                                                 &attribute
                                             );
+                                            let hashmap_display_display_into_hashmap_display_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
+                                            let hashmap_display_display_into_hashmap_display_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{display_lower_case}_{string_lower_case}");
+                                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_display_string_lower_case}::{hashmap_display_display_into_hashmap_display_string_camel_case}");
+                                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream = crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                            let hashmap_display_display_into_hashmap_display_string_token_stream = 
+                                            hashmap_display_display_into_hashmap_display_string_lower_case
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_display_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
                                             (
                                                 {
                                                     let type_stringified = format!(
@@ -1817,7 +1844,13 @@ pub fn error_occurence(
                                                     lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name_ident_stringified
-                                                )
+                                                ),
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream;
+                                                        #field_ident.#hashmap_display_display_into_hashmap_display_string_token_stream()
+                                                    }
+                                                }
                                             )
                                         };
                                         let hashmap_key_type_reference_case = |
@@ -1826,11 +1859,12 @@ pub fn error_occurence(
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
                                             proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
                                             proc_macro2::TokenStream
                                         ) {
                                             (
                                                 {
-                                                    let type_stringified = format!("{path}<&'{key_lifetime_ident} {key_reference_ident}, {std_string_string_stringified}>");
+                                                    let type_stringified = format!("{path}<{std_string_string_stringified}, {std_string_string_stringified}>");
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -1841,6 +1875,12 @@ pub fn error_occurence(
                                                         lifetimes_for_serialize_deserialize
                                                     );
                                                     quote::quote!{#[serde(borrow)]}
+                                                },
+                                                quote::quote! {
+                                                    {
+                                                        use crate::common::error_logs_logic::hashmap_display_display_into_hashmap_string_string::HashMapDisplayDisplayIntoHashMapStringString;
+                                                        #field_ident.hashmap_display_display_into_hashmap_string_string()
+                                                    }
                                                 }
                                             )
                                         };
@@ -1912,16 +1952,6 @@ pub fn error_occurence(
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     };
-                                    let hashmap_display_display_into_hashmap_display_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
-                                    let hashmap_display_display_into_hashmap_display_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{display_lower_case}_{string_lower_case}");
-                                    let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_display_string_lower_case}::{hashmap_display_display_into_hashmap_display_string_camel_case}");
-                                    let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream = crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
-                                    let hashmap_display_display_into_hashmap_display_string_token_stream = 
-                                    hashmap_display_display_into_hashmap_display_string_lower_case
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_display_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
                                     (
                                         quote::quote! {
                                             {
@@ -1956,12 +1986,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream;
-                                                #field_ident.#hashmap_display_display_into_hashmap_display_string_token_stream()
-                                            }
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -1971,7 +1996,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic,
+                                    ) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -2012,7 +2041,12 @@ pub fn error_occurence(
                                                         &mut lifetimes_for_serialize_deserialize,
                                                             &trait_lifetime_stringified,
                                                             &proc_macro_name_ident_stringified,
-                                                    )
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            #field_ident
+                                                        }
+                                                    }
                                                 )
                                             },
                                             (
@@ -2043,7 +2077,7 @@ pub fn error_occurence(
                                                 (
                                                     {
                                                         let type_stringified = format!(
-                                                            "{path}<{key_segments_stringified}{}, &'{value_lifetime_ident} {value_reference_ident}>",
+                                                            "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
                                                             vec_lifetime_to_string(&key_vec_lifetime)
                                                         );
                                                         type_stringified
@@ -2056,7 +2090,13 @@ pub fn error_occurence(
                                                         &mut lifetimes_for_serialize_deserialize,
                                                             &trait_lifetime_stringified,
                                                             &proc_macro_name_ident_stringified,
-                                                    )
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            use crate::common::error_logs_logic::hashmap_display_display_into_hashmap_display_string::HashMapDisplayDisplayIntoHashMapDisplayString;
+                                                            #field_ident.hashmap_display_display_into_hashmap_display_string()
+                                                        }
+                                                    }
                                                 )
                                             },
                                             (
@@ -2079,7 +2119,7 @@ pub fn error_occurence(
                                                 (
                                                     {
                                                         let type_stringified = format!(
-                                                            "{path}<&'{key_lifetime_ident} {key_reference_ident}, {value_segments_stringified}{}>",
+                                                            "{path}<{std_string_string_stringified}, {value_segments_stringified}{}>",
                                                             vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
@@ -2092,6 +2132,12 @@ pub fn error_occurence(
                                                             &mut lifetimes_for_serialize_deserialize
                                                         );
                                                         quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use crate::common::error_logs_logic::hashmap_display_display_into_hashmap_string_display::HashMapDisplayDisplayIntoHashMapStringDisplay;
+                                                            #field_ident.hashmap_display_display_into_hashmap_string_display()
+                                                        }
                                                     }
                                                 )
                                             },
@@ -2121,7 +2167,7 @@ pub fn error_occurence(
                                                 );
                                                 (
                                                     {
-                                                        let type_stringified = format!("{path}<&'{key_lifetime_ident} {key_reference_ident}, &'{value_lifetime_ident} {value_reference_ident}>");
+                                                        let type_stringified = format!("{path}<{std_string_string_stringified}, {std_string_string_stringified}>");
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
@@ -2135,6 +2181,12 @@ pub fn error_occurence(
                                                                 &proc_macro_name_ident_stringified,
                                                         );
                                                         quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use crate::common::error_logs_logic::hashmap_display_display_into_hashmap_string_string::HashMapDisplayDisplayIntoHashMapStringString;
+                                                            #field_ident.hashmap_display_display_into_hashmap_string_string()
+                                                        }
                                                     }
                                                 )
                                             },
@@ -2177,11 +2229,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            {
-                                                #field_ident
-                                            }
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -2191,7 +2239,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic,
+                                    ) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -2202,8 +2254,18 @@ pub fn error_occurence(
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
                                             proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
                                             proc_macro2::TokenStream
                                         ) {
+                                            let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream = 
+                                            hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+                                            let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified = format!("{crate_common_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case}::{hashmap_camel_case}{display_camel_case}{display_foreign_type_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
+                                            let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream = 
+                                            crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                             (
                                                 {
                                                     let type_stringified = format!(
@@ -2219,7 +2281,13 @@ pub fn error_occurence(
                                                     lifetimes_for_serialize_deserialize,
                                                     &trait_lifetime_stringified,
                                                     &proc_macro_name_ident_stringified
-                                                )
+                                                ),
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream;
+                                                        #field_ident.#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream()
+                                                    }
+                                                }
                                             )
                                         };
                                         let hashmap_key_type_reference_case = |
@@ -2228,12 +2296,13 @@ pub fn error_occurence(
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
                                             proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
                                             proc_macro2::TokenStream
                                         ) {
                                             (
                                                 {
                                                     let type_stringified = format!(
-                                                        "{path}<&'{key_lifetime_ident} {key_reference_ident},{std_string_string_stringified}>",
+                                                        "{path}<{std_string_string_stringified},{std_string_string_stringified}>"
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -2245,6 +2314,12 @@ pub fn error_occurence(
                                                         lifetimes_for_serialize_deserialize
                                                     );
                                                     quote::quote!{#[serde(borrow)]}
+                                                },
+                                                quote::quote! {
+                                                    {
+                                                        use crate::common::error_logs_logs::hashmap_display_display_foreign_type_into_hashmap_string_string::HashMapDisplayDisplayForeignTypeIntoHashMapStringString;
+                                                        #field_ident.hashmap_display_display_foreign_type_into_hashmap_string_string()
+                                                    }
                                                 }
                                             )
                                         };
@@ -2302,15 +2377,6 @@ pub fn error_occurence(
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     };
-                                    let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream = 
-                                    hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-                                    let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified = format!("{crate_common_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case}::{hashmap_camel_case}{display_camel_case}{display_foreign_type_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
-                                    let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream = 
-                                    crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                     (
                                         quote::quote! {
                                             {
@@ -2345,12 +2411,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream;
-                                                #field_ident.#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream()
-                                            }
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -2360,7 +2421,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -2401,7 +2466,10 @@ pub fn error_occurence(
                                                         &mut lifetimes_for_serialize_deserialize,
                                                             &trait_lifetime_stringified,
                                                             &proc_macro_name_ident_stringified
-                                                    )
+                                                    ),
+                                                    quote::quote! {
+                                                        #field_ident
+                                                    }
                                                 )
                                             },
                                             (
@@ -2434,7 +2502,7 @@ pub fn error_occurence(
                                                 (
                                                     {
                                                         let type_stringified = format!(
-                                                            "{path}<&'{key_lifetime_ident} {key_reference_ident},{value_segments_stringified}{}>",
+                                                            "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
                                                             vec_lifetime_to_string(&value_vec_lifetime),
                                                         );
                                                         type_stringified
@@ -2447,6 +2515,12 @@ pub fn error_occurence(
                                                             &mut lifetimes_for_serialize_deserialize
                                                         );
                                                         quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use crate::common::error_logs_logic::hashmap_display_display_foreign_type_into_hashmap_string_string::HashMapDisplayDisplayForeignTypeIntoHashMapStringString;
+                                                            #field_ident.hashmap_display_display_foreign_type_into_hashmap_string_string()
+                                                        }
                                                     }
                                                 )
                                             },
@@ -2499,9 +2573,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            #field_ident
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -2514,7 +2586,11 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -2555,7 +2631,14 @@ pub fn error_occurence(
                                                         &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
                                                         &proc_macro_name_ident_stringified
-                                                    )
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            #field_ident.into_iter()
+                                                            .map(|(k, v)| (k, { v.#into_serialize_deserialize_version_token_stream() }))
+                                                            .collect()
+                                                        }
+                                                    }
                                                 )
                                             },
                                             (
@@ -2588,7 +2671,7 @@ pub fn error_occurence(
                                                 (
                                                     {
                                                         let type_stringified = format!(
-                                                            "{path}<&'{key_lifetime_ident} {key_reference_ident}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
+                                                            "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
                                                             vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
@@ -2601,6 +2684,13 @@ pub fn error_occurence(
                                                             &mut lifetimes_for_serialize_deserialize
                                                         );
                                                         quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            #field_ident.into_iter()
+                                                            .map(|(k, v)| (k.to_string(), { v.#into_serialize_deserialize_version_token_stream() }))
+                                                            .collect()
+                                                        }
                                                     }
                                                 )
                                             },
@@ -2671,13 +2761,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            {
-                                                #field_ident.into_iter()
-                                                .map(|(k, v)| (k, { v.#into_serialize_deserialize_version_token_stream() }))
-                                                .collect()
-                                            }
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -2814,7 +2898,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
@@ -2829,23 +2917,41 @@ pub fn error_occurence(
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
-                                            ) => (
-                                                {
-                                                    let type_stringified = format!(
-                                                        "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(&value_vec_lifetime)
-                                                    );
-                                                    type_stringified
-                                                    .parse::<proc_macro2::TokenStream>()
-                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                                }, 
-                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    value_vec_lifetime, 
-                                                    &mut lifetimes_for_serialize_deserialize,
-                                                    &trait_lifetime_stringified,
-                                                    &proc_macro_name_ident_stringified
+                                            ) => {
+                                                let hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{display_lower_case}");
+                                                let hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream = 
+                                                hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+                                                let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified = format!("{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case}::{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{display_camel_case}");
+                                                let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream = 
+                                                crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
+                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
+                                                    }, 
+                                                    get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                        value_vec_lifetime, 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                        &trait_lifetime_stringified,
+                                                        &proc_macro_name_ident_stringified
+                                                    ),
+                                                    quote::quote! {
+                                                        {   
+                                                            use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream;
+                                                            #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream()
+                                                        }
+                                                    }
                                                 )
-                                            ),
+                                            },
                                             (
                                                 HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
@@ -2866,7 +2972,7 @@ pub fn error_occurence(
                                                 (
                                                     {
                                                         let type_stringified = format!(
-                                                            "{path}<{std_string_string_stringified},&'{value_lifetime_ident} {value_reference_ident}>",
+                                                            "{path}<{std_string_string_stringified},{std_string_string_stringified}>"
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -2877,7 +2983,13 @@ pub fn error_occurence(
                                                         &mut lifetimes_for_serialize_deserialize,
                                                         &trait_lifetime_stringified,
                                                         &proc_macro_name_ident_stringified
-                                                    )
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            use crate::common::error_logs_logic::hashmap_display_foreign_type_display_into_hashmap_string_string::HashMapDisplayForeignTypeDisplayForeignTypeIntoHashMapStringString;
+                                                            #field_ident.hashmap_display_foreign_type_display_into_hashmap_string_string()
+                                                        }
+                                                    }
                                                 )
                                             },
                                             (
@@ -2905,16 +3017,6 @@ pub fn error_occurence(
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     };
-                                    let hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{display_lower_case}");
-                                    let hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream = 
-                                    hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-                                    let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified = format!("{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case}::{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{display_camel_case}");
-                                    let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream = 
-                                    crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified
-                                    .parse::<proc_macro2::TokenStream>()
-                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                     (
                                         quote::quote! {
                                             {
@@ -2949,12 +3051,7 @@ pub fn error_occurence(
                                                 .#lines_space_backslash_lower_case_token_stream()
                                             }
                                         },
-                                        quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream()
-                                            }
-                                        },
+                                        into_serialize_deserialize_logic,
                                         type_token_stream,
                                         serde_borrow_token_stream,
                                         quote::quote! {
@@ -3936,6 +4033,7 @@ enum ErrorOrCodeOccurence {
     }
 }
 
+#[derive(Debug)]
 enum SupportedContainer {
     Vec{
         path: String,
@@ -3956,6 +4054,7 @@ enum SupportedContainer {
     },
 }
 
+#[derive(Debug)]
 enum VecElementType {
     Path{
         element_path: String,
@@ -3967,6 +4066,7 @@ enum VecElementType {
     }
 }
 
+#[derive(Debug)]
 enum HashMapKeyType {
     Path{
         key_segments_stringified: String,
@@ -3978,6 +4078,7 @@ enum HashMapKeyType {
     }
 }
 
+#[derive(Debug)]
 enum HashMapValueType {
     Path{
         value_segments_stringified: String,
@@ -3989,7 +4090,7 @@ enum HashMapValueType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 enum Lifetime {
     Specified(String),
     NotSpecified,
