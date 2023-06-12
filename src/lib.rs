@@ -1454,6 +1454,15 @@ pub fn error_occurence(
                                                     supports_only_stringified,
                                                     &attribute
                                                 );
+                                                let vec_display_into_vec_string_camel_case = format!("VecDisplayIntoVecString");//todo
+                                                let vec_display_into_vec_string_lower_case = vec_display_into_vec_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+                                                let vec_display_into_vec_string_token_stream = vec_display_into_vec_string_lower_case.parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {vec_display_into_vec_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+                                                let crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified = format!("{crate_common_error_logs_logic_stringified}{vec_display_into_vec_string_lower_case}::{vec_display_into_vec_string_camel_case}");
+                                                let crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_token_stream = 
+                                                crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified} {parse_proc_macro2_token_stream_failed_message}"));
                                                 (
                                                     {
                                                         let type_stringified = format!("{path}<{std_string_string_stringified}>");
@@ -1470,8 +1479,8 @@ pub fn error_occurence(
                                                     },
                                                     quote::quote! {
                                                         {
-                                                            use crate::common::error_logs_logic::vec_display_into_vec_string::VecDisplayIntoVecString;
-                                                            #field_ident.vec_display_into_vec_string()
+                                                            use #crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_token_stream;
+                                                            #field_ident.#vec_display_into_vec_string_token_stream()
                                                         }
                                                     }
                                                 )
