@@ -1093,11 +1093,6 @@ pub fn error_occurence(
                                                 lifetime_ident.to_string(),
                                                 &mut lifetimes_for_serialize_deserialize
                                             );
-                                            let type_token_stream = {
-                                                let type_stringified = format!("&\'{lifetime_ident} {reference_ident}");
-                                                type_stringified.parse::<proc_macro2::TokenStream>()
-                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                                            };
                                             (
                                                 quote::quote! {
                                                     {
@@ -1854,7 +1849,6 @@ pub fn error_occurence(
                                             )
                                         };
                                         let hashmap_key_type_reference_case = |
-                                            key_reference_ident: proc_macro2::Ident,
                                             key_lifetime_ident: proc_macro2::Ident,
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
@@ -1918,7 +1912,7 @@ pub fn error_occurence(
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
                                                 HashMapKeyType::Reference { 
-                                                    key_reference_ident, 
+                                                    key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
                                                 HashMapValueType::Path { 
@@ -1932,7 +1926,6 @@ pub fn error_occurence(
                                                     &attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified
                                                 );
                                                 hashmap_key_type_reference_case(
-                                                    key_reference_ident,
                                                     key_lifetime_ident,
                                                     &mut lifetimes_for_serialize_deserialize
                                                 )
@@ -2291,7 +2284,7 @@ pub fn error_occurence(
                                             )
                                         };
                                         let hashmap_key_type_reference_case = |
-                                            key_reference_ident: proc_macro2::Ident,
+                                            _key_reference_ident: proc_macro2::Ident,
                                             key_lifetime_ident: proc_macro2::Ident,
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
