@@ -987,7 +987,6 @@ pub fn error_occurence(
                             hashmap_display_display_into_hashmap_display_string_lower_case
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_display_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-                        //
                             let hashmap_display_foreign_type_display_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
                             let hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
                             let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case}::{hashmap_display_foreign_type_display_into_hashmap_string_string_camel_case}");
@@ -997,7 +996,6 @@ pub fn error_occurence(
                             let hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream = hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
-                        //
                             let (
                                 logic_for_source_to_string_with_config_for_attribute, 
                                 logic_for_source_to_string_without_config_for_attribute,
@@ -3498,7 +3496,6 @@ pub fn error_occurence(
                                 #field_ident: #unused_argument_handle_token_stream
                             });
                             enum_fields_logic_for_enum_with_serialize_deserialize.push(quote::quote!{
-                                // #serde_borrow_attribute_token_stream
                                 #field_ident: #field_type_with_serialize_deserialize_token_stream
                             });
                             enum_fields_logic_for_source_to_string_without_config_with_serialize_deserialize.push(quote::quote!{
@@ -4302,24 +4299,3 @@ fn form_last_arg_lifetime_vec(
         panic!("{proc_macro_name_ident_stringified} type_path.path.segments.last() {is_none_stringified}");
     }
 }
-
-// fn lifetimes_for_serialize_deserialize_into_token_stream(
-//     lifetimes_for_serialize_deserialize: Vec<String>,
-//     trait_lifetime_stringified: &String,
-//     proc_macro_name_ident_stringified: &String,
-//     parse_proc_macro2_token_stream_failed_message: &str,
-// ) -> proc_macro2::TokenStream {
-//     if let true = lifetimes_for_serialize_deserialize.contains(&trait_lifetime_stringified.to_string()) {
-//         panic!("{proc_macro_name_ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
-//     };
-//     let mut lifetimes_for_serialize_deserialize_stringified = lifetimes_for_serialize_deserialize
-//     .iter()
-//     .fold(String::from(""), |mut acc, gen_param| {
-//         acc.push_str(&format!("'{gen_param},"));
-//         acc
-//     });
-//     lifetimes_for_serialize_deserialize_stringified.pop();
-//     lifetimes_for_serialize_deserialize_stringified
-//     .parse::<proc_macro2::TokenStream>()
-//     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {lifetimes_for_serialize_deserialize_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-// }
