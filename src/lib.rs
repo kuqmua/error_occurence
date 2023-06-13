@@ -3808,7 +3808,6 @@ pub fn error_occurence(
             }
         },
         SuportedEnumVariant::Unnamed => {
-            let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(generics_len);
             let data_enum_variants_len = data_enum.variants.len();
             let mut logic_for_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
@@ -3828,32 +3827,14 @@ pub fn error_occurence(
                 else {
                     panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} {syn_fields}::{unnamed_camel_case}");
                 };
-                let (type_token_stream, serde_borrow_token_stream) = if let syn::Type::Path(type_path) = field_type {
-                    let vec_lifetime = form_last_arg_lifetime_vec(
-                        &type_path.path.segments, 
-                        &proc_macro_name_ident_stringified,
-                        supports_only_stringified,
-                        is_none_stringified,
-                        syn_generic_argument_type_stringified
+                let type_token_stream = if let syn::Type::Path(type_path) = field_type {
+                    let type_stringified = format!(
+                        "{}{with_serialize_deserialize_camel_case}",
+                        generate_path_from_segments(&type_path.path.segments),
                     );
-                    (
-                        {
-                            let type_stringified = format!(
-                                "{}{with_serialize_deserialize_camel_case}{}",
-                                generate_path_from_segments(&type_path.path.segments),
-                                vec_lifetime_to_string(&vec_lifetime)
-                            );
-                            type_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
-                        },
-                        get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                            vec_lifetime, 
-                            &mut lifetimes_for_serialize_deserialize,
-                            &trait_lifetime_stringified,
-                            &proc_macro_name_ident_stringified,
-                        )
-                    )
+                    type_stringified
+                    .parse::<proc_macro2::TokenStream>()
+                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {parse_proc_macro2_token_stream_failed_message}"))
                 }
                 else {
                     panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} {syn_type_path_stringified}")
@@ -3870,7 +3851,6 @@ pub fn error_occurence(
                 });
                 logic_for_enum_with_serialize_deserialize.push({
                     quote::quote!{
-                        #serde_borrow_token_stream
                         #variant_ident(#type_token_stream)
                     }
                 });
