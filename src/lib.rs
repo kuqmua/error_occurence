@@ -2155,10 +2155,27 @@ pub fn error_occurence(
                                                         );
                                                         quote::quote!{#[serde(borrow)]}
                                                     },
-                                                    quote::quote! {
-                                                        {
-                                                            use crate::common::error_logs_logic::hashmap_display_display_into_hashmap_string_display::HashMapDisplayDisplayIntoHashMapStringDisplay;
-                                                            #field_ident.hashmap_display_display_into_hashmap_string_display()
+                                                    {
+                                                        let hashmap_display_display_into_hashmap_string_display_camel_case = "HashMapDisplayDisplayIntoHashMapStringDisplay";//todo
+                                                        let hashmap_display_display_into_hashmap_string_display_lower_case = 
+                                                        hashmap_display_display_into_hashmap_string_display_camel_case
+                                                        .to_case(convert_case::Case::Snake)
+                                                        .to_lowercase();
+                                                        let hashmap_display_display_into_hashmap_string_display_token_stream = 
+                                                        hashmap_display_display_into_hashmap_string_display_lower_case
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_string_display_lower_case} {parse_proc_macro2_token_stream_failed_message}"));
+                                                        let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified = 
+                                                        format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_string_display_lower_case}::{hashmap_display_display_into_hashmap_string_display_camel_case}");
+                                                        let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_token_stream = 
+                                                        crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified} {parse_proc_macro2_token_stream_failed_message}"));
+                                                        quote::quote! {
+                                                            {
+                                                                use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_token_stream;
+                                                                #field_ident.#hashmap_display_display_into_hashmap_string_display_token_stream()
+                                                            }
                                                         }
                                                     }
                                                 )
