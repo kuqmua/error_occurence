@@ -223,7 +223,7 @@ pub fn error_occurence(
     let is_none_stringified = "is None";
     let suported_enum_variant_stringified = "SuportedEnumVariant";
     let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
-    let compile_time_check_error_occurence_members_stringified = format!("compile_time_check_{error_occurence_lower_case}_members");
+    let compile_time_check_error_occurence_members_stringified = format!("_compile_time_check_{error_occurence_lower_case}_members");
     let compile_time_check_error_occurence_members_token_stream = compile_time_check_error_occurence_members_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {compile_time_check_error_occurence_members_stringified} {parse_proc_macro2_token_stream_failed_message}"));
@@ -3949,9 +3949,7 @@ pub fn error_occurence(
                     }
                 }
                 impl<#generics> #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
-                    fn #error_occurence_unnamed_token_stream(&self) -> () {
-                        ()
-                    }
+                    fn #error_occurence_unnamed_token_stream(&self) {}
                 }
                 impl<#generics> #ident<#generics> {
                     fn #compile_time_check_error_occurence_members_token_stream(&self) {
