@@ -47,7 +47,7 @@ pub fn error_occurence(
     let occurence_camel_case = "Occurence";
     let proc_macro_name = format!("{error_camel_case}{occurence_camel_case}");
     let ast: syn::DeriveInput =
-        syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} let ast: syn::DeriveInput = syn::parse(input) failed"));
+        syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} {}", proc_macro_helpers::global_variables::hardcode::AST_PARSE_FAILED));
     let error_occurence_lower_case = proc_macro_name.to_case(convert_case::Case::Snake).to_lowercase();
     let trait_lifetime_stringified = format!("'{error_occurence_lower_case}_proc_macro_reserved_lifetime_name");
     let ident = &ast.ident;
