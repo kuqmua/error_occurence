@@ -242,6 +242,2137 @@ pub fn error_occurence(
     let hashmap_lower_case = hashmap_camel_case.to_case(convert_case::Case::Flat);
     let vec_camel_case = "Vec";
     let vec_lower_case = vec_camel_case.to_lowercase(); 
+    //
+    let something = match supported_enum_variant {
+        SuportedEnumVariant::Named => {
+            let code_occurence_camel_case = format!("Code{occurence_camel_case}");
+            let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+            let foreign_type_camel_case = "ForeignType";
+            let display_camel_case = "Display";
+            let display_foreign_type_camel_case = format!("{display_camel_case}{foreign_type_camel_case}");
+            let display_foreign_type_lower_case = display_foreign_type_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+            let display_lower_case = display_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+            let attribute_prefix_stringified = "eo_";
+            let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
+            let attribute_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}");
+            let attribute_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_error_occurence_stringified = format!("{attribute_prefix_stringified}{error_occurence_lower_case}");
+            let attribute_vec_display_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}");
+            let attribute_vec_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_vec_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}");
+            let attribute_vec_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_vec_error_occurence_stringified = format!("{attribute_prefix_stringified}{vec_lower_case}_{error_occurence_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}_{value_lower_case}_{error_occurence_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{display_foreign_type_lower_case}_{with_serialize_deserialize_lower_case}");
+            let attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified = format!("{attribute_prefix_stringified}{hashmap_lower_case}_{key_lower_case}_{display_foreign_type_lower_case}_{value_lower_case}_{error_occurence_lower_case}");
+            let variants_vec = data_enum.variants.clone().into_iter().map(|variant| {
+                let variant_fields_vec = if let syn::Fields::Named(fields_named) = variant.fields {
+                    fields_named.named.into_iter().map(|field|{
+                        let field_ident = field.ident.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} field.ident {is_none_stringified}"));
+                        let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
+                            true => {
+                                let (code_occurence_type_stringified, code_occurence_lifetime) = {
+                                    if let syn::Type::Path(type_path) = &field.ty {
+                                        (
+                                            {
+                                                let mut code_occurence_type_repeat_checker = false;
+                                                let code_occurence_segments_stringified_handle = type_path.path.segments.iter()
+                                                .fold(String::from(""), |mut acc, path_segment| {
+                                                    let path_segment_ident = &path_segment.ident;
+                                                    match *path_segment_ident == code_occurence_camel_case {
+                                                        true => {
+                                                            if code_occurence_type_repeat_checker {
+                                                                panic!("{proc_macro_name_ident_stringified} code_occurence_ident detected more than one {code_occurence_camel_case} inside type path");
+                                                            }
+                                                            acc.push_str(&path_segment_ident.to_string());
+                                                            code_occurence_type_repeat_checker = true;
+                                                        },
+                                                        false => acc.push_str(&format!("{path_segment_ident}::")),
+                                                    }
+                                                    acc
+                                                });
+                                                if !code_occurence_type_repeat_checker {
+                                                    panic!("{proc_macro_name_ident_stringified} no {code_occurence_camel_case} named field");
+                                                }
+                                                code_occurence_segments_stringified_handle
+                                            },
+                                            form_last_arg_lifetime_vec(
+                                                &type_path.path.segments,
+                                                &proc_macro_name_ident_stringified,
+                                                supports_only_stringified,
+                                                is_none_stringified,
+                                                syn_generic_argument_type_stringified
+                                            ),
+                                        )
+                                      }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {supports_only_stringified} {syn_type_path_stringified}");
+                                    }
+                                };
+                                ErrorOrCodeOccurence::CodeOccurence {
+                                    field_type: code_occurence_type_stringified,
+                                    vec_lifetime: code_occurence_lifetime
+                                }
+                            },
+                            false => {
+                                let attribute = {
+                                    let mut option_attribute = None;
+                                    field.attrs.iter().for_each(|attr|{
+                                        if let true = attr.path.segments.len() == 1 {
+                                            let error_message = format!("{proc_macro_name_ident_stringified} two or more supported attributes!");
+                                            if let true = attr.path.segments[0].ident == attribute_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_display_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplayWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoErrorOccurence);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplayWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_vec_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize);
+                                                }
+                                            }
+                                            else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified {
+                                                if let true = option_attribute.is_some() {
+                                                    panic!("{error_message}");
+                                                }
+                                                else {
+                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
+                                                }
+                                            }//other attributes are not for this proc_macro
+                                        }//other attributes are not for this proc_macro
+                                    });
+                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} option attribute {is_none_stringified}"))
+                                };
+                                let syn_type_reference = format!("syn::Type::{reference_camel_case}");
+                                let error_message = format!("{supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}");
+                                let supported_container = match field.ty {
+                                    syn::Type::Path(type_path) => {
+                                        let path = generate_path_from_segments(&type_path.path.segments);
+                                        let vec_lifetime = form_last_arg_lifetime_vec(
+                                            &type_path.path.segments,
+                                            &proc_macro_name_ident_stringified,
+                                            supports_only_stringified,
+                                            is_none_stringified,
+                                            syn_generic_argument_type_stringified
+                                        );
+                                        let path_segment = type_path.path.segments.into_iter().last()
+                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().last() {is_none_stringified}"));
+                                        if path_segment.ident == vec_camel_case {
+                                            let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
+                                                if let true = angle_brackets_generic_arguments.args.len() == 1 {
+                                                    if let syn::GenericArgument::Type(type_handle) = 
+                                                        angle_brackets_generic_arguments.args
+                                                        .into_iter().next()
+                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"))
+                                                    {
+                                                        match type_handle {
+                                                            syn::Type::Path(type_path) => VecElementType::Path{
+                                                                element_path: generate_path_from_segments(&type_path.path.segments),
+                                                                vec_lifetime: form_last_arg_lifetime_vec(
+                                                                    &type_path.path.segments, 
+                                                                    &proc_macro_name_ident_stringified,
+                                                                    supports_only_stringified,
+                                                                    is_none_stringified,
+                                                                    syn_generic_argument_type_stringified
+                                                                )
+                                                            },
+                                                            syn::Type::Reference(type_reference) => {
+                                                                let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
+                                                                    if let true = type_path.path.segments.len() == 1 {
+                                                                        type_path.path.segments
+                                                                        .into_iter().next()
+                                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .ident
+                                                                    }
+                                                                    else {
+                                                                        panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                                                };
+                                                                VecElementType::Reference {
+                                                                    reference_ident,
+                                                                    lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                }
+                                                            },
+                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}"),
+                                                        }
+                                                    }
+                                                    else {
+                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_stringified} {syn_generic_argument_type_stringified}");
+                                                    }
+                                                }
+                                                else {
+                                                    panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.len() == 1");
+                                                }
+                                            }
+                                            else {
+                                                panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
+                                            };
+                                            SupportedContainer::Vec{
+                                                path,
+                                                vec_element_type
+                                            }
+                                        }
+                                        else if path_segment.ident == hashmap_camel_case {
+                                            let (
+                                                hashmap_key_type,
+                                                hashmap_value_type
+                                            ) = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
+                                                if let true = angle_brackets_generic_arguments.args.len() == 2 {
+                                                    let (
+                                                        key_generic_argument,
+                                                        value_generic_argument
+                                                    ) = {
+                                                        let mut key_generic_argument_option = None;
+                                                        let mut value_generic_argument_option = None;
+                                                        angle_brackets_generic_arguments.args
+                                                        .into_iter()
+                                                        .enumerate()
+                                                        .for_each(|(index, generic_argument)|{
+                                                            match index {
+                                                                0 => {
+                                                                    key_generic_argument_option = Some(generic_argument);
+                                                                }
+                                                                1 => {
+                                                                    value_generic_argument_option = Some(generic_argument);
+                                                                }
+                                                                _ => panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.len() != 2")
+                                                            }
+                                                        });
+                                                        (
+                                                            key_generic_argument_option.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} key_generic_argument_option {is_none_stringified}")),
+                                                            value_generic_argument_option.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} value_generic_argument_option {is_none_stringified}"))
+                                                        )
+                                                    };
+                                                    let hashmap_key_type 
+                                                    = if let syn::GenericArgument::Type(type_handle) = 
+                                                        key_generic_argument
+                                                    {
+                                                        match type_handle {
+                                                            syn::Type::Path(type_path) => {
+                                                                HashMapKeyType::Path{
+                                                                    key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
+                                                                    key_vec_lifetime: form_last_arg_lifetime_vec(
+                                                                        &type_path.path.segments, 
+                                                                        &proc_macro_name_ident_stringified,
+                                                                        supports_only_stringified,
+                                                                        is_none_stringified,
+                                                                        syn_generic_argument_type_stringified
+                                                                    )
+                                                                }
+                                                            },
+                                                            syn::Type::Reference(type_reference) => {
+                                                                let key_reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
+                                                                    if let true = type_path.path.segments.len() == 1 {
+                                                                        type_path.path.segments
+                                                                        .into_iter().next()
+                                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .ident
+                                                                    }
+                                                                    else {
+                                                                        panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                                                };
+                                                                HashMapKeyType::Reference {
+                                                                    key_reference_ident,
+                                                                    key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                }
+                                                            },
+                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}"),
+                                                        }
+                                                    }
+                                                    else {
+                                                        panic!("{proc_macro_name_ident_stringified} key_generic_argument {supports_only_stringified} {syn_generic_argument_type_stringified}");
+                                                    };
+                                                    let hashmap_value_type = if let syn::GenericArgument::Type(type_handle) = value_generic_argument {
+                                                        match type_handle {
+                                                            syn::Type::Path(type_path) => {
+                                                                HashMapValueType::Path{
+                                                                    value_segments_stringified: generate_path_from_segments(&type_path.path.segments),
+                                                                    value_vec_lifetime: form_last_arg_lifetime_vec(
+                                                                        &type_path.path.segments,  
+                                                                        &proc_macro_name_ident_stringified,
+                                                                        supports_only_stringified,
+                                                                        is_none_stringified,
+                                                                        syn_generic_argument_type_stringified
+                                                                    )
+                                                                }
+                                                            },
+                                                            syn::Type::Reference(type_reference) => {
+                                                                let value_reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
+                                                                    if let true = type_path.path.segments.len() == 1 {
+                                                                        type_path.path.segments
+                                                                        .into_iter().next()
+                                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .ident
+                                                                    }
+                                                                    else {
+                                                                        panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                                                };
+                                                                HashMapValueType::Reference {
+                                                                    value_reference_ident,
+                                                                    value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                }
+                                                            },
+                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and syn::Type::Reference"),
+                                                        }
+                                                    }
+                                                    else {
+                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_stringified} {syn_generic_argument_type_stringified}");
+                                                    };
+                                                    (
+                                                        hashmap_key_type,
+                                                        hashmap_value_type,
+                                                    )
+                                                }
+                                                else {
+                                                    panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.len() == 2");
+                                                }
+                                            }
+                                            else {
+                                                panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
+                                            };
+                                            SupportedContainer::HashMap{
+                                                path,
+                                                hashmap_key_type,
+                                                hashmap_value_type
+                                            }
+                                        }
+                                        else {
+                                            SupportedContainer::Path{
+                                                path, 
+                                                vec_lifetime,
+                                            }
+                                        }
+                                    },
+                                    syn::Type::Reference(type_reference) => {
+                                        let reference_ident = if let syn::Type::Path(type_path) = *type_reference.elem {
+                                            if let true = type_path.path.segments.len() == 1 {
+                                                type_path.path.segments
+                                                .into_iter().next()
+                                                .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                .ident
+                                            }
+                                            else {
+                                                panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_path.path.segments.len() != 1");
+                                            }
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                        };
+                                        SupportedContainer::Reference{
+                                            reference_ident,
+                                            lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
+                                        }
+                                    },
+                                    _ => panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {error_message}"),
+                                };
+                                ErrorOrCodeOccurence::Error {
+                                    attribute,
+                                    supported_container,
+                                }
+                            },
+                        };
+                        (
+                            field_ident,
+                            error_or_code_occurence,
+                        )
+                    })
+                    .collect::<Vec<(
+                        proc_macro2::Ident,
+                        ErrorOrCodeOccurence
+                    )>>()
+                }
+                else {
+                    panic!("{proc_macro_name_ident_stringified} expected fields would be named");
+                };
+                (
+                    variant.ident, 
+                    variant_fields_vec,
+                )
+            })
+            .collect::<Vec<(
+                proc_macro2::Ident, 
+                 Vec<(
+                    proc_macro2::Ident,
+                    ErrorOrCodeOccurence
+                )>
+            )>>();
+            let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(generics_len);
+            let mut logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(variants_vec.len());
+            let mut should_generate_impl_compile_time_check_error_occurence_members = false;
+            variants_vec.into_iter().for_each(|(
+                variant_ident, 
+                fields_vec
+            )|{
+                let mut enum_fields_logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
+                fields_vec.into_iter().enumerate().for_each(|(index, (field_ident, error_or_code_occurence))|{
+                    let to_string_lower_case = to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+                    match error_or_code_occurence {
+                        ErrorOrCodeOccurence::Error { 
+                            attribute, 
+                            supported_container,
+                        } => {
+                            let crate_common_stringified = "crate::common"; 
+                            let string_lower_case = string_camel_case.to_lowercase();
+                            let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_foreign_type_lower_case}_{into_lower_case}_{hashmap_lower_case}_{display_lower_case}_{string_lower_case}");
+                            let std_stringified = "std";
+                            let std_string_string_stringified = format!("{std_stringified}::{string_lower_case}::{string_camel_case}");
+                            let std_string_string_token_stream = std_string_string_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {std_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let vec_element_type_path_stringified = format!("VecElementType::{path_camel_case}");
+                            let as_std_collections_hashmap_key_type_stringified = format!("as {std_stringified}::collections::{hashmap_camel_case} key type");
+                            let str_stringified = "str";
+                            let string_string_stringified: String = format!("{string_lower_case}::{string_camel_case}");
+                            let std_string_string_stringified = format!("{std_stringified}::{string_string_stringified}");
+                            let must_be_used_with_stringified = "must be used with";
+                            let does_not_support_stringified = "does not support";
+                            let type_camel_case = "Type";
+                            let hashmap_key_type_stringified = format!("{hashmap_camel_case}{key_camel_case}{type_camel_case}");
+                            let hashmap_value_type_stringified = format!("{hashmap_camel_case}{value_camel_case}{type_camel_case}");
+                            let hashmap_key_type_path_stringified = format!("{hashmap_key_type_stringified}::{path_camel_case}");
+                            let hashmap_key_type_reference_stringified = format!("{hashmap_key_type_stringified}::{reference_camel_case}");
+                            let hashmap_value_type_path_stringified = format!("{hashmap_value_type_stringified}::{path_camel_case}");
+                            let hashmap_value_type_reference_stringified = format!("{hashmap_value_type_stringified}::{reference_camel_case}");
+                            let inform_use_str_string_in_different_attribute = |
+                                path: String,
+                                wrong_attribute: &String,
+                                attribute_to_use: &String
+                            | {
+                                let wrong_attribute_view = attribute_view(wrong_attribute);
+                                let attribute_to_use_view = attribute_view(attribute_to_use);
+                                //maybe additional cases exists
+                                if path == str_stringified {
+                                    panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {str_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
+                                }
+                                else if path == std_string_string_stringified {
+                                    panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {std_string_string_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
+                                }
+                                else if path == string_string_stringified {
+                                    panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {string_string_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
+                                }
+                                else if path == string_camel_case {
+                                    panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {string_camel_case} {must_be_used_with_stringified} {attribute_to_use_view}");
+                                }
+                            };
+                            let vec_display_into_vec_string_camel_case: String = format!("{vec_camel_case}{display_camel_case}{into_camel_case}{vec_camel_case}{string_camel_case}");
+                            let vec_display_into_vec_string_lower_case = vec_display_into_vec_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+                            let vec_display_into_vec_string_token_stream = vec_display_into_vec_string_lower_case
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {vec_display_into_vec_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let hashmap_display_display_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
+                            let hashmap_display_display_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
+                            let hashmap_display_display_into_hashmap_string_string_token_stream = hashmap_display_display_into_hashmap_string_string_lower_case
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_string_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_string_string_lower_case}::{hashmap_display_display_into_hashmap_string_string_camel_case}");
+                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream = 
+                            crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let hashmap_display_display_foreign_type_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_foreign_type_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
+                            let hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_foreign_type_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
+                            let hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream = hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case}::{hashmap_display_display_foreign_type_into_hashmap_string_string_camel_case}");
+                            let crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream = crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let hashmap_display_display_into_hashmap_display_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
+                            let hashmap_display_display_into_hashmap_display_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{display_lower_case}_{string_lower_case}");
+                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_display_string_lower_case}::{hashmap_display_display_into_hashmap_display_string_camel_case}");
+                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream = crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let hashmap_display_display_into_hashmap_display_string_token_stream = 
+                            hashmap_display_display_into_hashmap_display_string_lower_case
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_display_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let hashmap_display_foreign_type_display_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
+                            let hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
+                            let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case}::{hashmap_display_foreign_type_display_into_hashmap_string_string_camel_case}");
+                            let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream = crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream = hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case
+                            .parse::<proc_macro2::TokenStream>()
+                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                            let 
+                                field_type_with_serialize_deserialize_token_stream
+                            = match attribute {
+                                NamedAttribute::EoDisplay => {
+                                    if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
+                                        inform_use_str_string_in_different_attribute(
+                                            path,
+                                            &attribute.to_str().to_string(),
+                                            &attribute_display_with_serialize_deserialize_stringified
+                                        );
+                                        quote::quote! {
+                                            #std_string_string_token_stream
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {supported_container_double_dot_double_dot}{path_camel_case}", attribute.attribute_view())
+                                    }
+                                },
+                                NamedAttribute::EoDisplayWithSerializeDeserialize => {
+                                    match supported_container {
+                                        SupportedContainer::Path { path, vec_lifetime } => {
+                                            let (type_token_stream, serde_borrow_token_stream) = (
+                                                {
+                                                    let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                },
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                )
+                                            );
+                                            type_token_stream
+                                        },
+                                        SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
+                                            panic_if_not_str(
+                                                &reference_ident,
+                                                str_stringified,
+                                                &proc_macro_name_ident_stringified,
+                                                supports_only_stringified,
+                                                &attribute
+                                            );
+                                            possible_lifetime_addition(
+                                                lifetime_ident.to_string(),
+                                                &mut lifetimes_for_serialize_deserialize
+                                            );
+                                            quote::quote!{#std_string_string_token_stream}
+                                        },
+                                        _ => panic!("{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{path_camel_case} and {supported_container_double_dot_double_dot}{reference_camel_case}", attribute.attribute_view()),
+                                    }
+                                },
+                                NamedAttribute::EoDisplayForeignType => {
+                                    if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
+                                    }
+                                    quote::quote! {
+                                        #std_string_string_token_stream
+                                    }
+                                },
+                                NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
+                                        (
+                                            {
+                                                let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                                type_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                            }, 
+                                            get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                vec_lifetime, 
+                                                &mut lifetimes_for_serialize_deserialize,
+                                                &trait_lifetime_stringified,
+                                                &proc_macro_name_ident_stringified
+                                            )
+                                        )
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
+                                        (
+                                            {
+                                                let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}");
+                                                type_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                            }, 
+                                            get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                vec_lifetime, 
+                                                &mut lifetimes_for_serialize_deserialize,
+                                                &trait_lifetime_stringified,
+                                                &proc_macro_name_ident_stringified
+                                            )
+                                        )
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoVecDisplay => {
+                                    let type_token_stream = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
+                                            inform_use_str_string_in_different_attribute(
+                                                element_path,
+                                                &attribute.to_str().to_string(),
+                                                &attribute_vec_display_with_serialize_deserialize_stringified
+                                            );
+                                            let type_stringified = format!("{path}<{std_string_string_stringified}>");
+                                            type_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        match vec_element_type {
+                                            VecElementType::Path { element_path, vec_lifetime } => (
+                                                {
+                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                }, 
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                ),
+                                                quote::quote! {
+                                                    {
+                                                        #field_ident
+                                                    }
+                                                }
+                                            ),
+                                            VecElementType::Reference { reference_ident, lifetime_ident } => {
+                                                panic_if_not_str(
+                                                    &reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                let crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified = format!("{crate_common_error_logs_logic_stringified}{vec_display_into_vec_string_lower_case}::{vec_display_into_vec_string_camel_case}");
+                                                let crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_token_stream = 
+                                                crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                                (
+                                                    {
+                                                        let type_stringified = format!("{path}<{std_string_string_stringified}>");
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    },
+                                                    {
+                                                        possible_lifetime_addition(
+                                                            lifetime_ident.to_string(),
+                                                            &mut lifetimes_for_serialize_deserialize,
+                                                        );
+                                                        quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use #crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_token_stream;
+                                                            #field_ident.#vec_display_into_vec_string_token_stream()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoVecDisplayForeignType => {
+                                    if let SupportedContainer::Vec { 
+                                        path: _path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
+                                        else {
+                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
+                                    }
+                                    quote::quote! {
+                                        std::vec::Vec<#std_string_string_token_stream>
+                                    }
+                                },
+                                NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type 
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
+                                            (
+                                                {
+                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                }, 
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                )
+                                            )
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoVecErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                        path, 
+                                        vec_element_type
+                                    } = supported_container {
+                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
+                                            (
+                                                {
+                                                    let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                }, 
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                )
+                                            )
+                                        }
+                                        else {
+                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                        }                                        
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
+                                        path,
+                                        hashmap_key_type, 
+                                        hashmap_value_type,
+                                    } = supported_container {
+                                        let hashmap_key_type_path_case = |
+                                            key_segments_stringified: String,
+                                            key_vec_lifetime: Vec<Lifetime>,
+                                            lifetimes_for_serialize_deserialize: &mut Vec<String>
+                                        | -> (
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream
+                                        ) {
+                                            panic_if_not_string(
+                                                &key_segments_stringified,
+                                                &std_string_string_stringified,
+                                                &proc_macro_name_ident_stringified,
+                                                supports_only_stringified,
+                                                &as_std_collections_hashmap_key_type_stringified,
+                                                &attribute
+                                            );
+                                            (
+                                                {
+                                                    let type_stringified = format!(
+                                                        "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
+                                                        vec_lifetime_to_string(&key_vec_lifetime),
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                },
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    key_vec_lifetime, 
+                                                    lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                ),
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream;
+                                                        #field_ident.#hashmap_display_display_into_hashmap_display_string_token_stream()
+                                                    }
+                                                }
+                                            )
+                                        };
+                                        let hashmap_key_type_reference_case = |
+                                            key_lifetime_ident: proc_macro2::Ident,
+                                            lifetimes_for_serialize_deserialize: &mut Vec<String>
+                                        | -> (
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream
+                                        ) {
+                                            (
+                                                {
+                                                    let type_stringified = format!("{path}<{std_string_string_stringified}, {std_string_string_stringified}>");
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                },
+                                                {
+                                                    possible_lifetime_addition(
+                                                        key_lifetime_ident.to_string(),
+                                                        lifetimes_for_serialize_deserialize
+                                                    );
+                                                    quote::quote!{#[serde(borrow)]}
+                                                },
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream;
+                                                        #field_ident.#hashmap_display_display_into_hashmap_string_string_token_stream()
+                                                    }
+                                                }
+                                            )
+                                        };
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                inform_use_str_string_in_different_attribute(
+                                                    value_segments_stringified,
+                                                    &attribute.to_str().to_string(),
+                                                    &attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified
+                                                );
+                                                hashmap_key_type_path_case(
+                                                    key_segments_stringified,
+                                                    key_vec_lifetime,
+                                                    &mut lifetimes_for_serialize_deserialize
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                inform_use_str_string_in_different_attribute(
+                                                    value_segments_stringified,
+                                                    &attribute.to_str().to_string(),
+                                                    &attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified
+                                                );
+                                                hashmap_key_type_reference_case(
+                                                    key_lifetime_ident,
+                                                    &mut lifetimes_for_serialize_deserialize
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic,
+                                    ) = if let SupportedContainer::HashMap { 
+                                        path,
+                                        hashmap_key_type, 
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{key_segments_stringified}{}, {value_segments_stringified}{}>",
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
+                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    }, 
+                                                    get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
+                                                        key_vec_lifetime, 
+                                                        value_vec_lifetime, 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                            &trait_lifetime_stringified,
+                                                            &proc_macro_name_ident_stringified,
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            #field_ident
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident, 
+                                                    value_lifetime_ident 
+                                                }
+                                            ) => {
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
+                                                panic_if_not_str(
+                                                    &value_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
+                                                            vec_lifetime_to_string(&key_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    }, 
+                                                    get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
+                                                        key_vec_lifetime, 
+                                                        vec![Lifetime::Specified(value_lifetime_ident.to_string())], 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                            &trait_lifetime_stringified,
+                                                            &proc_macro_name_ident_stringified,
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream;
+                                                            #field_ident.#hashmap_display_display_into_hashmap_display_string_token_stream()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{std_string_string_stringified}, {value_segments_stringified}{}>",
+                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    },
+                                                    {
+                                                        possible_lifetime_addition(
+                                                            key_lifetime_ident.to_string(),
+                                                            &mut lifetimes_for_serialize_deserialize
+                                                        );
+                                                        quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    {
+                                                        let hashmap_display_display_into_hashmap_string_display_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{display_camel_case}");
+                                                        let hashmap_display_display_into_hashmap_string_display_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{display_lower_case}");
+                                                        let hashmap_display_display_into_hashmap_string_display_token_stream = 
+                                                        hashmap_display_display_into_hashmap_string_display_lower_case
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_string_display_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                                        let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified = 
+                                                        format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_string_display_lower_case}::{hashmap_display_display_into_hashmap_string_display_camel_case}");
+                                                        let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_token_stream = 
+                                                        crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                                        quote::quote! {
+                                                            {
+                                                                use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_token_stream;
+                                                                #field_ident.#hashmap_display_display_into_hashmap_string_display_token_stream()
+                                                            }
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident, 
+                                                    value_lifetime_ident 
+                                                }
+                                            ) => {
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                panic_if_not_str(
+                                                    &value_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!("{path}<{std_string_string_stringified}, {std_string_string_stringified}>");
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    },
+                                                    {
+                                                        get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
+                                                            vec![Lifetime::Specified(key_lifetime_ident.to_string())], 
+                                                            vec![Lifetime::Specified(value_lifetime_ident.to_string())], 
+                                                            &mut lifetimes_for_serialize_deserialize,
+                                                                &trait_lifetime_stringified,
+                                                                &proc_macro_name_ident_stringified,
+                                                        );
+                                                        quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use ;#crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream
+                                                            #field_ident.#hashmap_display_display_into_hashmap_string_string_token_stream()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic,
+                                    ) = if let SupportedContainer::HashMap { 
+                                        path,
+                                        hashmap_key_type, 
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        let hashmap_key_type_path_case = |
+                                            key_segments_stringified: String,
+                                            key_vec_lifetime: Vec<Lifetime>,
+                                            lifetimes_for_serialize_deserialize: &mut Vec<String>
+                                        | -> (
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream
+                                        ) {
+                                            let hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream = 
+                                            hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                            let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified = format!("{crate_common_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case}::{hashmap_camel_case}{display_camel_case}{display_foreign_type_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
+                                            let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream = 
+                                            crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                            (
+                                                {
+                                                    let type_stringified = format!(
+                                                        "{path}<{key_segments_stringified}{},{std_string_string_stringified}>",
+                                                        vec_lifetime_to_string(&key_vec_lifetime)
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                },
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    key_vec_lifetime, 
+                                                    lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                ),
+                                                quote::quote! {
+                                                    {
+                                                        use #crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream;
+                                                        #field_ident.#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream()
+                                                    }
+                                                }
+                                            )
+                                        };
+                                        let hashmap_key_type_reference_case = |
+                                            _key_reference_ident: proc_macro2::Ident,
+                                            key_lifetime_ident: proc_macro2::Ident,
+                                            lifetimes_for_serialize_deserialize: &mut Vec<String>
+                                        | -> (
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream,
+                                            proc_macro2::TokenStream
+                                        ) {
+                                            (
+                                                {
+                                                    let type_stringified = format!(
+                                                        "{path}<{std_string_string_stringified},{std_string_string_stringified}>"
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                },
+                                                {
+                                                    possible_lifetime_addition(
+                                                        key_lifetime_ident.to_string(),
+                                                        lifetimes_for_serialize_deserialize
+                                                    );
+                                                    quote::quote!{#[serde(borrow)]}
+                                                },
+                                                
+                                                quote::quote! {
+                                                    {
+                                                        use 
+                                                        #crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream;
+                                                        #field_ident.#hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream()
+                                                    }
+                                                }    
+                                            )
+                                        };
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => hashmap_key_type_path_case(
+                                                key_segments_stringified,
+                                                key_vec_lifetime,
+                                                &mut lifetimes_for_serialize_deserialize
+                                            ),
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => hashmap_key_type_reference_case(
+                                                key_reference_ident,
+                                                key_lifetime_ident,
+                                                &mut lifetimes_for_serialize_deserialize
+                                            ),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
+                                        path,
+                                        hashmap_key_type, 
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{key_segments_stringified}{},{value_segments_stringified}{}>",
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
+                                                            vec_lifetime_to_string(&value_vec_lifetime),
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    },
+                                                    get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
+                                                        key_vec_lifetime, 
+                                                        value_vec_lifetime, 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                            &trait_lifetime_stringified,
+                                                            &proc_macro_name_ident_stringified
+                                                    ),
+                                                    quote::quote! {
+                                                        #field_ident
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
+                                                            vec_lifetime_to_string(&value_vec_lifetime),
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    },
+                                                    {
+                                                        possible_lifetime_addition(
+                                                            key_lifetime_ident.to_string(),
+                                                            &mut lifetimes_for_serialize_deserialize
+                                                        );
+                                                        quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            use #crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream;
+                                                            #field_ident.#hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
+                                        path,
+                                        hashmap_key_type, 
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified, 
+                                                    key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                panic_if_not_string(
+                                                    &key_segments_stringified,
+                                                    &std_string_string_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &as_std_collections_hashmap_key_type_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
+                                                            vec_lifetime_to_string(&key_vec_lifetime),
+                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    }, 
+                                                    get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_addition(
+                                                        key_vec_lifetime, 
+                                                        value_vec_lifetime, 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                        &trait_lifetime_stringified,
+                                                        &proc_macro_name_ident_stringified
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            #field_ident.into_iter()
+                                                            .map(|(k, v)| (k, { v.#into_serialize_deserialize_version_token_stream() }))
+                                                            .collect()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident, 
+                                                    key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                panic_if_not_str(
+                                                    &key_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
+                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    },
+                                                    {
+                                                        possible_lifetime_addition(
+                                                            key_lifetime_ident.to_string(),
+                                                            &mut lifetimes_for_serialize_deserialize
+                                                        );
+                                                        quote::quote!{#[serde(borrow)]}
+                                                    },
+                                                    quote::quote! {
+                                                        {
+                                                            #field_ident.into_iter()
+                                                            .map(|(k, v)| (k.to_string(), { v.#into_serialize_deserialize_version_token_stream() }))
+                                                            .collect()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
+                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        hashmap_key_type,
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        let hashmap_key_type_path_case = || -> proc_macro2::TokenStream {
+                                            let type_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
+                                            type_stringified
+                                            .parse::<proc_macro2::TokenStream>()
+                                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                        };
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                inform_use_str_string_in_different_attribute(
+                                                    value_segments_stringified,
+                                                    &attribute.to_str().to_string(),
+                                                    &attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified
+                                                );
+                                                hashmap_key_type_path_case()
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime
+                                                 }, 
+                                                 HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident  
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
+                                    let (
+                                        type_token_stream, 
+                                        serde_borrow_token_stream,
+                                        into_serialize_deserialize_logic
+                                    ) = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        hashmap_key_type,
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                let hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{display_lower_case}");
+                                                let hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream = 
+                                                hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                                let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified = format!("{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case}::{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{display_camel_case}");
+                                                let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream = 
+                                                crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
+                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    }, 
+                                                    get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                        value_vec_lifetime, 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                        &trait_lifetime_stringified,
+                                                        &proc_macro_name_ident_stringified
+                                                    ),
+                                                    quote::quote! {
+                                                        {   
+                                                            use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream;
+                                                            #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident, 
+                                                    value_lifetime_ident 
+                                                }
+                                            ) => {
+                                                panic_if_not_str(
+                                                    &value_reference_ident,
+                                                    str_stringified,
+                                                    &proc_macro_name_ident_stringified,
+                                                    supports_only_stringified,
+                                                    &attribute
+                                                );
+                                                (
+                                                    {
+                                                        let type_stringified = format!(
+                                                            "{path}<{std_string_string_stringified},{std_string_string_stringified}>"
+                                                        );
+                                                        type_stringified
+                                                        .parse::<proc_macro2::TokenStream>()
+                                                        .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                    }, 
+                                                    get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                        vec![Lifetime::Specified(value_lifetime_ident.to_string())], 
+                                                        &mut lifetimes_for_serialize_deserialize,
+                                                        &trait_lifetime_stringified,
+                                                        &proc_macro_name_ident_stringified
+                                                    ),
+                                                    quote::quote! {
+                                                        {
+                                                            use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream;
+                                                            #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream()
+                                                        }
+                                                    }
+                                                )
+                                            },
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                },
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        hashmap_key_type,
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => {
+                                                let type_stringified = format!("{path}<{std_string_string_stringified},{std_string_string_stringified}>");
+                                                type_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                            },
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime:  _key_vec_lifetime
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        hashmap_key_type,
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => (
+                                                {
+                                                   let type_stringified = format!(
+                                                        "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
+                                                        vec_lifetime_to_string(&value_vec_lifetime),
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                },
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    value_vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                )
+                                            ),
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident,
+                                                    value_lifetime_ident: _value_lifetime_ident
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                                    if let false = should_generate_impl_compile_time_check_error_occurence_members {
+                                        should_generate_impl_compile_time_check_error_occurence_members = true;
+                                    }
+                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                        path, 
+                                        hashmap_key_type,
+                                        hashmap_value_type
+                                    } = supported_container {
+                                        match (hashmap_key_type, hashmap_value_type) {
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified, 
+                                                    value_vec_lifetime 
+                                                }
+                                            ) => (
+                                                {
+                                                    let type_stringified = format!(
+                                                        "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
+                                                        vec_lifetime_to_string(&value_vec_lifetime)
+                                                    );
+                                                    type_stringified
+                                                    .parse::<proc_macro2::TokenStream>()
+                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                                }, 
+                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
+                                                    value_vec_lifetime, 
+                                                    &mut lifetimes_for_serialize_deserialize,
+                                                    &trait_lifetime_stringified,
+                                                    &proc_macro_name_ident_stringified
+                                                )
+                                            ),
+                                            (
+                                                HashMapKeyType::Path { 
+                                                    key_segments_stringified: _key_segments_stringified, 
+                                                    key_vec_lifetime: _key_vec_lifetime 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Path { 
+                                                    value_segments_stringified: _value_segments_stringified, 
+                                                    value_vec_lifetime: _value_vec_lifetime 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            (
+                                                HashMapKeyType::Reference { 
+                                                    key_reference_ident: _key_reference_ident, 
+                                                    key_lifetime_ident: _key_lifetime_ident 
+                                                }, 
+                                                HashMapValueType::Reference { 
+                                                    value_reference_ident: _value_reference_ident, 
+                                                    value_lifetime_ident: _value_lifetime_ident 
+                                                }
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_key_type_reference_stringified}", attribute.attribute_view()),
+                                        }
+                                    }
+                                    else {
+                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
+                                    };
+                                    type_token_stream
+                                },
+                            };
+                            enum_fields_logic_for_enum_with_serialize_deserialize.push(quote::quote!{
+                                #field_ident: #field_type_with_serialize_deserialize_token_stream
+                            });
+                        },
+                        ErrorOrCodeOccurence::CodeOccurence { 
+                            field_type,
+                            vec_lifetime: _vec_lifetime,
+                         } => {
+                            let code_occurence_type_with_serialize_deserialize_token_stream = {
+                                let code_occurence_type_with_serialize_deserialize_stringified = 
+                                format!("{field_type}{with_serialize_deserialize_camel_case}");
+                                code_occurence_type_with_serialize_deserialize_stringified
+                                .parse::<proc_macro2::TokenStream>()
+                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {code_occurence_type_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                            };
+                            enum_fields_logic_for_enum_with_serialize_deserialize.push(quote::quote!{
+                                #field_ident: #code_occurence_type_with_serialize_deserialize_token_stream
+                            });
+                        },
+                    }
+                });
+                let enum_fields_logic_for_enum_with_serialize_deserialize_iter = enum_fields_logic_for_enum_with_serialize_deserialize.iter();
+                logic_for_enum_with_serialize_deserialize.push(quote::quote! {
+                    #variant_ident {
+                        #(#enum_fields_logic_for_enum_with_serialize_deserialize_iter),*
+                    }
+                });
+            });
+            let logic_for_enum_with_serialize_deserialize_iter = logic_for_enum_with_serialize_deserialize.iter();
+            quote::quote! {
+                #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
+                pub enum #ident_with_serialize_deserialize_token_stream {
+                    #(#logic_for_enum_with_serialize_deserialize_iter),*
+                }
+            }
+        },
+        SuportedEnumVariant::Unnamed => {
+            let data_enum_variants_len = data_enum.variants.len();
+            let mut logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
+            data_enum.variants.iter().for_each(|variant|{
+                let variant_ident = &variant.ident;
+                let field_type = if let syn::Fields::Unnamed(fields_unnamed) = &variant.fields {
+                    let unnamed = &fields_unnamed.unnamed;
+                    if let false = unnamed.len() == 1 {
+                        panic!("{proc_macro_name_ident_stringified} {suported_enum_variant_stringified}::{unnamed_camel_case} variant fields unnamed len != 1");
+                    }
+                    &unnamed[0].ty
+                }
+                else {
+                    panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} {syn_fields}::{unnamed_camel_case}");
+                };
+                let type_token_stream = if let syn::Type::Path(type_path) = field_type {
+                    let type_stringified = format!(
+                        "{}{with_serialize_deserialize_camel_case}",
+                        generate_path_from_segments(&type_path.path.segments),
+                    );
+                    type_stringified
+                    .parse::<proc_macro2::TokenStream>()
+                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                }
+                else {
+                    panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} {syn_type_path_stringified}")
+                };
+                logic_for_enum_with_serialize_deserialize.push({
+                    quote::quote!{
+                        #variant_ident(#type_token_stream)
+                    }
+                });
+            });
+            let logic_for_enum_with_serialize_deserialize_generated = logic_for_enum_with_serialize_deserialize.iter();
+            quote::quote! {
+                #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
+                pub enum #ident_with_serialize_deserialize_token_stream {
+                    #(#logic_for_enum_with_serialize_deserialize_generated),*
+                }
+            }
+        },
+    };
+    // 
     let token_stream = match supported_enum_variant {
         SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
