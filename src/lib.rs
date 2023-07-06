@@ -919,7 +919,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
-                                    let type_token_stream = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
+                                    if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         {
                                             let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
@@ -929,14 +929,13 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    let type_token_stream = if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
+                                    if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         {
                                             let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}");
                                             type_stringified
@@ -946,11 +945,10 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoVecDisplay => {
-                                    let type_token_stream = if let SupportedContainer::Vec { 
+                                    if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
@@ -971,8 +969,7 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
                                     if let SupportedContainer::Vec { 
