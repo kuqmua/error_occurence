@@ -181,7 +181,7 @@ pub fn error_occurence(
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {into_serialize_deserialize_version_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let supported_container_double_dot_double_dot = "SupportedContainer::";
+    let supported_container_double_dot_double_dot = "proc_macro_helpers::error_occurence::supported_container::SupportedContainer::";
     let supports_only_supported_container_stringified = format!("{supports_only_stringified} {supported_container_double_dot_double_dot}");
     let path_camel_case = "Path";
     let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
@@ -283,7 +283,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {supports_only_stringified} {syn_type_path_stringified}");
                                     }
                                 };
-                                ErrorOrCodeOccurence::CodeOccurence {
+                                proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence {
                                     field_type: code_occurence_type_stringified,
                                     vec_lifetime: code_occurence_lifetime
                                 }
@@ -481,7 +481,7 @@ pub fn error_occurence(
                                                         .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"))
                                                     {
                                                         match type_handle {
-                                                            syn::Type::Path(type_path) => VecElementType::Path{
+                                                            syn::Type::Path(type_path) => proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path{
                                                                 element_path: generate_path_from_segments(&type_path.path.segments),
                                                                 vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                     &type_path.path.segments, 
@@ -506,7 +506,7 @@ pub fn error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                VecElementType::Reference {
+                                                                proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Reference {
                                                                     reference_ident,
                                                                     lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
@@ -525,7 +525,7 @@ pub fn error_occurence(
                                             else {
                                                 panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
                                             };
-                                            SupportedContainer::Vec{
+                                            proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec{
                                                 path,
                                                 vec_element_type
                                             }
@@ -567,7 +567,7 @@ pub fn error_occurence(
                                                     {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
-                                                                HashMapKeyType::Path{
+                                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path{
                                                                     key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
                                                                     key_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
@@ -593,7 +593,7 @@ pub fn error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                HashMapKeyType::Reference {
+                                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference {
                                                                     key_reference_ident,
                                                                     key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
@@ -607,7 +607,7 @@ pub fn error_occurence(
                                                     let hashmap_value_type = if let syn::GenericArgument::Type(type_handle) = value_generic_argument {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
-                                                                HashMapValueType::Path{
+                                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path{
                                                                     value_segments_stringified: generate_path_from_segments(&type_path.path.segments),
                                                                     value_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments,  
@@ -633,7 +633,7 @@ pub fn error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                HashMapValueType::Reference {
+                                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference {
                                                                     value_reference_ident,
                                                                     value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
@@ -656,14 +656,14 @@ pub fn error_occurence(
                                             else {
                                                 panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
                                             };
-                                            SupportedContainer::HashMap{
+                                            proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap{
                                                 path,
                                                 hashmap_key_type,
                                                 hashmap_value_type
                                             }
                                         }
                                         else {
-                                            SupportedContainer::Path{
+                                            proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path{
                                                 path, 
                                                 vec_lifetime,
                                             }
@@ -684,14 +684,14 @@ pub fn error_occurence(
                                         else {
                                             panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                         };
-                                        SupportedContainer::Reference{
+                                        proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Reference{
                                             reference_ident,
                                             lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
                                         }
                                     },
                                     _ => panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {error_message}"),
                                 };
-                                ErrorOrCodeOccurence::Error {
+                                proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error {
                                     attribute,
                                     supported_container,
                                 }
@@ -704,7 +704,7 @@ pub fn error_occurence(
                     })
                     .collect::<Vec<(
                         proc_macro2::Ident,
-                        ErrorOrCodeOccurence
+                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence
                     )>>()
                 }
                 else {
@@ -719,7 +719,7 @@ pub fn error_occurence(
                 proc_macro2::Ident, 
                  Vec<(
                     proc_macro2::Ident,
-                    ErrorOrCodeOccurence
+                    proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence
                 )>
             )>>();
             let mut lifetimes_for_serialize_deserialize = Vec::with_capacity(generics_len);
@@ -732,7 +732,7 @@ pub fn error_occurence(
                 let mut enum_fields_logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(fields_vec.len());
                 fields_vec.into_iter().for_each(|(field_ident, error_or_code_occurence)|{
                     match error_or_code_occurence {
-                        ErrorOrCodeOccurence::Error { 
+                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error { 
                             attribute, 
                             supported_container,
                         } => {
@@ -742,7 +742,7 @@ pub fn error_occurence(
                             let std_string_string_token_stream = std_string_string_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {std_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let vec_element_type_path_stringified = format!("VecElementType::{path_camel_case}");
+                            let vec_element_type_path_stringified = format!("proc_macro_helpers::error_occurence::vec_element_type::VecElementType::{path_camel_case}");
                             let as_std_collections_hashmap_key_type_stringified = format!("as {std_stringified}::collections::{hashmap_camel_case} key type");
                             let str_stringified = "str";
                             let string_string_stringified: String = format!("{string_lower_case}::{string_camel_case}");
@@ -781,7 +781,7 @@ pub fn error_occurence(
                                 field_type_with_serialize_deserialize_token_stream
                             = match attribute {
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplay => {
-                                    if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         inform_use_str_string_in_different_attribute(
                                             path,
                                             &attribute.to_str().to_string(),
@@ -797,7 +797,7 @@ pub fn error_occurence(
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
-                                        SupportedContainer::Path { path, vec_lifetime } => {
+                                        proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } => {
                                             {
                                                 let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
@@ -805,7 +805,7 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             }
                                         },
-                                        SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
+                                        proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
                                             panic_if_not_str(
                                                 &reference_ident,
                                                 str_stringified,
@@ -823,7 +823,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType => {
-                                    if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
                                     }
@@ -832,7 +832,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
-                                    if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         {
                                             let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
@@ -848,7 +848,7 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         {
                                             let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}");
                                             type_stringified
@@ -861,11 +861,11 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplay => {
-                                    if let SupportedContainer::Vec { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
                                             inform_use_str_string_in_different_attribute(
                                                 element_path,
                                                 &attribute.to_str().to_string(),
@@ -885,18 +885,18 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
-                                    if let SupportedContainer::Vec { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
                                         match vec_element_type {
-                                            VecElementType::Path { element_path, vec_lifetime } => {
+                                            proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } => {
                                                 let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
-                                            VecElementType::Reference { reference_ident, lifetime_ident: _lifetime_ident } => {
+                                            proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Reference { reference_ident, lifetime_ident: _lifetime_ident } => {
                                                 panic_if_not_str(
                                                     &reference_ident,
                                                     str_stringified,
@@ -918,11 +918,11 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignType => {
-                                    if let SupportedContainer::Vec { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path: _path, 
                                         vec_element_type 
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
                                             panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
                                         }
@@ -935,11 +935,11 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
-                                    if let SupportedContainer::Vec { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
                                             {
                                                 let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
@@ -959,11 +959,11 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    if let SupportedContainer::Vec { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
                                             {
                                                 let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
@@ -980,7 +980,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    let type_token_stream = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type,
@@ -1009,11 +1009,11 @@ pub fn error_occurence(
                                         };
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -1029,21 +1029,21 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -1061,11 +1061,11 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1078,18 +1078,18 @@ pub fn error_occurence(
                                     type_token_stream
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1114,11 +1114,11 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1149,11 +1149,11 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1176,11 +1176,11 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident  
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident  
                                                 }
@@ -1213,7 +1213,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -1234,11 +1234,11 @@ pub fn error_occurence(
                                         };
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -1247,21 +1247,21 @@ pub fn error_occurence(
                                                 key_vec_lifetime,
                                             ),
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -1274,11 +1274,11 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1290,18 +1290,18 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1326,21 +1326,21 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1363,11 +1363,11 @@ pub fn error_occurence(
                                                     }
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1382,18 +1382,18 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1418,21 +1418,21 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1455,11 +1455,11 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1471,7 +1471,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    let type_token_stream = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
@@ -1484,11 +1484,11 @@ pub fn error_occurence(
                                         };
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -1501,31 +1501,31 @@ pub fn error_occurence(
                                                 hashmap_key_type_path_case()
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime
                                                  }, 
-                                                 HashMapValueType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident  
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1538,18 +1538,18 @@ pub fn error_occurence(
                                     type_token_stream
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1563,11 +1563,11 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident  
                                                 }
@@ -1589,21 +1589,21 @@ pub fn error_occurence(
                                                 }
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 },
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1615,18 +1615,18 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -1637,31 +1637,31 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime:  _key_vec_lifetime
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1673,18 +1673,18 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1698,31 +1698,31 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}",proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident,
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1737,18 +1737,18 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    if let SupportedContainer::HashMap { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -1762,31 +1762,31 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -1802,7 +1802,7 @@ pub fn error_occurence(
                                 #field_ident: #field_type_with_serialize_deserialize_token_stream
                             });
                         },
-                        ErrorOrCodeOccurence::CodeOccurence { 
+                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence { 
                             field_type,
                             vec_lifetime: _vec_lifetime,
                          } => {
@@ -1951,7 +1951,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {supports_only_stringified} {syn_type_path_stringified}");
                                     }
                                 };
-                                ErrorOrCodeOccurence::CodeOccurence {
+                                proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence {
                                     field_type: code_occurence_type_stringified,
                                     vec_lifetime: code_occurence_lifetime
                                 }
@@ -2149,7 +2149,7 @@ pub fn error_occurence(
                                                         .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"))
                                                     {
                                                         match type_handle {
-                                                            syn::Type::Path(type_path) => VecElementType::Path{
+                                                            syn::Type::Path(type_path) => proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path{
                                                                 element_path: generate_path_from_segments(&type_path.path.segments),
                                                                 vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                     &type_path.path.segments, 
@@ -2174,7 +2174,7 @@ pub fn error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                VecElementType::Reference {
+                                                                proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Reference {
                                                                     reference_ident,
                                                                     lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
@@ -2193,7 +2193,7 @@ pub fn error_occurence(
                                             else {
                                                 panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
                                             };
-                                            SupportedContainer::Vec{
+                                            proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec{
                                                 path,
                                                 vec_element_type
                                             }
@@ -2235,7 +2235,7 @@ pub fn error_occurence(
                                                     {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
-                                                                HashMapKeyType::Path{
+                                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path{
                                                                     key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
                                                                     key_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
@@ -2261,7 +2261,7 @@ pub fn error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                HashMapKeyType::Reference {
+                                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference {
                                                                     key_reference_ident,
                                                                     key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
@@ -2275,7 +2275,7 @@ pub fn error_occurence(
                                                     let hashmap_value_type = if let syn::GenericArgument::Type(type_handle) = value_generic_argument {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
-                                                                HashMapValueType::Path{
+                                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path{
                                                                     value_segments_stringified: generate_path_from_segments(&type_path.path.segments),
                                                                     value_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments,  
@@ -2301,7 +2301,7 @@ pub fn error_occurence(
                                                                 else {
                                                                     panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                                                 };
-                                                                HashMapValueType::Reference {
+                                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference {
                                                                     value_reference_ident,
                                                                     value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
@@ -2324,14 +2324,14 @@ pub fn error_occurence(
                                             else {
                                                 panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
                                             };
-                                            SupportedContainer::HashMap{
+                                            proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap{
                                                 path,
                                                 hashmap_key_type,
                                                 hashmap_value_type
                                             }
                                         }
                                         else {
-                                            SupportedContainer::Path{
+                                            proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path{
                                                 path, 
                                                 vec_lifetime,
                                             }
@@ -2352,14 +2352,14 @@ pub fn error_occurence(
                                         else {
                                             panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
                                         };
-                                        SupportedContainer::Reference{
+                                        proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Reference{
                                             reference_ident,
                                             lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
                                         }
                                     },
                                     _ => panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {error_message}"),
                                 };
-                                ErrorOrCodeOccurence::Error {
+                                proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error {
                                     attribute,
                                     supported_container,
                                 }
@@ -2372,7 +2372,7 @@ pub fn error_occurence(
                     })
                     .collect::<Vec<(
                         proc_macro2::Ident,
-                        ErrorOrCodeOccurence
+                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence
                     )>>()
                 }
                 else {
@@ -2387,7 +2387,7 @@ pub fn error_occurence(
                 proc_macro2::Ident, 
                  Vec<(
                     proc_macro2::Ident,
-                    ErrorOrCodeOccurence
+                    proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence
                 )>
             )>>();
             let source_to_string_without_config_camel_case = format!("{source_camel_case}{to_string_without_config_camel_case}");
@@ -2439,7 +2439,7 @@ pub fn error_occurence(
                     let to_string_lower_case = to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
                     let hashmap_display_to_string_without_config_to_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}");
                     match error_or_code_occurence {
-                        ErrorOrCodeOccurence::Error { 
+                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error { 
                             attribute, 
                             supported_container,
                         } => {
@@ -2521,7 +2521,7 @@ pub fn error_occurence(
                             crate_common_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let vec_element_type_path_stringified = format!("VecElementType::{path_camel_case}");
+                            let vec_element_type_path_stringified = format!("proc_macro_helpers::error_occurence::vec_element_type::VecElementType::{path_camel_case}");
                             let vec_display_foreign_type_to_string_camel_case = format!("{vec_camel_case}{display_foreign_type_camel_case}{to_string_camel_case}");
                             let vec_display_foreign_type_to_string_lower_case = vec_display_foreign_type_to_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
                             let vec_display_foreign_type_to_string_lower_case_token_stream = 
@@ -2641,7 +2641,7 @@ pub fn error_occurence(
                                 logic_for_compile_time_check_error_occurence_members_for_attribute
                             ) = match attribute {
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplay => {
-                                    if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         inform_use_str_string_in_different_attribute(
                                             path,
                                             &attribute.to_str().to_string(),
@@ -2699,7 +2699,7 @@ pub fn error_occurence(
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
-                                        SupportedContainer::Path { path, vec_lifetime } => {
+                                        proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } => {
                                             let (type_token_stream, serde_borrow_token_stream) = (
                                                 {
                                                     let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
@@ -2758,7 +2758,7 @@ pub fn error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
+                                        proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
                                             panic_if_not_str(
                                                 &reference_ident,
                                                 str_stringified,
@@ -2818,7 +2818,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType => {
-                                    if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
                                     }
@@ -2872,7 +2872,7 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
                                                 let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
@@ -2940,7 +2940,7 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
+                                    let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
                                                 let type_stringified = format!("{path}{with_serialize_deserialize_camel_case}");
@@ -3015,11 +3015,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplay => {
-                                    let type_token_stream = if let SupportedContainer::Vec { 
+                                    let type_token_stream = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
                                             inform_use_str_string_in_different_attribute(
                                                 element_path,
                                                 &attribute.to_str().to_string(),
@@ -3094,12 +3094,12 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic
-                                    ) = if let SupportedContainer::Vec { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
                                         match vec_element_type {
-                                            VecElementType::Path { element_path, vec_lifetime } => (
+                                            proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } => (
                                                 {
                                                     let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
@@ -3118,7 +3118,7 @@ pub fn error_occurence(
                                                     }
                                                 }
                                             ),
-                                            VecElementType::Reference { reference_ident, lifetime_ident } => {
+                                            proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Reference { reference_ident, lifetime_ident } => {
                                                 panic_if_not_str(
                                                     &reference_ident,
                                                     str_stringified,
@@ -3202,11 +3202,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignType => {
-                                    if let SupportedContainer::Vec { 
+                                    if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path: _path, 
                                         vec_element_type 
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
                                             panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
                                         }
@@ -3276,11 +3276,11 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                    let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
                                             (
                                                 {
                                                     let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
@@ -3352,11 +3352,11 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
+                                    let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type
                                     } = supported_container {
-                                        if let VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
+                                        if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
                                             (
                                                 {
                                                     let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(&vec_lifetime));
@@ -3469,7 +3469,7 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic
-                                    ) = if let SupportedContainer::HashMap { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type,
@@ -3547,11 +3547,11 @@ pub fn error_occurence(
                                         };
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -3568,21 +3568,21 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -3598,11 +3598,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -3660,18 +3660,18 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic,
-                                    ) = if let SupportedContainer::HashMap { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -3710,11 +3710,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident, 
                                                     value_lifetime_ident 
                                                 }
@@ -3760,11 +3760,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -3816,11 +3816,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident, 
                                                     value_lifetime_ident 
                                                 }
@@ -3917,7 +3917,7 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic,
-                                    ) = if let SupportedContainer::HashMap { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -4001,11 +4001,11 @@ pub fn error_occurence(
                                         };
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -4015,21 +4015,21 @@ pub fn error_occurence(
                                                 &mut lifetimes_for_serialize_deserialize
                                             ),
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -4039,11 +4039,11 @@ pub fn error_occurence(
                                                 &mut lifetimes_for_serialize_deserialize
                                             ),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4101,18 +4101,18 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic
-                                    ) = if let SupportedContainer::HashMap { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -4149,21 +4149,21 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -4201,11 +4201,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4266,18 +4266,18 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic
-                                    ) = if let SupportedContainer::HashMap { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified, 
                                                     key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -4318,21 +4318,21 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
                                                     key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -4371,11 +4371,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4452,7 +4452,7 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    let type_token_stream = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
@@ -4465,11 +4465,11 @@ pub fn error_occurence(
                                         };
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -4482,31 +4482,31 @@ pub fn error_occurence(
                                                 hashmap_key_type_path_case()
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime
                                                  }, 
-                                                 HashMapValueType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident  
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4569,18 +4569,18 @@ pub fn error_occurence(
                                         type_token_stream, 
                                         serde_borrow_token_stream,
                                         into_serialize_deserialize_logic
-                                    ) = if let SupportedContainer::HashMap { 
+                                    ) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -4620,11 +4620,11 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident, 
                                                     value_lifetime_ident 
                                                 }
@@ -4660,21 +4660,21 @@ pub fn error_occurence(
                                                 )
                                             },
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 },
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4728,18 +4728,18 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    let type_token_stream = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
@@ -4750,31 +4750,31 @@ pub fn error_occurence(
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                             },
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime:  _key_vec_lifetime
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4843,18 +4843,18 @@ pub fn error_occurence(
                                     )
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -4876,31 +4876,31 @@ pub fn error_occurence(
                                                 )
                                             ),
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident,
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -4971,18 +4971,18 @@ pub fn error_occurence(
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
+                                    let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
                                     } = supported_container {
                                         match (hashmap_key_type, hashmap_value_type) {
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified, 
                                                     value_vec_lifetime 
                                                 }
@@ -5004,31 +5004,31 @@ pub fn error_occurence(
                                                 )
                                             ),
                                             (
-                                                HashMapKeyType::Path { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path { 
                                                     key_segments_stringified: _key_segments_stringified, 
                                                     key_vec_lifetime: _key_vec_lifetime 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Path { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path { 
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
                                             ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
                                             (
-                                                HashMapKeyType::Reference { 
+                                                proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
                                                     key_lifetime_ident: _key_lifetime_ident 
                                                 }, 
-                                                HashMapValueType::Reference { 
+                                               proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference { 
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
@@ -5155,7 +5155,7 @@ pub fn error_occurence(
                                 #logic_for_compile_time_check_error_occurence_members_for_attribute
                             });
                         },
-                        ErrorOrCodeOccurence::CodeOccurence { 
+                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence { 
                             field_type,
                             vec_lifetime: _vec_lifetime,
                          } => {
@@ -5599,73 +5599,6 @@ pub fn error_occurence(
     //     println!("{token_stream}");
     // }
     token_stream.into()
-}
-enum ErrorOrCodeOccurence {
-    Error {
-        attribute: proc_macro_helpers::error_occurence::named_attribute::NamedAttribute,
-        supported_container: SupportedContainer,
-    },
-    CodeOccurence {
-        field_type: String,
-        vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>
-    }
-}
-
-#[derive(Debug)]
-enum SupportedContainer {
-    Vec{
-        path: String,
-        vec_element_type: VecElementType
-    },
-    HashMap{
-        path: String,
-        hashmap_key_type: HashMapKeyType,
-        hashmap_value_type: HashMapValueType
-    },
-    Path{
-        path: String, 
-        vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>,
-    },
-    Reference{
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident, 
-    },
-}
-
-#[derive(Debug)]
-enum VecElementType {
-    Path{
-        element_path: String,
-        vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>
-    },
-    Reference {
-        reference_ident: proc_macro2::Ident,
-        lifetime_ident: proc_macro2::Ident
-    }
-}
-
-#[derive(Debug)]
-enum HashMapKeyType {
-    Path{
-        key_segments_stringified: String,
-        key_vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>
-    },
-    Reference {
-        key_reference_ident: proc_macro2::Ident,
-        key_lifetime_ident: proc_macro2::Ident
-    }
-}
-
-#[derive(Debug)]
-enum HashMapValueType {
-    Path{
-        value_segments_stringified: String,
-        value_vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>
-    },
-    Reference {
-        value_reference_ident: proc_macro2::Ident,
-        value_lifetime_ident: proc_macro2::Ident
-    }
 }
 
 fn attribute_view(attribute: &String) -> String {
