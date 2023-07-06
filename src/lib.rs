@@ -813,7 +813,7 @@ pub fn error_occurence(
                                                 supports_only_stringified,
                                                 &attribute
                                             );
-                                            possible_lifetime_addition(
+                                            proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                 lifetime_ident.to_string(),
                                                 &mut lifetimes_for_serialize_deserialize
                                             );
@@ -2766,7 +2766,7 @@ pub fn error_occurence(
                                                 supports_only_stringified,
                                                 &attribute
                                             );
-                                            possible_lifetime_addition(
+                                            proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                 lifetime_ident.to_string(),
                                                 &mut lifetimes_for_serialize_deserialize
                                             );
@@ -3139,7 +3139,7 @@ pub fn error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                                     },
                                                     {
-                                                        possible_lifetime_addition(
+                                                        proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                             lifetime_ident.to_string(),
                                                             &mut lifetimes_for_serialize_deserialize,
                                                         );
@@ -3531,7 +3531,7 @@ pub fn error_occurence(
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                                 },
                                                 {
-                                                    possible_lifetime_addition(
+                                                    proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                         key_lifetime_ident.to_string(),
                                                         lifetimes_for_serialize_deserialize
                                                     );
@@ -3787,7 +3787,7 @@ pub fn error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                                     },
                                                     {
-                                                        possible_lifetime_addition(
+                                                        proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                             key_lifetime_ident.to_string(),
                                                             &mut lifetimes_for_serialize_deserialize
                                                         );
@@ -3983,7 +3983,7 @@ pub fn error_occurence(
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                                 },
                                                 {
-                                                    possible_lifetime_addition(
+                                                    proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                         key_lifetime_ident.to_string(),
                                                         lifetimes_for_serialize_deserialize
                                                     );
@@ -4186,7 +4186,7 @@ pub fn error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                                     },
                                                     {
-                                                        possible_lifetime_addition(
+                                                        proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                             key_lifetime_ident.to_string(),
                                                             &mut lifetimes_for_serialize_deserialize
                                                         );
@@ -4355,7 +4355,7 @@ pub fn error_occurence(
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                                     },
                                                     {
-                                                        possible_lifetime_addition(
+                                                        proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                                                             key_lifetime_ident.to_string(),
                                                             &mut lifetimes_for_serialize_deserialize
                                                         );
@@ -5605,15 +5605,6 @@ fn attribute_view(attribute: &String) -> String {
     format!("attribute #[{attribute}]")
 }
 
-fn possible_lifetime_addition(
-    lifetime: String, 
-    lifetimes_for_serialize_deserialize: &mut Vec<String>,
-) {
-    if let false = lifetimes_for_serialize_deserialize.contains(&lifetime) {
-        lifetimes_for_serialize_deserialize.push(lifetime);
-    };
-}
-
 fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
     vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>, 
     lifetimes_for_serialize_deserialize: &mut Vec<String>,
@@ -5629,7 +5620,7 @@ fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_add
             if let true = &specified_lifetime == trait_lifetime_stringified {
                 panic!("{proc_macro_name_ident_stringified} must not contain reserved by macro lifetime name: {trait_lifetime_stringified}");
             }
-            possible_lifetime_addition(
+            proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                 specified_lifetime,
                 lifetimes_for_serialize_deserialize
             );
@@ -5659,7 +5650,7 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
             if let true = &key_lifetime_specified == trait_lifetime_stringified {
                 panic!("{proc_macro_name_ident_stringified} {error_message} {trait_lifetime_stringified}");
             }
-            possible_lifetime_addition(
+            proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                 key_lifetime_specified,
                 lifetimes_for_serialize_deserialize
             );
@@ -5670,7 +5661,7 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
             if let true = &value_lifetime_specified == trait_lifetime_stringified {
                 panic!("{proc_macro_name_ident_stringified} {error_message} {trait_lifetime_stringified}");
             }
-            possible_lifetime_addition(
+            proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
                 value_lifetime_specified,
                 lifetimes_for_serialize_deserialize
             );
