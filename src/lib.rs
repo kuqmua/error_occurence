@@ -299,7 +299,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_with_serialize_deserialize_stringified {
@@ -307,7 +307,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_stringified {
@@ -315,7 +315,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_with_serialize_deserialize_stringified {
@@ -323,7 +323,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_error_occurence_stringified {
@@ -331,7 +331,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
@@ -339,7 +339,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_with_serialize_deserialize_stringified {
@@ -347,7 +347,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_stringified {
@@ -355,7 +355,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_with_serialize_deserialize_stringified {
@@ -363,7 +363,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_error_occurence_stringified {
@@ -371,7 +371,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified {
@@ -379,7 +379,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified {
@@ -387,7 +387,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified {
@@ -395,7 +395,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified {
@@ -403,7 +403,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified {
@@ -411,7 +411,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
@@ -419,7 +419,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified {
@@ -427,7 +427,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
@@ -435,7 +435,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified {
@@ -443,7 +443,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified {
@@ -451,7 +451,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
                                                 }
                                             }//other attributes are not for this proc_macro
                                         }//other attributes are not for this proc_macro
@@ -780,7 +780,7 @@ pub fn error_occurence(
                             let 
                                 field_type_with_serialize_deserialize_token_stream
                             = match attribute {
-                                NamedAttribute::EoDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplay => {
                                     if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         inform_use_str_string_in_different_attribute(
                                             path,
@@ -795,7 +795,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {supported_container_double_dot_double_dot}{path_camel_case}", attribute.attribute_view())
                                     }
                                 },
-                                NamedAttribute::EoDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
                                         SupportedContainer::Path { path, vec_lifetime } => {
                                             {
@@ -822,7 +822,7 @@ pub fn error_occurence(
                                         _ => panic!("{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{path_camel_case} and {supported_container_double_dot_double_dot}{reference_camel_case}", attribute.attribute_view()),
                                     }
                                 },
-                                NamedAttribute::EoDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType => {
                                     if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
@@ -831,7 +831,7 @@ pub fn error_occurence(
                                         #std_string_string_token_stream
                                     }
                                 },
-                                NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
                                     if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         {
                                             let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
@@ -844,7 +844,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -860,7 +860,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoVecDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplay => {
                                     if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
@@ -884,7 +884,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
                                     if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
@@ -917,7 +917,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoVecDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignType => {
                                     if let SupportedContainer::Vec { 
                                         path: _path, 
                                         vec_element_type 
@@ -934,7 +934,7 @@ pub fn error_occurence(
                                         std::vec::Vec<#std_string_string_token_stream>
                                     }
                                 },
-                                NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
                                     if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
@@ -955,7 +955,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoVecErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -979,7 +979,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{vec_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1077,7 +1077,7 @@ pub fn error_occurence(
                                     };
                                     type_token_stream
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
                                     if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1212,7 +1212,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
                                     if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1289,7 +1289,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
                                     if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
@@ -1378,7 +1378,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -1470,7 +1470,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -1537,7 +1537,7 @@ pub fn error_occurence(
                                     };
                                     type_token_stream
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
                                     if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -1614,7 +1614,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
                                     if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -1672,7 +1672,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
                                     if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -1733,7 +1733,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
                                     }
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -1967,7 +1967,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_with_serialize_deserialize_stringified {
@@ -1975,7 +1975,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_stringified {
@@ -1983,7 +1983,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_display_foreign_type_with_serialize_deserialize_stringified {
@@ -1991,7 +1991,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_error_occurence_stringified {
@@ -1999,7 +1999,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_stringified {
@@ -2007,7 +2007,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_with_serialize_deserialize_stringified {
@@ -2015,7 +2015,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_stringified {
@@ -2023,7 +2023,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_display_foreign_type_with_serialize_deserialize_stringified {
@@ -2031,7 +2031,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_vec_error_occurence_stringified {
@@ -2039,7 +2039,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoVecErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_stringified {
@@ -2047,7 +2047,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified {
@@ -2055,7 +2055,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_stringified {
@@ -2063,7 +2063,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize_stringified {
@@ -2071,7 +2071,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_with_serialize_deserialize_value_error_occurence_stringified {
@@ -2079,7 +2079,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_stringified {
@@ -2087,7 +2087,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified {
@@ -2095,7 +2095,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_stringified {
@@ -2103,7 +2103,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize_stringified {
@@ -2111,7 +2111,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize);
                                                 }
                                             }
                                             else if let true = attr.path.segments[0].ident == attribute_hashmap_key_display_foreign_type_value_error_occurence_stringified {
@@ -2119,7 +2119,7 @@ pub fn error_occurence(
                                                     panic!("{error_message}");
                                                 }
                                                 else {
-                                                    option_attribute = Some(NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
+                                                    option_attribute = Some(proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence);
                                                 }
                                             }//other attributes are not for this proc_macro
                                         }//other attributes are not for this proc_macro
@@ -2640,7 +2640,7 @@ pub fn error_occurence(
                                 enum_fields_logic_for_compile_time_check_error_occurence_members_used_unused,
                                 logic_for_compile_time_check_error_occurence_members_for_attribute
                             ) = match attribute {
-                                NamedAttribute::EoDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplay => {
                                     if let SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         inform_use_str_string_in_different_attribute(
                                             path,
@@ -2697,7 +2697,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {supported_container_double_dot_double_dot}{path_camel_case}", attribute.attribute_view())
                                     }
                                 },
-                                NamedAttribute::EoDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
                                         SupportedContainer::Path { path, vec_lifetime } => {
                                             let (type_token_stream, serde_borrow_token_stream) = (
@@ -2817,7 +2817,7 @@ pub fn error_occurence(
                                         _ => panic!("{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{path_camel_case} and {supported_container_double_dot_double_dot}{reference_camel_case}", attribute.attribute_view()),
                                     }
                                 },
-                                NamedAttribute::EoDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType => {
                                     if let SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
@@ -2871,7 +2871,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
@@ -2936,7 +2936,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -3014,7 +3014,7 @@ pub fn error_occurence(
                                         },
                                     )
                                 },
-                                NamedAttribute::EoVecDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplay => {
                                     let type_token_stream = if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
@@ -3089,7 +3089,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayWithSerializeDeserialize => {
                                     let (
                                         type_token_stream, 
                                         serde_borrow_token_stream,
@@ -3201,7 +3201,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoVecDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignType => {
                                     if let SupportedContainer::Vec { 
                                         path: _path, 
                                         vec_element_type 
@@ -3275,7 +3275,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::Vec { 
                                         path, 
                                         vec_element_type 
@@ -3348,7 +3348,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoVecErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoVecErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -3464,7 +3464,7 @@ pub fn error_occurence(
                                         },
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => {
                                     let (
                                         type_token_stream, 
                                         serde_borrow_token_stream,
@@ -3655,7 +3655,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => {
                                     let (
                                         type_token_stream, 
                                         serde_borrow_token_stream,
@@ -3912,7 +3912,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
                                     let (
                                         type_token_stream, 
                                         serde_borrow_token_stream,
@@ -4096,7 +4096,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
                                     let (
                                         type_token_stream, 
                                         serde_borrow_token_stream,
@@ -4258,7 +4258,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -4451,7 +4451,7 @@ pub fn error_occurence(
                                         },
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -4564,7 +4564,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
                                     let (
                                         type_token_stream, 
                                         serde_borrow_token_stream,
@@ -4727,7 +4727,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -4842,7 +4842,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => {
                                     let (type_token_stream, serde_borrow_token_stream) = if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
@@ -4967,7 +4967,7 @@ pub fn error_occurence(
                                         proc_macro2::TokenStream::new(),
                                     )
                                 },
-                                NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
+                                proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
@@ -5600,69 +5600,9 @@ pub fn error_occurence(
     // }
     token_stream.into()
 }
-
-#[allow(clippy::enum_variant_names)]
-#[derive(
-    Debug,
-    strum_macros::EnumIter,
-    strum_macros::Display,
-    enum_extension::EnumExtension
-)]
-enum NamedAttribute {
-    EoDisplay,
-    EoDisplayWithSerializeDeserialize,
-    EoDisplayForeignType,
-    EoDisplayForeignTypeWithSerializeDeserialize,
-    EoErrorOccurence,
-    EoVecDisplay,
-    EoVecDisplayWithSerializeDeserialize,
-    EoVecDisplayForeignType,
-    EoVecDisplayForeignTypeWithSerializeDeserialize,
-    EoVecErrorOccurence,
-    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay,
-    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize,
-    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType,
-    EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize,
-    EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence,
-    EoHashMapKeyDisplayForeignTypeValueDisplay,
-    EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize,
-    EoHashMapKeyDisplayForeignTypeValueDisplayForeignType,
-    EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize,
-    EoHashMapKeyDisplayForeignTypeValueErrorOccurence,
-}
-
-impl NamedAttribute {
-    fn to_str(&self) -> &str {
-        match self {
-            NamedAttribute::EoDisplay => "eo_display",
-            NamedAttribute::EoDisplayWithSerializeDeserialize => "eo_display_with_serialize_deserialize",
-            NamedAttribute::EoDisplayForeignType => "eo_display_foreign_type",
-            NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => "eo_display_foreign_type_with_serialize_deserialize",
-            NamedAttribute::EoErrorOccurence => "eo_error_occurence",
-            NamedAttribute::EoVecDisplay => "eo_vec_display",
-            NamedAttribute::EoVecDisplayWithSerializeDeserialize => "eo_vec_display_with_serialize_deserialize",
-            NamedAttribute::EoVecDisplayForeignType => "eo_vec_display_foreign_type",
-            NamedAttribute::EoVecDisplayForeignTypeWithSerializeDeserialize => "eo_vec_display_foreign_type_with_serialize_deserialize",
-            NamedAttribute::EoVecErrorOccurence => "eo_vec_error_occurence",
-            NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplay => "eo_hashmap_key_display_with_serialize_deserialize_value_display",
-            NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayWithSerializeDeserialize => "eo_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize",
-            NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => "eo_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type",
-            NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => "eo_hashmap_key_display_with_serialize_deserialize_value_display_foreign_type_with_serialize_deserialize",
-            NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => "eo_hashmap_key_display_with_serialize_deserialize_value_error_occurence",
-            NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => "eo_hashmap_key_display_foreign_type_value_display",
-            NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => "eo_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize",
-            NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => "eo_hashmap_key_display_foreign_type_value_display_foreign_type",
-            NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignTypeWithSerializeDeserialize => "eo_hashmap_key_display_foreign_type_value_display_foreign_type_with_serialize_deserialize",
-            NamedAttribute::EoHashMapKeyDisplayForeignTypeValueErrorOccurence => "eo_hashmap_key_display_foreign_type_value_error_occurence",
-        }
-    }
-    fn attribute_view(&self) -> String {
-        attribute_view(&self.to_str().to_string())
-    }
-}
 enum ErrorOrCodeOccurence {
     Error {
-        attribute: NamedAttribute,
+        attribute: proc_macro_helpers::error_occurence::named_attribute::NamedAttribute,
         supported_container: SupportedContainer,
     },
     CodeOccurence {
@@ -5743,7 +5683,7 @@ fn panic_if_not_str(
     str_stringified: &str,
     proc_macro_name_ident_stringified: &String,
     supports_only_stringified: &str,
-    attribute: &NamedAttribute
+    attribute: &proc_macro_helpers::error_occurence::named_attribute::NamedAttribute
 ) {
     if let false = reference_ident == str_stringified {
         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {str_stringified}, but got {reference_ident}", attribute.attribute_view());
@@ -5756,7 +5696,7 @@ fn panic_if_not_string(
     proc_macro_name_ident_stringified: &String,
     supports_only_stringified: &str,
     as_std_collections_hashmap_key_type_stringified: &String,
-    attribute: &NamedAttribute
+    attribute: &proc_macro_helpers::error_occurence::named_attribute::NamedAttribute
 ) {
     if let false = segments_stringified == std_string_string_stringified {
         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified} (hashmap key must be string for deserialization)", attribute.attribute_view());
