@@ -88,48 +88,14 @@ pub fn error_occurence(
     let named_camel_case = "Named";
     let named_lower_case = named_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let unnamed_camel_case = format!("Un{named_lower_case}");
-    let supported_enum_variant = {
-        let mut all_equal: Option<SuportedEnumVariant> = None;
-        if let true = &data_enum.variants.is_empty() {
-            panic!("{proc_macro_name_ident_stringified} enum variants are empty");
-        }
-        let error_message = format!("{proc_macro_name_ident_stringified} {supports_only_stringified} enums where all variants are {syn_fields}::{named_camel_case} or all variants are {syn_fields}::{unnamed_camel_case}");
-        data_enum.variants.iter().for_each(|variant|{
-            match &variant.fields {
-                syn::Fields::Named(_) => {
-                    match &all_equal {
-                        Some(supported_variant) => {
-                            if let SuportedEnumVariant::Unnamed = supported_variant {
-                                panic!("{error_message}");
-                            }
-                        },
-                        None => {
-                            all_equal = Some(SuportedEnumVariant::Named);
-                        },
-                    }
-                },
-                syn::Fields::Unnamed(_) => {
-                    match &all_equal {
-                        Some(supported_variant) => {
-                            if let SuportedEnumVariant::Named = supported_variant {
-                                panic!("{error_message}");
-                            }
-                        },
-                        None => {
-                            all_equal = Some(SuportedEnumVariant::Unnamed);
-                        },
-                    }
-                },
-                syn::Fields::Unit => panic!("{error_message}"),
-            }
-        });
-        if let Some(supported_enum_variant) = all_equal {
-            supported_enum_variant
-        }
-        else {
-            panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} with enums where all variants are named or unnamed");
-        }
-    };
+    let supported_enum_variant = proc_macro_helpers::error_occurence::supported_enum_variant::create_supported_enum_variant(
+        &data_enum,
+        proc_macro_name_ident_stringified.clone(),
+        supports_only_stringified,
+        syn_fields,
+        named_camel_case,
+        unnamed_camel_case.clone(),
+    );
     let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {trait_lifetime_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
@@ -220,7 +186,7 @@ pub fn error_occurence(
     let path_camel_case = "Path";
     let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
     let is_none_stringified = "is None";
-    let suported_enum_variant_stringified = "SuportedEnumVariant";
+    let suported_enum_variant_stringified = "proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant";
     let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
     let compile_time_check_error_occurence_members_stringified = format!("_compile_time_check_{error_occurence_lower_case}_members");
     let compile_time_check_error_occurence_members_token_stream = compile_time_check_error_occurence_members_stringified
@@ -244,7 +210,7 @@ pub fn error_occurence(
     let vec_lower_case = vec_camel_case.to_lowercase(); 
     //
     let something = match supported_enum_variant {
-        SuportedEnumVariant::Named => {
+        proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
             let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
             let foreign_type_camel_case = "ForeignType";
@@ -1868,7 +1834,7 @@ pub fn error_occurence(
                 }
             }
         },
-        SuportedEnumVariant::Unnamed => {
+        proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Unnamed => {
             let data_enum_variants_len = data_enum.variants.len();
             let mut logic_for_enum_with_serialize_deserialize: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
             data_enum.variants.iter().for_each(|variant|{
@@ -1912,7 +1878,7 @@ pub fn error_occurence(
     };
     // 
     let token_stream = match supported_enum_variant {
-        SuportedEnumVariant::Named => {
+        proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{occurence_camel_case}");
             let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
             let foreign_type_camel_case = "ForeignType";
@@ -5475,7 +5441,7 @@ pub fn error_occurence(
                 #compile_time_check_error_occurence_members_impl_token_stream
             }
         },
-        SuportedEnumVariant::Unnamed => {
+        proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Unnamed => {
             let data_enum_variants_len = data_enum.variants.len();
             let mut logic_for_to_string_with_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
             let mut logic_for_to_string_without_config: Vec<proc_macro2::TokenStream> = Vec::with_capacity(data_enum_variants_len);
@@ -5694,12 +5660,6 @@ impl NamedAttribute {
         attribute_view(&self.to_str().to_string())
     }
 }
-
-enum SuportedEnumVariant {
-    Named,
-    Unnamed,
-}
-
 enum ErrorOrCodeOccurence {
     Error {
         attribute: NamedAttribute,
