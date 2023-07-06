@@ -770,7 +770,6 @@ pub fn error_occurence(
                             attribute, 
                             supported_container,
                         } => {
-                            let crate_common_stringified = "crate::common"; 
                             let string_lower_case = string_camel_case.to_lowercase();
                             let std_stringified = "std";
                             let std_string_string_stringified = format!("{std_stringified}::{string_lower_case}::{string_camel_case}");
@@ -1248,7 +1247,7 @@ pub fn error_occurence(
                                     }
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignType => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -1322,11 +1321,10 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueDisplayForeignTypeWithSerializeDeserialize => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -1412,14 +1410,13 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayWithSerializeDeserializeValueErrorOccurence => {
                                     if let false = should_generate_impl_compile_time_check_error_occurence_members {
                                         should_generate_impl_compile_time_check_error_occurence_members = true;
                                     }
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    if let SupportedContainer::HashMap { 
                                         path,
                                         hashmap_key_type, 
                                         hashmap_value_type
@@ -1505,8 +1502,7 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplay => {
                                     let type_token_stream = if let SupportedContainer::HashMap { 
@@ -1576,7 +1572,7 @@ pub fn error_occurence(
                                     type_token_stream
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayWithSerializeDeserialize => {
-                                    let type_token_stream = if let SupportedContainer::HashMap { 
+                                    if let SupportedContainer::HashMap { 
                                         path, 
                                         hashmap_key_type,
                                         hashmap_value_type
@@ -1650,8 +1646,7 @@ pub fn error_occurence(
                                     }
                                     else {
                                         panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{hashmap_camel_case}", attribute.attribute_view());
-                                    };
-                                    type_token_stream
+                                    }
                                 },
                                 NamedAttribute::EoHashMapKeyDisplayForeignTypeValueDisplayForeignType => {
                                     if let SupportedContainer::HashMap { 
