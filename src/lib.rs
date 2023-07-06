@@ -462,7 +462,7 @@ pub fn error_occurence(
                                 let error_message = format!("{supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}");
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
-                                        let path = generate_path_from_segments(&type_path.path.segments);
+                                        let path = proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments);
                                         let vec_lifetime = proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                             &type_path.path.segments,
                                             &proc_macro_name_ident_stringified,
@@ -482,7 +482,7 @@ pub fn error_occurence(
                                                     {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path{
-                                                                element_path: generate_path_from_segments(&type_path.path.segments),
+                                                                element_path: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                 vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                     &type_path.path.segments, 
                                                                     &proc_macro_name_ident_stringified,
@@ -568,7 +568,7 @@ pub fn error_occurence(
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
                                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path{
-                                                                    key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
+                                                                    key_segments_stringified: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                     key_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
                                                                         &proc_macro_name_ident_stringified,
@@ -608,7 +608,7 @@ pub fn error_occurence(
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
                                                                proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path{
-                                                                    value_segments_stringified: generate_path_from_segments(&type_path.path.segments),
+                                                                    value_segments_stringified: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                     value_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments,  
                                                                         &proc_macro_name_ident_stringified,
@@ -1852,7 +1852,7 @@ pub fn error_occurence(
                 let type_token_stream = if let syn::Type::Path(type_path) = field_type {
                     let type_stringified = format!(
                         "{}{with_serialize_deserialize_camel_case}",
-                        generate_path_from_segments(&type_path.path.segments),
+                        proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                     );
                     type_stringified
                     .parse::<proc_macro2::TokenStream>()
@@ -2130,7 +2130,7 @@ pub fn error_occurence(
                                 let error_message = format!("{supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}");
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
-                                        let path = generate_path_from_segments(&type_path.path.segments);
+                                        let path = proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments);
                                         let vec_lifetime = proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                             &type_path.path.segments,
                                             &proc_macro_name_ident_stringified,
@@ -2150,7 +2150,7 @@ pub fn error_occurence(
                                                     {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path{
-                                                                element_path: generate_path_from_segments(&type_path.path.segments),
+                                                                element_path: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                 vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                     &type_path.path.segments, 
                                                                     &proc_macro_name_ident_stringified,
@@ -2236,7 +2236,7 @@ pub fn error_occurence(
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
                                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Path{
-                                                                    key_segments_stringified: generate_path_from_segments(&type_path.path.segments),
+                                                                    key_segments_stringified: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                     key_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
                                                                         &proc_macro_name_ident_stringified,
@@ -2276,7 +2276,7 @@ pub fn error_occurence(
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => {
                                                                proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Path{
-                                                                    value_segments_stringified: generate_path_from_segments(&type_path.path.segments),
+                                                                    value_segments_stringified: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                     value_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments,  
                                                                         &proc_macro_name_ident_stringified,
@@ -5464,7 +5464,7 @@ pub fn error_occurence(
                 let type_token_stream = if let syn::Type::Path(type_path) = field_type {
                     let type_stringified = format!(
                         "{}{with_serialize_deserialize_camel_case}",
-                        generate_path_from_segments(&type_path.path.segments),
+                        proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                     );
                     type_stringified
                     .parse::<proc_macro2::TokenStream>()
@@ -5628,18 +5628,6 @@ fn panic_if_not_string(
     if let false = segments_stringified == std_string_string_stringified {
         panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified} (hashmap key must be string for deserialization)", attribute.attribute_view());
     }
-}
-
-
-fn generate_path_from_segments(segments: &syn::punctuated::Punctuated<syn::PathSegment, syn::token::Colon2>) -> String {
-    let mut segments_stringified = segments.iter()
-    .fold(String::from(""), |mut acc, elem| {
-        acc.push_str(&format!("{}::", elem.ident));
-        acc
-    });
-    segments_stringified.pop();
-    segments_stringified.pop();
-    segments_stringified
 }
 
 fn possible_lifetime_addition(
