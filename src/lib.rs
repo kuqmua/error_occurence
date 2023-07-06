@@ -989,7 +989,7 @@ pub fn error_occurence(
                                             key_segments_stringified: String,
                                             key_vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>,
                                         | -> proc_macro2::TokenStream {
-                                            panic_if_not_string(
+                                            proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                 &key_segments_stringified,
                                                 &std_string_string_stringified,
                                                 &proc_macro_name_ident_stringified,
@@ -1094,7 +1094,7 @@ pub fn error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -1123,7 +1123,7 @@ pub fn error_occurence(
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -1306,7 +1306,7 @@ pub fn error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -1398,7 +1398,7 @@ pub fn error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -3483,7 +3483,7 @@ pub fn error_occurence(
                                             proc_macro2::TokenStream,
                                             proc_macro2::TokenStream
                                         ) {
-                                            panic_if_not_string(
+                                            proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                 &key_segments_stringified,
                                                 &std_string_string_stringified,
                                                 &proc_macro_name_ident_stringified,
@@ -3676,7 +3676,7 @@ pub fn error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -3719,7 +3719,7 @@ pub fn error_occurence(
                                                     value_lifetime_ident 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -4117,7 +4117,7 @@ pub fn error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -4282,7 +4282,7 @@ pub fn error_occurence(
                                                     value_vec_lifetime 
                                                 }
                                             ) => {
-                                                panic_if_not_string(
+                                                proc_macro_helpers::error_occurence::panic_if_not_string::panic_if_not_string(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
@@ -5603,19 +5603,6 @@ pub fn error_occurence(
 
 fn attribute_view(attribute: &String) -> String {
     format!("attribute #[{attribute}]")
-}
-
-fn panic_if_not_string(
-    segments_stringified: &String,
-    std_string_string_stringified: &String,
-    proc_macro_name_ident_stringified: &String,
-    supports_only_stringified: &str,
-    as_std_collections_hashmap_key_type_stringified: &String,
-    attribute: &proc_macro_helpers::error_occurence::named_attribute::NamedAttribute
-) {
-    if let false = segments_stringified == std_string_string_stringified {
-        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {std_string_string_stringified} {as_std_collections_hashmap_key_type_stringified} (hashmap key must be string for deserialization)", attribute.attribute_view());
-    }
 }
 
 fn possible_lifetime_addition(
