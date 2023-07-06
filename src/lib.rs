@@ -814,47 +814,14 @@ pub fn error_occurence(
                             };
                             let vec_display_into_vec_string_camel_case: String = format!("{vec_camel_case}{display_camel_case}{into_camel_case}{vec_camel_case}{string_camel_case}");
                             let vec_display_into_vec_string_lower_case = vec_display_into_vec_string_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
-                            let vec_display_into_vec_string_token_stream = vec_display_into_vec_string_lower_case
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {vec_display_into_vec_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_display_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
                             let hashmap_display_display_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
-                            let hashmap_display_display_into_hashmap_string_string_token_stream = hashmap_display_display_into_hashmap_string_string_lower_case
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_string_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_string_string_lower_case}::{hashmap_display_display_into_hashmap_string_string_camel_case}");
-                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream = 
-                            crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_display_foreign_type_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_foreign_type_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
                             let hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_foreign_type_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
-                            let hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream = hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_foreign_type_into_hashmap_string_string_lower_case}::{hashmap_display_display_foreign_type_into_hashmap_string_string_camel_case}");
-                            let crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream = crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_display_into_hashmap_display_string_camel_case = format!("{hashmap_camel_case}{display_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{display_camel_case}{string_camel_case}");
                             let hashmap_display_display_into_hashmap_display_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{display_lower_case}_{string_lower_case}");
-                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_display_into_hashmap_display_string_lower_case}::{hashmap_display_display_into_hashmap_display_string_camel_case}");
-                            let crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream = crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let hashmap_display_display_into_hashmap_display_string_token_stream = 
-                            hashmap_display_display_into_hashmap_display_string_lower_case
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_display_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let hashmap_display_foreign_type_display_into_hashmap_string_string_camel_case = format!("{hashmap_camel_case}{display_foreign_type_camel_case}{display_camel_case}{into_camel_case}{hashmap_camel_case}{string_camel_case}{string_camel_case}");
-                            let hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case = format!("{hashmap_lower_case}_{display_foreign_type_lower_case}_{display_lower_case}_{into_lower_case}_{hashmap_lower_case}_{string_lower_case}_{string_lower_case}");
-                            let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case}::{hashmap_display_foreign_type_display_into_hashmap_string_string_camel_case}");
-                            let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream = crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream = hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case
-                            .parse::<proc_macro2::TokenStream>()
-                            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let 
                                 field_type_with_serialize_deserialize_token_stream
                             = match attribute {
@@ -876,21 +843,12 @@ pub fn error_occurence(
                                 NamedAttribute::EoDisplayWithSerializeDeserialize => {
                                     match supported_container {
                                         SupportedContainer::Path { path, vec_lifetime } => {
-                                            let (type_token_stream, serde_borrow_token_stream) = (
-                                                {
-                                                    let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
-                                                    type_stringified
-                                                    .parse::<proc_macro2::TokenStream>()
-                                                    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
-                                                },
-                                                get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
-                                                    vec_lifetime, 
-                                                    &mut lifetimes_for_serialize_deserialize,
-                                                    &trait_lifetime_stringified,
-                                                    &proc_macro_name_ident_stringified
-                                                )
-                                            );
-                                            type_token_stream
+                                            {
+                                                let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                                type_stringified
+                                                .parse::<proc_macro2::TokenStream>()
+                                                .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
+                                            }
                                         },
                                         SupportedContainer::Reference{ reference_ident, lifetime_ident } => {
                                             panic_if_not_str(
