@@ -761,8 +761,8 @@ pub fn error_occurence(
                                 wrong_attribute: &String,
                                 attribute_to_use: &String
                             | {
-                                let wrong_attribute_view = attribute_view(wrong_attribute);
-                                let attribute_to_use_view = attribute_view(attribute_to_use);
+                                let wrong_attribute_view = proc_macro_helpers::error_occurence::attribute_view::attribute_view(wrong_attribute);
+                                let attribute_to_use_view = proc_macro_helpers::error_occurence::attribute_view::attribute_view(attribute_to_use);
                                 //maybe additional cases exists
                                 if path == str_stringified {
                                     panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {str_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
@@ -2571,8 +2571,8 @@ pub fn error_occurence(
                                 wrong_attribute: &String,
                                 attribute_to_use: &String
                             | {
-                                let wrong_attribute_view = attribute_view(wrong_attribute);
-                                let attribute_to_use_view = attribute_view(attribute_to_use);
+                                let wrong_attribute_view = proc_macro_helpers::error_occurence::attribute_view::attribute_view(wrong_attribute);
+                                let attribute_to_use_view = proc_macro_helpers::error_occurence::attribute_view::attribute_view(attribute_to_use);
                                 //maybe additional cases exists
                                 if path == str_stringified {
                                     panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {str_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
@@ -5599,10 +5599,6 @@ pub fn error_occurence(
     //     println!("{token_stream}");
     // }
     token_stream.into()
-}
-
-fn attribute_view(attribute: &String) -> String {
-    format!("attribute #[{attribute}]")
 }
 
 fn get_possible_serde_borrow_token_stream_for_one_vec_with_possible_lifetime_addition(
