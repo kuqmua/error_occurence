@@ -799,7 +799,7 @@ pub fn error_occurence(
                                     match supported_container {
                                         proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } => {
                                             {
-                                                let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                                let type_stringified = format!("{path}{}", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -834,7 +834,7 @@ pub fn error_occurence(
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignTypeWithSerializeDeserialize => {
                                     if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         {
-                                            let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                            let type_stringified = format!("{path}{}", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                             .parse::<proc_macro2::TokenStream>()
                                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}",proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -891,7 +891,7 @@ pub fn error_occurence(
                                     } = supported_container {
                                         match vec_element_type {
                                             proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } => {
-                                                let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                let type_stringified = format!("{path}<{element_path}{}>", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -941,7 +941,7 @@ pub fn error_occurence(
                                     } = supported_container {
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
                                             {
-                                                let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                let type_stringified = format!("{path}<{element_path}{}>", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -965,7 +965,7 @@ pub fn error_occurence(
                                     } = supported_container {
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
                                             {
-                                                let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -1000,7 +1000,7 @@ pub fn error_occurence(
                                             {
                                                 let type_stringified = format!(
                                                     "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                    vec_lifetime_to_string(&key_vec_lifetime),
+                                                    proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
                                                 );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
@@ -1105,8 +1105,8 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{}, {value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(&key_vec_lifetime),
-                                                        vec_lifetime_to_string(&value_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1141,7 +1141,7 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                        vec_lifetime_to_string(&key_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1168,7 +1168,7 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified}, {value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(&value_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1225,7 +1225,7 @@ pub fn error_occurence(
                                             {
                                                 let type_stringified = format!(
                                                     "{path}<{key_segments_stringified}{},{std_string_string_stringified}>",
-                                                    vec_lifetime_to_string(&key_vec_lifetime)
+                                                    proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime)
                                                 );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
@@ -1317,8 +1317,8 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{},{value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(&key_vec_lifetime),
-                                                        vec_lifetime_to_string(&value_vec_lifetime),
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime),
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1355,7 +1355,7 @@ pub fn error_occurence(
                                                 {
                                                         let type_stringified = format!(
                                                             "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&value_vec_lifetime),
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime),
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -1409,8 +1409,8 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                        vec_lifetime_to_string(&key_vec_lifetime),
-                                                        vec_lifetime_to_string(&value_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1447,7 +1447,7 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                        vec_lifetime_to_string(&value_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                    );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -1556,7 +1556,7 @@ pub fn error_occurence(
                                             ) => {
                                                 let type_stringified = format!(
                                                     "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                    vec_lifetime_to_string(&value_vec_lifetime)
+                                                    proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                 );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
@@ -1691,7 +1691,7 @@ pub fn error_occurence(
                                             ) => {
                                                 let type_stringified = format!(
                                                     "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                    vec_lifetime_to_string(&value_vec_lifetime),
+                                                    proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime),
                                                 );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
@@ -1755,7 +1755,7 @@ pub fn error_occurence(
                                             ) => {
                                                 let type_stringified = format!(
                                                     "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                    vec_lifetime_to_string(&value_vec_lifetime)
+                                                    proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                 );
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
@@ -2702,7 +2702,7 @@ pub fn error_occurence(
                                         proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } => {
                                             let (type_token_stream, serde_borrow_token_stream) = (
                                                 {
-                                                    let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                                    let type_stringified = format!("{path}{}", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -2875,7 +2875,7 @@ pub fn error_occurence(
                                     let (type_token_stream, serde_borrow_token_stream) = if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime } = supported_container {
                                         (
                                             {
-                                                let type_stringified = format!("{path}{}", vec_lifetime_to_string(&vec_lifetime));
+                                                let type_stringified = format!("{path}{}", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                 type_stringified
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -3101,7 +3101,7 @@ pub fn error_occurence(
                                         match vec_element_type {
                                             proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } => (
                                                 {
-                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    let type_stringified = format!("{path}<{element_path}{}>", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -3283,7 +3283,7 @@ pub fn error_occurence(
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type {
                                             (
                                                 {
-                                                    let type_stringified = format!("{path}<{element_path}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    let type_stringified = format!("{path}<{element_path}{}>", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -3359,7 +3359,7 @@ pub fn error_occurence(
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime } = vec_element_type  {
                                             (
                                                 {
-                                                    let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", vec_lifetime_to_string(&vec_lifetime));
+                                                    let type_stringified = format!("{path}<{element_path}{with_serialize_deserialize_camel_case}{}>", proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&vec_lifetime));
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
                                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
@@ -3495,7 +3495,7 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                        vec_lifetime_to_string(&key_vec_lifetime),
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -3688,8 +3688,8 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, {value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&key_vec_lifetime),
-                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -3738,7 +3738,7 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, {std_string_string_stringified}>",
-                                                            vec_lifetime_to_string(&key_vec_lifetime)
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -3780,7 +3780,7 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{std_string_string_stringified}, {value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -3944,7 +3944,7 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{key_segments_stringified}{},{std_string_string_stringified}>",
-                                                        vec_lifetime_to_string(&key_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -4129,8 +4129,8 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{},{value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&key_vec_lifetime),
-                                                            vec_lifetime_to_string(&value_vec_lifetime),
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime),
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -4179,7 +4179,7 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&value_vec_lifetime),
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime),
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -4294,8 +4294,8 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{key_segments_stringified}{}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                            vec_lifetime_to_string(&key_vec_lifetime),
-                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&key_vec_lifetime),
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -4348,7 +4348,7 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -4599,7 +4599,7 @@ pub fn error_occurence(
                                                     {
                                                         let type_stringified = format!(
                                                             "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                            vec_lifetime_to_string(&value_vec_lifetime)
+                                                            proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                         );
                                                         type_stringified
                                                         .parse::<proc_macro2::TokenStream>()
@@ -4862,7 +4862,7 @@ pub fn error_occurence(
                                                 {
                                                    let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified},{value_segments_stringified}{}>",
-                                                        vec_lifetime_to_string(&value_vec_lifetime),
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime),
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -4990,7 +4990,7 @@ pub fn error_occurence(
                                                 {
                                                     let type_stringified = format!(
                                                         "{path}<{std_string_string_stringified}, {value_segments_stringified}{with_serialize_deserialize_camel_case}{}>",
-                                                        vec_lifetime_to_string(&value_vec_lifetime)
+                                                        proc_macro_helpers::error_occurence::vec_lifetime_to_string::vec_lifetime_to_string(&value_vec_lifetime)
                                                     );
                                                     type_stringified
                                                     .parse::<proc_macro2::TokenStream>()
@@ -5677,15 +5677,6 @@ fn get_possible_serde_borrow_token_stream_for_two_vecs_with_possible_lifetime_ad
         }
     });
     token_stream
-}
-
-fn vec_lifetime_to_string(vec: &[proc_macro_helpers::error_occurence::lifetime::Lifetime]) -> String {
-    let mut lifetimes_stringified_handle = vec.iter().fold(String::from(""), |mut acc, path_segment| {
-        acc.push_str(&format!("{},", path_segment));
-        acc
-    });
-    lifetimes_stringified_handle.pop();
-    format!("<{lifetimes_stringified_handle}>")
 }
 
 fn vec_lifetime_to_lifetime(vec: &Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>) -> &proc_macro_helpers::error_occurence::lifetime::Lifetime {
