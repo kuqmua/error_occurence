@@ -43,9 +43,7 @@ pub fn error_occurence(
 ) -> proc_macro::TokenStream {
     proc_macro_helpers::panic_location::panic_location();
     use convert_case::Casing;
-    let error_camel_case = "Error";
-    let occurence_camel_case = "Occurence";
-    let proc_macro_name = format!("{error_camel_case}{occurence_camel_case}");
+    let proc_macro_name = format!("{}{}", proc_macro_helpers::error_occurence::hardcode::ERROR_OCCURENCE_CASE, proc_macro_helpers::error_occurence::hardcode::OCCURENCE_CAMEL_CASE);
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} {}", proc_macro_helpers::global_variables::hardcode::AST_PARSE_FAILED));
     let error_occurence_lower_case = proc_macro_name.to_case(convert_case::Case::Snake).to_lowercase();
@@ -205,7 +203,7 @@ pub fn error_occurence(
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
         supported_enum_variant.clone(),
         &data_enum,
-        occurence_camel_case,
+        proc_macro_helpers::error_occurence::hardcode::OCCURENCE_CAMEL_CASE,
         with_serialize_deserialize_lower_case.clone(),
         error_occurence_lower_case.clone(),
         vec_lower_case.clone(),
@@ -236,7 +234,7 @@ pub fn error_occurence(
     );
     let token_stream = match supported_enum_variant {
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
-            let code_occurence_camel_case = format!("Code{occurence_camel_case}");
+            let code_occurence_camel_case = format!("Code{}", proc_macro_helpers::error_occurence::hardcode::OCCURENCE_CAMEL_CASE);
             let code_occurence_lower_case = code_occurence_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
             let foreign_type_camel_case = "ForeignType";
             let display_camel_case = "Display";
