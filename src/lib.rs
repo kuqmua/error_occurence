@@ -52,13 +52,12 @@ pub fn error_occurence(
     let trait_lifetime_stringified = format!("'{error_occurence_lower_case}_proc_macro_reserved_lifetime_name");
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
-    let supports_only_stringified = "supports only";
     let proc_macro_name_ident_stringified = format!("{proc_macro_name} {ident_stringified}");
     let data_enum = if let syn::Data::Enum(data_enum) = ast.data {
         data_enum
     }
     else {
-        panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} syn::Data::Enum");
+        panic!("{proc_macro_name_ident_stringified} {} syn::Data::Enum", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
     };
     let generics_len = ast.generics.params.len();
     //its really hard to support more than 1 lifetimes coz dont know how many generics would be in the WithSerializeDeserialize inner error_occurence variants and fields
@@ -73,7 +72,7 @@ pub fn error_occurence(
                 acc
             }
             else {
-                panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} syn::GenericParam::Lifetime");
+                panic!("{proc_macro_name_ident_stringified} {} syn::GenericParam::Lifetime", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
             }
         });
         lifetimes_stringified.pop();
@@ -84,16 +83,11 @@ pub fn error_occurence(
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {lifetimes_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
     };
-    let syn_fields = "syn::Fields";
-    let named_camel_case = "Named";
-    let named_lower_case = named_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let named_lower_case = proc_macro_helpers::error_occurence::hardcode::NAMED_CAMEL_CASE.to_case(convert_case::Case::Snake).to_lowercase();
     let unnamed_camel_case = format!("Un{named_lower_case}");
     let supported_enum_variant = proc_macro_helpers::error_occurence::supported_enum_variant::create_supported_enum_variant(
         &data_enum,
         proc_macro_name_ident_stringified.clone(),
-        supports_only_stringified,
-        syn_fields,
-        named_camel_case,
         unnamed_camel_case.clone(),
     );
     let trait_lifetime_token_stream = trait_lifetime_stringified
@@ -118,7 +112,7 @@ pub fn error_occurence(
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
     let unnamed_lower_case = unnamed_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let error_logs_logic_stringified = "error_logs_logic";
-    let error_occurence_named_camel_case = format!("{proc_macro_name}{named_camel_case}");
+    let error_occurence_named_camel_case = format!("{proc_macro_name}{}", proc_macro_helpers::error_occurence::hardcode::NAMED_CAMEL_CASE);
     let error_occurence_named_lower_case = format!("{error_occurence_lower_case}_{named_lower_case}");
     let error_occurence_named_token_stream = error_occurence_named_lower_case
     .parse::<proc_macro2::TokenStream>()
@@ -182,7 +176,7 @@ pub fn error_occurence(
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {into_serialize_deserialize_version_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let supported_container_double_dot_double_dot = "proc_macro_helpers::error_occurence::supported_container::SupportedContainer::";
-    let supports_only_supported_container_stringified = format!("{supports_only_stringified} {supported_container_double_dot_double_dot}");
+    let supports_only_supported_container_stringified = format!("{} {supported_container_double_dot_double_dot}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
     let path_camel_case = "Path";
     let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
     let is_none_stringified = "is None";
@@ -220,7 +214,7 @@ pub fn error_occurence(
         value_lower_case.clone(),
         proc_macro_name_ident_stringified.clone(),
         is_none_stringified,
-        supports_only_stringified,
+        proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
         syn_generic_argument_type_stringified,
         syn_type_path_stringified.clone(),
         reference_camel_case,
@@ -236,7 +230,7 @@ pub fn error_occurence(
         with_serialize_deserialize_camel_case.clone(),
         suported_enum_variant_stringified,
         unnamed_camel_case.clone(),
-        syn_fields,
+        proc_macro_helpers::error_occurence::hardcode::SYN_FIELDS,
         ident_with_serialize_deserialize_token_stream.clone(),
         None
     );
@@ -304,14 +298,14 @@ pub fn error_occurence(
                                             proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                 &type_path.path.segments,
                                                 &proc_macro_name_ident_stringified,
-                                                supports_only_stringified,
+                                                proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                 is_none_stringified,
                                                 syn_generic_argument_type_stringified
                                             ),
                                         )
                                       }
                                     else {
-                                        panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {supports_only_stringified} {syn_type_path_stringified}");
+                                        panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                     }
                                 };
                                 proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence {
@@ -490,14 +484,14 @@ pub fn error_occurence(
                                     option_attribute.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} option attribute {is_none_stringified}"))
                                 };
                                 let syn_type_reference = format!("syn::Type::{reference_camel_case}");
-                                let error_message = format!("{supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}");
+                                let error_message = format!("{} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
                                         let path = proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments);
                                         let vec_lifetime = proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                             &type_path.path.segments,
                                             &proc_macro_name_ident_stringified,
-                                            supports_only_stringified,
+                                            proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                             is_none_stringified,
                                             syn_generic_argument_type_stringified
                                         );
@@ -517,7 +511,7 @@ pub fn error_occurence(
                                                                 vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                     &type_path.path.segments, 
                                                                     &proc_macro_name_ident_stringified,
-                                                                    supports_only_stringified,
+                                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                                     is_none_stringified,
                                                                     syn_generic_argument_type_stringified
                                                                 )
@@ -535,18 +529,18 @@ pub fn error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                                                 };
                                                                 proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Reference {
                                                                     reference_ident,
                                                                     lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}"),
+                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_stringified} {syn_generic_argument_type_stringified}");
+                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {} {syn_generic_argument_type_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                                     }
                                                 }
                                                 else {
@@ -554,7 +548,7 @@ pub fn error_occurence(
                                                 }
                                             }
                                             else {
-                                                panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
+                                                panic!("{proc_macro_name_ident_stringified} path_segment.arguments {} syn::PathArguments::AngleBracketed", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                             };
                                             proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Vec{
                                                 path,
@@ -603,7 +597,7 @@ pub fn error_occurence(
                                                                     key_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
                                                                         &proc_macro_name_ident_stringified,
-                                                                        supports_only_stringified,
+                                                                        proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                                         is_none_stringified,
                                                                         syn_generic_argument_type_stringified
                                                                     )
@@ -622,18 +616,18 @@ pub fn error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                                                 };
                                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference {
                                                                     key_reference_ident,
                                                                     key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and {syn_type_reference}"),
+                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name_ident_stringified} key_generic_argument {supports_only_stringified} {syn_generic_argument_type_stringified}");
+                                                        panic!("{proc_macro_name_ident_stringified} key_generic_argument {} {syn_generic_argument_type_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                                     };
                                                     let hashmap_value_type = if let syn::GenericArgument::Type(type_handle) = value_generic_argument {
                                                         match type_handle {
@@ -643,7 +637,7 @@ pub fn error_occurence(
                                                                     value_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments,  
                                                                         &proc_macro_name_ident_stringified,
-                                                                        supports_only_stringified,
+                                                                        proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                                         is_none_stringified,
                                                                         syn_generic_argument_type_stringified
                                                                     )
@@ -662,18 +656,18 @@ pub fn error_occurence(
                                                                     }
                                                                 }
                                                                 else {
-                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                                                    panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                                                 };
                                                                proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference {
                                                                     value_reference_ident,
                                                                     value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
                                                                 }
                                                             },
-                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {supports_only_stringified} {syn_type_path_stringified} and syn::Type::Reference"),
+                                                            _ => panic!("{proc_macro_name_ident_stringified} type_handle {} {syn_type_path_stringified} and syn::Type::Reference", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED),
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {supports_only_stringified} {syn_generic_argument_type_stringified}");
+                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {} {syn_generic_argument_type_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                                     };
                                                     (
                                                         hashmap_key_type,
@@ -685,7 +679,7 @@ pub fn error_occurence(
                                                 }
                                             }
                                             else {
-                                                panic!("{proc_macro_name_ident_stringified} path_segment.arguments {supports_only_stringified} syn::PathArguments::AngleBracketed");
+                                                panic!("{proc_macro_name_ident_stringified} path_segment.arguments {} syn::PathArguments::AngleBracketed", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                             };
                                             proc_macro_helpers::error_occurence::supported_container::SupportedContainer::HashMap{
                                                 path,
@@ -713,7 +707,7 @@ pub fn error_occurence(
                                             }
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {supports_only_stringified} {syn_type_path_stringified}");
+                                            panic!("{proc_macro_name_ident_stringified} {syn_type_reference} type_reference.elem {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         };
                                         proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Reference{
                                             reference_ident,
@@ -1057,7 +1051,7 @@ pub fn error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {supported_container_double_dot_double_dot}{path_camel_case}", attribute.attribute_view())
+                                        panic!("{proc_macro_name_ident_stringified} {} {} {supported_container_double_dot_double_dot}{path_camel_case}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED)
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize => {
@@ -1126,7 +1120,7 @@ pub fn error_occurence(
                                                 &reference_ident,
                                                 str_stringified,
                                                 &proc_macro_name_ident_stringified,
-                                                supports_only_stringified,
+                                                proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                 &attribute
                                             );
                                             proc_macro_helpers::error_occurence::possible_lifetime_addition::possible_lifetime_addition(
@@ -1394,7 +1388,7 @@ pub fn error_occurence(
                                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }
                                     }
                                     else {
@@ -1486,7 +1480,7 @@ pub fn error_occurence(
                                                     &reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 let crate_common_error_logs_logic_vec_display_into_vec_string_vec_display_into_vec_string_stringified = format!("{crate_common_error_logs_logic_stringified}{vec_display_into_vec_string_lower_case}::{vec_display_into_vec_string_camel_case}");
@@ -1571,7 +1565,7 @@ pub fn error_occurence(
                                     } = supported_container {
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }
                                     }
                                     else {
@@ -1660,7 +1654,7 @@ pub fn error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }
                                     }
                                     else {
@@ -1736,7 +1730,7 @@ pub fn error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {supports_only_stringified} {vec_element_type_path_stringified}", attribute.attribute_view());
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }                                        
                                     }
                                     else {
@@ -1850,7 +1844,7 @@ pub fn error_occurence(
                                                 &key_segments_stringified,
                                                 &std_string_string_stringified,
                                                 &proc_macro_name_ident_stringified,
-                                                supports_only_stringified,
+                                                proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                 &as_std_collections_hashmap_key_type_stringified,
                                                 &attribute
                                             );
@@ -2043,7 +2037,7 @@ pub fn error_occurence(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &as_std_collections_hashmap_key_type_stringified,
                                                     &attribute
                                                 );
@@ -2086,7 +2080,7 @@ pub fn error_occurence(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &as_std_collections_hashmap_key_type_stringified,
                                                     &attribute
                                                 );
@@ -2094,7 +2088,7 @@ pub fn error_occurence(
                                                     &value_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 (
@@ -2136,7 +2130,7 @@ pub fn error_occurence(
                                                     &key_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 (
@@ -2192,14 +2186,14 @@ pub fn error_occurence(
                                                     &key_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 proc_macro_helpers::error_occurence::panic_if_not_str::panic_if_not_str(
                                                     &value_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 (
@@ -2484,7 +2478,7 @@ pub fn error_occurence(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &as_std_collections_hashmap_key_type_stringified,
                                                     &attribute
                                                 );
@@ -2535,7 +2529,7 @@ pub fn error_occurence(
                                                     &key_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 (
@@ -2649,7 +2643,7 @@ pub fn error_occurence(
                                                     &key_segments_stringified,
                                                     &std_string_string_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &as_std_collections_hashmap_key_type_stringified,
                                                     &attribute
                                                 );
@@ -2704,7 +2698,7 @@ pub fn error_occurence(
                                                     &key_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 (
@@ -2996,7 +2990,7 @@ pub fn error_occurence(
                                                     &value_reference_ident,
                                                     str_stringified,
                                                     &proc_macro_name_ident_stringified,
-                                                    supports_only_stringified,
+                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                     &attribute
                                                 );
                                                 (
@@ -3822,7 +3816,7 @@ pub fn error_occurence(
                     &unnamed[0].ty
                 }
                 else {
-                    panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} {syn_fields}::{unnamed_camel_case}");
+                    panic!("{proc_macro_name_ident_stringified} {} {}::{unnamed_camel_case}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED, proc_macro_helpers::error_occurence::hardcode::SYN_FIELDS);
                 };
                 let type_token_stream = if let syn::Type::Path(type_path) = field_type {
                     let type_stringified = format!(
@@ -3834,7 +3828,7 @@ pub fn error_occurence(
                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                 }
                 else {
-                    panic!("{proc_macro_name_ident_stringified} {supports_only_stringified} {syn_type_path_stringified}")
+                    panic!("{proc_macro_name_ident_stringified} {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED)
                 };
                 logic_for_to_string_with_config.push(quote::quote!{
                     #ident::#variant_ident(i) => {
