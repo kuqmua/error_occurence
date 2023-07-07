@@ -238,6 +238,7 @@ pub fn error_occurence(
         unnamed_camel_case.clone(),
         syn_fields,
         ident_with_serialize_deserialize_token_stream.clone(),
+        None
     );
     let token_stream = match supported_enum_variant {
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
