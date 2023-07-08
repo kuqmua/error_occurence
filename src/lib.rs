@@ -202,7 +202,7 @@ pub fn error_occurence(
     let vec_lower_case = vec_camel_case.to_lowercase(); 
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
         supported_enum_variant.clone(),
-        &data_enum,
+        data_enum.variants.iter().map(|variant|variant.clone()).collect(),
         proc_macro_helpers::error_occurence::hardcode::OCCURENCE_CAMEL_CASE,
         with_serialize_deserialize_lower_case.clone(),
         error_occurence_lower_case.clone(),
