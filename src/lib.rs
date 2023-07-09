@@ -91,9 +91,9 @@ pub fn error_occurence(
     let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {trait_lifetime_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let with_camel_case = "With";
     let with_serialize_deserialize_camel_case = format!(
-        "{with_camel_case}{}",
+        "{}{}",
+        proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE,
         proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_CAMEL_CASE
     );
     let ident_with_serialize_deserialize_stringified = format!("{ident}{with_serialize_deserialize_camel_case}");
@@ -108,7 +108,10 @@ pub fn error_occurence(
     let source_camel_case = "Source";
     let string_camel_case = "String";
     let to_string_camel_case = format!("To{string_camel_case}");
-    let to_string_with_config_camel_case = format!("{to_string_camel_case}{with_camel_case}{config_camel_case}");
+    let to_string_with_config_camel_case = format!(
+        "{to_string_camel_case}{}{config_camel_case}",
+        proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE
+    );
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
     let unnamed_lower_case = unnamed_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let error_logs_logic_stringified = "error_logs_logic";
@@ -132,7 +135,10 @@ pub fn error_occurence(
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let crate_common_error_logs_logic_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::");
-    let to_string_without_config_camel_case = format!("{to_string_camel_case}{with_camel_case}out{config_camel_case}");
+    let to_string_without_config_camel_case = format!(
+        "{to_string_camel_case}{}out{config_camel_case}",
+        proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE
+    );
     let to_string_without_config_lower_case = to_string_without_config_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
     let crate_common_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_common_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
     let crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = crate_common_error_logs_logic_to_string_without_config_to_string_without_config_stringified
