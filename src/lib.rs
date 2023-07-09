@@ -199,9 +199,8 @@ pub fn error_occurence(
     let to_string_with_config_token_stream = 
     to_string_with_config_lower_case.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_with_config_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let value_camel_case = "Value";
     let key_lower_case = proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE.to_lowercase();
-    let value_lower_case = value_camel_case.to_lowercase();
+    let value_lower_case = proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE.to_lowercase();
     let reference_camel_case = "Reference";
     let hashmap_lower_case = proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE.to_case(convert_case::Case::Flat);
     let vec_lower_case = proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE.to_lowercase(); 
@@ -227,7 +226,7 @@ pub fn error_occurence(
         string_camel_case,
         path_camel_case,
         proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE,
-        value_camel_case,
+        proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE,
         supported_container_double_dot_double_dot,
         supports_only_supported_container_stringified.clone(),
         with_serialize_deserialize_camel_case.clone(),
@@ -951,8 +950,9 @@ pub fn error_occurence(
                                 proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE
                             );
                             let hashmap_value_type_stringified = format!(
-                                "{}{value_camel_case}{type_camel_case}",
-                                proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
+                                "{}{}{type_camel_case}",
+                                proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE,
+                                proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE
                             );
                             let hashmap_key_type_path_stringified = format!("{hashmap_key_type_stringified}::{path_camel_case}");
                             let hashmap_key_type_reference_stringified = format!("{hashmap_key_type_stringified}::{reference_camel_case}");
