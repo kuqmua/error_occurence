@@ -186,7 +186,6 @@ pub fn error_occurence(
     let path_camel_case = "Path";
     let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
     let suported_enum_variant_stringified = "proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant";
-    let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
     let compile_time_check_error_occurence_members_stringified = format!("_compile_time_check_{error_occurence_lower_case}_members");
     let compile_time_check_error_occurence_members_token_stream = compile_time_check_error_occurence_members_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -216,7 +215,7 @@ pub fn error_occurence(
         proc_macro_name_ident_stringified.clone(),
         proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-        syn_generic_argument_type_stringified,
+        proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED,
         syn_type_path_stringified.clone(),
         reference_camel_case,
         proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE,
@@ -305,7 +304,7 @@ pub fn error_occurence(
                                                 &proc_macro_name_ident_stringified,
                                                 proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                 proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                syn_generic_argument_type_stringified
+                                                proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
                                             ),
                                         )
                                       }
@@ -501,7 +500,7 @@ pub fn error_occurence(
                                             &proc_macro_name_ident_stringified,
                                             proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                             proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                            syn_generic_argument_type_stringified
+                                            proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
                                         );
                                         let path_segment = type_path.path.segments.into_iter().last()
                                         .unwrap_or_else(|| panic!(
@@ -527,7 +526,7 @@ pub fn error_occurence(
                                                                     &proc_macro_name_ident_stringified,
                                                                     proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                                     proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                                    syn_generic_argument_type_stringified
+                                                                    proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
                                                                 )
                                                             },
                                                             syn::Type::Reference(type_reference) => {
@@ -560,7 +559,10 @@ pub fn error_occurence(
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {} {syn_generic_argument_type_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                                        panic!(
+                                                            "{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {} {}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
+                                                            proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                        );
                                                     }
                                                 }
                                                 else {
@@ -625,7 +627,7 @@ pub fn error_occurence(
                                                                         &proc_macro_name_ident_stringified,
                                                                         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                                         proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                                        syn_generic_argument_type_stringified
+                                                                        proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
                                                                     )
                                                                 }
                                                             },
@@ -659,7 +661,11 @@ pub fn error_occurence(
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name_ident_stringified} key_generic_argument {} {syn_generic_argument_type_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                                        panic!(
+                                                            "{proc_macro_name_ident_stringified} key_generic_argument {} {}", 
+                                                            proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
+                                                            proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                        );
                                                     };
                                                     let hashmap_value_type = if let syn::GenericArgument::Type(type_handle) = value_generic_argument {
                                                         match type_handle {
@@ -671,7 +677,7 @@ pub fn error_occurence(
                                                                         &proc_macro_name_ident_stringified,
                                                                         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                                                         proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                                        syn_generic_argument_type_stringified
+                                                                        proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
                                                                     )
                                                                 }
                                                             },
@@ -705,7 +711,10 @@ pub fn error_occurence(
                                                         }
                                                     }
                                                     else {
-                                                        panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {} {syn_generic_argument_type_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                                        panic!(
+                                                            "{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args[0] {} {}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
+                                                            proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                        );
                                                     };
                                                     (
                                                         hashmap_key_type,
