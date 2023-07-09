@@ -183,8 +183,10 @@ pub fn error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {into_serialize_deserialize_version_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let supported_container_double_dot_double_dot = "proc_macro_helpers::error_occurence::supported_container::SupportedContainer::";
     let supports_only_supported_container_stringified = format!("{} {supported_container_double_dot_double_dot}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
-    let path_camel_case = "Path";
-    let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
+    let syn_type_path_stringified = format!(
+        "syn::Type::{}",
+        proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+    );
     let suported_enum_variant_stringified = "proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant";
     let compile_time_check_error_occurence_members_stringified = format!("_compile_time_check_{error_occurence_lower_case}_members");
     let compile_time_check_error_occurence_members_token_stream = compile_time_check_error_occurence_members_stringified
@@ -222,7 +224,7 @@ pub fn error_occurence(
         proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE,
         generics_len,
         string_camel_case,
-        path_camel_case,
+        proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE,
         proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE,
         proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE,
         supported_container_double_dot_double_dot,
@@ -943,7 +945,10 @@ pub fn error_occurence(
                             crate_common_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let vec_element_type_path_stringified = format!("proc_macro_helpers::error_occurence::vec_element_type::VecElementType::{path_camel_case}");
+                            let vec_element_type_path_stringified = format!(
+                                "proc_macro_helpers::error_occurence::vec_element_type::VecElementType::{}",
+                                proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                            );
                             let vec_display_foreign_type_to_string_camel_case = format!(
                                 "{}{display_foreign_type_camel_case}{to_string_camel_case}",
                                 proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
@@ -1004,9 +1009,15 @@ pub fn error_occurence(
                                 proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE,
                                 proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE
                             );
-                            let hashmap_key_type_path_stringified = format!("{hashmap_key_type_stringified}::{path_camel_case}");
+                            let hashmap_key_type_path_stringified = format!(
+                                "{hashmap_key_type_stringified}::{}",
+                                proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                            );
                             let hashmap_key_type_reference_stringified = format!("{hashmap_key_type_stringified}::{reference_camel_case}");
-                            let hashmap_value_type_path_stringified = format!("{hashmap_value_type_stringified}::{path_camel_case}");
+                            let hashmap_value_type_path_stringified = format!(
+                                "{hashmap_value_type_stringified}::{}",
+                                proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                            );
                             let hashmap_value_type_reference_stringified = format!("{hashmap_value_type_stringified}::{reference_camel_case}");
                             let inform_use_str_string_in_different_attribute = |
                                 path: String,
@@ -1156,7 +1167,12 @@ pub fn error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name_ident_stringified} {} {} {supported_container_double_dot_double_dot}{path_camel_case}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED)
+                                        panic!(
+                                            "{proc_macro_name_ident_stringified} {} {} {supported_container_double_dot_double_dot}{}", 
+                                            attribute.attribute_view(), 
+                                            proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
+                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                                        )
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayWithSerializeDeserialize => {
@@ -1276,13 +1292,21 @@ pub fn error_occurence(
                                                 proc_macro2::TokenStream::new(),
                                             )
                                         },
-                                        _ => panic!("{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{path_camel_case} and {supported_container_double_dot_double_dot}{reference_camel_case}", attribute.attribute_view()),
+                                        _ => panic!(
+                                            "{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{} and {supported_container_double_dot_double_dot}{reference_camel_case}", 
+                                            attribute.attribute_view(),
+                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                                        ),
                                     }
                                 },
                                 proc_macro_helpers::error_occurence::named_attribute::NamedAttribute::EoDisplayForeignType => {
                                     if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path: _path, vec_lifetime: _vec_lifetime } = supported_container {}
                                     else {
-                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
+                                        panic!(
+                                            "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
+                                            attribute.attribute_view(),
+                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                                        );
                                     }
                                     (
                                         quote::quote! {
@@ -1351,7 +1375,11 @@ pub fn error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
+                                        panic!(
+                                            "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
+                                            attribute.attribute_view(),
+                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                                        );
                                     };
                                     (
                                         quote::quote! {
@@ -1419,7 +1447,11 @@ pub fn error_occurence(
                                         )
                                     }
                                     else {
-                                        panic!("{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{path_camel_case}", attribute.attribute_view());
+                                        panic!(
+                                            "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
+                                            attribute.attribute_view(),
+                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                                        );
                                     };
                                     (
                                         quote::quote! {
