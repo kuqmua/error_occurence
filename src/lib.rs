@@ -91,9 +91,11 @@ pub fn error_occurence(
     let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {trait_lifetime_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let serialize_deserialize_camel_case = "SerializeDeserialize";
     let with_camel_case = "With";
-    let with_serialize_deserialize_camel_case = format!("{with_camel_case}{serialize_deserialize_camel_case}");
+    let with_serialize_deserialize_camel_case = format!(
+        "{with_camel_case}{}",
+        proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_CAMEL_CASE
+    );
     let ident_with_serialize_deserialize_stringified = format!("{ident}{with_serialize_deserialize_camel_case}");
     let ident_with_serialize_deserialize_token_stream = ident_with_serialize_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
@@ -168,7 +170,7 @@ pub fn error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let into_camel_case = "Into";
     let into_lower_case = into_camel_case.to_lowercase();
-    let serialize_deserialize_lower_case = serialize_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let serialize_deserialize_lower_case = proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_CAMEL_CASE.to_case(convert_case::Case::Snake).to_lowercase();
     let into_serialize_deserialize_version_stringified = format!("{into_lower_case}_{serialize_deserialize_lower_case}_version");
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
