@@ -185,7 +185,6 @@ pub fn error_occurence(
     let supports_only_supported_container_stringified = format!("{} {supported_container_double_dot_double_dot}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
     let path_camel_case = "Path";
     let syn_type_path_stringified = format!("syn::Type::{path_camel_case}");
-    let is_none_stringified = "is None";
     let suported_enum_variant_stringified = "proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant";
     let syn_generic_argument_type_stringified = "syn::GenericArgument::Type";
     let compile_time_check_error_occurence_members_stringified = format!("_compile_time_check_{error_occurence_lower_case}_members");
@@ -215,7 +214,7 @@ pub fn error_occurence(
         key_lower_case.clone(),
         value_lower_case.clone(),
         proc_macro_name_ident_stringified.clone(),
-        is_none_stringified,
+        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
         syn_generic_argument_type_stringified,
         syn_type_path_stringified.clone(),
@@ -270,7 +269,10 @@ pub fn error_occurence(
             let variants_vec = data_enum.variants.into_iter().map(|variant| {
                 let variant_fields_vec = if let syn::Fields::Named(fields_named) = variant.fields {
                     fields_named.named.into_iter().map(|field|{
-                        let field_ident = field.ident.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} field.ident {is_none_stringified}"));
+                        let field_ident = field.ident.unwrap_or_else(|| panic!(
+                            "{proc_macro_name_ident_stringified} field.ident {}",
+                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                        ));
                         let error_or_code_occurence = match field_ident == *code_occurence_lower_case {
                             true => {
                                 let (code_occurence_type_stringified, code_occurence_lifetime) = {
@@ -302,7 +304,7 @@ pub fn error_occurence(
                                                 &type_path.path.segments,
                                                 &proc_macro_name_ident_stringified,
                                                 proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                is_none_stringified,
+                                                proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
                                                 syn_generic_argument_type_stringified
                                             ),
                                         )
@@ -484,7 +486,10 @@ pub fn error_occurence(
                                             }//other attributes are not for this proc_macro
                                         }//other attributes are not for this proc_macro
                                     });
-                                    option_attribute.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} option attribute {is_none_stringified}"))
+                                    option_attribute.unwrap_or_else(|| panic!(
+                                        "{proc_macro_name_ident_stringified} option attribute {}",
+                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                    ))
                                 };
                                 let syn_type_reference = format!("syn::Type::{reference_camel_case}");
                                 let error_message = format!("{} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
@@ -495,18 +500,24 @@ pub fn error_occurence(
                                             &type_path.path.segments,
                                             &proc_macro_name_ident_stringified,
                                             proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                            is_none_stringified,
+                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
                                             syn_generic_argument_type_stringified
                                         );
                                         let path_segment = type_path.path.segments.into_iter().last()
-                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().last() {is_none_stringified}"));
+                                        .unwrap_or_else(|| panic!(
+                                            "{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().last() {}",
+                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                        ));
                                         if path_segment.ident == proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE {
                                             let vec_element_type = if let syn::PathArguments::AngleBracketed(angle_brackets_generic_arguments) = path_segment.arguments {
                                                 if let true = angle_brackets_generic_arguments.args.len() == 1 {
                                                     if let syn::GenericArgument::Type(type_handle) = 
                                                         angle_brackets_generic_arguments.args
                                                         .into_iter().next()
-                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {is_none_stringified}"))
+                                                        .unwrap_or_else(|| panic!(
+                                                            "{proc_macro_name_ident_stringified} angle_brackets_generic_arguments.args.into_iter().nth(0) {}",
+                                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                        ))
                                                     {
                                                         match type_handle {
                                                             syn::Type::Path(type_path) => proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path{
@@ -515,7 +526,7 @@ pub fn error_occurence(
                                                                     &type_path.path.segments, 
                                                                     &proc_macro_name_ident_stringified,
                                                                     proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                                    is_none_stringified,
+                                                                    proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
                                                                     syn_generic_argument_type_stringified
                                                                 )
                                                             },
@@ -524,7 +535,10 @@ pub fn error_occurence(
                                                                     if let true = type_path.path.segments.len() == 1 {
                                                                         type_path.path.segments
                                                                         .into_iter().next()
-                                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .unwrap_or_else(|| panic!(
+                                                                            "{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {}",
+                                                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                                        ))
                                                                         .ident
                                                                     }
                                                                     else {
@@ -536,7 +550,10 @@ pub fn error_occurence(
                                                                 };
                                                                 proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Reference {
                                                                     reference_ident,
-                                                                    lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                    lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!(
+                                                                        "{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {}",
+                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                                    )).ident
                                                                 }
                                                             },
                                                             _ => panic!("{proc_macro_name_ident_stringified} type_handle {} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED),
@@ -585,8 +602,14 @@ pub fn error_occurence(
                                                             }
                                                         });
                                                         (
-                                                            key_generic_argument_option.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} key_generic_argument_option {is_none_stringified}")),
-                                                            value_generic_argument_option.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} value_generic_argument_option {is_none_stringified}"))
+                                                            key_generic_argument_option.unwrap_or_else(|| panic!(
+                                                                "{proc_macro_name_ident_stringified} key_generic_argument_option {}",
+                                                                proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                            )),
+                                                            value_generic_argument_option.unwrap_or_else(|| panic!(
+                                                                "{proc_macro_name_ident_stringified} value_generic_argument_option {}",
+                                                                proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                            ))
                                                         )
                                                     };
                                                     let hashmap_key_type 
@@ -601,7 +624,7 @@ pub fn error_occurence(
                                                                         &type_path.path.segments, 
                                                                         &proc_macro_name_ident_stringified,
                                                                         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                                        is_none_stringified,
+                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
                                                                         syn_generic_argument_type_stringified
                                                                     )
                                                                 }
@@ -611,7 +634,10 @@ pub fn error_occurence(
                                                                     if let true = type_path.path.segments.len() == 1 {
                                                                         type_path.path.segments
                                                                         .into_iter().next()
-                                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .unwrap_or_else(|| panic!(
+                                                                            "{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {}",
+                                                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                                        ))
                                                                         .ident
                                                                     }
                                                                     else {
@@ -623,7 +649,10 @@ pub fn error_occurence(
                                                                 };
                                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference {
                                                                     key_reference_ident,
-                                                                    key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                    key_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!(
+                                                                        "{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {}",
+                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                                    )).ident
                                                                 }
                                                             },
                                                             _ => panic!("{proc_macro_name_ident_stringified} type_handle {} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED),
@@ -641,7 +670,7 @@ pub fn error_occurence(
                                                                         &type_path.path.segments,  
                                                                         &proc_macro_name_ident_stringified,
                                                                         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                                        is_none_stringified,
+                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
                                                                         syn_generic_argument_type_stringified
                                                                     )
                                                                 }
@@ -651,7 +680,10 @@ pub fn error_occurence(
                                                                     if let true = type_path.path.segments.len() == 1 {
                                                                         type_path.path.segments
                                                                         .into_iter().next()
-                                                                        .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                                        .unwrap_or_else(|| panic!(
+                                                                            "{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {}",
+                                                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                                        ))
                                                                         .ident
                                                                     }
                                                                     else {
@@ -663,7 +695,10 @@ pub fn error_occurence(
                                                                 };
                                                                proc_macro_helpers::error_occurence::hashmap_key_type::HashMapValueType::Reference {
                                                                     value_reference_ident,
-                                                                    value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident
+                                                                    value_lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!(
+                                                                        "{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {}",
+                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                                    )).ident
                                                                 }
                                                             },
                                                             _ => panic!("{proc_macro_name_ident_stringified} type_handle {} {syn_type_path_stringified} and syn::Type::Reference", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED),
@@ -702,7 +737,10 @@ pub fn error_occurence(
                                             if let true = type_path.path.segments.len() == 1 {
                                                 type_path.path.segments
                                                 .into_iter().next()
-                                                .unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {is_none_stringified}"))
+                                                .unwrap_or_else(|| panic!(
+                                                    "{proc_macro_name_ident_stringified} type_path.path.segments.into_iter().nth(0) {}",
+                                                    proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                                ))
                                                 .ident
                                             }
                                             else {
@@ -714,7 +752,10 @@ pub fn error_occurence(
                                         };
                                         proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Reference{
                                             reference_ident,
-                                            lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!("{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {is_none_stringified}")).ident,
+                                            lifetime_ident: type_reference.lifetime.unwrap_or_else(|| panic!(
+                                                "{proc_macro_name_ident_stringified} {syn_type_reference} lifetime {}",
+                                                proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
+                                            )).ident,
                                         }
                                     },
                                     _ => panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {error_message}"),
