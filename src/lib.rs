@@ -201,7 +201,6 @@ pub fn error_occurence(
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_with_config_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let key_lower_case = proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE.to_lowercase();
     let value_lower_case = proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE.to_lowercase();
-    let reference_camel_case = "Reference";
     let hashmap_lower_case = proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE.to_case(convert_case::Case::Flat);
     let vec_lower_case = proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE.to_lowercase(); 
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
@@ -219,7 +218,7 @@ pub fn error_occurence(
         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
         proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED,
         syn_type_path_stringified.clone(),
-        reference_camel_case,
+        proc_macro_helpers::error_occurence::hardcode::REFERENCE_CAMEL_CASE,
         proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE,
         proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE,
         generics_len,
@@ -492,7 +491,10 @@ pub fn error_occurence(
                                         proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED
                                     ))
                                 };
-                                let syn_type_reference = format!("syn::Type::{reference_camel_case}");
+                                let syn_type_reference = format!(
+                                    "syn::Type::{}",
+                                    proc_macro_helpers::error_occurence::hardcode::REFERENCE_CAMEL_CASE
+                                );
                                 let error_message = format!("{} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                 let supported_container = match field.ty {
                                     syn::Type::Path(type_path) => {
@@ -1013,12 +1015,18 @@ pub fn error_occurence(
                                 "{hashmap_key_type_stringified}::{}",
                                 proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
                             );
-                            let hashmap_key_type_reference_stringified = format!("{hashmap_key_type_stringified}::{reference_camel_case}");
+                            let hashmap_key_type_reference_stringified = format!(
+                                "{hashmap_key_type_stringified}::{}",
+                                proc_macro_helpers::error_occurence::hardcode::REFERENCE_CAMEL_CASE
+                            );
                             let hashmap_value_type_path_stringified = format!(
                                 "{hashmap_value_type_stringified}::{}",
                                 proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
                             );
-                            let hashmap_value_type_reference_stringified = format!("{hashmap_value_type_stringified}::{reference_camel_case}");
+                            let hashmap_value_type_reference_stringified = format!(
+                                "{hashmap_value_type_stringified}::{}",
+                                proc_macro_helpers::error_occurence::hardcode::REFERENCE_CAMEL_CASE
+                            );
                             let inform_use_str_string_in_different_attribute = |
                                 path: String,
                                 wrong_attribute: &String,
@@ -1293,9 +1301,10 @@ pub fn error_occurence(
                                             )
                                         },
                                         _ => panic!(
-                                            "{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{} and {supported_container_double_dot_double_dot}{reference_camel_case}", 
+                                            "{proc_macro_name_ident_stringified} {} only supports {supported_container_double_dot_double_dot}{} and {supported_container_double_dot_double_dot}{}", 
                                             attribute.attribute_view(),
-                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
+                                            proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE,
+                                            proc_macro_helpers::error_occurence::hardcode::REFERENCE_CAMEL_CASE
                                         ),
                                     }
                                 },
