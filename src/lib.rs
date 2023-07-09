@@ -199,9 +199,8 @@ pub fn error_occurence(
     let to_string_with_config_token_stream = 
     to_string_with_config_lower_case.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_with_config_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let key_camel_case = "Key";
     let value_camel_case = "Value";
-    let key_lower_case = key_camel_case.to_lowercase();
+    let key_lower_case = proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE.to_lowercase();
     let value_lower_case = value_camel_case.to_lowercase();
     let reference_camel_case = "Reference";
     let hashmap_lower_case = proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE.to_case(convert_case::Case::Flat);
@@ -227,7 +226,7 @@ pub fn error_occurence(
         generics_len,
         string_camel_case,
         path_camel_case,
-        key_camel_case,
+        proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE,
         value_camel_case,
         supported_container_double_dot_double_dot,
         supports_only_supported_container_stringified.clone(),
@@ -947,8 +946,9 @@ pub fn error_occurence(
                             let does_not_support_stringified = "does not support";
                             let type_camel_case = "Type";
                             let hashmap_key_type_stringified = format!(
-                                "{}{key_camel_case}{type_camel_case}",
-                                proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
+                                "{}{}{type_camel_case}",
+                                proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE,
+                                proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE
                             );
                             let hashmap_value_type_stringified = format!(
                                 "{}{value_camel_case}{type_camel_case}",
