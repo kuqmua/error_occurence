@@ -281,10 +281,7 @@ pub fn error_occurence(
                                             },
                                             proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                 &type_path.path.segments,
-                                                &proc_macro_name_ident_stringified,
-                                                proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                proc_macro_helpers::error_occurence::hardcode::SYN_GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                &proc_macro_name_ident_stringified
                                             ),
                                         )
                                       }
@@ -480,10 +477,7 @@ pub fn error_occurence(
                                         let path = proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments);
                                         let vec_lifetime = proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                             &type_path.path.segments,
-                                            &proc_macro_name_ident_stringified,
-                                            proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                            proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                            proc_macro_helpers::error_occurence::hardcode::SYN_GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                            &proc_macro_name_ident_stringified
                                         );
                                         let path_segment = type_path.path.segments.into_iter().last()
                                         .unwrap_or_else(|| panic!(
@@ -506,10 +500,7 @@ pub fn error_occurence(
                                                                 element_path: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                 vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                     &type_path.path.segments, 
-                                                                    &proc_macro_name_ident_stringified,
-                                                                    proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                                    proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                                    proc_macro_helpers::error_occurence::hardcode::SYN_GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                                    &proc_macro_name_ident_stringified
                                                                 )
                                                             },
                                                             syn::Type::Reference(type_reference) => {
@@ -607,10 +598,7 @@ pub fn error_occurence(
                                                                     key_segments_stringified: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                     key_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments, 
-                                                                        &proc_macro_name_ident_stringified,
-                                                                        proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                                        proc_macro_helpers::error_occurence::hardcode::SYN_GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                                        &proc_macro_name_ident_stringified
                                                                     )
                                                                 }
                                                             },
@@ -657,10 +645,7 @@ pub fn error_occurence(
                                                                     value_segments_stringified: proc_macro_helpers::error_occurence::generate_path_from_segments::generate_path_from_segments(&type_path.path.segments),
                                                                     value_vec_lifetime: proc_macro_helpers::error_occurence::form_last_arg_lifetime_vec::form_last_arg_lifetime_vec(
                                                                         &type_path.path.segments,  
-                                                                        &proc_macro_name_ident_stringified,
-                                                                        proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-                                                                        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
-                                                                        proc_macro_helpers::error_occurence::hardcode::SYN_GENERIC_ARGUMENT_TYPE_STRINGIFIED
+                                                                        &proc_macro_name_ident_stringified
                                                                     )
                                                                 }
                                                             },
