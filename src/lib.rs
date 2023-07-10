@@ -207,7 +207,6 @@ pub fn error_occurence(
         key_lower_case.clone(),
         value_lower_case.clone(),
         proc_macro_name_ident_stringified.clone(),
-        proc_macro_helpers::error_occurence::hardcode::IS_NONE_STRINGIFIED,
         proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
         proc_macro_helpers::error_occurence::hardcode::GENERIC_ARGUMENT_TYPE_STRINGIFIED,
         syn_type_path_stringified.clone(),
