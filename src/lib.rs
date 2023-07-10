@@ -43,10 +43,10 @@ pub fn error_occurence(
 ) -> proc_macro::TokenStream {
     proc_macro_helpers::panic_location::panic_location();
     use convert_case::Casing;
-    let proc_macro_name = format!("{}{}", proc_macro_helpers::error_occurence::hardcode::ERROR_OCCURENCE_CASE, proc_macro_helpers::error_occurence::hardcode::OCCURENCE_CAMEL_CASE);
+    let proc_macro_name = proc_macro_helpers::error_occurence::hardcode::error_occurence_camel_case();
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} {}", proc_macro_helpers::global_variables::hardcode::AST_PARSE_FAILED));
-    let error_occurence_lower_case = proc_macro_name.to_case(convert_case::Case::Snake).to_lowercase();
+    let error_occurence_lower_case = proc_macro_helpers::error_occurence::hardcode::error_occurence_lower_case();
     let trait_lifetime_stringified = format!("'{error_occurence_lower_case}_proc_macro_reserved_lifetime_name");
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
@@ -81,8 +81,8 @@ pub fn error_occurence(
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {lifetimes_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
     };
-    let named_lower_case = proc_macro_helpers::error_occurence::hardcode::NAMED_CAMEL_CASE.to_case(convert_case::Case::Snake).to_lowercase();
-    let unnamed_camel_case = format!("Un{named_lower_case}");
+    let named_lower_case = proc_macro_helpers::error_occurence::hardcode::named_lower_case();
+    let unnamed_camel_case = proc_macro_helpers::error_occurence::hardcode::unnamed_camel_case();
     let supported_enum_variant = proc_macro_helpers::error_occurence::supported_enum_variant::create_supported_enum_variant(
         &data_enum,
         proc_macro_name_ident_stringified.clone(),
@@ -91,11 +91,7 @@ pub fn error_occurence(
     let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {trait_lifetime_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let with_serialize_deserialize_camel_case = format!(
-        "{}{}",
-        proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE,
-        proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_CAMEL_CASE
-    );
+    let with_serialize_deserialize_camel_case = proc_macro_helpers::error_occurence::hardcode::with_serialize_deserialize_camel_case();
     let ident_with_serialize_deserialize_stringified = format!("{ident}{with_serialize_deserialize_camel_case}");
     let ident_with_serialize_deserialize_token_stream = ident_with_serialize_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
@@ -171,7 +167,7 @@ pub fn error_occurence(
     let to_string_without_config_token_stream = 
     to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let with_serialize_deserialize_lower_case = with_serialize_deserialize_camel_case.to_case(convert_case::Case::Snake).to_lowercase();
+    let with_serialize_deserialize_lower_case = proc_macro_helpers::error_occurence::hardcode::with_serialize_deserialize_lower_case();
     let to_string_without_config_with_serialize_deserialize_stringified = format!("{to_string_without_config_lower_case}_{with_serialize_deserialize_lower_case}");
     let to_string_without_config_with_serialize_deserialize_token_stream = 
     to_string_without_config_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
@@ -183,15 +179,8 @@ pub fn error_occurence(
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {into_serialize_deserialize_version_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let supports_only_supported_container_stringified = format!(
-        "{} {}", 
-        proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
-        proc_macro_helpers::error_occurence::hardcode::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT
-    );
-    let syn_type_path_stringified = format!(
-        "syn::Type::{}",
-        proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
-    );
+    let supports_only_supported_container_stringified = proc_macro_helpers::error_occurence::hardcode::supports_only_supported_container_stringified();
+    let syn_type_path_stringified = proc_macro_helpers::error_occurence::hardcode::syn_type_path_stringified();
     let compile_time_check_error_occurence_members_stringified = format!("_compile_time_check_{error_occurence_lower_case}_members");
     let compile_time_check_error_occurence_members_token_stream = compile_time_check_error_occurence_members_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -203,10 +192,10 @@ pub fn error_occurence(
     let to_string_with_config_token_stream = 
     to_string_with_config_lower_case.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_with_config_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let key_lower_case = proc_macro_helpers::error_occurence::hardcode::KEY_CAMEL_CASE.to_lowercase();
-    let value_lower_case = proc_macro_helpers::error_occurence::hardcode::VALUE_CAMEL_CASE.to_lowercase();
-    let hashmap_lower_case = proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE.to_case(convert_case::Case::Flat);
-    let vec_lower_case = proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE.to_lowercase(); 
+    let key_lower_case = proc_macro_helpers::error_occurence::hardcode::key_lower_case();
+    let value_lower_case = proc_macro_helpers::error_occurence::hardcode::value_lower_case();
+    let hashmap_lower_case = proc_macro_helpers::error_occurence::hardcode::hashmap_lower_case();
+    let vec_lower_case = proc_macro_helpers::error_occurence::hardcode::vec_lower_case(); 
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
         supported_enum_variant.clone(),
         data_enum.variants.iter().map(|variant|variant.clone()).collect(),
