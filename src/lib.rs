@@ -214,6 +214,7 @@ pub fn error_occurence(
         &ident_with_serialize_deserialize_token_stream,
         None,
         true,
+        true
     );
     let token_stream = match supported_enum_variant {
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
