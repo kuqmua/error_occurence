@@ -110,7 +110,7 @@ pub fn error_occurence(
         proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE
     );
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
-    let unnamed_lower_case = convert_case::Casing::to_case(&unnamed_camel_case, convert_case::Case::Snake).to_lowercase();
+    let unnamed_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&unnamed_camel_case);
     let error_logs_logic_stringified = "error_logs_logic";
     let error_occurence_named_camel_case = format!("{proc_macro_name}{}", proc_macro_helpers::error_occurence::hardcode::NAMED_CAMEL_CASE);
     let error_occurence_named_lower_case = format!("{error_occurence_lower_case}_{named_lower_case}");
@@ -136,7 +136,7 @@ pub fn error_occurence(
         "{to_string_camel_case}{}out{config_camel_case}",
         proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE
     );
-    let to_string_without_config_lower_case = convert_case::Casing::to_case(&to_string_without_config_camel_case,convert_case::Case::Snake).to_lowercase();
+    let to_string_without_config_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&to_string_without_config_camel_case);
     let crate_common_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_common_error_logs_logic_stringified}{to_string_without_config_lower_case}::{to_string_without_config_camel_case}");
     let crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream = crate_common_error_logs_logic_to_string_without_config_to_string_without_config_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -157,8 +157,8 @@ pub fn error_occurence(
     let crate_common_config_config_fields_get_timezone_token_stream = 
     crate_common_config_config_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_config_config_fields_get_timezone_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let source_lower_case = convert_case::Casing::to_case(&source_camel_case, convert_case::Case::Snake).to_lowercase();
-    let to_string_with_config_lower_case = convert_case::Casing::to_case(&to_string_with_config_camel_case, convert_case::Case::Snake).to_lowercase();
+    let source_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&source_camel_case);
+    let to_string_with_config_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&to_string_with_config_camel_case);
     let source_to_string_with_config_stringified = format!("{source_lower_case}_{to_string_with_config_lower_case}");
     let source_to_string_with_config_token_stream = 
     source_to_string_with_config_stringified.parse::<proc_macro2::TokenStream>()
@@ -173,7 +173,7 @@ pub fn error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let into_camel_case = "Into";
     let into_lower_case = into_camel_case.to_lowercase();
-    let serialize_deserialize_lower_case = convert_case::Casing::to_case(&proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_CAMEL_CASE,convert_case::Case::Snake).to_lowercase();
+    let serialize_deserialize_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_CAMEL_CASE);
     let into_serialize_deserialize_version_stringified = format!("{into_lower_case}_{serialize_deserialize_lower_case}_version");
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
@@ -218,12 +218,12 @@ pub fn error_occurence(
     let token_stream = match supported_enum_variant {
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
             let code_occurence_camel_case = format!("Code{}", proc_macro_helpers::error_occurence::hardcode::OCCURENCE_CAMEL_CASE);
-            let code_occurence_lower_case = convert_case::Casing::to_case(&code_occurence_camel_case,convert_case::Case::Snake).to_lowercase();
+            let code_occurence_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&code_occurence_camel_case);
             let foreign_type_camel_case = "ForeignType";
             let display_camel_case = "Display";
             let display_foreign_type_camel_case = format!("{display_camel_case}{foreign_type_camel_case}");
-            let display_foreign_type_lower_case = convert_case::Casing::to_case(&display_foreign_type_camel_case,convert_case::Case::Snake).to_lowercase();
-            let display_lower_case = convert_case::Casing::to_case(&display_camel_case,convert_case::Case::Snake).to_lowercase();
+            let display_foreign_type_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&display_foreign_type_camel_case);
+            let display_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&display_camel_case);
             let attribute_prefix_stringified = "eo_";
             let attribute_display_stringified = format!("{attribute_prefix_stringified}{display_lower_case}");
             let attribute_display_with_serialize_deserialize_stringified = format!("{attribute_prefix_stringified}{display_lower_case}_{with_serialize_deserialize_lower_case}");
@@ -769,7 +769,7 @@ pub fn error_occurence(
                 )>
             )>>();
             let source_to_string_without_config_camel_case = format!("{source_camel_case}{to_string_without_config_camel_case}");
-            let source_to_string_without_config_lower_case = convert_case::Casing::to_case(&source_to_string_without_config_camel_case,convert_case::Case::Snake).to_lowercase();
+            let source_to_string_without_config_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&source_to_string_without_config_camel_case);
             let source_to_string_without_config_token_stream = 
             source_to_string_without_config_lower_case.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {source_to_string_without_config_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
@@ -814,7 +814,7 @@ pub fn error_occurence(
                     let unused_argument_handle_token_stream = unused_argument_handle_stringified
                     .parse::<proc_macro2::TokenStream>()
                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {unused_argument_handle_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                    let to_string_lower_case = convert_case::Casing::to_case(&to_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                    let to_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&to_string_camel_case);
                     let hashmap_display_to_string_without_config_to_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}");
                     match error_or_code_occurence {
                         proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error { 
@@ -835,7 +835,7 @@ pub fn error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let lines_space_backslash_camel_case = "LinesSpaceBackslash";
-                            let lines_space_backslash_lower_case = convert_case::Casing::to_case(&lines_space_backslash_camel_case,convert_case::Case::Snake).to_lowercase();
+                            let lines_space_backslash_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&lines_space_backslash_camel_case);
                             let lines_space_backslash_lower_case_token_stream = 
                             lines_space_backslash_lower_case
                             .parse::<proc_macro2::TokenStream>()
@@ -855,7 +855,7 @@ pub fn error_occurence(
                                 "{}{display_camel_case}{to_string_camel_case}",
                                 proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                             );
-                            let vec_display_to_string_lower_case = convert_case::Casing::to_case(&vec_display_to_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                            let vec_display_to_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_display_to_string_camel_case);
                             let vec_display_to_string_lower_case_token_stream = 
                             vec_display_to_string_lower_case
                             .parse::<proc_macro2::TokenStream>()
@@ -922,7 +922,7 @@ pub fn error_occurence(
                                 "{}{display_foreign_type_camel_case}{to_string_camel_case}",
                                 proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                             );
-                            let vec_display_foreign_type_to_string_lower_case = convert_case::Casing::to_case(&vec_display_foreign_type_to_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                            let vec_display_foreign_type_to_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_display_foreign_type_to_string_camel_case);
                             let vec_display_foreign_type_to_string_lower_case_token_stream = 
                             vec_display_foreign_type_to_string_lower_case
                             .parse::<proc_macro2::TokenStream>()
@@ -1027,7 +1027,7 @@ pub fn error_occurence(
                                 proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE,
                                 proc_macro_helpers::error_occurence::hardcode::STRING_CAMEL_CASE
                             );
-                            let vec_display_into_vec_string_lower_case = convert_case::Casing::to_case(&vec_display_into_vec_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                            let vec_display_into_vec_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_display_into_vec_string_camel_case);
                             let vec_display_into_vec_string_token_stream = vec_display_into_vec_string_lower_case
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {vec_display_into_vec_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
@@ -1719,7 +1719,7 @@ pub fn error_occurence(
                                         proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE,
                                         proc_macro_helpers::error_occurence::hardcode::STRING_CAMEL_CASE
                                     );
-                                    let vec_display_foreign_type_into_vec_string_lower_case = convert_case::Casing::to_case(&vec_display_foreign_type_into_vec_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                                    let vec_display_foreign_type_into_vec_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_display_foreign_type_into_vec_string_camel_case);
                                     let vec_display_foreign_type_into_vec_string_lower_case_token_stream = 
                                     vec_display_foreign_type_into_vec_string_lower_case
                                     .parse::<proc_macro2::TokenStream>()
@@ -1895,7 +1895,7 @@ pub fn error_occurence(
                                         "{}{to_string_without_config_camel_case}{to_string_camel_case}",
                                         proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                     );
-                                    let vec_to_string_without_config_to_string_lower_case = convert_case::Casing::to_case(&vec_to_string_without_config_to_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                                    let vec_to_string_without_config_to_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_to_string_without_config_to_string_camel_case);
                                     let vec_to_string_without_config_to_string_lower_case_token_stream = 
                                     vec_to_string_without_config_to_string_lower_case
                                     .parse::<proc_macro2::TokenStream>()
@@ -1909,7 +1909,7 @@ pub fn error_occurence(
                                         "{}{to_string_without_config_camel_case}{to_string_camel_case}{with_serialize_deserialize_camel_case}",
                                         proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                     );
-                                    let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case = convert_case::Casing::to_case(&vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case,convert_case::Case::Snake).to_lowercase();
+                                    let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_to_string_without_config_to_string_with_serialize_deserialize_camel_case);
                                     let vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream = 
                                     vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case
                                     .parse::<proc_macro2::TokenStream>()
@@ -1923,7 +1923,7 @@ pub fn error_occurence(
                                         "{}{to_string_with_config_camel_case}{to_string_camel_case}",
                                         proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                     );
-                                    let vec_to_string_with_config_to_string_lower_case = convert_case::Casing::to_case(&vec_to_string_with_config_to_string_camel_case,convert_case::Case::Snake).to_lowercase();
+                                    let vec_to_string_with_config_to_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&vec_to_string_with_config_to_string_camel_case);
                                     let crate_common_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::{vec_to_string_with_config_to_string_lower_case}::{vec_to_string_with_config_to_string_camel_case}");
                                     let crate_common_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_token_stream = crate_common_error_logs_logic_vec_to_string_with_config_to_string_vec_to_string_with_config_to_string_stringified
                                     .parse::<proc_macro2::TokenStream>()
@@ -3898,7 +3898,7 @@ pub fn error_occurence(
             let logic_for_into_serialize_deserialize_version_iter = logic_for_into_serialize_deserialize_version.iter();
             let logic_for_compile_time_check_error_occurence_members_iter = logic_for_compile_time_check_error_occurence_members.iter();
             let get_code_occurence_camel_case = format!("{get_camel_case}{code_occurence_camel_case}");
-            let get_code_occurence_lower_case = convert_case::Casing::to_case(&get_code_occurence_camel_case,convert_case::Case::Snake).to_lowercase();
+            let get_code_occurence_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&get_code_occurence_camel_case);
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified = format!("{crate_common_error_logs_logic_stringified}{get_code_occurence_lower_case}::{get_code_occurence_camel_case}");
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
             crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
