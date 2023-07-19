@@ -197,7 +197,6 @@ pub fn error_occurence(
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
         &supported_enum_variant,
         &data_enum.variants.iter().collect(),
-        &with_serialize_deserialize_lower_case,
         &error_occurence_lower_case,
         &vec_lower_case,
         &hashmap_lower_case,
@@ -207,7 +206,6 @@ pub fn error_occurence(
         &syn_type_path_stringified,
         generics_len,
         &supports_only_supported_container_stringified,
-        &with_serialize_deserialize_camel_case,
         &ident_with_serialize_deserialize_token_stream,
         None,
         true,
