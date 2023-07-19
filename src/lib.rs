@@ -197,7 +197,7 @@ pub fn error_occurence(
     let vec_lower_case = proc_macro_helpers::error_occurence::hardcode::vec_lower_case(); 
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
         &supported_enum_variant,
-        &data_enum.variants,
+        &data_enum.variants.iter().collect(),
         &with_serialize_deserialize_lower_case,
         &error_occurence_lower_case,
         &vec_lower_case,
