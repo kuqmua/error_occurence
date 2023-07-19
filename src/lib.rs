@@ -84,8 +84,7 @@ pub fn error_occurence(
     let unnamed_camel_case = proc_macro_helpers::error_occurence::hardcode::unnamed_camel_case();
     let supported_enum_variant = proc_macro_helpers::error_occurence::supported_enum_variant::create_supported_enum_variant(
         &data_enum,
-        &proc_macro_name_ident_stringified,
-        &unnamed_camel_case,
+        &proc_macro_name_ident_stringified
     );
     let trait_lifetime_token_stream = trait_lifetime_stringified
         .parse::<proc_macro2::TokenStream>()
@@ -209,7 +208,6 @@ pub fn error_occurence(
         generics_len,
         &supports_only_supported_container_stringified,
         &with_serialize_deserialize_camel_case,
-        &unnamed_camel_case,
         &ident_with_serialize_deserialize_token_stream,
         None,
         true,
