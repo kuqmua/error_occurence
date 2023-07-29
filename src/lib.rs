@@ -1896,15 +1896,14 @@ pub fn error_occurence(
                                             )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_vec_to_string_without_config_to_string_with_serialize_deserialize_vec_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_vec_to_string_without_config_to_string_with_serialize_deserialize_vec_to_string_without_config_to_string_with_serialize_deserialize_token_stream::#vec_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
                                             {
@@ -1919,10 +1918,11 @@ pub fn error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.iter().for_each(|i|{
-                                                use #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream;
-                                                i.#error_occurence_unnamed_token_stream();
-                                            });
+                                            #field_ident.iter().for_each(|i|
+                                                #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
+                                                    i
+                                                )
+                                            );
                                         },
                                     )
                                 },
@@ -1970,10 +1970,9 @@ pub fn error_occurence(
                                                     &proc_macro_name_ident_stringified
                                                 ),
                                                 quote::quote! {
-                                                    {
-                                                        use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream;
-                                                        #field_ident.#hashmap_display_display_into_hashmap_display_string_token_stream()
-                                                    }
+                                                    #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream::#hashmap_display_display_into_hashmap_display_string_token_stream(
+                                                        #field_ident
+                                                    )
                                                 }
                                             )
                                         };
@@ -2000,10 +1999,9 @@ pub fn error_occurence(
                                                     quote::quote!{#[serde(borrow)]}
                                                 },
                                                 quote::quote! {
-                                                    {
-                                                        use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream;
-                                                        #field_ident.#hashmap_display_display_into_hashmap_string_string_token_stream()
-                                                    }
+                                                    #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream::#hashmap_display_display_into_hashmap_string_string_token_stream(
+                                                        #field_ident
+                                                    )
                                                 }
                                             )
                                         };
@@ -2229,10 +2227,9 @@ pub fn error_occurence(
                                                             &proc_macro_name_ident_stringified,
                                                     ),
                                                     quote::quote! {
-                                                        {
-                                                            use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream;
-                                                            #field_ident.#hashmap_display_display_into_hashmap_display_string_token_stream()
-                                                        }
+                                                        #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_display_string_hashmap_display_display_into_hashmap_display_string_token_stream::#hashmap_display_display_into_hashmap_display_string_token_stream(
+                                                            #field_ident
+                                                        )
                                                     }
                                                 )
                                             },
@@ -2289,10 +2286,9 @@ pub fn error_occurence(
                                                         .parse::<proc_macro2::TokenStream>()
                                                         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                                         quote::quote! {
-                                                            {
-                                                                use #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_token_stream;
-                                                                #field_ident.#hashmap_display_display_into_hashmap_string_display_token_stream()
-                                                            }
+                                                            #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_display_hashmap_display_display_into_hashmap_string_display_token_stream::#hashmap_display_display_into_hashmap_string_display_token_stream(
+                                                                #field_ident
+                                                            )
                                                         }
                                                     }
                                                 )
@@ -2339,10 +2335,9 @@ pub fn error_occurence(
                                                         quote::quote!{#[serde(borrow)]}
                                                     },
                                                     quote::quote! {
-                                                        {
-                                                            use ;#crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream
-                                                            #field_ident.#hashmap_display_display_into_hashmap_string_string_token_stream()
-                                                        }
+                                                        #crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_token_stream::#hashmap_display_display_into_hashmap_string_string_token_stream(
+                                                            #field_ident
+                                                        )
                                                     }
                                                 )
                                             },
@@ -2451,10 +2446,9 @@ pub fn error_occurence(
                                                     &proc_macro_name_ident_stringified
                                                 ),
                                                 quote::quote! {
-                                                    {
-                                                        use #crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream;
-                                                        #field_ident.#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream()
-                                                    }
+                                                    #crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_token_stream::#hashmap_display_display_foreign_type_into_hashmap_display_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 }
                                             )
                                         };
@@ -2485,11 +2479,9 @@ pub fn error_occurence(
                                                 },
                                                 
                                                 quote::quote! {
-                                                    {
-                                                        use 
-                                                        #crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream;
-                                                        #field_ident.#hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream()
-                                                    }
+                                                    #crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream::#hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream(
+                                                        #field_ident
+                                                    )
                                                 }    
                                             )
                                         };
@@ -2694,10 +2686,9 @@ pub fn error_occurence(
                                                         quote::quote!{#[serde(borrow)]}
                                                     },
                                                     quote::quote! {
-                                                        {
-                                                            use #crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream;
-                                                            #field_ident.#hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream()
-                                                        }
+                                                        #crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream::#hashmap_display_display_foreign_type_into_hashmap_string_string_token_stream(
+                                                            #field_ident
+                                                        )
                                                     }
                                                 )
                                             },
@@ -2923,37 +2914,35 @@ pub fn error_occurence(
                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_to_string_with_config_to_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                     (
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_to_string_with_config_to_string_token_stream(config)
+                                                    #crate_common_error_logs_logic_hashmap_display_to_string_with_config_to_string_hashmap_display_to_string_with_config_to_string_token_stream::#hashmap_display_to_string_with_config_to_string_token_stream(
+                                                        #field_ident,
+                                                        config
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_hashmap_display_to_string_without_config_to_string_token_stream::#hashmap_display_to_string_without_config_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream::#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         into_serialize_deserialize_logic,
                                         type_token_stream,
@@ -2962,10 +2951,11 @@ pub fn error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.values().for_each(|v|{
-                                                use #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream;
-                                                v.#error_occurence_unnamed_token_stream();
-                                            });
+                                            #field_ident.values().for_each(|v|
+                                                #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
+                                                    v
+                                                )
+                                            );
                                         },
                                     )
                                 },
@@ -3040,26 +3030,24 @@ pub fn error_occurence(
                                     };
                                     (
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream::#hashmap_display_foreign_type_display_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream::#hashmap_display_foreign_type_display_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
                                             {
@@ -3074,10 +3062,9 @@ pub fn error_occurence(
                                             }
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream()
-                                            }
+                                            #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream::#hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream(
+                                                #field_ident
+                                            )
                                         },
                                         type_token_stream,
                                         proc_macro2::TokenStream::new(),
@@ -3140,10 +3127,9 @@ pub fn error_occurence(
                                                         &proc_macro_name_ident_stringified
                                                     ),
                                                     quote::quote! {
-                                                        {   
-                                                            use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream;
-                                                            #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream()
-                                                        }
+                                                        #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_token_stream::#hashmap_display_foreign_type_display_into_hashmap_string_display_lower_case_token_stream(
+                                                            #field_ident
+                                                        )
                                                     }
                                                 )
                                             },
@@ -3180,10 +3166,9 @@ pub fn error_occurence(
                                                         &proc_macro_name_ident_stringified
                                                     ),
                                                     quote::quote! {
-                                                        {
-                                                            use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream;
-                                                            #field_ident.#hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream()
-                                                        }
+                                                        #crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_string_hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream::#hashmap_display_foreign_type_display_into_hashmap_string_string_token_stream(
+                                                            #field_ident
+                                                        )
                                                     }
                                                 )
                                             },
@@ -3218,26 +3203,24 @@ pub fn error_occurence(
                                     };
                                     (
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream::#hashmap_display_foreign_type_display_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_to_string_hashmap_display_foreign_type_display_to_string_token_stream::#hashmap_display_foreign_type_display_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
                                             {
@@ -3339,26 +3322,24 @@ pub fn error_occurence(
                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                     (
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream::#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream::#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
                                             {
@@ -3373,10 +3354,9 @@ pub fn error_occurence(
                                             }
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_lower_case_token_stream()
-                                            }
+                                            #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_token_stream::#hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_lower_case_token_stream(
+                                                #field_ident
+                                            )
                                         },
                                         type_token_stream,
                                         proc_macro2::TokenStream::new(),
@@ -3474,26 +3454,24 @@ pub fn error_occurence(
                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_display_foreign_type_hash_map_display_foreign_type_display_foreign_type_into_hash_map_string_display_foreign_type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                     (
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream::#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_to_string_hashmap_display_foreign_type_display_foreign_type_to_string_token_stream::#hashmap_display_foreign_type_display_foreign_type_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
                                             {
@@ -3508,10 +3486,9 @@ pub fn error_occurence(
                                             }
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_display_foreign_type_hash_map_display_foreign_type_display_foreign_type_into_hash_map_string_display_foreign_type_token_stream;
-                                                #field_ident.#hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_display_foreign_type_token_stream()
-                                            }
+                                            #crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_display_foreign_type_hash_map_display_foreign_type_display_foreign_type_into_hash_map_string_display_foreign_type_token_stream::#hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_display_foreign_type_token_stream(
+                                                #field_ident
+                                            )
                                         },
                                         type_token_stream,
                                         serde_borrow_token_stream,
@@ -3623,47 +3600,42 @@ pub fn error_occurence(
                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_to_string_with_config_to_string_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                     (
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_to_string_with_config_to_string_token_stream(config)
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_to_string_with_config_to_string_hashmap_display_foreign_type_to_string_with_config_to_string_token_stream::#hashmap_display_foreign_type_to_string_with_config_to_string_token_stream(
+                                                        #field_ident,
+                                                        config
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_foreign_type_to_string_without_config_to_string_hashmap_display_foreign_type_to_string_without_config_to_string_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_foreign_type_to_string_without_config_to_string_hashmap_display_foreign_type_to_string_without_config_to_string_token_stream::#hashmap_display_foreign_type_to_string_without_config_to_string_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
-                                            {
-                                                use #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream;
-                                                use #crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream;
-                                                format!(
+                                            #crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_token_stream::#lines_space_backslash_lower_case_token_stream(
+                                                &format!(
                                                     #field_name_with_field_value_token_stream,
-                                                    #field_ident.#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream()
+                                                    #crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_token_stream::#hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_lower_case_token_stream(
+                                                        #field_ident
+                                                    )
                                                 )
-                                                .#lines_space_backslash_lower_case_token_stream()
-                                            }
+                                            )
                                         },
                                         quote::quote! {
                                             {
                                                 #field_ident.into_iter()
                                                 .map(|(k, v)| {
                                                     (
-                                                        {
-                                                            use #crate_common_display_foreign_type_display_foreign_type_token_stream;
-                                                            k.#display_foreign_type_lower_case_token_stream()
-                                                        },
+                                                        #crate_common_display_foreign_type_display_foreign_type_token_stream::#display_foreign_type_lower_case_token_stream(k),
                                                         { v.#into_serialize_deserialize_version_token_stream() },
                                                     )
                                                 })
@@ -3676,10 +3648,11 @@ pub fn error_occurence(
                                             #field_ident
                                         },
                                         quote::quote! {
-                                            #field_ident.values().for_each(|v|{
-                                                use #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream;
-                                                v.#error_occurence_unnamed_token_stream();
-                                            });
+                                            #field_ident.values().for_each(|v|
+                                                #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
+                                                    v
+                                                )
+                                            );
                                         },
                                     )
                                 },
@@ -3989,14 +3962,22 @@ pub fn error_occurence(
                 }
                 impl<#generics> std::fmt::Display for #ident<#generics> {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        use #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                        write!(f, "{}", self.#to_string_without_config_token_stream())
+                        write!(
+                            f, 
+                            "{}", 
+                            #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream::#to_string_without_config_token_stream(self)
+                        )
                     }
                 }
                 impl std::fmt::Display for #ident_with_serialize_deserialize_token_stream {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        use #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream;
-                        write!(f, "{}", self.#to_string_without_config_with_serialize_deserialize_token_stream())
+                        write!(
+                            f, 
+                            "{}",
+                            #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream::#to_string_without_config_with_serialize_deserialize_token_stream(
+                                self
+                            )
+                        )
                     }
                 }
                 impl<#generics> #crate_common_error_logs_logic_error_occurence_named_error_occurence_named_token_stream for #ident<#generics> {
@@ -4067,10 +4048,7 @@ pub fn error_occurence(
                 });
                 logic_for_compile_time_check_error_occurence_members.push(quote::quote!{
                      #ident::#variant_ident(i) => {
-                        {
-                            use #crate_common_error_logs_logic_error_occurence_named_error_occurence_named_token_stream;
-                            i.#error_occurence_named_token_stream();
-                        }
+                        #crate_common_error_logs_logic_error_occurence_named_error_occurence_named_token_stream::#error_occurence_named_token_stream(i)
                      }
                 });
             });
@@ -4139,14 +4117,24 @@ pub fn error_occurence(
                 }
                 impl<#generics> std::fmt::Display for #ident<#generics> {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        use #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream;
-                        write!(f, "{}", self.#to_string_without_config_token_stream())
+                        write!(
+                            f, 
+                            "{}", 
+                            #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream::#to_string_without_config_token_stream(
+                                self
+                            )
+                        )
                     }
                 }
                 impl std::fmt::Display for #ident_with_serialize_deserialize_token_stream {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                        use #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream;
-                        write!(f, "{}", self.#to_string_without_config_with_serialize_deserialize_token_stream())
+                        write!(
+                            f, 
+                            "{}", 
+                            #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream::#to_string_without_config_with_serialize_deserialize_token_stream(
+                                self
+                            )
+                        )
                     }
                 }
                 impl<#generics> #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
