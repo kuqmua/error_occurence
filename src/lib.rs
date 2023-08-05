@@ -105,7 +105,7 @@ pub fn error_occurence(
         proc_macro_helpers::error_occurence::hardcode::STRING_CAMEL_CASE
     );
     let to_string_with_config_camel_case = format!(
-        "{to_string_camel_case}{}{config_camel_case}",
+        "{to_string_camel_case}{}{config_camel_case}Second",
         proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE
     );
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
@@ -3876,16 +3876,24 @@ pub fn error_occurence(
                 impl<
                     #trait_lifetime_token_stream,
                     #generics,
-                    #config_generic_token_stream
+                    // #config_generic_token_stream
                 >
                     #crate_common_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
                         #trait_lifetime_token_stream,
-                        #config_generic_token_stream
+                        // #config_generic_token_stream
                     > for #ident<#generics>
-                    where #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
-                        + #crate_common_config_config_fields_get_timezone_token_stream
+                    // where #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
+                    //     + #crate_common_config_config_fields_get_timezone_token_stream
                 {
-                    fn #source_to_string_with_config_token_stream(
+                    fn #source_to_string_with_config_token_stream
+                    <
+                        #config_generic_token_stream: 
+                        #crate_common_config_config_fields_get_source_place_type_token_stream
+                        + #crate_common_config_config_fields_get_timezone_token_stream 
+                        + 
+                        ?Sized
+                    >
+                    (
                         &self,
                         config: &#config_generic_token_stream 
                     ) -> String {
