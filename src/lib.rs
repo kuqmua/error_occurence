@@ -105,7 +105,7 @@ pub fn error_occurence(
         proc_macro_helpers::error_occurence::hardcode::STRING_CAMEL_CASE
     );
     let to_string_with_config_camel_case = format!(
-        "{to_string_camel_case}{}{config_camel_case}Second",
+        "{to_string_camel_case}{}{config_camel_case}",
         proc_macro_helpers::error_occurence::hardcode::WITH_CAMEL_CASE
     );
     let source_to_string_with_config_camel_case = format!("{source_camel_case}{to_string_with_config_camel_case}");
