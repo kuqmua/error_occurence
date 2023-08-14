@@ -56,11 +56,8 @@ pub fn error_occurence(
     else {
         panic!("{proc_macro_name_ident_stringified} {} syn::Data::Enum", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
     };
+    //todo ident lifetimes removed. maybe some other logic must be removed too
     let generics_len = ast.generics.params.len();
-    //its really hard to support more than 1 lifetimes coz dont know how many generics would be in the WithSerializeDeserialize inner error_occurence variants and fields
-    if generics_len != 1 {
-        panic!("{proc_macro_name_ident_stringified} generics_len != 1");
-    }
     let generics = {
         let mut lifetimes_stringified = ast.generics.params.iter()
         .fold(String::from(""), |mut acc, gen_param| {
@@ -3875,13 +3872,12 @@ pub fn error_occurence(
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
-                    #generics,
                     // #config_generic_token_stream
                 >
                     #crate_common_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
                         #trait_lifetime_token_stream,
                         // #config_generic_token_stream
-                    > for #ident<#generics>
+                    > for #ident
                     // where #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
                     //     + #crate_common_config_config_fields_get_timezone_token_stream
                 {
@@ -3902,13 +3898,10 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl<
-                    #trait_lifetime_token_stream,
-                    #generics
-                >
+                impl<#trait_lifetime_token_stream>
                     #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
                         #trait_lifetime_token_stream
-                    > for #ident<#generics>
+                    > for #ident
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -3916,15 +3909,11 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl<
-                    #trait_lifetime_token_stream,
-                    #generics
-                > 
+                impl<#trait_lifetime_token_stream> 
                     #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<
                         #trait_lifetime_token_stream
                     >
-                    for #ident<#generics>
-                {
+                    for #ident {
                     fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream
                     {
                         match self {
@@ -3936,9 +3925,7 @@ pub fn error_occurence(
                 // pub enum #ident_with_serialize_deserialize_token_stream {
                 //     #(#logic_for_enum_with_serialize_deserialize_iter),*
                 // }
-                impl<#trait_lifetime_token_stream> #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
-                    #trait_lifetime_token_stream
-                > for #ident_with_serialize_deserialize_token_stream
+                impl <#trait_lifetime_token_stream> #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<#trait_lifetime_token_stream> for #ident_with_serialize_deserialize_token_stream
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -3946,10 +3933,7 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl<
-                    #trait_lifetime_token_stream> #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream<
-                    #trait_lifetime_token_stream
-                >
+                impl <#trait_lifetime_token_stream> #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream <#trait_lifetime_token_stream>
                     for #ident_with_serialize_deserialize_token_stream
                 {
                     fn #get_code_occurence_with_serialize_deserialize_token_stream(
@@ -3961,14 +3945,14 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl<#generics> #ident<#generics> {
+                impl #ident {
                     pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_serialize_deserialize_token_stream {
                         match self {
                             #(#logic_for_into_serialize_deserialize_version_iter),*
                         }
                     }
                 }
-                impl<#generics> std::fmt::Display for #ident<#generics> {
+                impl std::fmt::Display for #ident {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                         write!(
                             f, 
@@ -3988,7 +3972,9 @@ pub fn error_occurence(
                         )
                     }
                 }
-                impl<#generics> #crate_common_error_logs_logic_error_occurence_named_error_occurence_named_token_stream for #ident<#generics> {
+                impl
+                #crate_common_error_logs_logic_error_occurence_named_error_occurence_named_token_stream for 
+                #ident {
                     fn #error_occurence_named_token_stream(&self) {}
                 }
                 #compile_time_check_error_occurence_members_impl_token_stream
@@ -4069,13 +4055,12 @@ pub fn error_occurence(
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
-                    #generics,
                     #config_generic_token_stream
                 >
                     #crate_common_error_logs_logic_to_string_with_config_to_string_with_config_token_stream<
                         #trait_lifetime_token_stream,
                         #config_generic_token_stream
-                    > for #ident<#generics>
+                    > for #ident
                 where
                     #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
                     + #crate_common_config_config_fields_get_timezone_token_stream
@@ -4087,12 +4072,11 @@ pub fn error_occurence(
                     }
                 }
                 impl<
-                    #trait_lifetime_token_stream,
-                    #generics
+                    #trait_lifetime_token_stream
                 > #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream<
                     #trait_lifetime_token_stream
                 >
-                    for #ident<#generics>
+                    for #ident
                 {
                     fn #to_string_without_config_token_stream(&self) -> String {
                         match self {
@@ -4116,14 +4100,14 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl<#generics> #ident<#generics> {
+                impl #ident {
                     pub fn #into_serialize_deserialize_version_token_stream(self) -> #ident_with_serialize_deserialize_token_stream {
                         match self {
                             #(#logic_for_into_serialize_deserialize_version_generated),*
                         }
                     }
                 }
-                impl<#generics> std::fmt::Display for #ident<#generics> {
+                impl std::fmt::Display for #ident {
                     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                         write!(
                             f, 
@@ -4148,7 +4132,7 @@ pub fn error_occurence(
                 impl<#generics> #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
                     fn #error_occurence_unnamed_token_stream(&self) {}
                 }
-                impl<#generics> #ident<#generics> {
+                impl #ident {
                     fn #compile_time_check_error_occurence_members_token_stream(&self) {
                         match self {
                             #(#logic_for_compile_time_check_error_occurence_members_generated),*
