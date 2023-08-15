@@ -3933,7 +3933,7 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl <#trait_lifetime_token_stream> #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream <#trait_lifetime_token_stream>
+                impl #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream 
                     for #ident_with_serialize_deserialize_token_stream
                 {
                     fn #get_code_occurence_with_serialize_deserialize_token_stream(
@@ -4146,9 +4146,9 @@ pub fn error_occurence(
         #token_stream
         #enum_with_serialize_deserialize_logic
     };
-    // if ident_stringified == "" {
-    //     println!("{gen}");
-    // }
+    if ident_stringified == "CreateDirIfItDoesntExistErrorNamed" {
+        println!("{gen}");
+    }
     gen.into()
 }
 
