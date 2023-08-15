@@ -3725,7 +3725,7 @@ pub fn error_occurence(
                                 #field_ident: #unused_argument_handle_token_stream
                             });
                             fields_logic_for_into_serialize_deserialize_version_for_attribute.push(quote::quote!{
-                                #field_ident: #field_ident.#into_serialize_deserialize_version_token_stream()
+                                #field_ident: #field_ident
                             });
                             fields_logic_for_compile_time_check_error_occurence_members_for_attribute.push(proc_macro2::TokenStream::new());
                         },
@@ -3838,25 +3838,13 @@ pub fn error_occurence(
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
             crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-            let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_stringified = format!("{crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified}{with_serialize_deserialize_camel_case}");
-            let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream = 
-            crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
             let crate_common_code_occurence_code_occurence_stringified = format!("crate::common::{code_occurence_lower_case}::{code_occurence_camel_case}");
             let crate_common_code_occurence_code_occurence_token_stream = 
             crate_common_code_occurence_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_code_occurence_code_occurence_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-            let crate_common_code_occurence_code_occurence_with_serialize_deserialize_stringified = format!("{crate_common_code_occurence_code_occurence_stringified}{with_serialize_deserialize_camel_case}");
-            let crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream = 
-            crate_common_code_occurence_code_occurence_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_code_occurence_code_occurence_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
             let get_code_occurence_token_stream = 
             get_code_occurence_lower_case.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {get_code_occurence_lower_case} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-            let get_code_occurence_with_serialize_deserialize_stringified = format!("{get_code_occurence_lower_case}_{with_serialize_deserialize_lower_case}");
-            let get_code_occurence_with_serialize_deserialize_token_stream = 
-            get_code_occurence_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {get_code_occurence_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
             let compile_time_check_error_occurence_members_impl_token_stream = match should_generate_impl_compile_time_check_error_occurence_members {
                 true => quote::quote!{
                     impl<#generics> #ident<#generics> {
@@ -3929,12 +3917,12 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_with_serialize_deserialize_token_stream 
+                impl #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream 
                     for #ident_with_serialize_deserialize_token_stream
                 {
-                    fn #get_code_occurence_with_serialize_deserialize_token_stream(
+                    fn #get_code_occurence_token_stream(
                         &self
-                    ) -> &#crate_common_code_occurence_code_occurence_with_serialize_deserialize_token_stream
+                    ) -> &#crate_common_code_occurence_code_occurence_token_stream
                     {
                         match self {
                             #(#logic_for_get_code_occurence_with_serialize_deserialize_iter),*
@@ -3962,7 +3950,7 @@ pub fn error_occurence(
                         write!(
                             f, 
                             "{}",
-                            #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream::#to_string_without_config_with_serialize_deserialize_token_stream(
+                            #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_token_stream::#to_string_without_config_token_stream(
                                 self
                             )
                         )
@@ -4142,9 +4130,9 @@ pub fn error_occurence(
         #token_stream
         #enum_with_serialize_deserialize_logic
     };
-    if ident_stringified == "CreateDirIfItDoesntExistErrorNamed" {
-        println!("{gen}");
-    }
+    // if ident_stringified == "" {
+    //     println!("{gen}");
+    // }
     gen.into()
 }
 
