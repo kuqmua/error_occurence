@@ -3909,11 +3909,7 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl<#trait_lifetime_token_stream> 
-                    #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream<
-                        #trait_lifetime_token_stream
-                    >
-                    for #ident {
+                impl #crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream for #ident {
                     fn #get_code_occurence_token_stream(&self) -> &#crate_common_code_occurence_code_occurence_token_stream
                     {
                         match self {
