@@ -3905,10 +3905,6 @@ pub fn error_occurence(
                         }
                     }
                 }
-                // #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)]
-                // pub enum #ident_with_serialize_deserialize_token_stream {
-                //     #(#logic_for_enum_with_serialize_deserialize_iter),*
-                // }
                 impl <#trait_lifetime_token_stream> #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<#trait_lifetime_token_stream> for #ident_with_serialize_deserialize_token_stream
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> String {
@@ -4068,10 +4064,6 @@ pub fn error_occurence(
                         }
                     }
                 }
-                // #[derive(Debug, thiserror::Error, serde::Serialize, serde::Deserialize)] 
-                // pub enum #ident_with_serialize_deserialize_token_stream {
-                //     #(#logic_for_enum_with_serialize_deserialize_generated),*
-                // }
                 impl<#trait_lifetime_token_stream>
                     #crate_common_error_logs_logic_to_string_without_config_to_string_without_config_with_serialize_deserialize_token_stream<
                         #trait_lifetime_token_stream
