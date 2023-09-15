@@ -4,6 +4,7 @@
 )]
 #![allow(clippy::too_many_arguments)]
 
+//there is a possibility for not doing with_serialize_deserialize case (then type does not implement serde::Serialize and serde::Deserialize) https://serde.rs/remote-derive.html 
 //todo change how hashmap shows in console
 //todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
 //todo maybe add multiple lifetimes supports with attribute parameters like this 
