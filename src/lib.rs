@@ -5,6 +5,7 @@
 #![allow(clippy::too_many_arguments)]
 
 //there is a possibility for not doing with_serialize_deserialize case (then type does not implement serde::Serialize and serde::Deserialize) https://serde.rs/remote-derive.html 
+//todo not all implementations of Unnnamed ErrorOccurence are support Sized config Generic. fix its(hashmap\vec impl)
 //todo change how hashmap shows in console
 //todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
 //todo maybe add multiple lifetimes supports with attribute parameters like this 
@@ -3861,14 +3862,10 @@ pub fn error_occurence(
             quote::quote! {
                 impl<
                     #trait_lifetime_token_stream,
-                    // #config_generic_token_stream
                 >
                     #crate_common_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream<
                         #trait_lifetime_token_stream,
-                        // #config_generic_token_stream
                     > for #ident
-                    // where #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
-                    //     + #crate_common_config_config_fields_get_timezone_token_stream
                 {
                     fn #source_to_string_with_config_token_stream
                     <
@@ -4035,18 +4032,18 @@ pub fn error_occurence(
             let logic_for_compile_time_check_error_occurence_members_generated = logic_for_compile_time_check_error_occurence_members.iter();
             quote::quote! {
                 impl<
-                    #trait_lifetime_token_stream,
-                    #config_generic_token_stream
+                    #trait_lifetime_token_stream
                 >
                     #crate_common_error_logs_logic_to_string_with_config_to_string_with_config_token_stream<
-                        #trait_lifetime_token_stream,
-                        #config_generic_token_stream
+                        #trait_lifetime_token_stream
                     > for #ident
-                where
-                    #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
-                    + #crate_common_config_config_fields_get_timezone_token_stream
                 {
-                    fn #to_string_with_config_token_stream(&self, config: &#config_generic_token_stream) -> String {
+                    fn #to_string_with_config_token_stream<
+                        #config_generic_token_stream: #crate_common_config_config_fields_get_source_place_type_token_stream
+                        + #crate_common_config_config_fields_get_timezone_token_stream
+                        + ?Sized,
+                    >
+                    (&self, config: &#config_generic_token_stream) -> String {
                         match self {
                             #(#logic_for_to_string_with_config_generated),*
                         }
