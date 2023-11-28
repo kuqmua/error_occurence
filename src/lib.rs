@@ -990,8 +990,8 @@ pub fn error_occurence(
                                 wrong_attribute: &String,
                                 attribute_to_use: &String
                             | {
-                                let wrong_attribute_view = proc_macro_helpers::error_occurence::attribute_view::attribute_view(wrong_attribute);
-                                let attribute_to_use_view = proc_macro_helpers::error_occurence::attribute_view::attribute_view(attribute_to_use);
+                                let wrong_attribute_view = proc_macro_helpers::error_occurence::named_attribute::attribute_view(wrong_attribute);
+                                let attribute_to_use_view = proc_macro_helpers::error_occurence::named_attribute::attribute_view(attribute_to_use);
                                 //maybe additional cases exists
                                 if path == str_stringified {
                                     panic!("{proc_macro_name_ident_stringified} {wrong_attribute_view} {str_stringified} {must_be_used_with_stringified} {attribute_to_use_view}");
@@ -1094,7 +1094,7 @@ pub fn error_occurence(
                                     if let proc_macro_helpers::error_occurence::supported_container::SupportedContainer::Path { path, vec_lifetime: _vec_lifetime } = supported_container {
                                         inform_use_str_string_in_different_attribute(
                                             path,
-                                            &attribute.to_str().to_string(),
+                                            &attribute.to_string(),
                                             &attribute_display_with_serialize_deserialize_stringified
                                         );
                                         (
@@ -1140,7 +1140,7 @@ pub fn error_occurence(
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {} {}{}", 
-                                            attribute.attribute_view(), 
+                                            attribute.attribute_view_stringified(), 
                                             proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED,
                                             proc_macro_helpers::error_occurence::hardcode::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
                                             proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
@@ -1254,7 +1254,7 @@ pub fn error_occurence(
                                         },
                                         _ => panic!(
                                             "{proc_macro_name_ident_stringified} {} only supports {}{} and {}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
                                             proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE,
                                             proc_macro_helpers::error_occurence::hardcode::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
@@ -1267,7 +1267,7 @@ pub fn error_occurence(
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
                                         );
                                     }
@@ -1335,7 +1335,7 @@ pub fn error_occurence(
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
                                         );
                                     };
@@ -1404,7 +1404,7 @@ pub fn error_occurence(
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::PATH_CAMEL_CASE
                                         );
                                     };
@@ -1465,7 +1465,7 @@ pub fn error_occurence(
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path, vec_lifetime: _vec_lifetime } = vec_element_type {
                                             inform_use_str_string_in_different_attribute(
                                                 element_path,
-                                                &attribute.to_str().to_string(),
+                                                &attribute.to_string(),
                                                 &attribute_vec_display_with_serialize_deserialize_stringified
                                             );
                                             let type_stringified = format!("{path}<{std_string_string_stringified}>");
@@ -1474,13 +1474,13 @@ pub fn error_occurence(
                                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {type_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view_stringified(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                         );
                                     };
@@ -1600,7 +1600,7 @@ pub fn error_occurence(
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                         );
                                     };
@@ -1651,13 +1651,13 @@ pub fn error_occurence(
                                     } = supported_container {
                                         if let proc_macro_helpers::error_occurence::vec_element_type::VecElementType::Path { element_path: _element_path, vec_lifetime: _vec_lifetime } = vec_element_type {}
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view_stringified(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                         );
                                     }
@@ -1745,13 +1745,13 @@ pub fn error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view_stringified(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                         );
                                     };
@@ -1822,13 +1822,13 @@ pub fn error_occurence(
                                             )
                                         }
                                         else {
-                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
+                                            panic!("{proc_macro_name_ident_stringified} {} {} {vec_element_type_path_stringified}", attribute.attribute_view_stringified(), proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                         }                                        
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::VEC_CAMEL_CASE
                                         );
                                     };
@@ -2017,7 +2017,7 @@ pub fn error_occurence(
                                             ) => {
                                                 inform_use_str_string_in_different_attribute(
                                                     value_segments_stringified,
-                                                    &attribute.to_str().to_string(),
+                                                    &attribute.to_string(),
                                                     &attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified
                                                 );
                                                 hashmap_key_type_path_case(
@@ -2035,7 +2035,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -2048,7 +2048,7 @@ pub fn error_occurence(
                                             ) => {
                                                 inform_use_str_string_in_different_attribute(
                                                     value_segments_stringified,
-                                                    &attribute.to_str().to_string(),
+                                                    &attribute.to_string(),
                                                     &attribute_hashmap_key_display_with_serialize_deserialize_value_display_with_serialize_deserialize_stringified
                                                 );
                                                 hashmap_key_type_reference_case(
@@ -2065,13 +2065,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -2345,7 +2345,7 @@ pub fn error_occurence(
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -2508,7 +2508,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -2532,13 +2532,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -2649,7 +2649,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -2700,13 +2700,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -2824,7 +2824,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident, 
@@ -2877,13 +2877,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -2983,7 +2983,7 @@ pub fn error_occurence(
                                             ) => {
                                                 inform_use_str_string_in_different_attribute(
                                                     value_segments_stringified,
-                                                    &attribute.to_str().to_string(),
+                                                    &attribute.to_string(),
                                                     &attribute_hashmap_key_display_foreign_type_value_display_with_serialize_deserialize_stringified
                                                 );
                                                 hashmap_key_type_path_case()
@@ -2997,7 +2997,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident  
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3007,7 +3007,7 @@ pub fn error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3017,14 +3017,14 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}",
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE,
-                                            attribute.attribute_view()
+                                            attribute.attribute_view_stringified()
                                         );
                                     };
                                     (
@@ -3180,7 +3180,7 @@ pub fn error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3190,13 +3190,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -3273,7 +3273,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3283,7 +3283,7 @@ pub fn error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3293,13 +3293,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -3407,7 +3407,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident,
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3417,7 +3417,7 @@ pub fn error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3427,13 +3427,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
@@ -3542,7 +3542,7 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_path_stringified} && {hashmap_value_type_reference_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3552,7 +3552,7 @@ pub fn error_occurence(
                                                     value_segments_stringified: _value_segments_stringified, 
                                                     value_vec_lifetime: _value_vec_lifetime 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_value_type_path_stringified}", attribute.attribute_view_stringified()),
                                             (
                                                 proc_macro_helpers::error_occurence::hashmap_value_type::HashMapKeyType::Reference { 
                                                     key_reference_ident: _key_reference_ident, 
@@ -3562,13 +3562,13 @@ pub fn error_occurence(
                                                     value_reference_ident: _value_reference_ident, 
                                                     value_lifetime_ident: _value_lifetime_ident 
                                                 }
-                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_key_type_reference_stringified}", attribute.attribute_view()),
+                                            ) => panic!("{proc_macro_name_ident_stringified} {} {does_not_support_stringified} {hashmap_key_type_reference_stringified} && {hashmap_key_type_reference_stringified}", attribute.attribute_view_stringified()),
                                         }
                                     }
                                     else {
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
-                                            attribute.attribute_view(),
+                                            attribute.attribute_view_stringified(),
                                             proc_macro_helpers::error_occurence::hardcode::HASHMAP_CAMEL_CASE
                                         );
                                     };
