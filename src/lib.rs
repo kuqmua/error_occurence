@@ -277,7 +277,7 @@ pub fn error_occurence(
                                         panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {} {syn_type_path_stringified}", proc_macro_helpers::error_occurence::hardcode::SUPPORTS_ONLY_STRINGIFIED);
                                     }
                                 };
-                                proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence {
+                                proc_macro_helpers::error_occurence::error_field_or_code_occurence::ErrorFieldOrCodeOccurence::CodeOccurence {
                                     field_type: code_occurence_type_stringified,
                                     vec_lifetime: code_occurence_lifetime
                                 }
@@ -725,7 +725,7 @@ pub fn error_occurence(
                                     },
                                     _ => panic!("{proc_macro_name_ident_stringified} {code_occurence_lower_case} {error_message}"),
                                 };
-                                proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error {
+                                proc_macro_helpers::error_occurence::error_field_or_code_occurence::ErrorFieldOrCodeOccurence::ErrorField {
                                     attribute,
                                     supported_container,
                                 }
@@ -738,7 +738,7 @@ pub fn error_occurence(
                     })
                     .collect::<Vec<(
                         proc_macro2::Ident,
-                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence
+                        proc_macro_helpers::error_occurence::error_field_or_code_occurence::ErrorFieldOrCodeOccurence
                     )>>()
                 }
                 else {
@@ -753,7 +753,7 @@ pub fn error_occurence(
                 proc_macro2::Ident, 
                  Vec<(
                     proc_macro2::Ident,
-                    proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence
+                    proc_macro_helpers::error_occurence::error_field_or_code_occurence::ErrorFieldOrCodeOccurence
                 )>
             )>>();
             let source_to_string_without_config_camel_case = format!("{source_camel_case}{to_string_without_config_camel_case}");
@@ -805,7 +805,7 @@ pub fn error_occurence(
                     let to_string_lower_case = proc_macro_helpers::to_lower_snake_case::ToLowerSnakeCase::to_lower_snake_case(&to_string_camel_case);
                     let hashmap_display_to_string_without_config_to_string_lower_case = format!("{hashmap_lower_case}_{display_lower_case}_{to_string_without_config_lower_case}_{to_string_lower_case}");
                     match error_or_code_occurence {
-                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::Error { 
+                        proc_macro_helpers::error_occurence::error_field_or_code_occurence::ErrorFieldOrCodeOccurence::ErrorField { 
                             attribute, 
                             supported_container,
                         } => {
@@ -3691,7 +3691,7 @@ pub fn error_occurence(
                                 #logic_for_compile_time_check_error_occurence_members_for_attribute
                             });
                         },
-                        proc_macro_helpers::error_occurence::error_or_code_occurence::ErrorOrCodeOccurence::CodeOccurence { 
+                        proc_macro_helpers::error_occurence::error_field_or_code_occurence::ErrorFieldOrCodeOccurence::CodeOccurence { 
                             field_type,
                             vec_lifetime: _vec_lifetime,
                          } => {
