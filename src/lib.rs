@@ -170,7 +170,7 @@ pub fn error_occurence(
     to_string_without_config_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let into_upper_camel_case = "Into";
-    let into_snake_case = into_upper_camel_case.to_lowercase();
+    let into_snake_case = proc_macro_helpers::naming_conventions::ToSnakeCase::to_snake_case(&into_upper_camel_case);
     let serialize_deserialize_snake_case = proc_macro_helpers::naming_conventions::ToSnakeCase::to_snake_case(&proc_macro_helpers::error_occurence::hardcode::SERIALIZE_DESERIALIZE_UPPER_CAMEL_CASE);
     let into_serialize_deserialize_version_stringified = format!("{into_snake_case}_{serialize_deserialize_snake_case}_version");
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
@@ -880,7 +880,7 @@ pub fn error_occurence(
                             crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_stringified
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_hashmap_display_to_string_without_config_to_string_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-                            let string_snake_case = proc_macro_helpers::error_occurence::hardcode::STRING_UPPER_CAMEL_CASE.to_lowercase();
+                            let string_snake_case = proc_macro_helpers::naming_conventions::ToSnakeCase::to_snake_case(&proc_macro_helpers::error_occurence::hardcode::STRING_UPPER_CAMEL_CASE);
                             let hashmap_display_display_foreign_type_into_hashmap_display_string_snake_case = format!("{hashmap_snake_case}_{display_snake_case}_{display_foreign_type_snake_case}_{into_snake_case}_{hashmap_snake_case}_{display_snake_case}_{string_snake_case}");
                             let std_stringified = "std";
                             let std_string_string_stringified = format!(
