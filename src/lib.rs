@@ -79,7 +79,7 @@ pub fn error_occurence(
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {lifetimes_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
     };
-    let named_snake_case = proc_macro_helpers::naming_conventions::named_snake_case();
+    let named_snake_case = proc_macro_helpers::naming_conventions::named_snake_case_stringified();
     let unnamed_upper_camel_case = proc_macro_helpers::naming_conventions::unnamed_upper_camel_case();
     let supported_enum_variant = proc_macro_helpers::error_occurence::supported_enum_variant::create_supported_enum_variant(
         &data_enum,
