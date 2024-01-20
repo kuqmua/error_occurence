@@ -164,7 +164,7 @@ pub fn error_occurence(
     let to_string_without_config_token_stream = 
     to_string_without_config_snake_case_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_snake_case_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let with_serialize_deserialize_snake_case = proc_macro_helpers::naming_conventions::with_serialize_deserialize_snake_case();
+    let with_serialize_deserialize_snake_case = proc_macro_helpers::naming_conventions::with_serialize_deserialize_snake_case_stringified();
     let to_string_without_config_with_serialize_deserialize_stringified = format!("{to_string_without_config_snake_case_stringified}_{with_serialize_deserialize_snake_case}");
     let to_string_without_config_with_serialize_deserialize_token_stream = 
     to_string_without_config_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
