@@ -967,7 +967,7 @@ pub fn error_occurence(
                             let hashmap_value_type_stringified = format!(
                                 "{}{}{type_upper_camel_case}",
                                 proc_macro_helpers::naming_conventions::HASHMAP_UPPER_CAMEL_CASE,
-                                proc_macro_helpers::naming_conventions::VALUE_UPPER_CAMEL_CASE
+                                proc_macro_helpers::naming_conventions::value_upper_camel_case_stringified()
                             );
                             let hashmap_key_type_path_stringified = format!(
                                 "{hashmap_key_type_stringified}::{}",
