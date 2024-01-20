@@ -190,7 +190,7 @@ pub fn error_occurence(
     to_string_with_config_snake_case_stringified.parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_with_config_snake_case_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let key_snake_case = proc_macro_helpers::naming_conventions::key_upper_camel_case_stringified();
-    let value_snake_case = proc_macro_helpers::naming_conventions::value_snake_case();
+    let value_snake_case = proc_macro_helpers::naming_conventions::value_upper_camel_case_stringified();
     let hashmap_snake_case = proc_macro_helpers::naming_conventions::hashmap_snake_case();
     let vec_snake_case = proc_macro_helpers::naming_conventions::vec_snake_case(); 
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
