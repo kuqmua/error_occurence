@@ -457,7 +457,7 @@ pub fn error_occurence(
                                 };
                                 let syn_type_reference = format!(
                                     "syn::Type::{}",
-                                    proc_macro_helpers::naming_conventions::REFERENCE_UPPER_CAMEL_CASE
+                                    proc_macro_helpers::naming_conventions::reference_upper_camel_case_stringified()
                                 );
                                 let error_message = format!("{} {syn_type_path_stringified} and {syn_type_reference}", proc_macro_helpers::naming_conventions::SUPPORTS_ONLY_STRINGIFIED);
                                 let supported_container = match field.ty {
@@ -975,7 +975,7 @@ pub fn error_occurence(
                             );
                             let hashmap_key_type_reference_stringified = format!(
                                 "{hashmap_key_type_stringified}::{}",
-                                proc_macro_helpers::naming_conventions::REFERENCE_UPPER_CAMEL_CASE
+                                proc_macro_helpers::naming_conventions::reference_upper_camel_case_stringified()
                             );
                             let hashmap_value_type_path_stringified = format!(
                                 "{hashmap_value_type_stringified}::{}",
@@ -983,7 +983,7 @@ pub fn error_occurence(
                             );
                             let hashmap_value_type_reference_stringified = format!(
                                 "{hashmap_value_type_stringified}::{}",
-                                proc_macro_helpers::naming_conventions::REFERENCE_UPPER_CAMEL_CASE
+                                proc_macro_helpers::naming_conventions::reference_upper_camel_case_stringified()
                             );
                             let inform_use_str_string_in_different_attribute = |
                                 path: String,
@@ -1258,7 +1258,7 @@ pub fn error_occurence(
                                             proc_macro_helpers::naming_conventions::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
                                             proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified(),
                                             proc_macro_helpers::naming_conventions::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
-                                            proc_macro_helpers::naming_conventions::REFERENCE_UPPER_CAMEL_CASE
+                                            proc_macro_helpers::naming_conventions::reference_upper_camel_case_stringified()
                                         ),
                                     }
                                 },
