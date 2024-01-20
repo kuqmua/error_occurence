@@ -105,7 +105,7 @@ pub fn error_occurence(
     );
     let to_string_with_config_upper_camel_case = format!(
         "{to_string_upper_camel_case}{}{config_upper_camel_case}",
-        proc_macro_helpers::naming_conventions::WITH_UPPER_CAMEL_CASE
+        proc_macro_helpers::naming_conventions::with_upper_camel_case_stringified()
     );
     let source_to_string_with_config_upper_camel_case = format!("{source_upper_camel_case}{to_string_with_config_upper_camel_case}");
     let unnamed_snake_case_stringified = proc_macro_helpers::naming_conventions::ToSnakeCaseString::to_snake_case_string(&unnamed_upper_camel_case);
@@ -132,7 +132,7 @@ pub fn error_occurence(
     let crate_common_error_logs_logic_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::");
     let to_string_without_config_upper_camel_case = format!(
         "{to_string_upper_camel_case}{}out{config_upper_camel_case}",
-        proc_macro_helpers::naming_conventions::WITH_UPPER_CAMEL_CASE
+        proc_macro_helpers::naming_conventions::with_upper_camel_case_stringified()
     );
     let to_string_without_config_snake_case_stringified = proc_macro_helpers::naming_conventions::ToSnakeCaseString::to_snake_case_string(&to_string_without_config_upper_camel_case);
     let crate_common_error_logs_logic_to_string_without_config_to_string_without_config_stringified = format!("{crate_common_error_logs_logic_stringified}{to_string_without_config_snake_case_stringified}::{to_string_without_config_upper_camel_case}");
