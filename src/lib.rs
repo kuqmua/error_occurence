@@ -192,7 +192,7 @@ pub fn error_occurence(
     let key_snake_case = proc_macro_helpers::naming_conventions::key_upper_camel_case_stringified();
     let value_snake_case = proc_macro_helpers::naming_conventions::value_upper_camel_case_stringified();
     let hashmap_snake_case = proc_macro_helpers::naming_conventions::hashmap_snake_case();
-    let vec_snake_case = proc_macro_helpers::naming_conventions::vec_snake_case(); 
+    let vec_snake_case = proc_macro_helpers::naming_conventions::vec_snake_case_stringified(); 
     let enum_with_serialize_deserialize_logic = proc_macro_helpers::error_occurence::generate_with_serialize_deserialize_version::generate_with_serialize_deserialize_version(
         &supported_enum_variant,
         &data_enum.variants.iter().collect(),
