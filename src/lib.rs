@@ -44,10 +44,10 @@ pub fn error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     proc_macro_helpers::panic_location::panic_location();
-    let proc_macro_name = proc_macro_helpers::naming_conventions::error_occurence_upper_camel_case();
+    let proc_macro_name = proc_macro_helpers::naming_conventions::error_occurence_upper_camel_case_stringified();
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} {}", proc_macro_helpers::global_variables::hardcode::AST_PARSE_FAILED));
-    let error_occurence_snake_case = proc_macro_helpers::naming_conventions::error_occurence_snake_case();
+    let error_occurence_snake_case = proc_macro_helpers::naming_conventions::error_occurence_snake_case_stringified();
     let trait_lifetime_stringified = format!("'{error_occurence_snake_case}_proc_macro_reserved_lifetime_name");
     let ident = &ast.ident;
     let ident_stringified = ident.to_string();
@@ -80,7 +80,7 @@ pub fn error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {lifetimes_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE))
     };
     let named_snake_case = proc_macro_helpers::naming_conventions::named_snake_case_stringified();
-    let unnamed_upper_camel_case = proc_macro_helpers::naming_conventions::unnamed_upper_camel_case();
+    let unnamed_upper_camel_case = proc_macro_helpers::naming_conventions::unnamed_upper_camel_case_stringified();
     let supported_enum_variant = proc_macro_helpers::error_occurence::supported_enum_variant::create_supported_enum_variant(
         &data_enum,
         &proc_macro_name_ident_stringified
