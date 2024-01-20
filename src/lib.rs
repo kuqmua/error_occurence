@@ -110,7 +110,7 @@ pub fn error_occurence(
     let source_to_string_with_config_upper_camel_case = format!("{source_upper_camel_case}{to_string_with_config_upper_camel_case}");
     let unnamed_snake_case_stringified = proc_macro_helpers::naming_conventions::ToSnakeCaseString::to_snake_case_string(&unnamed_upper_camel_case);
     let error_logs_logic_stringified = "error_logs_logic";
-    let error_occurence_named_upper_camel_case = format!("{proc_macro_name}{}", proc_macro_helpers::naming_conventions::NAMED);
+    let error_occurence_named_upper_camel_case = format!("{proc_macro_name}{}", proc_macro_helpers::naming_conventions::named_upper_camel_case_stringified());
     let error_occurence_named_snake_case = format!("{error_occurence_snake_case}_{named_snake_case}");
     let error_occurence_named_token_stream = error_occurence_named_snake_case
     .parse::<proc_macro2::TokenStream>()
