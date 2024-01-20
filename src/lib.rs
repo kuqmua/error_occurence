@@ -904,7 +904,7 @@ pub fn error_occurence(
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_foreign_type_to_string_hashmap_display_display_foreign_type_to_string_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let vec_element_type_path_stringified = format!(
                                 "proc_macro_helpers::error_occurence::vec_element_type::VecElementType::{}",
-                                proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                             );
                             let vec_display_foreign_type_to_string_upper_camel_case = format!(
                                 "{}{display_foreign_type_upper_camel_case}{to_string_upper_camel_case}",
@@ -971,7 +971,7 @@ pub fn error_occurence(
                             );
                             let hashmap_key_type_path_stringified = format!(
                                 "{hashmap_key_type_stringified}::{}",
-                                proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                             );
                             let hashmap_key_type_reference_stringified = format!(
                                 "{hashmap_key_type_stringified}::{}",
@@ -979,7 +979,7 @@ pub fn error_occurence(
                             );
                             let hashmap_value_type_path_stringified = format!(
                                 "{hashmap_value_type_stringified}::{}",
-                                proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                             );
                             let hashmap_value_type_reference_stringified = format!(
                                 "{hashmap_value_type_stringified}::{}",
@@ -1143,7 +1143,7 @@ pub fn error_occurence(
                                             attribute.attribute_view_stringified(), 
                                             proc_macro_helpers::naming_conventions::SUPPORTS_ONLY_STRINGIFIED,
                                             proc_macro_helpers::naming_conventions::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
-                                            proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                            proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                                         )
                                     }
                                 },
@@ -1256,7 +1256,7 @@ pub fn error_occurence(
                                             "{proc_macro_name_ident_stringified} {} only supports {}{} and {}{}", 
                                             attribute.attribute_view_stringified(),
                                             proc_macro_helpers::naming_conventions::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
-                                            proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE,
+                                            proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified(),
                                             proc_macro_helpers::naming_conventions::SUPPORTED_CONTAINER_DOUBLE_DOT_DOUBLE_DOT,
                                             proc_macro_helpers::naming_conventions::REFERENCE_UPPER_CAMEL_CASE
                                         ),
@@ -1268,7 +1268,7 @@ pub fn error_occurence(
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
                                             attribute.attribute_view_stringified(),
-                                            proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                            proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                                         );
                                     }
                                     (
@@ -1336,7 +1336,7 @@ pub fn error_occurence(
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
                                             attribute.attribute_view_stringified(),
-                                            proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                            proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                                         );
                                     };
                                     (
@@ -1405,7 +1405,7 @@ pub fn error_occurence(
                                         panic!(
                                             "{proc_macro_name_ident_stringified} {} {supports_only_supported_container_stringified}{}", 
                                             attribute.attribute_view_stringified(),
-                                            proc_macro_helpers::naming_conventions::PATH_UPPER_CAMEL_CASE
+                                            proc_macro_helpers::naming_conventions::path_upper_camel_case_stringified()
                                         );
                                     };
                                     (
