@@ -171,7 +171,11 @@ pub fn error_occurence(
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_with_serialize_deserialize_stringified} {}", proc_macro_helpers::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let into_upper_camel_case = "Into";
     let into_snake_case_stringified = proc_macro_helpers::naming_conventions::ToSnakeCaseString::to_snake_case_string(&into_upper_camel_case);
-    let serialize_deserialize_snake_case_stringified = proc_macro_helpers::naming_conventions::ToSnakeCaseString::to_snake_case_string(&proc_macro_helpers::naming_conventions::SERIALIZE_DESERIALIZE_UPPER_CAMEL_CASE);
+    let serialize_deserialize_snake_case_stringified = proc_macro_helpers::naming_conventions::serialize_deserialize_snake_case_stringified();
+    
+    
+    
+    // proc_macro_helpers::naming_conventions::ToSnakeCaseString::to_snake_case_string(&proc_macro_helpers::naming_conventions::SERIALIZE_DESERIALIZE_UPPER_CAMEL_CASE);
     let into_serialize_deserialize_version_stringified = format!("{into_snake_case_stringified}_{serialize_deserialize_snake_case_stringified}_version");
     let into_serialize_deserialize_version_token_stream = into_serialize_deserialize_version_stringified
     .parse::<proc_macro2::TokenStream>()
