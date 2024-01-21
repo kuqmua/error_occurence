@@ -43,7 +43,7 @@
 pub fn error_occurence(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    proc_macro_helpers::panic_location::panic_location();
+    proc_macro_common::panic_location::panic_location();
     let proc_macro_name = proc_macro_helpers::naming_conventions::error_occurence_upper_camel_case_stringified();
     let ast: syn::DeriveInput =
         syn::parse(input).unwrap_or_else(|_| panic!("{proc_macro_name} {}", proc_macro_helpers::global_variables::hardcode::AST_PARSE_FAILED));
