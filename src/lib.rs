@@ -209,7 +209,7 @@ pub fn error_occurence(
     );
     let token_stream = match supported_enum_variant {
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
-            let code_occurence_upper_camel_case = format!("Code{}", proc_macro_helpers::naming_conventions::occurence_upper_camel_case_stringified());
+            let code_occurence_upper_camel_case = proc_macro_helpers::naming_conventions::code_occurence_upper_camel_case_stringified();
             let code_occurence_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&code_occurence_upper_camel_case);
             let foreign_type_upper_camel_case = "ForeignType";
             let display_upper_camel_case = "Display";
