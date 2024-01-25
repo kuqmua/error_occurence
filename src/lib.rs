@@ -169,8 +169,8 @@ pub fn error_occurence(
     let to_string_without_config_with_serialize_deserialize_token_stream = 
     to_string_without_config_with_serialize_deserialize_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {to_string_without_config_with_serialize_deserialize_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let into_upper_camel_case = "Into";
-    let into_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&into_upper_camel_case);
+    let into_upper_camel_case_stringified = proc_macro_helpers::naming_conventions::into_upper_camel_case_stringified();
+    let into_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&into_upper_camel_case_stringified);
     let serialize_deserialize_snake_case_stringified = proc_macro_helpers::naming_conventions::serialize_deserialize_snake_case_stringified();
     
     
@@ -211,8 +211,12 @@ pub fn error_occurence(
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
             let code_occurence_upper_camel_case_stringified = proc_macro_helpers::naming_conventions::code_occurence_upper_camel_case_stringified();
             let code_occurence_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&code_occurence_upper_camel_case_stringified);
-            let foreign_type_upper_camel_case_stringified = "ForeignType";
-            let display_upper_camel_case_stringified = "Display";
+            let foreign_type_upper_camel_case_stringified = format!(
+                "{}{}",
+                proc_macro_helpers::naming_conventions::foreign_upper_camel_case_stringified(),
+                proc_macro_helpers::naming_conventions::type_upper_camel_case_stringified()
+            );
+            let display_upper_camel_case_stringified = proc_macro_helpers::naming_conventions::display_upper_camel_case_stringified();
             let display_foreign_type_upper_camel_case = format!("{display_upper_camel_case_stringified}{foreign_type_upper_camel_case_stringified}");
             let display_foreign_type_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&display_foreign_type_upper_camel_case);
             let display_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&display_upper_camel_case_stringified);
@@ -1014,7 +1018,7 @@ pub fn error_occurence(
                                 }
                             };
                             let vec_display_into_vec_string_upper_camel_case: String = format!(
-                                "{}{display_upper_camel_case_stringified}{into_upper_camel_case}{}{}",
+                                "{}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{}",
                                 proc_macro_helpers::naming_conventions::vec_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::vec_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
@@ -1024,7 +1028,7 @@ pub fn error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {vec_display_into_vec_string_snake_case_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_display_into_hashmap_string_string_upper_camel_case = format!(
-                                "{}{display_upper_camel_case_stringified}{display_upper_camel_case_stringified}{into_upper_camel_case}{}{}{}",
+                                "{}{display_upper_camel_case_stringified}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{}{}",
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified(),
@@ -1040,7 +1044,7 @@ pub fn error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_hashmap_display_display_into_hashmap_string_string_hash_map_display_display_into_hashmap_string_string_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_display_foreign_type_into_hashmap_string_string_upper_camel_case = format!(
-                                "{}{display_upper_camel_case_stringified}{display_foreign_type_upper_camel_case}{into_upper_camel_case}{}{}{}",
+                                "{}{display_upper_camel_case_stringified}{display_foreign_type_upper_camel_case}{into_upper_camel_case_stringified}{}{}{}",
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified(),
@@ -1055,7 +1059,7 @@ pub fn error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logs_hashmap_display_display_foreign_type_into_hashmap_string_string_hashmap_display_display_foreign_type_into_hashmap_string_string_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_display_into_hashmap_display_string_upper_camel_case = format!(
-                                "{}{display_upper_camel_case_stringified}{display_upper_camel_case_stringified}{into_upper_camel_case}{}{display_upper_camel_case_stringified}{}",
+                                "{}{display_upper_camel_case_stringified}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{display_upper_camel_case_stringified}{}",
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
@@ -1070,7 +1074,7 @@ pub fn error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_into_hashmap_display_string_snake_case} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let hashmap_display_foreign_type_display_into_hashmap_string_string_upper_camel_case = format!(
-                                "{}{display_foreign_type_upper_camel_case}{display_upper_camel_case_stringified}{into_upper_camel_case}{}{}{}",
+                                "{}{display_foreign_type_upper_camel_case}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{}{}",
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified(),
@@ -1666,7 +1670,7 @@ pub fn error_occurence(
                                         );
                                     }
                                     let vec_display_foreign_type_into_vec_string_upper_camel_case = format!(
-                                        "{}{display_foreign_type_upper_camel_case}{into_upper_camel_case}{}{}",
+                                        "{}{display_foreign_type_upper_camel_case}{into_upper_camel_case_stringified}{}{}",
                                         proc_macro_helpers::naming_conventions::vec_upper_camel_case_stringified(),
                                         proc_macro_helpers::naming_conventions::vec_upper_camel_case_stringified(),
                                         proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
@@ -2272,7 +2276,7 @@ pub fn error_occurence(
                                                     },
                                                     {
                                                         let hashmap_display_display_into_hashmap_string_display_upper_camel_case = format!(
-                                                            "{}{display_upper_camel_case_stringified}{display_upper_camel_case_stringified}{into_upper_camel_case}{}{}{display_upper_camel_case_stringified}",
+                                                            "{}{display_upper_camel_case_stringified}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{}{display_upper_camel_case_stringified}",
                                                             proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                                             proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                                             proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
@@ -2423,7 +2427,7 @@ pub fn error_occurence(
                                             .parse::<proc_macro2::TokenStream>()
                                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_display_foreign_type_into_hashmap_display_string_snake_case} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                             let crate_common_error_logs_logic_hashmap_display_display_foreign_type_into_hashmap_display_string_hashmap_display_display_foreign_type_into_hashmap_display_string_stringified = format!(
-                                                "{crate_common_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_string_snake_case}::{}{display_upper_camel_case_stringified}{display_foreign_type_upper_camel_case}{into_upper_camel_case}{}{display_upper_camel_case_stringified}{}",
+                                                "{crate_common_error_logs_logic_stringified}{hashmap_display_display_foreign_type_into_hashmap_display_string_snake_case}::{}{display_upper_camel_case_stringified}{display_foreign_type_upper_camel_case}{into_upper_camel_case_stringified}{}{display_upper_camel_case_stringified}{}",
                                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
@@ -3104,7 +3108,7 @@ pub fn error_occurence(
                                                 .parse::<proc_macro2::TokenStream>()
                                                 .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_into_hashmap_string_display_snake_case} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                                 let crate_common_error_logs_logic_hashmap_display_foreign_type_display_into_hashmap_string_display_hashmap_display_foreign_type_display_into_hashmap_string_display_stringified = format!(
-                                                    "{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_into_hashmap_string_display_snake_case}::{}{display_foreign_type_upper_camel_case}{display_upper_camel_case_stringified}{into_upper_camel_case}{}{}{display_upper_camel_case_stringified}",
+                                                    "{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_into_hashmap_string_display_snake_case}::{}{display_foreign_type_upper_camel_case}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{}{display_upper_camel_case_stringified}",
                                                     proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                                     proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                                     proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
@@ -3313,7 +3317,7 @@ pub fn error_occurence(
                                     .parse::<proc_macro2::TokenStream>()
                                     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_snake_case} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                                     let crate_common_error_logs_logic_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_stringified = format!(
-                                        "{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_snake_case}::{}{display_foreign_type_upper_camel_case}{display_foreign_type_upper_camel_case}{into_upper_camel_case}{}{}{}",
+                                        "{crate_common_error_logs_logic_stringified}{hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_string_snake_case}::{}{display_foreign_type_upper_camel_case}{display_foreign_type_upper_camel_case}{into_upper_camel_case_stringified}{}{}{}",
                                         proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                         proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                         proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified(),
@@ -3442,7 +3446,7 @@ pub fn error_occurence(
                                         );
                                     };
                                     let hashmap_display_foreign_type_display_foreign_type_into_hashmap_string_display_foreign_type_upper_camel_case = format!(
-                                        "{}{display_foreign_type_upper_camel_case}{display_foreign_type_upper_camel_case}{into_upper_camel_case}{}{}{display_foreign_type_upper_camel_case}",
+                                        "{}{display_foreign_type_upper_camel_case}{display_foreign_type_upper_camel_case}{into_upper_camel_case_stringified}{}{}{display_foreign_type_upper_camel_case}",
                                         proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                         proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified(),
                                         proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
