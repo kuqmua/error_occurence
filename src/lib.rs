@@ -93,8 +93,8 @@ pub fn error_occurence(
     let ident_with_serialize_deserialize_token_stream = ident_with_serialize_deserialize_stringified
         .parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {ident_with_serialize_deserialize_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let config_upper_camel_case = "Config";
-    let config_generic_upper_camel_case = format!("{config_upper_camel_case}Generic");
+    let config_upper_camel_case_stringified = proc_macro_helpers::naming_conventions::config_upper_camel_case_stringified();
+    let config_generic_upper_camel_case = format!("{config_upper_camel_case_stringified}Generic");
     let config_generic_token_stream = config_generic_upper_camel_case
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {config_generic_upper_camel_case} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
@@ -104,7 +104,7 @@ pub fn error_occurence(
         proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
     );
     let to_string_with_config_upper_camel_case = format!(
-        "{to_string_upper_camel_case}{}{config_upper_camel_case}",
+        "{to_string_upper_camel_case}{}{config_upper_camel_case_stringified}",
         proc_macro_helpers::naming_conventions::with_upper_camel_case_stringified()
     );
     let source_to_string_with_config_upper_camel_case = format!("{source_upper_camel_case}{to_string_with_config_upper_camel_case}");
@@ -131,7 +131,7 @@ pub fn error_occurence(
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let crate_common_error_logs_logic_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::");
     let to_string_without_config_upper_camel_case = format!(
-        "{to_string_upper_camel_case}{}out{config_upper_camel_case}",
+        "{to_string_upper_camel_case}{}out{config_upper_camel_case_stringified}",
         proc_macro_helpers::naming_conventions::with_upper_camel_case_stringified()
     );
     let to_string_without_config_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&to_string_without_config_upper_camel_case);
