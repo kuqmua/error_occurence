@@ -209,8 +209,8 @@ pub fn error_occurence(
     );
     let token_stream = match supported_enum_variant {
         proc_macro_helpers::error_occurence::supported_enum_variant::SuportedEnumVariant::Named => {
-            let code_occurence_upper_camel_case = proc_macro_helpers::naming_conventions::code_occurence_upper_camel_case_stringified();
-            let code_occurence_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&code_occurence_upper_camel_case);
+            let code_occurence_upper_camel_case_stringified = proc_macro_helpers::naming_conventions::code_occurence_upper_camel_case_stringified();
+            let code_occurence_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&code_occurence_upper_camel_case_stringified);
             let foreign_type_upper_camel_case = "ForeignType";
             let display_upper_camel_case = "Display";
             let display_foreign_type_upper_camel_case = format!("{display_upper_camel_case}{foreign_type_upper_camel_case}");
@@ -254,10 +254,10 @@ pub fn error_occurence(
                                                 let code_occurence_segments_stringified_handle = type_path.path.segments.iter()
                                                 .fold(String::from(""), |mut acc, path_segment| {
                                                     let path_segment_ident = &path_segment.ident;
-                                                    match *path_segment_ident == code_occurence_upper_camel_case {
+                                                    match *path_segment_ident == code_occurence_upper_camel_case_stringified {
                                                         true => {
                                                             if code_occurence_type_repeat_checker {
-                                                                panic!("{proc_macro_name_ident_stringified} code_occurence_ident detected more than one {code_occurence_upper_camel_case} inside type path");
+                                                                panic!("{proc_macro_name_ident_stringified} code_occurence_ident detected more than one {code_occurence_upper_camel_case_stringified} inside type path");
                                                             }
                                                             acc.push_str(&path_segment_ident.to_string());
                                                             code_occurence_type_repeat_checker = true;
@@ -267,7 +267,7 @@ pub fn error_occurence(
                                                     acc
                                                 });
                                                 if !code_occurence_type_repeat_checker {
-                                                    panic!("{proc_macro_name_ident_stringified} no {code_occurence_upper_camel_case} named field");
+                                                    panic!("{proc_macro_name_ident_stringified} no {code_occurence_upper_camel_case_stringified} named field");
                                                 }
                                                 code_occurence_segments_stringified_handle
                                             },
@@ -3838,13 +3838,13 @@ pub fn error_occurence(
             let logic_for_get_code_occurence_with_serialize_deserialize_iter = logic_for_get_code_occurence_with_serialize_deserialize.iter();
             let logic_for_into_serialize_deserialize_version_iter = logic_for_into_serialize_deserialize_version.iter();
             let logic_for_compile_time_check_error_occurence_members_iter = logic_for_compile_time_check_error_occurence_members.iter();
-            let get_code_occurence_upper_camel_case = format!("{get_upper_camel_case}{code_occurence_upper_camel_case}");
+            let get_code_occurence_upper_camel_case = format!("{get_upper_camel_case}{code_occurence_upper_camel_case_stringified}");
             let get_code_occurence_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&get_code_occurence_upper_camel_case);
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified = format!("{crate_common_error_logs_logic_stringified}{get_code_occurence_snake_case_stringified}::{get_code_occurence_upper_camel_case}");
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
             crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-            let crate_common_code_occurence_code_occurence_stringified = format!("crate::common::{code_occurence_snake_case_stringified}::{code_occurence_upper_camel_case}");
+            let crate_common_code_occurence_code_occurence_stringified = format!("crate::common::{code_occurence_snake_case_stringified}::{code_occurence_upper_camel_case_stringified}");
             let crate_common_code_occurence_code_occurence_token_stream = 
             crate_common_code_occurence_code_occurence_stringified.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_code_occurence_code_occurence_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
