@@ -146,12 +146,12 @@ pub fn error_occurence(
     let config_fields_stringified = "config_fields";
     let crate_common_config_stringified = "crate::common::config";
     let crate_common_config_config_fields_stringified = format!("{crate_common_config_stringified}::{config_fields_stringified}::");
-    let get_upper_camel_case = "Get";
-    let crate_common_config_config_fields_get_source_place_type_stringified = format!("{crate_common_config_config_fields_stringified}{get_upper_camel_case}{source_upper_camel_case_stringified}PlaceType");
+    let get_upper_camel_case_stringified = proc_macro_helpers::naming_conventions::get_upper_camel_case_stringified();
+    let crate_common_config_config_fields_get_source_place_type_stringified = format!("{crate_common_config_config_fields_stringified}{get_upper_camel_case_stringified}{source_upper_camel_case_stringified}PlaceType");
     let crate_common_config_config_fields_get_source_place_type_token_stream = 
     crate_common_config_config_fields_get_source_place_type_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_config_config_fields_get_source_place_type_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let crate_common_config_config_fields_get_timezone_stringified = format!("{crate_common_config_config_fields_stringified}{get_upper_camel_case}Timezone");
+    let crate_common_config_config_fields_get_timezone_stringified = format!("{crate_common_config_config_fields_stringified}{get_upper_camel_case_stringified}Timezone");
     let crate_common_config_config_fields_get_timezone_token_stream = 
     crate_common_config_config_fields_get_timezone_stringified.parse::<proc_macro2::TokenStream>()
         .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_config_config_fields_get_timezone_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
@@ -3842,7 +3842,7 @@ pub fn error_occurence(
             let logic_for_get_code_occurence_with_serialize_deserialize_iter = logic_for_get_code_occurence_with_serialize_deserialize.iter();
             let logic_for_into_serialize_deserialize_version_iter = logic_for_into_serialize_deserialize_version.iter();
             let logic_for_compile_time_check_error_occurence_members_iter = logic_for_compile_time_check_error_occurence_members.iter();
-            let get_code_occurence_upper_camel_case = format!("{get_upper_camel_case}{code_occurence_upper_camel_case_stringified}");
+            let get_code_occurence_upper_camel_case = format!("{get_upper_camel_case_stringified}{code_occurence_upper_camel_case_stringified}");
             let get_code_occurence_snake_case_stringified = proc_macro_common::naming_conventions::ToSnakeCaseStringified::to_snake_case_stringified(&get_code_occurence_upper_camel_case);
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_stringified = format!("{crate_common_error_logs_logic_stringified}{get_code_occurence_snake_case_stringified}::{get_code_occurence_upper_camel_case}");
             let crate_common_error_logs_logic_get_code_occurence_get_code_occurence_token_stream = 
