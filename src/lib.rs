@@ -7,7 +7,7 @@
 //there is a possibility for not doing with_serialize_deserialize case (then type does not implement serde::Serialize and serde::Deserialize) https://serde.rs/remote-derive.html 
 //todo not all implementations of Unnnamed ErrorOccurence are support Sized config Generic. fix its(hashmap\vec impl)
 //todo change how hashmap shows in console
-//todo maybe structs that are enums or containing enums - maybe convert them not into String, but some custom type that copies all logic of the type?
+//todo maybe structs that are enums or containing enums - maybe convert them not into std::string::String, but some custom type that copies all logic of the type?
 //todo maybe add multiple lifetimes supports with attribute parameters like this 
 // #[derive(Serialize)]
 // struct Foo {
@@ -960,7 +960,7 @@ pub fn error_occurence(
                                 proc_macro_helpers::naming_conventions::hashmap_upper_camel_case_stringified()
                             );
                             let str_stringified = "str";
-                            let string_string_stringified: String = format!(
+                            let string_string_stringified: std::string::String = format!(
                                 "{string_snake_case_stringified}::{}",
                                 proc_macro_helpers::naming_conventions::string_upper_camel_case_stringified()
                             );
@@ -995,7 +995,7 @@ pub fn error_occurence(
                                 proc_macro_helpers::naming_conventions::reference_upper_camel_case_stringified()
                             );
                             let inform_use_str_string_in_different_attribute = |
-                                path: String,
+                                path: std::string::String,
                                 wrong_attribute: &String,
                                 attribute_to_use: &String
                             | {
@@ -1018,7 +1018,7 @@ pub fn error_occurence(
                                     );
                                 }
                             };
-                            let vec_display_into_vec_string_upper_camel_case: String = format!(
+                            let vec_display_into_vec_string_upper_camel_case: std::string::String = format!(
                                 "{}{display_upper_camel_case_stringified}{into_upper_camel_case_stringified}{}{}",
                                 proc_macro_helpers::naming_conventions::vec_upper_camel_case_stringified(),
                                 proc_macro_helpers::naming_conventions::vec_upper_camel_case_stringified(),
@@ -1945,7 +1945,7 @@ pub fn error_occurence(
                                         hashmap_value_type,
                                     } = supported_container {
                                         let hashmap_key_type_path_case = |
-                                            key_segments_stringified: String,
+                                            key_segments_stringified: std::string::String,
                                             key_vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>,
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
@@ -2415,7 +2415,7 @@ pub fn error_occurence(
                                         hashmap_value_type
                                     } = supported_container {
                                         let hashmap_key_type_path_case = |
-                                            key_segments_stringified: String,
+                                            key_segments_stringified: std::string::String,
                                             key_vec_lifetime: Vec<proc_macro_helpers::error_occurence::lifetime::Lifetime>,
                                             lifetimes_for_serialize_deserialize: &mut Vec<String>
                                         | -> (
@@ -3887,7 +3887,7 @@ pub fn error_occurence(
                     (
                         &self,
                         config: &#config_generic_token_stream 
-                    ) -> String {
+                    ) -> std::string::String {
                         match self {
                             #(#logic_for_source_to_string_with_config_iter),*
                         }
@@ -3898,7 +3898,7 @@ pub fn error_occurence(
                         #trait_lifetime_token_stream
                     > for #ident
                 {
-                    fn #source_to_string_without_config_token_stream(&self) -> String {
+                    fn #source_to_string_without_config_token_stream(&self) -> std::string::String {
                         match self {
                             #(#logic_for_source_to_string_without_config_iter),*
                         }
@@ -3914,7 +3914,7 @@ pub fn error_occurence(
                 }
                 impl <#trait_lifetime_token_stream> #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<#trait_lifetime_token_stream> for #ident_with_serialize_deserialize_token_stream
                 {
-                    fn #source_to_string_without_config_token_stream(&self) -> String {
+                    fn #source_to_string_without_config_token_stream(&self) -> std::string::String {
                         match self {
                             #(#logic_for_source_to_string_without_config_with_serialize_deserialize_iter),*
                         }
@@ -4050,7 +4050,7 @@ pub fn error_occurence(
                         + #crate_common_config_config_fields_get_timezone_token_stream
                         + ?Sized,
                     >
-                    (&self, config: &#config_generic_token_stream) -> String {
+                    (&self, config: &#config_generic_token_stream) -> std::string::String {
                         match self {
                             #(#logic_for_to_string_with_config_generated),*
                         }
@@ -4063,7 +4063,7 @@ pub fn error_occurence(
                 >
                     for #ident
                 {
-                    fn #to_string_without_config_token_stream(&self) -> String {
+                    fn #to_string_without_config_token_stream(&self) -> std::string::String {
                         match self {
                             #(#logic_for_to_string_without_config_generated),*
                         }
@@ -4075,7 +4075,7 @@ pub fn error_occurence(
                     > 
                     for #ident_with_serialize_deserialize_token_stream
                 {
-                    fn #to_string_without_config_with_serialize_deserialize_token_stream(&self) -> String {
+                    fn #to_string_without_config_with_serialize_deserialize_token_stream(&self) -> std::string::String {
                         match self {
                             #(#logic_for_to_string_without_config_with_serialize_deserialize_generated),*
                         }
