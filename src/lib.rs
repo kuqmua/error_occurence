@@ -126,10 +126,10 @@ pub fn error_occurence(
     let error_occurence_lib_error_occurence_named_error_occurence_named_token_stream = error_occurence_lib_error_occurence_named_error_occurence_named_stringified
     .parse::<proc_macro2::TokenStream>()
     .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {error_occurence_lib_error_occurence_named_error_occurence_named_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
-    let crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified = format!("{error_occurence_lib_stringified}::{error_occurence_unnamed_snake_case}::{error_occurence_unnamed_upper_camel_case}");
-    let crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream = crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified
+    let error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_stringified = format!("{error_occurence_lib_stringified}::{error_occurence_unnamed_snake_case}::{error_occurence_unnamed_upper_camel_case}");
+    let error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_token_stream = error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_stringified
     .parse::<proc_macro2::TokenStream>()
-    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+    .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
     let crate_common_error_logs_logic_stringified = format!("{crate_common_stringified}::{error_logs_logic_stringified}::");
     let to_string_without_config_upper_camel_case = format!(
         "{to_string_upper_camel_case}{}out{config_upper_camel_case_stringified}",
@@ -771,10 +771,10 @@ pub fn error_occurence(
             source_to_string_without_config_snake_case_stringified.parse::<proc_macro2::TokenStream>()
             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {source_to_string_without_config_snake_case_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
             //
-            let crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified = format!("{error_occurence_lib_stringified}::{source_to_string_without_config_snake_case_stringified}::{source_to_string_without_config_upper_camel_case}");
-            let crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream = 
-            crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
-            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
+            let error_occurence_lib_source_to_string_without_config_source_to_string_without_config_stringified = format!("{error_occurence_lib_stringified}::{source_to_string_without_config_snake_case_stringified}::{source_to_string_without_config_upper_camel_case}");
+            let error_occurence_lib_source_to_string_without_config_source_to_string_without_config_token_stream = 
+            error_occurence_lib_source_to_string_without_config_source_to_string_without_config_stringified.parse::<proc_macro2::TokenStream>()
+            .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {error_occurence_lib_source_to_string_without_config_source_to_string_without_config_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
             //
             let crate_common_error_logs_logic_source_to_string_with_config_source_to_string_with_config_stringified = format!("{crate_common_error_logs_logic_stringified}{source_to_string_with_config_stringified}::{source_to_string_with_config_upper_camel_case}");
             let crate_common_error_logs_logic_source_to_string_with_config_source_to_string_with_config_token_stream = 
@@ -1929,7 +1929,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.iter().for_each(|i|
-                                                #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
+                                                #error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
                                                     i
                                                 )
                                             );
@@ -2962,7 +2962,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|
-                                                #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
+                                                #error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
                                                     v
                                                 )
                                             );
@@ -3659,7 +3659,7 @@ pub fn error_occurence(
                                         },
                                         quote::quote! {
                                             #field_ident.values().for_each(|v|
-                                                #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
+                                                #error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_token_stream::#error_occurence_unnamed_token_stream(
                                                     v
                                                 )
                                             );
@@ -3896,7 +3896,7 @@ pub fn error_occurence(
                     }
                 }
                 impl<#trait_lifetime_token_stream>
-                    #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<
+                    #error_occurence_lib_source_to_string_without_config_source_to_string_without_config_token_stream<
                         #trait_lifetime_token_stream
                     > for #ident
                 {
@@ -3914,7 +3914,7 @@ pub fn error_occurence(
                         }
                     }
                 }
-                impl <#trait_lifetime_token_stream> #crate_common_error_logs_logic_source_to_string_without_config_source_to_string_without_config_token_stream<#trait_lifetime_token_stream> for #ident_with_serialize_deserialize_token_stream
+                impl <#trait_lifetime_token_stream> #error_occurence_lib_source_to_string_without_config_source_to_string_without_config_token_stream<#trait_lifetime_token_stream> for #ident_with_serialize_deserialize_token_stream
                 {
                     fn #source_to_string_without_config_token_stream(&self) -> std::string::String {
                         match self {
@@ -4112,7 +4112,7 @@ pub fn error_occurence(
                         )
                     }
                 }
-                impl<#generics> #crate_common_error_logs_logic_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
+                impl<#generics> #error_occurence_lib_error_occurence_unnamed_error_occurence_unnamed_token_stream for #ident<#generics> {
                     fn #error_occurence_unnamed_token_stream(&self) {}
                 }
                 impl #ident {
