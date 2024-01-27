@@ -845,7 +845,7 @@ pub fn error_occurence(
                             .parse::<proc_macro2::TokenStream>()
                             .unwrap_or_else(|_| panic!("{proc_macro_name_ident_stringified} {crate_common_error_logs_logic_lines_space_backslash_lines_space_backslash_stringified} {}", proc_macro_common::global_variables::hardcode::PARSE_PROC_MACRO2_TOKEN_STREAM_FAILED_MESSAGE));
                             let crate_common_stringified = "crate::common"; 
-                            let crate_common_display_foreign_type_display_foreign_type_stringified = format!("{crate_common_stringified}::{display_foreign_type_snake_case_stringified}::{display_foreign_type_upper_camel_case}");
+                            let crate_common_display_foreign_type_display_foreign_type_stringified = format!("{error_occurence_lib_stringified}::{display_foreign_type_snake_case_stringified}::{display_foreign_type_upper_camel_case}");
                             let crate_common_display_foreign_type_display_foreign_type_token_stream = 
                             crate_common_display_foreign_type_display_foreign_type_stringified
                             .parse::<proc_macro2::TokenStream>()
